@@ -457,7 +457,7 @@ class UniteCreatorPluginIntegrations{
 			case "fvplayers_user_watched":
 				
 				$arrIDs = fv_player_get_user_watched_post_ids(array("count"=>$limit));
-		
+				
 				//show debug
 				
 				if(GlobalsProviderUC::$showPostsQueryDebug == true){
@@ -498,6 +498,72 @@ class UniteCreatorPluginIntegrations{
 	
 	private function ___________GENERAL_INIT_INTEGRATIONS_________(){}
 	
+	/**
+	 * favorites plugin posts includeby
+	 */
+	public function favoritesModifyPostsIncludeby($includeBy){
+		
+		$includeBy["favorites_get_user_posts"] = __("Favorites Plugin - Get User Posts", "unlimited-elements-for-elementor");
+
+		return($includeBy);
+	}
+	
+	/**
+	 * get user post ids
+	 */
+	public function favoritesGetUserPostIDs($arrIDs, $includeBY, $limit){
+		
+		
+		$arrIDs = array();
+		
+		switch($includeBY){
+			case "favorites_get_user_posts":
+				
+				$exists = class_exists("Favorites\Entities\User\UserRepository");
+				
+				$response = null;
+				
+				if($exists == true){
+					$userRepository = new Favorites\Entities\User\UserRepository();
+					$response = $userRepository->getAllFavorites();
+				}
+				
+				if(!empty($response)){
+					$arrRespones = $response[0];
+					$arrIDs = UniteFunctionsUC::getVal($arrRespones, "posts");
+				}
+				
+				//show debug
+				
+				if(GlobalsProviderUC::$showPostsQueryDebug == true){
+					dmp("Favorites plugin - get usre favorites");
+					dmp($arrIDs);
+				}
+				
+			break;
+		}
+				
+		if(empty($arrIDs))
+			$arrIDs = array();
+					
+		return($arrIDs);
+		
+		
+	}
+	
+	/**
+	 * init favoritest plugin integration
+	 */
+	private function initFavoritesIntegration(){
+		
+		if(function_exists("favorites_check_versions") == false)
+			return(false);
+			
+		add_filter("ue_modify_post_select_includeby",array($this,"favoritesModifyPostsIncludeby"));
+		
+		add_filter("ue_get_custom_includeby_postids",array($this,"favoritesGetUserPostIDs"),10,3);
+		
+	}
 	
 	/**
 	 * init plugin integrations - on plugins loaded
@@ -510,7 +576,10 @@ class UniteCreatorPluginIntegrations{
 			$this->initSABoxIntegration();
 		
 		$this->initFvPlayerIntegrations();
-			
+		
+		if(defined("FAVORITES_PLUGIN_FILE"))
+			$this->initFavoritesIntegration();
+		
 	}
 	
 	

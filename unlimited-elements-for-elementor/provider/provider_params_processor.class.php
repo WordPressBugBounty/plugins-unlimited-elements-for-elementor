@@ -1520,11 +1520,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 					dmp("Related Posts Query");
 				}
 
-				$relatedMode = UniteFunctionsUC::getVal($value, $name."_related_mode");
-
+				
 				//prepare terms string
 				$arrTerms = UniteFunctionsWPUC::getPostTerms($post);
-
+				
 				$strTerms = "";
 
 				$arrRelatedTaxonomies = UniteFunctionsUC::getVal($value, $name."_related_taxonomies");
@@ -1549,21 +1548,24 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 						$strTerms .= $strTerm;
 					}
 				}
-
+				
 				//add terms
 				if(!empty($strTerms)){
-
+					$filters["category"] = $strTerms;
+					
+					$relatedMode = UniteFunctionsUC::getVal($value, $name."_related_mode");
+					
 					$relation = "OR";
 					if($relatedMode == "and")
 						$relation = "AND";
-
+			
 					if($relatedMode == "grouping")
 						$relation = "GROUP";
-
-					$filters["category"] = $strTerms;
+					
 					$filters["category_relation"] = $relation;
 				}
-
+				
+				
 				$filters["exclude_current_post"] = true;
 			}
 
@@ -1574,11 +1576,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			if(!empty($category))
 				$filters["category"] = $category;
-
-			$relation = UniteFunctionsUC::getVal($value, "{$name}_category_relation");
-
-			if(!empty($relation) && !empty($category))
-				$filters["category_relation"] = $relation;
+			
 
 			$termsIncludeChildren = UniteFunctionsUC::getVal($value, "{$name}_terms_include_children");
 			$termsIncludeChildren = UniteFunctionsUC::strToBool($termsIncludeChildren);
@@ -1769,11 +1767,35 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 					}
 
 				break;
+				case "terms_free_selection":
+					
+					$arrTermIDs = UniteFunctionsUC::getVal($value, $name."_include_terms_freeselect");
+					
+					if(!empty($arrTermIDs)){
+						
+						if(empty($category))
+							$category = array();
+
+						$category = array_merge($arrTermIDs, $category);
+						$category = array_unique($category);
+
+						$filters["category"] = $category;
+					}
+					
+				break;
 			}
 
 		}
-
-
+		
+		//set category relation
+		
+		$relation = UniteFunctionsUC::getVal($value, "{$name}_category_relation");
+		 
+		if(!empty($relation) && isset($filters["category"]))
+			$filters["category_relation"] = $relation;
+		
+		//set category relation
+		
 		$filters["limit"] = $limit;
 
 		$filters = $this->getPostListData_addOrderBy($filters, $value, $name);
@@ -2049,7 +2071,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 					$metaValueSecond = $this->modifyMetaValueForCompare($metaValueSecond);
 
 					$metaRelation = UniteFunctionsUC::getVal($value, "{$name}_includeby_meta_relation");
-
+				
 					$arrMetaSubQuery = array();
 					$arrMetaSubQuery2 = array();
 

@@ -140,7 +140,7 @@ function UniteCreatorElementorEditorAdmin(){
 	 * change taxonomy post select
 	 */
 	function changePostTaxonomySelect(selectPostType, dataPostTypes){
-		
+				
 		var objPanel = getObjElementorPanel();
 		var prefix = selectPostType.data("settingprefix");
 		
@@ -154,7 +154,6 @@ function UniteCreatorElementorEditorAdmin(){
 		//remove the tip
 		var objInputWrapper = selectPostTaxonomy.parents(".elementor-control-input-wrapper");
 		objInputWrapper.addClass("uc-notip");
-		
 		
 		var postType = selectPostType.val();
 		var selectedTax = selectPostTaxonomy.val();
@@ -173,6 +172,7 @@ function UniteCreatorElementorEditorAdmin(){
 			return(true);
 		
 		//hide not relevant select options
+		
 		var objOptions = selectPostTaxonomy.find("option");
 		var firstVisibleOption = null;
 				
@@ -182,8 +182,18 @@ function UniteCreatorElementorEditorAdmin(){
 			var objOption = jQuery(option);
 			var optionTax = objOption.prop("value");
 			
-			var taxFound = objTax.hasOwnProperty(optionTax);
+			//modify the text on the way
 			
+			var optionText = objOption.text();
+			
+			var optionTextNew = optionText.replace("("+optionTax+")","");
+			
+			if(optionTextNew.length < optionText.length){
+				objOption.html(optionTextNew);
+			}
+			
+			var taxFound = objTax.hasOwnProperty(optionTax);
+						
 			if(taxFound == true && firstVisibleOption == null)
 				firstVisibleOption = optionTax;
 			
@@ -557,6 +567,7 @@ function UniteCreatorElementorEditorAdmin(){
 		if(arrInitData){
 			options["data"] = arrInitData;
 		}
+		
 		
 		objSelect.select2(options);
 		

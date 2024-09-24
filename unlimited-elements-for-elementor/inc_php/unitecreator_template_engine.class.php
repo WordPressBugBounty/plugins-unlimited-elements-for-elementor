@@ -973,16 +973,19 @@ class UniteCreatorTemplateEngineWork{
 			return(false);
 		
 		$altTemplateID = UniteFunctionsUC::getVal($this->arrParams, $listingName."_alt_templateid");
-
+		
 		if(empty($altTemplateID))
 			return(false);
 			
+		if(is_numeric($altTemplateID) == false)
+			return(false);
+		
 		//check for sure
 		$templateIDFromSettings = UniteFunctionsUC::getVal($this->arrParams, $listingName."_templateid");
 		
 		if($templateIDFromSettings != $templateID)
 			return(false);
-			
+		
 		return($altTemplateID);
 	}
 	
@@ -1023,12 +1026,14 @@ class UniteCreatorTemplateEngineWork{
 	public function putDynamicLoopTemplate($item, $templateID){
 		
 		//get alternate template
-		
+				
 		$altTemplateID = $this->getAlternateTemplate($templateID);
-					
+		
 		if(!empty($altTemplateID))
 			$templateID = $this->getCurrentItemTemplateID($templateID, $altTemplateID, $item);
 		
+		if(is_numeric($templateID) == false)
+			return(false);
 			
 		$widgetID = UniteFunctionsUC::getVal($this->arrParams, "uc_id");
 

@@ -28,38 +28,11 @@ function ueCheckCatalog(){
 }
 
 function checkSomeFunc(){
-
-	
-	$data = array(
-		"id"=>100
-	);
 	
 	
-	$addons = new UniteCreatorAddons();
-	
-	$html = $addons->getAddonSettingsHTMLFromData($data);
-	
-	
-	
-	dmp(htmlspecialchars($html));
+	dmp("check some func");
 	exit();
 	
-	/*
-	
-	$operations = new ProviderOperationsUC();
-	
-	$data = array(
-		"post_ids"=>array(125)
-	);
-	
-	dmp($data);
-	
-	$arrData = $operations->getSelect2TermsTitles($data);
-	
-	dmp("check");
-	dmp($arrData);	
-	
-	*/
 }
 
 

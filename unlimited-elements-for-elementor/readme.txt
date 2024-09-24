@@ -893,6 +893,30 @@ Note : This plugin works with Elementor. Make sure you have [Elementor](https://
 
 == Changelog ==
 
+version 1.5.124: 2024-09-24
+
+Plugin Changes:
+
+* Fix: fixed alternate template empty output in dynamic loop
+* Fix: fixed hiding taxonomy select in some cases
+
+Widget Changes:
+
+* Feature: Remote Dropdown (Pro) - Added a new option &quot;Update Button Label on Selection&quot; to allow users to display the active item in the dropdown select for better user experience.
+* Feature: Woo Product Grid (Pro) - Introduced a new option that allows users to customize and change the position of the Rating element within the layout, providing greater flexibility in design.
+* Feature: Taxonomy Terms (Pro) - Added improved hover options for all parent, child, and multi-level terms.
+* Feature: Post Grid (Pro) - Added the Align Content option, enabling vertical alignment for content in the Always Overlay layout type.
+* Feature: Coverflow Carousel (Pro) - Added Button Type option that allows the use of the Dynamic Post Popup widget.
+* Feature: Multi Step Form (Pro) - Added a new option called &quot;Scroll To Top After Step Change,&quot; which automatically scrolls the page to the top when navigating between steps in a multi-step form.
+* Feature: List (Free) - Added Index Type option with Default / Custom settings. This feature allows users to assign a custom number to each item for greater flexibility.
+* Feature: Flip Box (Free) - Expanded the Height option to include additional units, providing more flexibility and customization for various design requirements.
+* Feature: Hotspots (Pro) - Added the 'Always Show Tooltip' option to allow users to keep tooltips visible at all times for improved customization.
+* Feature: File Field (Pro) - Introduced Multiple Select option to enable selecting multiple files simultaneously.
+* Feature: Job Listing (Pro) - Added an option for description toggle, allowing users to 'Show More' or 'Show Less' content.
+* Feature: Date Field (Pro) - Added &quot;Icon Type&quot; option with Default and Custom settings, providing flexibility in selecting icon types for the widget.
+* Feature: Remote Play Pause (Free) - Added the icon hover icon style option.
+
+
 
 version 1.5.123: 2024-09-19
 

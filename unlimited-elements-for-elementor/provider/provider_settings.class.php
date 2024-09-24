@@ -128,7 +128,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 	 * get taxonomies array for terms picker
 	 */
 	private function addPostTermsPicker_getArrTaxonomies($arrPostTypesWithTax){
-
+		
 		$arrAllTax = array();
 
 		//make taxonomies data
@@ -155,7 +155,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 				//some modification for woo
 				if($taxTitle == "Tag" && $slug != "post_tag")
 					$isDuplicate = true;
-
+				
 				if(isset($arrAllTax[$taxTitle]))
 					$isDuplicate = true;
 
@@ -163,21 +163,26 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 					$taxTitle = UniteFunctionsUC::convertHandleToTitle($slug);
 
 				$taxTitle = ucwords($taxTitle);
-
+				
+				//avoid duplicate title
+				if(isset($arrAllTax[$taxTitle]))
+					$taxTitle = "$taxTitle ($slug)";
+				
 				$arrTaxOutput[$slug] = $taxTitle;
-
+				
 				$arrAllTax[$taxTitle] = $slug;
 			}
 
 			if(!empty($arrTaxOutput))
 				$arrTaxonomies[$typeName] = $arrTaxOutput;
 		}
-
+		
+		
 		$response = array();
 		$response["post_type_tax"] = $arrTaxonomies;
 		$response["taxonomies_simple"] = $arrAllTax;
-
-
+		
+		
 		return($response);
 	}
 
@@ -428,9 +433,9 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$isForWooCommerce = UniteFunctionsUC::strToBool($isForWooCommerce);
 
 		$filterType = UniteFunctionsUC::getVal($extra, "filter_type");
-
+		
 		$arrPostTypesWithTax = UniteFunctionsWPUC::getPostTypesWithTaxomonies(GlobalsProviderUC::$arrFilterPostTypes, false);
-
+		
 		if($isForWooCommerce == true && isset($arrPostTypesWithTax["product"]))
 			$arrPostTypesWithTax = array("product" => $arrPostTypesWithTax["product"]);
 
@@ -439,7 +444,8 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$arrPostTypesTaxonomies = $taxData["post_type_tax"];
 
 		$arrTaxonomiesSimple = $taxData["taxonomies_simple"];
-
+		
+		
 		//----- add post types ---------
 
 		//prepare post types array
@@ -448,7 +454,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		foreach($arrPostTypesWithTax as $typeName => $arrType){
 
 			$title = UniteFunctionsUC::getVal($arrType, "title");
-
+			
 			if(empty($title))
 				$title = ucfirst($typeName);
 
@@ -460,12 +466,11 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 
 			$arrPostTypes[$title] = $typeName;
 		}
-
+				
 		$postType = UniteFunctionsUC::getVal($value, $name."_posttype");
 		if(empty($postType))
 			$postType = UniteFunctionsUC::getArrFirstValue($arrPostTypes);
-
-
+		
 		$params = array();
 
 		$params[UniteSettingsUC::PARAM_CLASSADD] = "unite-setting-post-type";
@@ -474,9 +479,10 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params[UniteSettingsUC::PARAM_ADDPARAMS] = "data-arrposttypes='$dataTax' data-settingtype='select_post_taxonomy' data-settingprefix='{$name}'";
 		$params["datasource"] = "post_type";
 		$params["origtype"] = "uc_select_special";
-
+		
+		
 		$this->addSelect($name."_posttype", $arrPostTypes, __("Select Post Type", "unlimited-elements-for-elementor"), $postType, $params);
-
+		
 		//---------- add taxonomy ---------
 
 		$params = array();
@@ -496,8 +502,9 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		if($isForWooCommerce)
 			$taxonomy = "product_cat";
 
+			
 		$this->addSelect($name."_taxonomy", $arrTaxonomiesSimple, __("Select Taxonomy", "unlimited-elements-for-elementor"), $taxonomy, $params);
-
+		
 		// --------- add include by -------------
 
 		$arrIncludeBy = array();
@@ -1483,6 +1490,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		}
 
 		//-------- add related posts options --------
+		
 		$arrRelatedModes = array_flip(array(
 			"or" => "OR (default)",
 			"and" => "AND",
@@ -1495,7 +1503,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params["description"] = __("In grouping mode, between taxonomies will be 'and' relation and inside same taxonomy will be 'or' relation ", "unlimited-elements-for-elementor");
 
 		$this->addSelect($name . "_related_mode", $arrRelatedModes, __("Related Posts Mode", "unlimited-elements-for-elementor"), "or", $params);
-
+		
 		//----- post type -----
 		$defaultPostType = "post";
 
@@ -1553,8 +1561,9 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$arrIncludeBy["ids_from_dynamic"] = __("Post IDs from Dynamic Field", "unlimited-elements-for-elementor");
 		$arrIncludeBy["terms_from_dynamic"] = __("Terms from Dynamic Field", "unlimited-elements-for-elementor");
 		$arrIncludeBy["terms_from_current_meta"] = __("Terms from Current Post Meta", "unlimited-elements-for-elementor");
+		$arrIncludeBy["terms_free_selection"] = __("Terms Free Selection", "unlimited-elements-for-elementor");
 		$arrIncludeBy["current_query_base"] = __("Current Query as a Base", "unlimited-elements-for-elementor");
-
+		
 		if($isForWooProducts === true){
 			$arrIncludeBy["products_on_sale"] = __("Products On Sale Only (woo)", "unlimited-elements-for-elementor");
 			$arrIncludeBy["up_sells"] = __("Up Sells Products (woo)", "unlimited-elements-for-elementor");
@@ -1858,9 +1867,10 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$this->addTextBox($name . "_includeby_terms_dynamic_field", "", __("Include by Terms from Dynamic Field", "unlimited-elements-for-elementor"), $params);
 
 		//----- include terms from current post meta field -------
+		
 		$arrConditionIncludeDynamic = $arrConditionIncludeBy;
 		$arrConditionIncludeDynamic[$name . "_includeby"] = "terms_from_current_meta";
-
+		
 		$params = array();
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_TEXTFIELD;
 		$params["description"] = __("Enter current post meta field, that has the terms selection of the posts you want to bring. Use it to connect parent with children posts with terms", "unlimited-elements-for-elementor");
@@ -1870,8 +1880,22 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params["elementor_condition"] = $arrConditionIncludeDynamic;
 
 		$this->addTextBox($name . "_includeby_terms_from_meta", "", __("Current Post Terms Select Meta Field", "unlimited-elements-for-elementor"), $params);
-
+		
+		// --------- terms free selection -------------
+		
+		$params = array();
+		$params["description"] = __("Another way to select terms, not limited by number of terms");
+		
+		$arrConditionTermsFree = $arrConditionIncludeBy;
+		$arrConditionTermsFree[$name . "_includeby"] = "terms_free_selection";
+		
+		$addAttrib = "data-posttypename='{$name}_posttype'";
+		
+		$this->addPostIDSelect($name."_include_terms_freeselect", __("Terms Free Selection", "unlimited-elements-for-elementor"), $arrConditionTermsFree, "terms", $addAttrib, $params);
+		
+		
 		// --------- current query base -------------
+		
 		$arrConditionCurrentQueryBase = $arrConditionIncludeBy;
 		$arrConditionCurrentQueryBase[$name . "_includeby"] = "current_query_base";
 

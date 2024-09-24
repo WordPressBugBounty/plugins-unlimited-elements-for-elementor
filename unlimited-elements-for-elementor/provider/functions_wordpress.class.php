@@ -248,7 +248,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 					continue;
 
 				$arrTaxomonies = self::getPostTypeTaxomonies($postType);
-
+				
 				if($fetchWithNoTax == false && empty($arrTaxomonies))
 					continue;
 

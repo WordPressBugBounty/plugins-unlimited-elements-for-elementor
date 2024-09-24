@@ -1,10 +1,18 @@
 
 
+version 1.5.124:
+
+* Fix: fixed alternate template empty output in dynamic loop
+* Fix: fixed hiding taxonomy select in some cases
+
+
 version 1.5.123:
 
 * Feature: alternate template for loop builder
 * Fix: make the active filters appear inside off canvas filters widget
 * Fix: avoid php errors when no db installed for some reason
+* Feature: made integration with "favorites plugin"
+* Feature: added another way to select terms "free terms selection"
 
 
 version 1.5.122:

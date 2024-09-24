@@ -1067,6 +1067,18 @@ class HelperProviderUC{
 	private function _______DEBUG_________(){}
 	
 	/**
+	 * debug function
+	 */
+	public static function debugFunction($str){
+		
+		if(GlobalsProviderUC::$showDebugFunction == false)
+			return(false);
+			
+		dmp($str);
+	}
+	
+	
+	/**
 	 * show debug db tables
 	 */
 	public static function showDebugDBTables(){

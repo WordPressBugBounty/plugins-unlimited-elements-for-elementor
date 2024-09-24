@@ -623,6 +623,7 @@ class UniteCreatorActions{
 					HelperUC::ajaxResponseData($arrUsersList);
 				break;
 				case "get_terms_list_forselect":
+					
 					$arrTermsList = $operations->getTermsListForSelectFromData($data);
 
 					HelperUC::ajaxResponseData($arrTermsList);

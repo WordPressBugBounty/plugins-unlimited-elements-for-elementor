@@ -117,10 +117,11 @@ class GlobalsUnlimitedElements{
 		self::$urlAccount = admin_url("admin.php?page=unlimitedelements-account");
 
 		UniteProviderFunctionsUC::addAction('admin_init', array("GlobalsUnlimitedElements", 'initAdminNotices'));
-
+		
 		if(GlobalsUC::$is_admin == true && HelperUC::hasPermissionsFromQuery("showadminnotices"))
 			self::$debugAdminNotices = true;
-
+		
+			
 		//set paths
 		
 		self::$pathPlugin = dirname(__FILE__)."/";
@@ -158,6 +159,10 @@ class GlobalsUnlimitedElements{
 			self::$enableElementorSupport = false;
 			
 		}
+
+		//debug functions
+		if(GlobalsUC::$is_admin == true && HelperUC::hasPermissionsFromQuery("show_debug_function"))
+			GlobalsProviderUC::$showDebugFunction = true;
 		
 		
 	}

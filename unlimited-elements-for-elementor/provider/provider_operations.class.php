@@ -161,7 +161,7 @@ class ProviderOperationsUC extends UCOperations{
 	public function getTermsListForSelectFromData($data){
 
 		$limit = 10;
-
+		
 		$search = $this->getSearchFromData($data);
 		$taxonomy = UniteFunctionsUC::getVal($data, "taxonomy");
 
@@ -182,8 +182,7 @@ class ProviderOperationsUC extends UCOperations{
 			$isSingleTax = false;
 
 		$response = get_terms($query);
-
-
+		
 		//try to get some taxonomies
 		if(empty($response) && count($search) == 1){
 			unset($query["search"]);

@@ -376,13 +376,15 @@ class UniteCreatorElementorIntegrate{
      */
     public function onWidgetsRegistered() {
 		
+		HelperProviderUC::debugFunction("onWidgetsRegistered");
+    	
     	//preload db data
     	
     	$this->preloadElementorDBData();
 		
     	//$this->initTemplateTypeVars();
     	$this->initOtherVars();
-
+		
     	$this->includePluginFiles();
 
     	$this->registerWidgets();
@@ -454,7 +456,9 @@ class UniteCreatorElementorIntegrate{
      * add all categories
      */
     private function addUCCategories(){
- 
+
+    	HelperProviderUC::debugFunction("addUCCategories");
+    	
     	$this->preloadElementorDBData();
     	
     	$objElementsManager = \Elementor\Plugin::instance()->elements_manager;
@@ -506,7 +510,9 @@ class UniteCreatorElementorIntegrate{
      * preload all the elementor data
      */
     private function preloadElementorDBData(){
-		 
+
+    	HelperProviderUC::debugFunction("preloadElementorDBData start");
+    	
     	//don't let run the function twice
     	if(!empty(self::$arrAddonsRecords))
 			return(false);
@@ -522,11 +528,16 @@ class UniteCreatorElementorIntegrate{
 			self::$arrAddonsRecords = UniteFunctionsUC::getVal($arrData, "addons");
 			$this->arrCatsRecords = UniteFunctionsUC::getVal($arrData, "cats");
 			self::$arrPostsWidgetNames = UniteFunctionsUC::getVal($arrData, "posts_widgets_names");
-    		
+    	
+			HelperProviderUC::debugFunction("preloadElementorDBData - preloaded!");
+			
     	}catch(Exception $e){
-
+			
+    		HelperProviderUC::debugFunction("preloadElementorDBData - error!");
+    		
     		$this->isSystemErrorOccured = true;
     	}
+    	
     	
     }
 
@@ -536,7 +547,7 @@ class UniteCreatorElementorIntegrate{
      */
     public function onElementorInit(){
 
-    	
+		HelperProviderUC::debugFunction("onElementorInit");
     	
     }
 
@@ -1664,7 +1675,9 @@ class UniteCreatorElementorIntegrate{
      * init the elementor integration
      */
     public function initElementorIntegration(){
-		    	
+		
+    	HelperProviderUC::debugFunction("initElementorIntegration - start");
+    	
     	$isEnabled = HelperProviderCoreUC_EL::getGeneralSetting("el_enable");
     	$isEnabled = UniteFunctionsUC::strToBool($isEnabled);
     	if($isEnabled == false)
@@ -1700,16 +1713,14 @@ class UniteCreatorElementorIntegrate{
 	    	return(false);
 	    }
     	
-    	
     	//detect old elementor version
     	$compare = version_compare(ELEMENTOR_VERSION, '3.7.0');
 	    if($compare < 0)
     		$this->isOldElementorVersion = true;
 		    		
-    		
     	//consolidation always false
     	self::$isConsolidated = false;
-
+		
     	$enableExportImport = HelperProviderCoreUC_EL::getGeneralSetting("enable_import_export");
     	$enableExportImport = UniteFunctionsUC::strToBool($enableExportImport);
 
@@ -1728,13 +1739,13 @@ class UniteCreatorElementorIntegrate{
 
     	add_action('elementor/editor/init', array($this, 'onEditorInit'));
 		
-		add_action( 'elementor/elements/categories_registered', array($this, 'onCategoriesRegistered') );    	
+		add_action( 'elementor/elements/categories_registered', array($this, 'onCategoriesRegistered') ); 
     	
     	if($this->isOldElementorVersion == true)
     		add_action('elementor/widgets/widgets_registered', array($this, 'onWidgetsRegistered'));
     	else
     		add_action('elementor/widgets/register', array($this, 'onWidgetsRegistered'));
-
+		
     	add_action('elementor/frontend/after_register_scripts', array($this, 'onRegisterFrontScripts'), 10);
     	add_action('elementor/editor/after_enqueue_scripts', array($this, 'onEnqueueEditorScripts'), 10);
 
@@ -1795,7 +1806,9 @@ class UniteCreatorElementorIntegrate{
 
 			add_action('wp_ajax_unitecreator_elementor_import_template', array($this, 'onAjaxImportLayout'));
     	}
-
+		
+    	HelperProviderUC::debugFunction("initElementorIntegration - end");
+    	
 
     }
 
