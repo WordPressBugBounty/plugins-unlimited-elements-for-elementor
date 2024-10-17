@@ -6,19 +6,21 @@
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
 defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
-?>
 
-
-<h1>Unlimited Elements - API Access Test</h1>
-
-<br>
-
-<?php
+class UEConnectivityTestView{
+	
+	/**
+	 * construction
+	 */
+	public function __construct(){
+		
+		$this->putHTML();
+	}
 
 /**
  * check zip file request
  */
-function checkZipFile(){
+private function checkZipFile(){
 
 	//request single file
 	dmp("requesting widget zip from API");
@@ -43,12 +45,12 @@ function checkZipFile(){
 }
 
 
+
 /**
  * check zip file request
  */
-function checkCatalogRequest(){
+private function checkCatalogRequest(){
 
-	try{
 		dmp("requesting catalog check");
 
 		$response = UEHttp::make()->post(GlobalsUC::URL_API, array(
@@ -58,38 +60,52 @@ function checkCatalogRequest(){
 			"domain" => "localhost",
 			"platform" => "wp",
 		));
-
+		
 		$data = $response->body();
 
 		if(empty($data))
 			UniteFunctionsUC::throwError("Empty server response");
 
 		$len = strlen($data);
-
+	
+		if($len < 5000){
+			
+			dmp("The wrong response: ");
+			dmpHtml($data);
+			 
+			UniteFunctionsUC::throwError("Response has wrong size: $len");
+		}
+		
 		dmp("api response OK, received string size: $len");
-	}catch(Exception $e){
-		$message = $e->getMessage() . "\n<br>";
-
-		$message .= "The request to the catalog url has failed. \n<br>";
-		$message .= "Please contact your hosting provider and request to open firewall access to this address: \n<br>";
-		$message .= "http://api.unlimited-elements.com/";
-
-		UniteFunctionsUC::throwError($message);
-	}
+		
+		
 }
 
 /**
  * various
  */
-function checkVariousOptions(){
-
-	dmp("checking file get contents");
+private function checkVariousOptions(){
 
 	$urlAPI = GlobalsUC::URL_API;
+	
+	dmp("checking get contents from the api: $urlAPI");
+ 	
 	$response = file_get_contents($urlAPI);
-
+		
 	$len = strlen($response);
-
+	
+	if($len == 0)
+		UniteFunctionsUC::throwError("No response from API. Recieved string size: 0");
+	
+	if($len > 1000){
+		
+		dmp("Response has wrong size: $len");
+		
+		dmpHtml($response);
+				
+		return(false);
+	}
+	
 	dmp("file get contents OK, received string size: $len");
 
 }
@@ -97,7 +113,7 @@ function checkVariousOptions(){
 /**
  * check and update catalog
  */
-function checkUpdateCatalog(){
+private function checkUpdateCatalog(){
 
 	dmp("Trying to update the catalog from the api... Printing Debug...");
 
@@ -124,16 +140,15 @@ function checkUpdateCatalog(){
 /**
  * check if catalog data is saved well
  */
-function checkingCatalogData(){
+private function checkingCatalogData(){
 
 	$webAPI = new UniteCreatorWebAPI();
 	$data = $webAPI->getCatalogData();
 
-
 	dmp("Checking saved widgets catalog data");
 
 	if(empty($data)){
-
+	
 		dmp("No catalog widgets data found!");
 
 		checkUpdateCatalog();
@@ -164,24 +179,84 @@ function checkingCatalogData(){
 		dmp($data);
 
 }
+	
+	
+	/**
+	 * put view html
+	 */
+	private function putHTML(){
+		?>
+		
+		
+<h1>Unlimited Elements - API Access Test</h1>
 
+<br>
+		
+<?php 
+		
 try{
-
-	checkVariousOptions();
-
-	echo "<br><br>";
-
-	checkCatalogRequest();
-
-	echo "<br><br>";
-
-	checkZipFile();
-
-	echo "<br><br>";
-
-	checkingCatalogData();
-
+	
+		ini_set("display_errors","0");
+		
+		$this->checkVariousOptions();
+	
+		echo "<br><br>";
+	
+		$this->checkCatalogRequest();
+	
+		echo "<br><br>";
+	
+		$this->checkZipFile();
+	
+		echo "<br><br>";
+	
+		$this->checkingCatalogData();
 
 }catch(Exception $e){
-	echo $e->getMessage();
+
+		$urlPHPFile = GlobalsUC::$urlPlugin."views/api-connect-test.php";
+	 
+		?>
+		
+		<div style="font-size:18px;line-height:35px;">
+			
+			<hr>
+		
+		<?php 
+			
+			echo $e->getMessage();
+		?>
+			<hr>
+			
+			The request to the catalog url has failed. <br>
+			
+			Please contact your hosting provider and request to open firewall access to this address: 
+			
+			<br>
+			
+			<a href="https://api.unlimited-elements.com/">https://api.unlimited-elements.com/</a>
+			
+			<br>
+			
+			Also, you can test the very simple plain PHP file with the connectiviry test:
+					
+			<a href="<?php echo $urlPHPFile ?>">api-connect-test.php</a>
+			
+			<br>
+			
+			If it will fail as well, please show this file to your server support.
+		
+		</div>
+
+		<?php 
+
 }
+		
+		
+	}//end putHTML()
+	
+}
+
+
+new UEConnectivityTestView();
+

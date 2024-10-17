@@ -1331,7 +1331,7 @@ class UniteCreatorFiltersProcess{
 	 * get init filtres taxonomy request
 	 */
 	private function getInitFiltersTaxRequest($request, $strTestIDs){
-
+		
 		if(strpos($request, "WHERE 1=2") !== false)
 			return(null);
 
@@ -1446,7 +1446,7 @@ class UniteCreatorFiltersProcess{
 
 		$isModeFiltersInit = UniteFunctionsUC::getPostGetVariable("modeinit","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
 		$isModeFiltersInit = UniteFunctionsUC::strToBool($isModeFiltersInit);
-
+		
 		self::$isModeInit = $isModeFiltersInit;
 
 		$testTermIDs = UniteFunctionsUC::getPostGetVariable("testtermids","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
@@ -1462,9 +1462,11 @@ class UniteCreatorFiltersProcess{
 
 		//if($isModeFiltersInit == true)
 			//GlobalsProviderUC::$skipRunPostQueryOnce = true;
-
+		
 		if(self::$isGutenberg == false)
+			
 			$arrContent = HelperProviderCoreUC_EL::getElementorContentByPostID($layoutID);
+			
 		else{	//gutenberg
 			
 			if(class_exists("UniteCreatorGutenbergIntegrate") == false)
@@ -1479,6 +1481,7 @@ class UniteCreatorFiltersProcess{
 			UniteFunctionsUC::throwError(self::$platform." content not found");
 
 		//run the post query
+		
 		$arrHtmlWidget = $this->getContentWidgetHtml($arrContent, $elementID);
 
 		if(empty(GlobalsProviderUC::$lastPostQuery))
@@ -1493,7 +1496,7 @@ class UniteCreatorFiltersProcess{
 				dmp("---- Test Not Empty Terms----");
 
 			$args = GlobalsProviderUC::$lastQueryArgs;
-
+			
 			if(self::$showDebug == true){
 				dmp("--- Last Query Args:");
 				dmp($args);
@@ -2025,12 +2028,12 @@ class UniteCreatorFiltersProcess{
 
 		$selectedTerms = null;
 		$selectedTermIDs = null;
-
+		
 		//if mode init - get selected id's from request
 		if(self::$isModeInit == true){
 
 			$strSelectedTermIDs = UniteFunctionsUC::getPostGetVariable("ucinitselectedterms","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
-
+			
 			if(empty($strSelectedTermIDs))
 				return($arrTerms);
 
@@ -2059,7 +2062,7 @@ class UniteCreatorFiltersProcess{
 		$arrSelected = array();
 
 		foreach($arrTerms as $index => $term){
-
+		
 			if(!empty($selectedTerms))
 				$isSelected = $this->isTermSelectedByRequest($term, $selectedTerms);
 			else{
@@ -2576,7 +2579,7 @@ class UniteCreatorFiltersProcess{
 		$arrTerms = $this->modifyOutputTerms_modifySelected($arrTerms, $data,$filterType);
 
 		$arrTerms = $this->modifyOutputTerms_modifySelectedByRequest($arrTerms);
-
+		
 		$isFilterHidden = false;
 
 		switch($filterType){
@@ -2626,7 +2629,7 @@ class UniteCreatorFiltersProcess{
 		$data["filter_first_load"] = $isFirstLoad?"yes":"no";
 
 		$data["taxonomy"] = $arrTerms;
-
+		
 
 		return($data);
 	}

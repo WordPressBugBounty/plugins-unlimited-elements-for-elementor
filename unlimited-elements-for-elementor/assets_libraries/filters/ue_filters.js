@@ -2362,8 +2362,7 @@ function UEDynamicFilters(){
 	 * small ajax request
 	 */
 	function ajaxRequest(ajaxUrl, action, objData, onSuccess){
-
-
+				
 		if(g_debugInitMode === true){
 
 			trace("debug init mode - skip request");
@@ -2607,33 +2606,42 @@ function UEDynamicFilters(){
 		var isSetUrl = (behave == "mixed" || behave == "mixed_back");
 
 		if(isFiltersInit == false && isSetUrl === true){
-
-			if(behave == "mixed_back"){
-
-				//save state for back button
-
-				var gridID = objGrid.attr("id");
-
-				//save initial state
-				var isStateEmpty = jQuery.isEmptyObject(history.state);
+			
+			try{
 				
-				var objState = {"ucaction":"change", "ajaxurl":ajaxUrl, "gridid":gridID, selected_terms:arrTerms};
-
-				if(isStateEmpty){
-
-					var ajaxUrlInitial = objGrid.data("initajaxurl");
-
-					objState["ajaxurl"] = ajaxUrlInitial;
-
-					history.replaceState(objState, null, urlReplace);
+				if(behave == "mixed_back"){
+	
+					//save state for back button
+	
+					var gridID = objGrid.attr("id");
+	
+					//save initial state
+					var isStateEmpty = jQuery.isEmptyObject(history.state);
+					
+					var objState = {"ucaction":"change", "ajaxurl":ajaxUrl, "gridid":gridID, selected_terms:arrTerms};
+	
+					if(isStateEmpty){
+	
+						var ajaxUrlInitial = objGrid.data("initajaxurl");
+	
+						objState["ajaxurl"] = ajaxUrlInitial;
+	
+						history.replaceState(objState, null, urlReplace);
+					}
+	
+					history.pushState(objState, null, urlReplace);		//with back
+	
 				}
-
-				history.pushState(objState, null, urlReplace);		//with back
-
+				else
+					history.replaceState({}, null, urlReplace);		//without back
+			
+			}catch(error){
+				trace("history push state error");
+				trace(error);
 			}
-			else
-				history.replaceState({}, null, urlReplace);		//without back
 		}
+		
+		
 		
 		initGrid_setActiveFiltersData(objGrid, objAjaxOptions);
 		
@@ -2646,7 +2654,8 @@ function UEDynamicFilters(){
 	 * do the actual grid ajax request
 	 */
 	function doGridAjaxRequest(ajaxUrl, objGrid, objFilters, isLoadMore, isFiltersInit){
-
+		
+				
 		var objEmptyMessage = getGridEmptyMessage(objGrid);
 
 		//set the loaders
@@ -3076,7 +3085,7 @@ function UEDynamicFilters(){
 						else{
 
 							//INIT MODE
-
+							
 							//add terms, if only children mode and the filter not child
 							if(initModeChildrens == true && filterRole != "child")
 								arrTerms.push(objTerm);
@@ -3138,7 +3147,7 @@ function UEDynamicFilters(){
 						isNoRefresh = true;
 					
 					var filterData = getGeneralFilterData(objFilter);
-
+					
 					//add terms
 					var dataTerms = getVal(filterData,"terms");
 
@@ -3164,11 +3173,31 @@ function UEDynamicFilters(){
 							}
 
 							arrTerms.push(dataTerms);	//multiple (grouping)
-
 						}
-
+						
+						
+						//set selected terms string if init mode
+						if(isFiltersInitMode == true && dataTerms && dataTerms.length){
+														
+							jQuery.each(arrTerms, function(index, term){
+								
+								var termID = getVal(term,"id");
+								
+								if(!termID)
+									return(true);
+								
+								if(strSelectedTerms)
+									strSelectedTerms +=",";
+								
+								strSelectedTerms += termID;
+							});
+							
+						}
+						
+						
 					}
-
+					
+										
 					if(g_showDebug == true){
 
 						trace("Filter Data:");
@@ -3209,9 +3238,6 @@ function UEDynamicFilters(){
 					throw new Error("Unknown filter type: "+type);
 				break;
 			}
-			
-			
-			
 			
 			//handle filters init mode
 			
@@ -3277,6 +3303,7 @@ function UEDynamicFilters(){
 
 		});		//end filters iteration
 
+		
 		
 		//add init filters additions
 
@@ -3408,7 +3435,7 @@ function UEDynamicFilters(){
 
 			urlReplace = addUrlParam(urlReplace, "ucorderdir="+orderdir);
 		}
-
+				
 		if(isFiltersInitMode && strSelectedTerms)
 			urlAjax += "&ucinitselectedterms="+strSelectedTerms;
 

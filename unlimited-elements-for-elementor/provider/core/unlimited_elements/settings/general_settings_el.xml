@@ -339,21 +339,24 @@
       type="statictext"
       label="In case of insufficient memory, you can increase WordPress memory limit wp config file (wp-config.php)">
     </field>
-
-    <field name="enable_memory_usage_test"
-      type="boolean"
-      default="false"
-      label="Enable Memory Usage Test"
-      description="Use it when you have some memory crash. &lt;br&gt; When enabling it it will log every addon and field register operation &lt;br&gt; and sugniffically slow down the editor work. Use it only for testing and turn it off after.">
+	
+    <field name="api-connectivity"
+      type="hr">
     </field>
 
-    <field name="memory_usage_button"
+    <field name="text_api_connectivity"
+      type="statictext"
+      label="&lt;b&gt;API Connectivity Test&lt;/b&gt;">
+    </field>
+
+    <field name="text_connectivity_button"
       type="button"
-      value="Show Memory Usage Log"
-      gotoview="troubleshooting-memory-usage"
-      label="Show last memory usage log &lt;br&gt; Run it after the editor run with the memory test"
+      value="Run Test"
+      gotoview="troubleshooting-connectivity"
+      label="Test the api connectivity. Run it if you don't see any widgets inside the widgets catalog"
     >
     </field>
+
 
     <field name="before_disable_post_content_filters"
       type="hr">
@@ -396,38 +399,11 @@
     <field name="troubleshooting-hr1"
       type="hr">
     </field>
-
-    <field name="text_overload"
-      type="statictext"
-      label="Overload Bug Test">
-    </field>
-
-    <field name="text_overload_button"
-      type="button"
-      value="Run Test"
-      gotoview="troubleshooting-overload"
-      label="Test the server for overload bug, &lt;br&gt; run this test when the edit page get stuck for any reason &lt;br&gt; when the unlimited elements plugin is on."
-    >
-    </field>
-    <field name="api-connectivity"
-      type="hr">
-    </field>
-    <field name="text_api_connectivity"
-      type="statictext"
-      label="API Connectivity Test">
-    </field>
-
-    <field name="text_connectivity_button"
-      type="button"
-      value="Run Test"
-      gotoview="troubleshooting-connectivity"
-      label="Test the api connectivity. Run it if you don't see any widgets inside the widgets catalog"
-    >
-    </field>
-
+        
     <field name="phpinfo"
       type="hr">
     </field>
+    
     <field name="text_phpinfo"
       type="statictext"
       label="Show PHP Info">
@@ -459,6 +435,38 @@
       value="Show DB Tables"
       gotoview="troubleshooting-tables"
       label="Show The DB Tables available"
+    >
+    </field>
+    
+    <field name="api-connectivity"
+      type="hr">
+    </field>
+
+    <field name="text_overload"
+      type="statictext"
+      label="Overload Bug Test">
+    </field>
+
+    <field name="text_overload_button"
+      type="button"
+      value="Run Test"
+      gotoview="troubleshooting-overload"
+      label="Test the server for overload bug, &lt;br&gt; run this test when the edit page get stuck for any reason &lt;br&gt; when the unlimited elements plugin is on."
+    >
+    </field>
+
+    <field name="enable_memory_usage_test"
+      type="boolean"
+      default="false"
+      label="Enable Memory Usage Test"
+      description="Use it when you have some memory crash. &lt;br&gt; When enabling it it will log every addon and field register operation &lt;br&gt; and sugniffically slow down the editor work. Use it only for testing and turn it off after.">
+    </field>
+
+    <field name="memory_usage_button"
+      type="button"
+      value="Show Memory Usage Log"
+      gotoview="troubleshooting-memory-usage"
+      label="Show last memory usage log &lt;br&gt; Run it after the editor run with the memory test"
     >
     </field>
 

@@ -1711,7 +1711,7 @@ class UniteCreatorDialogParamWork{
 		$this->validateInited();
 		$type = $this->type;
 		$dialogID = "uc_dialog_param_".$type;
-
+		
 		//fill texts
 		$arrTexts = $this->getArrTexts();
 		$dataTexts = UniteFunctionsUC::jsonEncodeForHtmlData($arrTexts);
@@ -1721,14 +1721,14 @@ class UniteCreatorDialogParamWork{
 
 		//put items param types
 		$addParams = "";
-
+		
 		$checkboxBlockLabelID = "uc_dialog_left_blocklabel_".$this->type;
 
 		?>
 
 			<!-- Dialog Param: <?php echo esc_html($type)?> -->
 
-			<div id="<?php echo esc_attr($dialogID)?>" class="uc-dialog-param uc-dialog-param-<?php echo esc_attr($type)?>" data-texts="<?php echo esc_attr($dataTexts)?>" <?php echo $addParams?> style="display:none">
+			<div id="<?php echo esc_attr($dialogID)?>" class="uc-dialog-param uc-dialog-param-<?php echo esc_attr($type)?>" data-texts="<?php echo esc_attr($dataTexts)?>" data-type="<?php echo esc_attr($type)?>" <?php echo $addParams?> style="display:none">
 
 				<div class="dialog-param-wrapper unite-inputs">
 

@@ -153,8 +153,9 @@ class HelperInstaUC{
 
 		$urlReturn = UniteFunctionsUC::encodeContent($urlReturn);
 
-		$urlConnect = "{$urlAuthorize}?client_id={$clientID}&scope=user_profile,user_media&response_type=code&redirect_uri={$urlConnect}&state=$urlReturn";
-
+		//$urlConnect = "{$urlAuthorize}?client_id={$clientID}&scope=user_profile,user_media&response_type=code&redirect_uri={$urlConnect}&state=$urlReturn";
+		$urlConnect = "{$urlAuthorize}?enable_fb_login=1&force_authentication=1&client_id={$clientID}&redirect_uri={$urlConnect}&response_type=code&scope=instagram_business_basic%2Cinstagram_business_manage_messages%2Cinstagram_business_manage_comments%2Cinstagram_business_content_publish&state={$urlReturn}";
+ 
 		$buttonText = __("Connect With Instagram", "unlimited-elements-for-elementor");
 
 		$htmlButton = HelperHtmlUC::getHtmlLink($urlConnect, "", "", "uc-button-connect-instagram");

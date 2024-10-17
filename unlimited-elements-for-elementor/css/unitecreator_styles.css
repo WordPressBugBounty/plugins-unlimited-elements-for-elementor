@@ -945,6 +945,23 @@
 	background-image: url("../images/icon_accept.png");
 }
 
+.uc-table-dropdown-items .uc-dropdown-item-pro {
+	background-image: url("../images/icon_pro_disabled.png");
+	background-repeat: no-repeat;
+	margin-left: 8px;
+}
+
+.uc-dropdown-item-pro.uc-selected {
+	background-image: url("../images/icon_pro.png");
+}
+
+.uc-table-dropdown-items tr.uc-pro-selected,
+.uc-table-dropdown-items tr.uc-pro-selected input,
+.uc-table-dropdown-items tr.uc-pro-selected .uc-dropdown-item-handle{
+	background-color:#c5dbc5;
+}
+
+
 .uc-table-dropdown-items .uc-dropdown-item-handle {
 	height: 25px;
 	width: 20px;

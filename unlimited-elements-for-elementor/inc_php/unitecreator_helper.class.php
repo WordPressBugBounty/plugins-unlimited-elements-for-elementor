@@ -617,8 +617,11 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		public static function urlToPath($url){
 
 			$urlRelative = self::URLtoRelative($url);
+						
 			$path = GlobalsUC::$path_base.$urlRelative;
-
+			
+			$path = UniteFunctionsUC::cleanPath($path);
+						
 			if(file_exists($path) == false)
 				return(null);
 

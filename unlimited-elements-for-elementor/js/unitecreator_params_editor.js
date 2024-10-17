@@ -1575,7 +1575,7 @@ function UniteCreatorParamsEditor(){
 
 		var html = getParamRowHtml(objParam);
 		var objNewRow = jQuery(html).data("paramdata", objParam);
-
+		
 		//update category related variables
 		if(g_temp.hasCats == true){
 			var catID = objRow.data("catid");

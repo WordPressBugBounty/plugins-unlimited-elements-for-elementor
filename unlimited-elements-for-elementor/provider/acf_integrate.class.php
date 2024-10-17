@@ -206,10 +206,23 @@ class UniteCreatorAcfIntegrate{
 			else
 				$arrValues[$key] = $postID;
 			
+			$isRepeater = (strpos($key,"repeater-field") !== false);
+										
 			$arrValues[$key."_title"] = UniteFunctionsUC::getVal($arrPost, "post_title");
 			$arrValues[$key."_alias"] = UniteFunctionsUC::getVal($arrPost, "post_name");
 			$arrValues[$key."_content"] = UniteFunctionsUC::getVal($arrPost, "post_content");
 			$arrValues[$key."_link"] = UniteFunctionsWPUC::getPermalink($objPost);
+			
+			//double the fields for ease of use when using repeater
+			
+			if($isRepeater == true){
+			    
+			    $arrValues["title"] = $arrValues[$key."_title"];
+			    $arrValues["alias"] = $arrValues[$key."_alias"];
+			    $arrValues["content"] = $arrValues[$key."_content"];
+			    $arrValues["link"] = $arrValues[$key."_link"];
+			}
+						
 			$arrValues["put_post_add_data"] = true;
 			
 			return($arrValues);

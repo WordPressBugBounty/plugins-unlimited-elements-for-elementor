@@ -496,6 +496,49 @@ class UniteCreatorPluginIntegrations{
 		
 	}
 	
+	private function ___________TRANSLATE_PRESS_________(){}
+	
+	/**
+	 * modify post data
+	 */
+	public function translatePressModifyPostData($data){
+		
+		if(empty($data))
+			return($data);
+		
+		if(is_array($data) == false)
+			return($data);
+			
+		$trp = TRP_Translate_Press::get_trp_instance();
+		
+		if(empty($trp))
+			return($data);
+		
+		$translation_render = $trp->get_component('translation_render');
+		
+		foreach($data as $key=>$value){
+			
+			if(is_string($value) == false)
+				continue;
+			
+			$data[$key] = $translation_render->translate_page($value);
+		}
+		
+		
+		return($data);
+	}
+	
+	/**
+	 * translate press
+	 */
+	private function initTranslatePressIntegration(){
+		
+		if(class_exists('TRP_Translate_Press') == false)
+			return(false);
+		
+		add_filter("ue_modify_post_data",array($this,"translatePressModifyPostData"));
+	}
+	
 	private function ___________GENERAL_INIT_INTEGRATIONS_________(){}
 	
 	/**
@@ -580,6 +623,9 @@ class UniteCreatorPluginIntegrations{
 		if(defined("FAVORITES_PLUGIN_FILE"))
 			$this->initFavoritesIntegration();
 		
+		//if(function_exists("trp_enable_translatepress"))
+			//$this->initTranslatePressIntegration();
+			
 	}
 	
 	

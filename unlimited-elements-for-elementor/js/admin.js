@@ -58,7 +58,7 @@ function UniteAdminUC(){
 		trasholdHandle: null,
 		trasholdDelay: 500,
 		debounceDelay: 500,
-		throttleDelay: 50,
+		throttleDelay: 50
 	};
 
 	this.getvalopt = {
@@ -69,7 +69,33 @@ function UniteAdminUC(){
 
 
 	this.__________GENERAL_FUNCTIONS_____ = function(){};
-
+	
+	/**
+	 * set some global option
+	 */
+	this.setOption = function(name, value){
+		
+		if(typeof window.g_ucGlobalOptions == "undefined")
+			window.g_ucGlobalOptions = {};
+		
+		window.g_ucGlobalOptions[name] = value;
+		
+	}
+	
+	/**
+	 * get option
+	 */
+	this.getOption = function(name){
+		
+		if(typeof window.g_ucGlobalOptions == "undefined")
+			return(null);
+		
+		var value = t.getVal(window.g_ucGlobalOptions, name);
+		
+		return(value);
+	}
+	
+	
 	/**
 	 * check if debug mode
 	 */
@@ -92,8 +118,7 @@ function UniteAdminUC(){
 		jQuery("#div_debug").show().html(html);
 		
 	};
-
-
+	
 
 	/**
 	 * output data to console

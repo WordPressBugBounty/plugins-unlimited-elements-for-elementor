@@ -1,4 +1,16 @@
 
+version 1.5.125:
+
+* Feature: added some easy simple easy fields for repeater in multisource select
+* Feature: added page_url placeholder to submit button
+* Feature: added better explanation and extra tools to "check connectivity" troubleshooting tool
+* Change: moved instagram connection to new api
+* Fix: fixed hover animations php warning
+* Fix: replace the post-xx.css for loop-xx.css in elementor in dynamic loop when needed
+* Fix: fixed some small selected filters issue on init
+* Fix: fixed elementor css output on loop items i ncase of optimized css
+* Fix: fixed custom query filter ordering (put on the very end, was before the filters)
+
 
 version 1.5.124:
 

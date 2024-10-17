@@ -8,7 +8,8 @@ function UniteCreatorParamsDialog(){
 	var g_objTexts, g_objParent, g_objData, g_objSettings, g_currentOpenedType, g_currentOpenedName;
 
 	var g_arrSpecialInputs = {};	//array of special inputs
-
+	var g_isEnableEditPro = false;
+	
 	var events = {
 			CHANGE_NAME: "name_change",
 			OPEN: "open",
@@ -174,7 +175,7 @@ function UniteCreatorParamsDialog(){
 
 					if(typeof objSpecialData != "object")
 						throw new Error("The special param get function should return object: "+inputType);
-
+										
 					objParam = jQuery.extend(objParam, objSpecialData);
 
 				}
@@ -183,7 +184,7 @@ function UniteCreatorParamsDialog(){
 
 		});
 
-
+		
 		return(objParam);
 	}
 
@@ -462,8 +463,9 @@ function UniteCreatorParamsDialog(){
 		//---- action click
 
 		buttonOpts[actionTitle] = function(){
+			
 			var objParam = getParamDialogContent();
-
+			
 			if(typeof onActionFunc != "function")
 				throw new Error("on add/edit function not passed");
 
@@ -471,7 +473,7 @@ function UniteCreatorParamsDialog(){
 
 			if(validateParamDialog(objParam) == false)
 				return(false);
-
+			
 			if(isEdit == false)
 				onActionFunc(objParam);		//add function
 			else{
@@ -549,8 +551,6 @@ function UniteCreatorParamsDialog(){
 
 	}
 
-
-
 	function ____________DROPDOWN_PARAM____________(){};
 
 
@@ -558,13 +558,14 @@ function UniteCreatorParamsDialog(){
 	 * add row to dropdown param
 	 */
 	function dropdownParamAddRow(objTable, objRowBefore, objData){
-
+		
 		var html = "";
 
 		var valueName = "";
 		var valueValue = "";
 		var selectedClass = "";
-
+		var classProSelected = "";
+		
 		if(objData){
 
 			if(objData.name)
@@ -575,8 +576,13 @@ function UniteCreatorParamsDialog(){
 
 			if(objData.isDefault == true)
 				selectedClass = " uc-selected";
+			
+			var isPro = g_ucAdmin.getVal(objData,"isPro");
+			
+			if(isPro === true)
+				classProSelected = " uc-selected";
 		}
-
+		
 		valueValue = g_ucAdmin.htmlspecialchars(valueValue);
 
 		html += "<tr>";
@@ -587,6 +593,13 @@ function UniteCreatorParamsDialog(){
 		html += "<div class='uc-dropdown-icon uc-dropdown-item-delete' title=\"Delete Item\"></div>";
 		html += "<div class='uc-dropdown-icon uc-dropdown-item-add' title=\"Add Item\"></div>";
 		html += "<div class='uc-dropdown-icon uc-dropdown-item-default"+selectedClass+"' title=\"Default Item\"></div>";
+				
+		if(g_isEnableEditPro == true){
+			html += "<div class='uc-dropdown-icon uc-dropdown-item-pro"+classProSelected+"' title=\"Pro Setting\"></div>";
+		}else{
+			html += "<span class='uc-dropdown-item-pro"+classProSelected+"' style='display:none'></span>";
+		}
+		
 		html += "</td>";
 		html += "</tr>";
 
@@ -627,6 +640,7 @@ function UniteCreatorParamsDialog(){
 		else
 			var defaultOption = "";
 
+		var optionsPro = [];
 
 		jQuery.each(rows, function(index, row){
 			var objRow = jQuery(row);
@@ -634,13 +648,22 @@ function UniteCreatorParamsDialog(){
 			var optionName = objRow.find(".uc-dropdown-item-name").val();
 			var optionValue = objRow.find(".uc-dropdown-item-value").val();
 			var isDefault = objRow.find(".uc-dropdown-item-default").hasClass("uc-selected");
-
+			var isPro = false;
+			
+			if(g_isEnableEditPro == true){
+				isPro = objRow.find(".uc-dropdown-item-pro").hasClass("uc-selected");
+			}
+						
 			optionName = jQuery.trim(optionName);
 			optionValue = jQuery.trim(optionValue);
-
+			
 			if(optionName == "")
 				return(true);
-
+			
+			if(isPro == true){
+				optionsPro.push(optionValue);
+			}
+			
 			//set default option
 			if(isMultiple !== true){
 				if(defaultOption == "")
@@ -654,7 +677,7 @@ function UniteCreatorParamsDialog(){
 					defaultOption.push(optionValue);
 
 			}
-
+			
 			objOptions[optionName] = optionValue;
 
 		});
@@ -663,7 +686,11 @@ function UniteCreatorParamsDialog(){
 			options: objOptions,
 			default_value: defaultOption
 		};
-
+		
+		if(optionsPro.length)
+			objOutput.pro_options = optionsPro;
+		
+		
 		return(objOutput);
 	}
 
@@ -686,26 +713,37 @@ function UniteCreatorParamsDialog(){
 	/**
 	 * fill dropdown param options
 	 */
-	function fillDropdownParamOptions(objTable, options, defaultValue){
+	function fillDropdownParamOptions(objTable, options, defaultValue, objData){
 
 		if(objTable.length == 0)
 			throw new Error("dropdown parameter not found");
-
+				
 		clearDropdownParam(objTable);
-
+		
 		if(jQuery.isEmptyObject(options))
 			dropdownParamAddRow(objTable);
 		else{
 
 			jQuery.each(options, function(optionName, optionValue){
-
+				
 				if(jQuery.isArray(defaultValue)){
 					var isDefault = (jQuery.inArray(optionValue, defaultValue) !== -1);
 				}else{
 					var isDefault = (optionValue == defaultValue);
 				}
-
-				dropdownParamAddRow(objTable, null, {name: optionName, value: optionValue , isDefault:isDefault});
+				
+				var isPro = false;
+				
+				var arrPro = g_ucAdmin.getVal(objData, "pro_options",[]);
+				
+				isPro = (jQuery.inArray(optionValue, arrPro) !== -1);
+				
+				dropdownParamAddRow(objTable, null, {
+					name: optionName, 
+					value: optionValue, 
+					isDefault:isDefault, 
+					isPro:isPro});
+				
 			});
 		}
 
@@ -729,6 +767,7 @@ function UniteCreatorParamsDialog(){
 	 * set default row
 	 */
 	function dropdownSetDefaultRow(objTable, objRow){
+				
 		var objRowDefault = objRow.find(".uc-dropdown-item-default");
 		objTable.find("tbody tr .uc-dropdown-item-default").not(objRow).removeClass("uc-selected");
 		objRowDefault.addClass("uc-selected");
@@ -739,7 +778,7 @@ function UniteCreatorParamsDialog(){
 	 * set default item by value
 	 */
 	function dropdownSetDefaultItem(objTable, defaultValue){
-
+		
 		var objRows = objTable.find("tbody tr");
 
 		objRows.each(function(index, row){
@@ -750,7 +789,7 @@ function UniteCreatorParamsDialog(){
 			var isDefault = objRow.find(".uc-dropdown-item-default").hasClass("uc-selected");
 
 			optionValue = jQuery.trim(optionValue);
-
+			
 			if(optionValue == defaultValue && isDefault == false){
 				dropdownSetDefaultRow(objTable, objRow);
 				return(false);
@@ -809,7 +848,7 @@ function UniteCreatorParamsDialog(){
 
 		//default icon click
 		objTableDropdown.on("click", ".uc-dropdown-item-default", function(){
-
+		
 			var objIcon = jQuery(this);
 			var objParentTable = objIcon.parents(".uc-table-dropdown-items");
 
@@ -823,14 +862,26 @@ function UniteCreatorParamsDialog(){
 
 			if(objIcon.hasClass("uc-selected"))
 				return(false);
-
+			
 			objParentTable.find(".uc-dropdown-item-default").removeClass("uc-selected");
 
 			objIcon.addClass("uc-selected");
-
-
 		});
-
+		
+		//default icon click
+		if(g_isEnableEditPro){
+			
+			objTableDropdown.on("click", ".uc-dropdown-item-pro", function(){
+				
+				var objIcon = jQuery(this);
+				objIcon.toggleClass("uc-selected");
+				
+				var objParentRow = objIcon.parents("tr");
+				objParentRow.toggleClass("uc-pro-selected");
+				
+			});
+			
+		}
 
 	}
 
@@ -863,8 +914,8 @@ function UniteCreatorParamsDialog(){
 
 		//fill
 		objDropdownParam.onFillInputData = function(objTable, objData){
-
-				fillDropdownParamOptions(objTable, objData.options, objData.default_value);
+			
+			fillDropdownParamOptions(objTable, objData.options, objData.default_value, objData);
 
 		}
 
@@ -947,7 +998,7 @@ function UniteCreatorParamsDialog(){
 	 * init radio boolean param
 	 */
 	function initRadioBooleanParam(){
-
+		
 		var objTableDropdown = g_objWrapper.find(".uc-table-dropdown-items");
 		if(objTableDropdown.length == 0)
 			return(false);
@@ -969,7 +1020,7 @@ function UniteCreatorParamsDialog(){
 			return(returnData);
 
 		}
-
+		
 		//fill
 		objRadioBoolean.onFillInputData = function(objInput, objData){
 
@@ -1868,7 +1919,7 @@ function UniteCreatorParamsDialog(){
 		var dialogID = g_objWrapper.prop("id");
 		if(dialogID != "uc_dialog_param_main")
 			return(false);
-
+		
 		var objInputs = jQuery("#uc_tabparam_main_uc_editor textarea[name='default_value']").add(
 				"#uc_tabparam_main_uc_textarea textarea[name='default_value']").add(
 				"#uc_tabparam_main_uc_content textarea[name='default_value']").add(
@@ -2111,7 +2162,7 @@ function UniteCreatorParamsDialog(){
 	function init(){
 
 		g_objTexts = g_objWrapper.data("texts");
-
+		
 		g_objSelectType = g_objWrapper.find(".uc-paramdialog-select-type");
 
 		g_objTabContentWrapper = g_objWrapper.find(".uc-tabsparams-content-wrapper");
@@ -2121,7 +2172,14 @@ function UniteCreatorParamsDialog(){
 		g_objParamTitle = g_objWrapper.find(".uc-param-title");
 		g_objParamName = g_objWrapper.find(".uc-param-name");
 		g_objSettings = new UniteSettingsUC();
-
+		
+		var isAddPro = g_ucAdmin.getOption("uc_edit_pro");
+		
+		var dialogType = g_objWrapper.data("type");
+				
+		if(isAddPro == true && dialogType == "main")
+			g_isEnableEditPro = true;
+				
 		initTabs();
 
 		initEvents();

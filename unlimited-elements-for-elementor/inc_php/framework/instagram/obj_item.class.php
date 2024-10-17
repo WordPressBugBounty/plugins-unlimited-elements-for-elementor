@@ -474,7 +474,7 @@ class InstaObjItemUC{
 				$this->parseVideoRelated();
 			break;
 			default:
-				throw new Error("Wrong item type: $this->type");
+				UniteFunctionsUC::throwError("Wrong item type: $this->type");
 			break;
 		}
 		

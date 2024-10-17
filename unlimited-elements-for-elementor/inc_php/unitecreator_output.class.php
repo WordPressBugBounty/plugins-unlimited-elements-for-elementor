@@ -1622,9 +1622,9 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 
 		$arrPost = $this->modifyDebugArray($post);
 
-		$html = htmlGet("<b> ------- Post  ------- </b>");
+		$html = dmpGet("<b> ------- Post  ------- </b>");
 
-		$html .= htmlGet($arrPost);
+		$html .= dmpGet($arrPost);
 
 		dmp("<b> ------- Post Meta ------- </b>");
 
@@ -1632,17 +1632,18 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 
 		$meta = $this->modifyDebugArray($meta);
 
-		$html .= htmlGet($meta);
+		$html .= dmpGet($meta);
 
-		$html .= htmlGet("<b> ----------Terms--------- </b>");
+		$html .= dmpGet("<b> ----------Terms--------- </b>");
 
 		$terms = UniteFunctionsWPUC::getPostTerms($post);
 
-		$html .= htmlGet($terms);
-
+		$html .= dmpGet($terms);
+		
 		return($html);
 	}
-
+	
+	
 	/**
 	 * put debug data - posts
 	 */

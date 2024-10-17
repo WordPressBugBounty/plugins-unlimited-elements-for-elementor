@@ -225,7 +225,8 @@ class UCEmptyTemplate{
 					if(objActiveTemplate.length != 1){
 						
 						trace(objActiveTemplate);
-						throw new Error("Wrong active template");
+						
+						throw new Exception("Wrong active template");
 					}
 
 					if(dir == "prev")					
@@ -252,7 +253,7 @@ class UCEmptyTemplate{
 			            if(objNextTemplate.length > 1){
 				            
 				            trace(objNextTemplate);
-				            throw new Error("wrong next template");
+				            throw new Exception("wrong next template");
 				            
 				        }
 

@@ -10,10 +10,12 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 class InstagramAPIOfficialUC{
 
 	const URL_REFRESH = "https://graph.instagram.com/refresh_access_token";
-	const URL_AUTHORIZE = "https://api.instagram.com/oauth/authorize";
-	const APP_CLIENT_ID = "301063367606985";
+	//const URL_AUTHORIZE = "https://api.instagram.com/oauth/authorize";	//old
+	const URL_AUTHORIZE = "https://www.instagram.com/oauth/authorize";
+	//const APP_CLIENT_ID = "301063367606985";	//old
+	const APP_CLIENT_ID = "282482552809594";
 	const URL_APP_CONNECT = "https://unlimited-elements.com/instagram-connect/connect.php";
-
+ 
 	private $accessToken;
 	private $userID;
 	private $limit = 30;

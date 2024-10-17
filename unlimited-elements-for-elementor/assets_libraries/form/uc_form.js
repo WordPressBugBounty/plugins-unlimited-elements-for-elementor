@@ -1,6 +1,6 @@
 "use strict";
 
-//version: 1.16
+//version: 1.17
 
 function UnlimitedElementsForm(){
   
@@ -179,12 +179,12 @@ function UnlimitedElementsForm(){
         
         if(dataSeparateThousandsFormat == "de-DE"){
           
-          inputValue = Number(inputValue.replace(".", "").replace(",", ""));
+          inputValue = Number(inputValue.replace(/\./g, "").replace(/,/g, ""));
           
         }else{
-          
+       
           //make sure value is number type (usefull for separating thousand option)
-          inputValue = Number(inputValue.toString().replace(",", ''));
+          inputValue = Number(inputValue.toString().replace(/,/g, ''));
           
         }      		
         
@@ -233,7 +233,7 @@ function UnlimitedElementsForm(){
     
     //replace inputs name with its values
     expr = replaceNamesWithValues(expr, objError, objCalcInput);
-    
+   
     var result;
     
     //returan closest value from lookup table if needed

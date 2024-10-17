@@ -793,86 +793,6 @@ class HelperProviderUC{
 		return($term);
 	}
 
-	/**
-	 * remember the current query
-	 */
-	public static function startDebugQueries(){
-
-		global $wpdb;
-		$queries = $wpdb->queries;
-
-		self::$numQueriesStart = count($queries);
-
-
-	}
-
-	/**
-	 * print queries debug
-	 */
-	public static function printDebugQueries($showTrace = false){
-
-		global $wpdb;
-		$queries = $wpdb->queries;
-
-		if(empty($queries)){
-			dmp("queries not collected");
-			exit();
-		}
-
-		$numQueries = count($queries);
-
-		dmp("num querie found: ".$numQueries);
-
-		$start = 0;
-		if(!empty(self::$numQueriesStart))
-			$start = self::$numQueriesStart;
-
-		if(!empty($start) && $start == $numQueries){
-
-			dmp("nothing changed since the start : $start");
-			exit();
-		}
-
-		if(!empty($start)){
-
-			$numToShow = $numQueries - $start;
-
-			dmp("Showing $numToShow queries");
-		}
-
-		echo "<div style='font-size:12px;color:black;'>";
-
-		foreach($queries as $index => $query){
-
-			if($index < $start)
-				continue;
-
-			if(empty($query))
-				continue;
-
-			$color = "";
-
-			$sql = $query[0];
-
-			$strTrace = $query[2];
-
-
-			if(strpos($sql, "wp_postmeta") !== false)
-				$color = "red";
-
-			echo("<div style='padding:10px;border-bottom:1px solid lightgray;color:$color'> $index: {$sql} </div>");
-
-			if($showTrace){
-				echo "<div>";
-				dmp($strTrace);
-				echo "<div>";
-			}
-
-		}
-
-		echo "<div style='font-size:10px;'>";
-
-	}
 
 	/**
 	 * check if user has some operations permissions
@@ -1065,6 +985,93 @@ class HelperProviderUC{
 	}
 	
 	private function _______DEBUG_________(){}
+	
+	/**
+	 * remember the current query
+	 */
+	public static function startDebugQueries(){
+
+		global $wpdb;
+		$queries = $wpdb->queries;
+
+		self::$numQueriesStart = count($queries);
+
+
+	}
+
+	/**
+	 * print queries debug
+	 * debug db queries debugdbquery
+	 */
+	public static function printDebugQueries($showTrace = false){
+
+		global $wpdb;
+		$queries = $wpdb->queries;
+
+		if(empty($queries)){
+			dmp("queries not collected");
+			exit();
+		}
+
+		$numQueries = count($queries);
+
+		dmp("num querie found: ".$numQueries);
+
+		$start = 0;
+		if(!empty(self::$numQueriesStart))
+			$start = self::$numQueriesStart;
+
+		if(!empty($start) && $start == $numQueries){
+
+			dmp("nothing changed since the start : $start");
+			exit();
+		}
+
+		if(!empty($start)){
+
+			$numToShow = $numQueries - $start;
+
+			dmp("Showing $numToShow queries");
+		}
+
+		echo "<div style='font-size:12px;color:black;'>";
+		
+		$numQuery = 0;
+		
+		foreach($queries as $index => $query){
+			
+			if($index < $start)
+				continue;
+
+			if(empty($query))
+				continue;
+
+			$numQuery++;
+				
+			$color = "";
+
+			$sql = $query[0];
+
+			$strTrace = $query[2];
+
+
+			if(strpos($sql, "wp_postmeta") !== false)
+				$color = "red";
+
+			echo("<div style='padding:10px;border-bottom:1px solid lightgray;color:$color'> $numQuery: {$sql} </div>");
+
+			if($showTrace){
+				echo "<div>";
+				dmp($strTrace);
+				echo "<div>";
+			}
+
+		}
+
+		echo "<div style='font-size:10px;'>";
+
+	}
+	
 	
 	/**
 	 * debug function

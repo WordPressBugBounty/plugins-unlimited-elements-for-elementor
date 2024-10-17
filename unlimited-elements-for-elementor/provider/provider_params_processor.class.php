@@ -1005,7 +1005,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			return($arrData);
 		}
-
+		
+		$arrData = apply_filters("ue_modify_post_data", $arrData);
+		
 		return($arrData);
 	}
 
@@ -1416,7 +1418,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	 * get post list data custom from filters
 	 */
 	private function getPostListData_custom($value, $name, $processType, $param, $data, $nameListing = null){
-		
+			    
 		if(empty($value))
 			return(array());
 
@@ -2176,9 +2178,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 					
 				break;
 				case "ids_from_meta":
-
-					$arrIDsPostMeta = $this->getPostListData_getIDsFromPostMeta($value, $name, $showDebugQuery);
 					
+					$arrIDsPostMeta = $this->getPostListData_getIDsFromPostMeta($value, $name, $showDebugQuery);
+										
 				break;
 				case "ids_from_dynamic":
 
@@ -2378,11 +2380,14 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		//merge the whole query
 		if(!empty($arrQueryBase))
 			$args = UniteFunctionsWPUC::mergeQueryVars($arrQueryBase, $args);
-		
+
+		if($showDebugQuery == true){
+			echo "<div class='uc-debug-query-wrapper'>";	//start debug wrapper
+		}
+			
 		$args = $this->getPostListData_getPostGetFilters_pagination($args, $value, $name, $data, $param);
-				
-		$args = $this->getPostListData_getCustomQueryFilters($args, $value, $name, $data);
-				
+
+		
 		//update by post and get filters
 		$objFiltersProcess = new UniteCreatorFiltersProcess();
 		$args = $objFiltersProcess->processRequestFilters($args, $isFilterable);
@@ -2396,12 +2401,13 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$arrVariationTerms = $objWoo->getVariationTermsFromQueryQrgs($args);
 		}
 		
+		$args = $this->getPostListData_getCustomQueryFilters($args, $value, $name, $data);
+				
 		HelperUC::addDebug("Posts Query", $args);
 
 		//-------- show debug query --------------
 
 		if($showDebugQuery == true){
-			echo "<div class='uc-debug-query-wrapper'>";	//start debug wrapper
 			
 			$argsForDebug = $args;
 			if(!empty($arrQueryBase))
@@ -2564,11 +2570,12 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			echo "</div>";
 		}
-
+        
+		
 		//show debug meta if needed
 		$this->showPostsDebyMeta($arrPosts, $value, $name);
 
-
+        
 		return($arrPosts);
 	}
 
@@ -2710,7 +2717,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	 * get current posts
 	 */
 	private function getPostListData_currentPosts($value, $name, $data, $nameListing = null){
-
+        
 		//add debug for further use
 		HelperUC::addDebug("Getting Current Posts");
 
@@ -4936,7 +4943,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 		$arrTerms = $this->modifyArrTermsForOutput($arrTerms, $taxonomy, $useCustomFields, $postType);
 		
-		
+			
 		return($arrTerms);
 	}
 

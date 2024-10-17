@@ -47,9 +47,9 @@ function UniteCreatorAdmin(){
 			itemsByPostsParam:null,
 			typeCurrentPost: "uc_current_post",
 			typePost: "uc_post",
-			putCodeExamplesParams:false
-	};
-
+			putCodeExamplesParams:false,
+			isProEditEnabled:false,
+	}
 
 	if(!g_ucAdmin)
 		var g_ucAdmin = new UniteAdminUC();
@@ -160,7 +160,7 @@ function UniteCreatorAdmin(){
 				options: options,
 				variables_item: variables_item,
 				variables_main: variables_main
-		};
+		}
 
 		if(objParamsCatData)
 			data.params_cats = objParamsCatData;
@@ -251,7 +251,7 @@ function UniteCreatorAdmin(){
 				      var optionsCM = {
 								mode: mixedMode,
 								lineNumbers: true
-					  };
+					  }
 
 
 					g_codemirrorHtml = CodeMirror.fromTextArea(textArea, optionsCM);
@@ -283,12 +283,12 @@ function UniteCreatorAdmin(){
 				      var mixedMode = {
 						      name: "twig", base: "text/html"
 				    	       //name: "htmlmixed"
-				      };
+				      }
 
 				      var optionsCM = {
 								mode: mixedMode,
 								lineNumbers: true
-					        };
+					        }
 
 				     var objAreaItem = document.getElementById("area_addon_html_item");
 
@@ -310,11 +310,11 @@ function UniteCreatorAdmin(){
 				setTimeout(function(){
 				      var mixedMode = {
 						      name: "twig", base: "text/html"
-				      };
+				      }
 				      var optionsCM = {
 								mode: mixedMode,
 								lineNumbers: true
-					        };
+					        }
 
 					g_codemirrorHtmlItem2 = CodeMirror.fromTextArea(document.getElementById("area_addon_html_item2"), optionsCM);
 
@@ -1952,14 +1952,14 @@ function UniteCreatorAdmin(){
 		var objDialogParam = jQuery("#uc_dialog_param_main");
 		var objDialogItemVariable = jQuery("#uc_dialog_param_variable_item");
 		var objDialogMainVariable = jQuery("#uc_dialog_param_variable_main");
-
+		
 		g_objDialogParam.init(objDialogParam, t);
 		g_objDialogItemVariable.init(objDialogItemVariable, t);
 		g_objDialogMainVariable.init(objDialogMainVariable, t);
 
 		g_paramsEditorMain.init(objWrapperMain, objParamsMain, g_objDialogParam, arrParamsCats);
 		g_paramsEditorItems.init(g_objWrapperItems, objParamsItems, g_objDialogParam);
-
+		
 	}
 
 
@@ -2016,7 +2016,7 @@ function UniteCreatorAdmin(){
 			delayIn: 200,
 			offset: 4,
 			html: true,
-			gravity: "s",
+			gravity: "s"
 		});
 	}
 
@@ -2064,7 +2064,7 @@ function UniteCreatorAdmin(){
 	 * init view by options related items
 	 */
 	function initByOptions(arrOptions){
-
+		
 		var urlPreview = arrOptions["url_preview"];
 		if(urlPreview)
 			putPreviewImage(urlPreview);
@@ -2076,14 +2076,14 @@ function UniteCreatorAdmin(){
 		if(objThumbSizes){
 			objPanel.initGlobalSetting_ThumbSizes(objThumbSizes);
 		}
-
+		
 		//set image add fields
 		var objImageParams = arrOptions["image_add_fields"];
 		if(objImageParams){
 			objPanel.initGlobalSetting_ImageAddParams(objImageParams);
 		}
-
-
+		
+		
 	}
 
 
@@ -2130,6 +2130,11 @@ function UniteCreatorAdmin(){
 		var arrParamsCats = objConfig.data("params-cats");
 
 		var arrOptions = objConfig.data("options");
+
+		var isAddEditPro = g_ucAdmin.getVal(arrOptions,"add_edit_pro");
+		
+		if(isAddEditPro === true)
+			g_ucAdmin.setOption("uc_edit_pro", true);
 
 		var objSettingsWrapper = jQuery("#uc_general_settings");
 

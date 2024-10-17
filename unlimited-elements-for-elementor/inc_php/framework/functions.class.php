@@ -1572,7 +1572,13 @@ class UniteFunctionsUC{
 		{
 			$path = preg_replace('#[/\\\\]+#', $ds, $path);
 		}
+		
+		//clear ?=something if exists. if the path made from url
 
+		if(strpos($path,"?") !== false)
+			$path = strtok($path, '?');
+		
+		
 		return $path;
 	}
 

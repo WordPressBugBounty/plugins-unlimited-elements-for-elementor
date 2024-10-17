@@ -36,7 +36,8 @@ class UniteCreatorForm{
 	const PLACEHOLDER_EMAIL_FIELD = "email_field";
 	const PLACEHOLDER_FORM_FIELDS = "form_fields";
 	const PLACEHOLDER_SITE_NAME = "site_name";
-
+	const PLACEHOLDER_PAGE_URL = "page_url";
+	
 	const TYPE_FILES = "files";
 
 	private static $isFormIncluded = false;    //indicator that the form included once
@@ -700,7 +701,7 @@ class UniteCreatorForm{
 				global $wpdb;
 
 				$entriesTable = UniteFunctionsWPUC::prefixDBTable(GlobalsUC::TABLE_FORM_ENTRIES_NAME);
-
+				
 				$entriesData = array_merge($this->getFormMeta(), array(
 					"form_name" => $this->getFormName(),
 				));
@@ -715,6 +716,7 @@ class UniteCreatorForm{
 				$entryFieldsTable = UniteFunctionsWPUC::prefixDBTable(GlobalsUC::TABLE_FORM_ENTRY_FIELDS_NAME);
 
 				foreach($this->formFields as $field){
+					
 					$entryFieldsData = array(
 						"entry_id" => $entryId,
 						"title" => $this->getFieldTitle($field),
@@ -723,7 +725,7 @@ class UniteCreatorForm{
 						"text" => $field["text"],
 						"value" => $field["value"],
 					);
-
+					
 					$isFieldCreated = $wpdb->insert($entryFieldsTable, $entryFieldsData);
 
 					if($isFieldCreated === false)
@@ -887,62 +889,6 @@ class UniteCreatorForm{
 		}
 	}
 
-	/**
-	 * get email fields
-	 */
-	private function getEmailFields($action){
-	
-		$from = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("from", $action));
-		$from = $this->replacePlaceholders($from, array(self::PLACEHOLDER_ADMIN_EMAIL));
-		
-		$fromName = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("from_name", $action));
-		$fromName = $this->replaceTitlePlaceholders($fromName);
-		
-		$replyTo = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("reply_to", $action));
-		$replyTo = $this->replacePlaceholders($replyTo, array(self::PLACEHOLDER_ADMIN_EMAIL, self::PLACEHOLDER_EMAIL_FIELD));
-		
-		$to = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("to", $action));
-
-		if($to === "custom")
-			$to = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("custom_to", $action));
-
-		$to = $this->replacePlaceholders($to, array(self::PLACEHOLDER_ADMIN_EMAIL, self::PLACEHOLDER_EMAIL_FIELD));
-		$to = $this->prepareEmailRecipients($to);
-
-		$cc = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("cc", $action));
-		$cc = $this->replacePlaceholders($cc, array(self::PLACEHOLDER_ADMIN_EMAIL, self::PLACEHOLDER_EMAIL_FIELD));
-		$cc = $this->prepareEmailRecipients($cc);
-
-		$bcc = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("bcc", $action));
-		$bcc = $this->replacePlaceholders($bcc, array(self::PLACEHOLDER_ADMIN_EMAIL, self::PLACEHOLDER_EMAIL_FIELD));
-		
-		$bcc = $this->prepareEmailRecipients($bcc);
-		
-		$subject = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("subject", $action));
-		$subject = $this->replaceTitlePlaceholders($subject);
-		
-		$message = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("message", $action));
-		$message = $this->prepareEmailMessageField($message);
-		
-		$emailFields = array(
-			"from" => $from,
-			"from_name" => $fromName,
-			"reply_to" => $replyTo,
-			"to" => $to,
-			"cc" => $cc,
-			"bcc" => $bcc,
-			"subject" => $subject,
-			"message" => $message,
-			"headers" => array(),
-			"attachments" => array(),
-		);
-
-		$emailFields = $this->applyActionFieldsFilter($action, $emailFields);
-
-		$emailFields["headers"] = array_merge($this->prepareEmailHeaders($emailFields), $emailFields["headers"]);
-		
-		return $emailFields;
-	}
 
 	/**
 	 * prepare email recipients
@@ -1011,6 +957,7 @@ class UniteCreatorForm{
 			self::PLACEHOLDER_ADMIN_EMAIL,
 			self::PLACEHOLDER_EMAIL_FIELD,
 			self::PLACEHOLDER_SITE_NAME,
+			self::PLACEHOLDER_PAGE_URL,
 		), $formFieldPlaceholders);
 		
 		if($includeFormFields == true)
@@ -1277,6 +1224,8 @@ class UniteCreatorForm{
 		return $fields;
 	}
 
+	private function ________GETTERS_________(){}
+	
 	/**
 	 * get form name
 	 */
@@ -1417,7 +1366,7 @@ class UniteCreatorForm{
 
 		return $field["title"] ?: __("Untitled", "unlimited-elements-for-elementor");
 	}
-
+	
 	/**
 	 * get field error
 	 */
@@ -1480,15 +1429,81 @@ class UniteCreatorForm{
 				}
 
 				return "";
-
+			break;
 			case self::PLACEHOLDER_SITE_NAME:
 				return get_bloginfo("name");
-
+			break;
+			case self::PLACEHOLDER_PAGE_URL:
+				
+				$urlPage = UniteFunctionsWPUC::getUrlCurrentPage();
+				
+			return($urlPage);
+			break;
 			default:
 				return "";
 		}
+		
+		
 	}
 
+	/**
+	 * get email fields
+	 */
+	private function getEmailFields($action){
+	
+		$from = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("from", $action));
+		$from = $this->replacePlaceholders($from, array(self::PLACEHOLDER_ADMIN_EMAIL));
+		
+		$fromName = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("from_name", $action));
+		$fromName = $this->replaceTitlePlaceholders($fromName);
+		
+		$replyTo = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("reply_to", $action));
+		$replyTo = $this->replacePlaceholders($replyTo, array(self::PLACEHOLDER_ADMIN_EMAIL, self::PLACEHOLDER_EMAIL_FIELD));
+		
+		$to = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("to", $action));
+
+		if($to === "custom")
+			$to = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("custom_to", $action));
+
+		$to = $this->replacePlaceholders($to, array(self::PLACEHOLDER_ADMIN_EMAIL, self::PLACEHOLDER_EMAIL_FIELD));
+		$to = $this->prepareEmailRecipients($to);
+
+		$cc = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("cc", $action));
+		$cc = $this->replacePlaceholders($cc, array(self::PLACEHOLDER_ADMIN_EMAIL, self::PLACEHOLDER_EMAIL_FIELD));
+		$cc = $this->prepareEmailRecipients($cc);
+
+		$bcc = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("bcc", $action));
+		$bcc = $this->replacePlaceholders($bcc, array(self::PLACEHOLDER_ADMIN_EMAIL, self::PLACEHOLDER_EMAIL_FIELD));
+		
+		$bcc = $this->prepareEmailRecipients($bcc);
+		
+		$subject = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("subject", $action));
+		$subject = $this->replaceTitlePlaceholders($subject);
+		
+		$message = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("message", $action));
+		$message = $this->prepareEmailMessageField($message);
+		
+		$emailFields = array(
+			"from" => $from,
+			"from_name" => $fromName,
+			"reply_to" => $replyTo,
+			"to" => $to,
+			"cc" => $cc,
+			"bcc" => $bcc,
+			"subject" => $subject,
+			"message" => $message,
+			"headers" => array(),
+			"attachments" => array(),
+		);
+
+		$emailFields = $this->applyActionFieldsFilter($action, $emailFields);
+
+		$emailFields["headers"] = array_merge($this->prepareEmailHeaders($emailFields), $emailFields["headers"]);
+		
+		return $emailFields;
+	}
+	
+	
 	/**
 	 * replace placeholders
 	 */

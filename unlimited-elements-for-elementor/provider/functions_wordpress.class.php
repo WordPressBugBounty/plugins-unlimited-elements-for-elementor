@@ -516,7 +516,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		 * get term data
 		 */
 		public static function getTermData($term){
-
+			
 			$data = array();
 			$data["term_id"] = $term->term_id;
 			$data["name"] = $term->name;
@@ -535,7 +535,14 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			$data["count"] = $count;
 
 			//get link
-			$link = get_term_link($term);
+			
+			$link = "";
+			
+			$objTaxonomy = get_taxonomy( $term->taxonomy );
+			
+			if(!empty($objTaxonomy))			//some protection
+				$link = get_term_link($term);			
+				
 			$data["link"] = $link;
 			
 			//level (custom attribute after sorting)
@@ -4591,6 +4598,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 	/**
 	 * get current page url
+	 * isClear - clear the page from pagination
 	 */
 	public static function getUrlCurrentPage($isClear = false){
 

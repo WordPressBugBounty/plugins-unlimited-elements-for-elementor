@@ -1689,9 +1689,11 @@ class UniteCreatorAddonView{
 		$arrImageAddFields = $this->getImageAddFields();
 
 		$options["image_add_fields"] = $arrImageAddFields;
-
+		
 		$options["items_type"] = $this->objAddon->getItemsType();
-
+		
+		$options = apply_filters("ue_modify_edit_addon_options", $options);
+		
 		$dataOptions = UniteFunctionsUC::jsonEncodeForHtmlData($options, "options");
 
 		$params = $this->objAddon->getParams();

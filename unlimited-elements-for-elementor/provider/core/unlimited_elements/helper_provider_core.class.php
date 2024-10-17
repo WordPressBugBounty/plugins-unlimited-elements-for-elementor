@@ -93,7 +93,7 @@ class HelperProviderCoreUC_EL{
 		delete_post_meta($postID, "_elementor_css");
 
 		$pathFiles = GlobalsUC::$path_images."elementor/css/";
-
+		
 		$filepath = $pathFiles."post-{$postID}.css";
 		
 		$fileExists = file_exists($filepath);
@@ -419,26 +419,15 @@ class HelperProviderCoreUC_EL{
 	 * include hover animations styles
 	 */
 	public static function includeHoverAnimationsStyles(){
-
+		
 		if(class_exists("\Elementor\Control_Hover_Animation") == false)
 			return(false);
-
-		if(method_exists("\Elementor\Control_Hover_Animation", "get_assets") == false)
-			return(false);
-
-		$assets = \Elementor\Control_Hover_Animation::get_assets(array("something"));
-
-		if(empty($assets))
-			return(false);
-
-		$arrStyles = UniteFunctionsUC::getVal($assets, "styles");
-
-		foreach($arrStyles as $handle){
-			wp_enqueue_style("e-animations");
-		}
-
+		 
+		wp_enqueue_style("e-animations");
+		
 	}
-
+	
+	
 	/**
 	 * get hover animations
 	 */
@@ -1027,14 +1016,63 @@ class HelperProviderCoreUC_EL{
 		if(empty($templateID) || is_numeric($templateID) == false)
 			return("");
 
-
 		$output = \Elementor\Plugin::instance()->frontend->get_builder_content_for_display( $templateID, $withCss);
 
 
 		return($output);
 	}
 
+	/**
+	 * handle elementor styles, if exist loop-xxx by post id - add this style
+	 */
+	private static function checkHandleElementorStyles($arrStyles){
+		
+		if(empty($arrStyles))
+			return(false);
+		
+		$filteredStyles = array_filter($arrStyles, function($value) {
+		    return preg_match('/^elementor-post-\d+$/', $value);
+		});
 
+		if(empty($filteredStyles))
+			return(false);
+
+		global $wp_styles;		
+			
+		foreach($filteredStyles as $handle){
+			
+			if(!isset($wp_styles->registered[$handle]))
+				continue;
+			
+			$urlStyle = $wp_styles->registered[$handle]->src;
+			
+			$urlStyleLoop = str_replace('post-', 'loop-', $urlStyle);			
+			
+			if($urlStyleLoop == $urlStyle)
+				continue;
+			
+			$filepathLoop = HelperUC::urlToPath($urlStyleLoop);
+			
+			if(empty($filepathLoop))
+				continue;
+				
+			if(file_exists($filepathLoop) == false)
+				return(false);
+			
+			$handleLoop = str_replace("post","loop",$handle);
+				
+			HelperUC::addStyleAbsoluteUrl($urlStyleLoop, $handleLoop);
+			
+			//if file not exists - return null
+			$filepathStyle = HelperUC::urlToPath($urlStyle);
+			
+			if(empty($filepathStyle))
+				wp_deregister_style( $handle );
+			
+		}
+		
+	}
+	
 	/**
 	 * put the post listing template
 	 */
@@ -1140,37 +1178,36 @@ class HelperProviderCoreUC_EL{
 		);
 
 		//handle the additional css files
-
-		if(GlobalsProviderUC::$isUnderAjax == true){
-
-			$objStyles = wp_styles();
-			$arrHandles = $objStyles->queue;
-		}
-
+		
+		$objStyles = wp_styles();
+		$arrHandles = $objStyles->queue;
+		
 
 		if($listingType == "jet")
 			$htmlTemplate = self::getJetTemplateListingItem($templateID, $post);
 		else
 			$htmlTemplate = self::getElementorTemplate($templateID, $withCss);
+		
+		$objStyles2 = wp_styles();
+		$arrHandles2 = $objStyles->queue;
 
-
+		$arrDiff = array_diff($arrHandles2, $arrHandles);
+		
+		
 		//handle the additional css files
-
+		
 		if(GlobalsProviderUC::$isUnderAjax == true){
-
-			$objStyles2 = wp_styles();
-			$arrHandles2 = $objStyles->queue;
-
-			$arrDiff = array_diff($arrHandles2, $arrHandles);
-
+			
+			//avoid duplicate style add, and add styles that was not added in ajax
+			
 			if(!empty($arrDiff))
 			foreach($arrDiff as $handleToAdd){
-
+				
 				if(isset(self::$arrAddedStyles[$handleToAdd]))
 					continue;
 
 				self::$arrAddedStyles[$handleToAdd] = true;
-
+			
 				$objStyle = UniteFunctionsUC::getVal($objStyles2->registered, $handleToAdd);
 
 				if(empty($objStyle))
@@ -1184,10 +1221,12 @@ class HelperProviderCoreUC_EL{
 				$htmlTemplate = $htmlStyle.$htmlTemplate;
 			}
 
+		}else{		//check for file existance of post-xx.css and check for loop-xx.css file
+			
+			self::checkHandleElementorStyles($arrDiff);			
 		}
-
-
-
+		
+		
 		//add one more class
 
 		$source = "class=\"elementor elementor-{$templateID}";
@@ -1419,10 +1458,8 @@ class HelperProviderCoreUC_EL{
 			return(false);
 		}
 
-		$withCss = false;
-		if($isFrontAjax == true)
-			$withCss = true;
-
+		$withCss = true;  //formelli was only on ajax calls
+		
 		//template output
 		if($type == "post")
 			self::putListingItemTemplate_post($item, $templateID, $widgetID, $listingType, $withCss);

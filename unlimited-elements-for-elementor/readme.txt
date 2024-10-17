@@ -893,6 +893,47 @@ Note : This plugin works with Elementor. Make sure you have [Elementor](https://
 
 == Changelog ==
 
+version 1.5.125: 2024-10-17
+
+Plugin Changes
+
+* Feature: added some easy simple easy fields for repeater in multisource select
+* Feature: added page_url placeholder to submit button
+* Feature: added better explanation and extra tools to "check connectivity" troubleshooting tool
+* Change: moved instagram connection to new api
+* Fix: fixed hover animations php warning
+* Fix: replace the post-xx.css for loop-xx.css in elementor in dynamic loop when needed
+* Fix: fixed some small selected filters issue on init
+* Fix: fixed elementor css output on loop items i ncase of optimized css
+* Fix: fixed custom query filter ordering (put on the very end, was before the filters)
+
+Widgets Changes: 
+
+* Feature: Event List (Pro) - Added Event End Date option to Source options.
+* Feature: Product Box (Free) - Added Content Min Height option, allowing users to set a minimum height for content to improve layout consistency.
+* Feature: List (Free) - Enhanced the functionality of the link element by modifying it to cover the entire List Item.
+* Feature: Justified Image Carousel (Pro) - Added the Autoplay Hover Pause option, allowing users to pause the autoplay feature when hovering over the content.
+* Feature: List (Free) - Introduced new functionality that dynamically adds the uc-current-page class name to menu items when the source is set to 'Menu', enhancing the ability to style active page links.
+* Feature: Woo Product Grid (Pro) - Added the &quot;Show Additional Button&quot; feature along with other related options that provide the ability to display a button with a link sourced from a custom field, allowing for greater customization and flexibility in managing button links.
+* Feature: Woo Product Grid (Pro) - added a new functionality called &quot;Show All Categories&quot; option, which allows users to display and filter through all available categories.
+* Feature: Woo Product Grid (Pro) - Implemented additional Styling options for categories: Spacing Between Categories, Categories Justify Content. Categories align Items.
+* Feature: Woo Product List (Free) - Added a new option 'Category Type' to allow users to choose between displaying the main category or all categories.
+* Feature: Content Slider (Pro) - Added a new Link Whole Item option, allowing users to make the entire item clickable.
+* Feature: Creative Button Hovers (Free) - Added a new Show Icon option, which provides additional flexibility for displaying icons
+* Feature: Image Accordion (Pro) - Added Button Animation Type option that allows setting animation for the button.
+* Feature: Underline Link Hover Effect (Pro) - Added Underline Hover Direction option, allowing control over the direction of the underline effect on hover for enhanced visual customization.
+* Feature: Event List (Pro) - Added a new option to Hide Button If Button Link Is Empty, ensuring buttons are only displayed when a valid link is provided.
+* Feature: List (Free) - Added a new Item Margin option, providing users with greater control over the spacing between individual items.
+* Feature: Submit Button (Free) - Added another placeholder for the Message option {page_url} that allows displaying the URL of the page where the form was submitted.
+* Feature: Underline Link Hover Effect (Pro) - Added Hover Animation Type option that allows to show or hide underline on hover.
+* Fix: Before After (Pro) - Fixed issue where the dragging feature was not working smoothly in certain cases.
+* Fix: Icon Accordion (Pro) - Fixed an issue where the Accordion component was not properly closing in certain cases.
+* Fix: Flip Box (Free) - Renamed several options to improve clarity and consistency across settings
+* Fix: Dynamic Post Popup (Pro) - Fixed an issue where widgets were not functioning properly when used in combination with certain additional iframe elements.
+* Fix: Unlimited Google Maps (Pro) - Added some CSS protection to prevent image elements from being customized by the default CSS of websites.
+* Fix: Card Carousel (Free) - Fixed issue when image elements were not filling 100% of container height when the height is set to 100%.
+
+
 version 1.5.124: 2024-09-24
 
 Plugin Changes:
