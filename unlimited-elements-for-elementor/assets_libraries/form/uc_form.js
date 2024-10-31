@@ -1,6 +1,6 @@
 "use strict";
 
-//version: 1.17
+//version: 1.18
 
 function UnlimitedElementsForm(){
   
@@ -902,7 +902,7 @@ function UnlimitedElementsForm(){
     
     var objFieldWidget = jQuery("#"+widgetId);
     var classHidden = "ucform-has-conditions";
-    var elementorHiddenClass = "elementor-hidden-desktop elementor-hidden-tablet elementor-hidden-mobile";
+    var elementorHiddenClass = "elementor-hidden-desktop elementor-hidden-tablet elementor-hidden-mobile elementor-hidden-widescreen elementor-hidden-laptop";
     var classError = "ue-error";
     
     var conditions = conditionArray.visibility_conditions;

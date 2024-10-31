@@ -295,15 +295,14 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 			if(empty($arrScripts))
 				return("");
-
+			
 			if(is_array($arrScripts) == false){
 				UniteFunctionsUC::throwError("arrScripts should be array");
 			}
-
+			
 			$arrScriptsOutput = array();
 			$arrModulesOutput = array();
-
-
+			
 			foreach ($arrScripts as $key=>$script){
 				$isModule = (strpos($key, "module_") !== false);
 

@@ -412,7 +412,7 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 					$htmlType = "text/javascript";
 					$isModule = UniteFunctionsUC::getVal($include, "is_module");
 					$isModule = UniteFunctionsUC::strToBool($isModule);
-
+					
 					if($isModule == true)
 						$htmlType = "module";
 
@@ -452,13 +452,13 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 	public function processIncludes($includesType = "all"){
 		
 		$arrIncludes = $this->getProcessedIncludes(true, true, $includesType);
-		
+				
 		$addonName = $this->addon->getName();
 
 		$arrDep = $this->addon->getIncludesJsDependancies();
 
 		foreach($arrIncludes as $include){
-						
+			
 			$type = $include["type"];
 			$url = $include["url"];
 			$handle = UniteFunctionsUC::getVal($include, "handle");
@@ -471,8 +471,9 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 			if($isInCache == true){
 				continue;
 			}
+			
 			$this->cacheInclude($url, $handle, $type);
-
+			
 			$arrIncludeDep = $arrDep;
 
 			if(!empty($deps))
@@ -485,6 +486,7 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 					wp_deregister_script( $handle );
 					
 					UniteProviderFunctionsUC::addScript($handle, $url, false, $arrIncludeDep);
+				
 				break;
 				case "css":
 					
@@ -2031,7 +2033,6 @@ $css
 	 */
 	public function getHtmlBody($scriptHardCoded = true, $putCssIncludes = false, $putCssInline = true, $params = null){
 		
-		
 		$this->validateInited();
 
 		//render the js inside "template" tag always if available
@@ -2062,7 +2063,6 @@ $css
 				$js = $this->modifyGutenbergBGJS($js);
 				
 				$css = $this->modifyGutenbergBGCSS($css);
-				
 			}
 			
 			
@@ -2071,14 +2071,13 @@ $css
 			$isAddSelectors = UniteFunctionsUC::strToBool($isAddSelectors);
 
 			$cssSelectors = "";
-
 			
 			if($isAddSelectors === true)
 				$cssSelectors = $this->getSelectorsCss();
 
 			//get css includes if needed
 			$arrCssIncludes = array();
-
+	
 			if($putCssIncludes == true)
 				$arrCssIncludes = $this->getProcessedIncludes(true, true, "css");
 						
@@ -2165,6 +2164,7 @@ $css
 						
 			//output js
 			if($isOutputJs == true){
+				
 				$isJSAsModule = $this->addon->getOption("js_as_module");
 				$isJSAsModule = UniteFunctionsUC::strToBool($isJSAsModule);
 

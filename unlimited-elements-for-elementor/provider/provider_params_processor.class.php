@@ -2044,6 +2044,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 						$strRecentProducts = $_COOKIE["woocommerce_recently_viewed"];
 						$strRecentProducts = trim($strRecentProducts);
 						$arrRecentProducts = explode("|", $strRecentProducts);
+						
+						if(!empty($arrRecentProducts))
+							$arrRecentProducts = array_unique($arrRecentProducts);
 					}
 
 				break;
@@ -2296,8 +2299,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				dmp($debugText);
 			}
 
-			if(is_checkout() == true){
-
+			if(function_exists("is_checkout") && is_checkout() == true){
+				
 				$objWoo = new UniteCreatorWooIntegrate();
 				$arrRelatedProductIDs = $objWoo->getRelatedProductsFromCart($limit, $arrPostsNotIn);
 
@@ -2402,7 +2405,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		}
 		
 		$args = $this->getPostListData_getCustomQueryFilters($args, $value, $name, $data);
-				
+		
 		HelperUC::addDebug("Posts Query", $args);
 
 		//-------- show debug query --------------
@@ -2417,11 +2420,11 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			dmp($argsForDebug);
 			
 		}
-
+		
 		//disable other hooks:
 
 		$disableOtherHooks = UniteFunctionsUC::getVal($value, "{$name}_disable_other_hooks");
-
+		
 		if($disableOtherHooks === "yes" && GlobalsProviderUC::$isUnderAjax == true){
 			global $wp_filter;
 			$wp_filter = array();
@@ -2459,6 +2462,11 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 		$args = UniteCreatorPluginIntegrations::modifyPostQueryIntegrations($args);
 		
+		//set debug errors
+		if($showDebugQuery == true && $debugType == "show_query"){
+			add_action("wp_error_added",array($this,"showWPErrorLog"),10,4);
+		}
+		
 		$query->query($args);
 		
 		do_action("ue_after_custom_posts_query", $query);
@@ -2467,17 +2475,19 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		if($showDebugQuery == true && $debugType == "show_query"){
 
+			remove_action("wp_error_added",array($this,"showWPErrorLog"));
+			
 			$originalQueryVars = $query->query_vars;
 			$originalQueryVars = UniteFunctionsWPUC::cleanQueryArgsForDebug($originalQueryVars);
 			
 			dmp("The Query Request Is:");
 			dmp($query->request);
 
-			dmp("The finals query vars:");
+			dmp("The final query vars:");
 			dmp($originalQueryVars);
 
 			$this->showPostsDebugCallbacks($isForWoo);
-
+			
 		}
 
 		/*
@@ -2579,6 +2589,15 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		return($arrPosts);
 	}
 
+	/**
+	 * show wordpress error if available
+	 */
+	public function showWPErrorLog($code, $message, $data, $obj){
+		
+		dmp("<div style='color:red;'>wp error found!</div>");
+		dmp("<div style='color:red;'>$message</div>");
+	}
+	
 	/**
 	 * show modify callbacks for debug
 	 */

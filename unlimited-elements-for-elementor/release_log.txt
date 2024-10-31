@@ -1,4 +1,16 @@
 
+
+
+version 1.5.126:
+
+* Fix - fixed some checkbox filter issues with selected terms on start
+* Fix - fixed some small avoid duplicates bug
+* Change - updated to latest freemius sdk
+* Fix - improved js module script output in some cases
+* Fix - remove repeating products in get posts woocommerce
+
+
+
 version 1.5.125:
 
 * Feature: added some easy simple easy fields for repeater in multisource select

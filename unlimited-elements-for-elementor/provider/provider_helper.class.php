@@ -943,20 +943,20 @@ class HelperProviderUC{
 			}
 			
 			foreach($arrCallbacks as $function=>$arrCallback){
-				
+								
 				$count++;
 				
 				$function = UniteFunctionsUC::getVal($arrCallback, "function");
 				
 				if(is_array($function) == false){
 					
-					if(is_object($function)){
+					if(isset($function) && is_object($function)){
 						
-						$className = get_class($object);
+						$className = get_class($function);
 						
 						dmp("{$count}. ".$className);
 						
-						if(empty($className))
+						if(empty($className) || $className == "Closure")
 							dmp($function);
 						
 						continue;

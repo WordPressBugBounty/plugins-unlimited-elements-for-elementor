@@ -819,6 +819,18 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 	}
 
 	/**
+	 * convert alias to title
+	 */
+	public static function convertAliasToTitle($alias){
+		
+	    $title = str_replace(array('-', '_'), ' ', $alias);
+		
+	    $title = ucwords($title);
+	
+	    return $title;		
+	}
+	
+	/**
 	 * get url handle
 	 */
 	public static function getUrlHandle($url, $addonName = null){

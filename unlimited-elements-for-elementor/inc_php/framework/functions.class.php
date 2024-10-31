@@ -944,7 +944,25 @@ class UniteFunctionsUC{
 		return($arrNew);
 	}
 
-
+	/**
+	 * replace strings in array deeply
+	 * on string to another, no metter how deep it goes
+	 */
+	public static function replaceStringsInArrayDeep($arr, $strSource, $strDest){
+		
+	    foreach ($arr as $key => $value){
+	    
+	        if (is_array($value))
+	            $arr[$key] = self::replaceStringsInArrayDeep($value, $strSource, $strDest);
+	            
+	        elseif (is_string($value)) 
+	            $arr[$key] = str_replace($strSource, $strDest, $value);
+	       
+	    }
+		
+		return($arr);
+	}
+	
 	public static function z_____________STRINGS_____________(){}
 	
 	/**
@@ -1847,7 +1865,7 @@ class UniteFunctionsUC{
 	public static function cleanUrl($url){
 
 		$url = preg_replace('/([^:])(\/{2,})/', '$1/', $url);
-
+		
 		return($url);
 	}
 

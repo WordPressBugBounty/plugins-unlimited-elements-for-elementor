@@ -959,7 +959,10 @@ class UniteCreatorFiltersProcess{
 
 
 		$arrTerms = UniteFunctionsUC::getVal($arrFilters, "terms");
-		if(!empty($arrTerms)){
+		
+		//if mode init - the filters should be set by "all" the posts set, not by the selected ones.
+		
+		if(!empty($arrTerms) && self::$isModeInit == false){	
 
 			//combine the tax queries
 			$arrTaxQuery = $this->getTaxQuery($arrTerms);
@@ -998,7 +1001,7 @@ class UniteCreatorFiltersProcess{
 		}
 		
 		//Woo Prices
-
+		
 		if(!empty($priceFrom)){
 
 			$arrMetaQuery[] = array(
@@ -1038,7 +1041,8 @@ class UniteCreatorFiltersProcess{
 			dmp("filters:");
 			dmp($arrFilters);
 		}
-
+		
+		
 		return($args);
 	}
 

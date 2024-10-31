@@ -362,7 +362,7 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 	 * validate admin permissions, if no pemissions - exit
 	 */
 	protected function validateAdminPermissions(){
-
+		
 		if(UniteFunctionsWPUC::isAdminPermissions() == false){
 			echo "access denied, no admin permissions";
 

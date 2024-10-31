@@ -12,11 +12,11 @@ if(!defined('UNLIMITED_ELEMENTS_INC'))
 defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 if(!defined("UNLIMITED_ELEMENTS_VERSION"))
-	define("UNLIMITED_ELEMENTS_VERSION", "1.5.125");
+	define("UNLIMITED_ELEMENTS_VERSION", "1.5.126");
 
 //disable elementor support for debugging purposes. keep it commented
 //define("UE_DISABLE_ELEMENTOR_SUPPORT", true);
-	
+
 	
 $currentFile = __FILE__;
 $currentFolder = dirname($currentFile);

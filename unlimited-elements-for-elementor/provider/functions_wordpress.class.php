@@ -209,7 +209,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		 * get post edit link with elementor
 		 */
 		public static function getPostEditLink_editWithElementor($postID){
-
+			
 			$urlAdmin = admin_url("post.php");
 			$urlAdmin .= "?post=$postID&action=elementor";
 
@@ -2199,6 +2199,10 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			);
 
 			$arrPosts = get_posts($query);
+			
+			if(empty($arrPosts))
+				return(null);
+			
 			$post = $arrPosts[0];
 
 			return ($post);
@@ -3517,7 +3521,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 	 * validate permission that the user is admin, and can manage options.
 	 */
 	public static function isAdminPermissions(){
-
+		
 		if(is_admin() && current_user_can("manage_options"))
 			return (true);
 

@@ -1584,7 +1584,7 @@ function UEDynamicFilters(){
 	 * get filter data
 	 */
 	function getGeneralFilterData(objFilter){
-
+		
 		var filterDataObj = {};
 		objFilter.trigger(g_vars.EVENT_GET_FILTER_DATA, filterDataObj);
 
@@ -1820,14 +1820,14 @@ function UEDynamicFilters(){
 	 * get selected filter element data
 	 */
 	function getFilterElementData(objElement){
-
+				
 		var id = objElement.data("id");
 		var slug = objElement.data("slug");
 		var taxonomy = objElement.data("taxonomy");
 		var title = objElement.data("title");
 		var key = objElement.data("key");
 		var type = objElement.data("type");
-
+		
 		if(!taxonomy)
 			return(null);
 
@@ -2877,7 +2877,7 @@ function UEDynamicFilters(){
 	 * get grid ajax options
 	 */
 	function getGridAjaxOptions(objFilters, objGrid, isFiltersInitMode, isLoadMoreMode, params){
-
+				
 		if(!isLoadMoreMode)
 			var isLoadMoreMode = false;
 				
@@ -3150,7 +3150,7 @@ function UEDynamicFilters(){
 					
 					//add terms
 					var dataTerms = getVal(filterData,"terms");
-
+					
 					if(dataTerms && dataTerms.length){
 
 						if(dataTerms.length == 1)		//single term
@@ -3460,11 +3460,10 @@ function UEDynamicFilters(){
 
 		//avoid duplicates - exclude, disable the offset
 		
-		
 		if(objGrid.hasClass("uc-avoid-duplicates") && isLoadMoreMode == true){
-		
-			var strExcludePostIDs = getExcludePostIDs(objGrid);
 			
+			var strExcludePostIDs = getExcludePostIDs();
+			 			
 			if(strExcludePostIDs){
 				urlAjax += "&ucexclude="+strExcludePostIDs;
 				offset = null;
@@ -3526,14 +3525,18 @@ function UEDynamicFilters(){
 
 	/**
 	 * get all exclude post ids from all avoid duplicates grids
-	 * except of the current grid
+	 * if it's a single avoid duplicates grid - don't get excludes
 	 */
-	function getExcludePostIDs(objCurrentGrid){
-				
-		var objGrids = jQuery(".uc-avoid-duplicates").not(objCurrentGrid);
-				
-		if(objGrids.length == 0)
+	function getExcludePostIDs(){
+		
+		//check if it's only one grid involved
+		
+		var objGrids = jQuery(".uc-avoid-duplicates");
+		
+		if(objGrids.length <= 1)
 			return("");
+		
+		//get all the id's of all including the existing.
 		
 		var strIDs = "";
 
@@ -3763,13 +3766,13 @@ function UEDynamicFilters(){
 
 		//get all grid filters
 		var objFilters = objGrid.data("filters");
-
+		
 		if(!objFilters)
 			return(false);
 
 		if(objFilters.length == 0)
 			return(false);
-
+				
 		//check if there are mains with selected
 
 		var arrSelectedMain = getSelectedFilters(objFilters, "main");
@@ -4010,9 +4013,10 @@ function UEDynamicFilters(){
 			//--- set active filters (for clear and active filters links)
 
 			initGrid_setActiveFiltersData(objGrid);
-
+			
+						
 			//--- refresh init filters
-
+			
 			var objInitFilters = objGrid.data("filters_init_after");
 
 			var isMainFiltersRefreshed = false;
@@ -4290,7 +4294,7 @@ function UEDynamicFilters(){
 	 * get filter element data
 	 */
 	this.getFilterElementData = function(objElement){
-
+		
 		var objData = getFilterElementData(objElement);
 
 		return(objData);
@@ -4345,6 +4349,35 @@ function UEDynamicFilters(){
 	this.getVal = function(obj, name, defaultValue){
 
 		return getVal(obj, name, defaultValue);
+	}
+	
+	/**
+	 * get filters by type
+	 * return jquery object
+	 */
+	this.getGridFiltersByType = function(objGrid, filterType){
+		
+		if(!filterType)
+			throw new Error("getGridFiltersByType error - enter type as second param");
+		
+		var arrFilters = getGridFilters(objGrid);
+		
+		if(arrFilters.length == 0)
+			return(jQuery());
+		
+		var objChosenFilters = jQuery();
+		
+		jQuery.each(arrFilters, function(index, objFilter){
+			
+			var type = getFilterType(objFilter, true);
+						
+			if(type == filterType){
+				objChosenFilters = objChosenFilters.add(objFilter);
+			}
+			
+		});
+		
+		return(objChosenFilters);
 	}
 
 

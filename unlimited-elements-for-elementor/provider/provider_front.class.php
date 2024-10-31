@@ -41,12 +41,18 @@ class UniteProviderFrontUC{
 		
 		if(isset(GlobalsProviderUC::$arrJSHandlesModules[$handle])){
 			
-			//modify tag, change to module if needed
 			
+			//modify tag, change to module if needed
+						
 			$search = "type='text/javascript'";
 			$replace = "type='module'";
 			
 			$tag = str_replace($search, $replace, $tag);
+			
+			$pos = strpos($tag, "type='module'");
+			
+			if($pos === false)
+				$tag = str_replace('<script',"<script type='module'", $tag);
 		}
 				
 		return($tag);

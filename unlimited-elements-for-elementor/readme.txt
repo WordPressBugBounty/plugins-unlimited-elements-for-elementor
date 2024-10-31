@@ -893,6 +893,45 @@ Note : This plugin works with Elementor. Make sure you have [Elementor](https://
 
 == Changelog ==
 
+version 1.5.126:
+
+Plugin Changes
+
+* Fix - fixed some checkbox filter issues with selected terms on start
+* Fix - fixed some small avoid duplicates bug
+* Change - updated to latest freemius sdk
+* Fix - improved js module script output in some cases
+* Fix - remove repeating products in get posts woocommerce
+
+Widgets Changes
+
+* Feature: Slider Field (Pro) - Added new Align Items option for the Current Value setting, allowing users to adjust the alignment of items vertically.
+* Feature: Job Listing (Pro) - Added new element - Badge. Also included options like Show Badge, Badge Text, and various styling options.
+* Feature: Content Grid (Pro) - Added Show Live Search option, allowing users to enable or disable live search functionality for enhanced usability and a more interactive search experience.
+* Feature: Cookie Consent (Pro) - Added another value for Horizontal Position - Center, allowing the Cookie Consent banner to be positioned horizontally centered.
+* Feature: Lordicon: Animated Icons (Free) - Added new option called Enable Link For the Whole Widget, allowing users to make the entire widget clickable.
+* Feature: Checkboxes Filter (Pro) - Added a new option called Hide Title When Filter Has No Terms, allowing the title to be automatically hidden if no terms are available in the filter.
+* Feature: Underline Link Hover Effect (Pro) - Added Icon Spacing option, allowing users to adjust the space between icons for better visual alignment.
+* Feature: Creative Button Hovers (Free) - Enhanced the Alignment and Button Width options by adding responsive controls, allowing users to adjust these settings individually for different screen sizes.
+* Feature: Unlimited Google Maps (Pro) - Added new Source option for Multisource feature - Place Address.
+* Feature: Interactive Circle Infographic (Pro) - Added new option called Image Position, allowing users to select the alignment and display location of images within the element.
+* Feature: Underline Link Hover Effect (Pro) - Added Rotation option, providing the ability to rotate elements, offering more dynamic design possibilities.
+* Feature: Image and Video Slider (Pro) - Added display condition to Button element - if link is empty then button won't appear.
+* Feature: Content Grid (Pro) - Added Show Pagination option, allowing users to enable or disable pagination for better navigation and control over content display across multiple pages.
+* Feature: Image and Video Slider (Pro) - Made Display option responsive, allowing customization for different screen sizes.
+* Feature: Creative Button Hovers (Free) - Added Rotation option, providing the ability to rotate elements, offering more dynamic design possibilities.
+* Feature: Woo Product Grid (Pro) - Added a new feature that allows replacing a product price of &quot;0&quot; with customizable text. This option provides flexibility for situations where you might want to display text like &quot;Free&quot; or &quot;Contact for Pricing&quot; instead of showing a zero value for products without a set price.
+* Change: Job Listing (Pro) - Added condition to Item Company Name, Item Job Location, Item Job Type, Item Additional Info, and Item Salary options, ensuring that if any of these options are empty, the respective icon will not be visible.
+* Change: Swipe Carousel (Pro) - Changed &quot;Enable Link&quot; option within each item to one general option. Now if a link in some item is empty, link element won't be present in the item.
+* Change: Event List (Pro) - Added display condition for Event End Date elemetn - if Event End Date is empty it won't be visible on the page.
+* Fix: Job Listing (Pro) - Optimized widgets' HTML and JS code for better performance, reduced file sizes, and improved loading times.
+* Fix: Taxonomy Terms (Pro) - Changed some option names to improve clarity and avoid misunderstandings.
+* Fix: Creative Button Hovers (Free) - Fixed the Icon Size option, resolving issues related to inconsistent scaling.
+* Fix: Slider Gallery (Free) - Fixed issue when Play icon for videos on iOS devices were not centered in some cases.
+* Fix: Custom Cursor (Pro) - Improved Custom Cursor widget to work more smoothly within the Template Switcher, ensuring seamless transitions and consistent cursor performance across templates.
+* Fix: Shape Bullets (Pro) - Fixed issue when Shape Bullet Icons were not displaying properly in Firefox browser.
+
+
 version 1.5.125: 2024-10-17
 
 Plugin Changes
