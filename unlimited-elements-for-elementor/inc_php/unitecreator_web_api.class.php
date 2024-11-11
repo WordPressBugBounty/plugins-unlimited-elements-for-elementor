@@ -609,6 +609,37 @@ class UniteCreatorWebAPIWork{
 		return($arrAddonsHasTags);
 	}
 	
+	/**
+	 * get addons categories
+	 */
+	public function getCatalogAddonsCategories(){
+		
+		$arrAddons = $this->getCatalogArray_addons();
+				
+		$arrCats = array_keys($arrAddons);
+		
+		return($arrCats);
+	}
+	
+	
+	/**
+	 * get categories aliases
+	 */
+	public function getCatalogAddonsCategoriesAliases(){
+		
+		$arrCats = $this->getCatalogAddonsCategories();
+
+		$arrAliases = array();
+				
+		foreach($arrCats as $index=>$cat){
+			
+			$alias = HelperUC::convertTitleToAlias($cat);
+			
+			$arrAliases[] = $alias;
+		}
+		
+		return($arrAliases);
+	}
 	
 	
 	private function a___________SETTERS___________(){}

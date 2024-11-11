@@ -1615,6 +1615,22 @@ class UniteCreatorTemplateEngineWork{
 				
 				return($count);
 			break;
+			case "get_alphabet":
+
+				require_once GlobalsUC::$pathFramework."alphabet.class.php";
+				
+				$objAlphabet = new UELanguageAlphabets();
+				$arrAlphabet = $objAlphabet->getAlphabet($arg1);
+				
+				if(empty($arrAlphabet)){
+					dmp("$arg1 language not exists. Please choose one of those: ");
+					$arrLanguages = $objAlphabet->getLanguages();
+					
+					dmp($arrLanguages);
+				}
+				
+				return($arrAlphabet);
+			break;
 			default:
 
 				$type = UniteFunctionsUC::sanitizeAttr($type);

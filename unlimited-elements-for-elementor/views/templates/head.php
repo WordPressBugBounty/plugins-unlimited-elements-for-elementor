@@ -29,7 +29,7 @@ if(GlobalsUnlimitedElements::$isGutenbergOnly == true)
 $logoUrl = GlobalsUC::URL_SITE;
 $logoTitle = GlobalsUC::URL_SITE;
 
-$isBFMode = false;
+$isBFMode = GlobalsUnlimitedElements::$blackFridayMode;
 
 if($isProVersion == true)
 	$isBFMode = false;
@@ -39,10 +39,13 @@ $headAddClass = "";
 $buyButtonText = __("Go Pro", "unlimited-elements-for-elementor");
 
 if($isBFMode == true){
+	
 	$headAddClass = "ue-header__bf";
 	$logoImage = GlobalsUC::$urlPluginImages."logo_unlimited-white.svg";
 	
-	$buyButtonText = __("Get My Discount", "unlimited-elements-for-elementor");
+	$buyButtonText = __("Get Deal Now!", "unlimited-elements-for-elementor");
+	
+	$urlHeaderImage = GlobalsUC::$urlPluginImages."banners/bf-banner-header.png";
 }
 
 
@@ -57,6 +60,17 @@ if($isBFMode == true){
 	<a href="<?php echo $logoUrl; ?>" title="<?php echo $logoTitle; ?>" class="ue-header__logo">
 		<img class="ue-header-logo" src="<?php echo $logoImage; ?>" alt="" />
 	</a>
+
+	<?php if($isBFMode == true):
+		//Black Friday Inner Elements
+	?>
+	
+		<img class="uc-bf-banner__header" src="<?php echo $urlHeaderImage?>">
+		
+		<img class="uc-bf-banner__counter" src="http://i.countdownmail.com/2mgwko.gif" style="display:inline-block!important;width:100%!important;max-width:272px!important;" border="0" alt="countdownmail.com"/>
+			
+	<?php endif?>
+
 		
 	<div class="ue-header-buttons">
 		<a class="ue-btn ue-flex-center ue-view-demo-btn"

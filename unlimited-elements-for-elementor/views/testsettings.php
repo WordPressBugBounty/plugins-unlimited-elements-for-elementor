@@ -28,9 +28,8 @@ function ueCheckCatalog(){
 }
 
 function checkSomeFunc(){
-			
-	$success = UniteFunctionsWPUC::insertPost($title, $alias, $params);
-			
+
+	
 	
 	dmp("check some func");
 	exit();

@@ -18,7 +18,11 @@ class UCAdminNoticeBannerBuilder extends UCAdminNoticeBuilderAbstract{
 	private $linkUrl;
 	private $linkTarget;
 	private $imageUrl;
-
+	private $addClass = "";
+	private $css = "";
+	private $addHtml = "";
+	
+	
 	/**
 	 * set the notice theme
 	 */
@@ -28,6 +32,16 @@ class UCAdminNoticeBannerBuilder extends UCAdminNoticeBuilderAbstract{
 
 		return $this;
 	}
+	
+	
+	/**
+	 * set add class
+	 */
+	public function setAddClass($class){
+		
+		$this->addClass = $class;
+	}
+	
 
 	/**
 	 * set the notice link URL
@@ -49,7 +63,25 @@ class UCAdminNoticeBannerBuilder extends UCAdminNoticeBuilderAbstract{
 
 		return $this;
 	}
-
+	
+	
+	/**
+	 * get css
+	 */
+	public function setCss($css){
+		
+		$this->css = $css;
+	}
+	
+	/**
+	 * set add html
+	 */
+	public function setAddHtml($html){
+		
+		$this->addHtml = $html;
+	}
+	
+	
 	/**
 	 * get the notice html
 	 */
@@ -62,10 +94,24 @@ class UCAdminNoticeBannerBuilder extends UCAdminNoticeBuilderAbstract{
 			'uc-admin-notice--theme-' . $this->theme,
 			'uc-admin-notice--' . $this->getId(),
 		));
-
-		$html = '<div class="' . esc_attr($class) . '">';
+		
+		if(!empty($this->addClass))
+			$class .= " ".$this->addClass;
+		
+		$html = "";
+		
+		//add css
+		if(!empty($this->css))
+			$html .= "
+			<style>
+				".$this->css."
+			</style>
+		";
+			
+		$html .= '<div class="' . esc_attr($class) . '">';
 		$html .= '<a class="uc-notice-link" href="' . esc_url($this->linkUrl) . '" target="' . esc_attr($this->linkTarget) . '" >';
 		$html .= $this->getImageHtml();
+		$html .= $this->getAddHTML();
 		$html .= '</a>';
 		$html .= $this->getDebugHtml();
 		$html .= $this->getDismissHtml();
@@ -73,12 +119,24 @@ class UCAdminNoticeBannerBuilder extends UCAdminNoticeBuilderAbstract{
 
 		return $html;
 	}
+	
+	/**
+	 * get custom html
+	 */
+	private function getAddHTML(){
+		
+		if(empty($this->addHtml))
+			return("");
+			
+		return($this->addHtml);
+	}
+
 
 	/**
 	 * get the image html
 	 */
 	private function getImageHtml(){
-
+		
 		if(empty($this->imageUrl))
 			return '';
 

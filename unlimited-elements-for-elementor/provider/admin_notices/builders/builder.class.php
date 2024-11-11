@@ -15,6 +15,7 @@ class UCAdminNoticeBuilder extends UCAdminNoticeBuilderAbstract{
 	const COLOR_WARNING = 'warning';
 	const COLOR_ERROR = 'error';
 	const COLOR_DOUBLY = 'doubly';
+	const COLOR_BLACK = 'black';
 
 	const ACTION_VARIANT_PRIMARY = 'primary';
 	const ACTION_VARIANT_SECONDARY = 'secondary';

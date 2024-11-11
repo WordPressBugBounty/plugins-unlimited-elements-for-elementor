@@ -73,9 +73,10 @@ abstract class UCAdminNoticeAbstract{
 
 		if($isLocationAllowed === false)
 			return false;
-
+		
 		$isConditionAllowed = $this->isConditionAllowed();
-
+		
+		
 		if($isConditionAllowed === false)
 			return false;
 
@@ -133,7 +134,7 @@ abstract class UCAdminNoticeAbstract{
 
 		$builder = new UCAdminNoticeBannerBuilder($id);
 		$builder = $this->initBuilder($builder);
-
+		
 		return $builder;
 	}
 
@@ -180,7 +181,7 @@ abstract class UCAdminNoticeAbstract{
 	/**
 	 * initialize the builder instance
 	 */
-	private function initBuilder($builder){
+	protected function initBuilder($builder){
 
 		$isDebug = $this->isDebug();
 

@@ -893,7 +893,19 @@ Note : This plugin works with Elementor. Make sure you have [Elementor](https://
 
 == Changelog ==
 
-version 1.5.126:
+
+version 1.5.127: 2024-11-11
+
+* Feature: done the functionality for alphabet filter
+* Feature: added option for rss source in multisource
+* Change: set black friday deal compaign graphics
+* Fix: fixed archive pagination number of pages
+* Fix: in filters disabled scroll to grid when the grid don't refreshed.
+* Fix: fixed init selected multiple checkbox filters
+* Fix: added some sanitize and escape to gallery fields output
+
+
+version 1.5.126: 2024-11-04
 
 Plugin Changes
 

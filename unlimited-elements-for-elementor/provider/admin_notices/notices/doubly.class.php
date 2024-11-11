@@ -31,7 +31,11 @@ class UCAdminNoticeDoubly extends UCAdminNoticeAbstract{
 		$installUrl = UniteFunctionsWPUC::getInstallPluginLink('doubly');
 		$installUrl = UniteFunctionsUC::addUrlParams($installUrl, array('uc_dismiss_notice' => $this->getId()));
 
-		$builder = $this->createBuilder();
+		$id = $this->getId();
+
+		$builder = new UCAdminNoticeBuilder($id);
+		$builder = $this->initBuilder($builder);
+		
 		$builder->dismissible();
 		$builder->color(UCAdminNoticeBuilder::COLOR_DOUBLY);
 		$builder->withHeading($heading);

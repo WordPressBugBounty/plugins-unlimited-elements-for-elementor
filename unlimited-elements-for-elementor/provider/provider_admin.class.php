@@ -320,7 +320,7 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 	 * in the admin side.
 	 */
 	protected function isInsidePlugin(){
-
+		
 		$page = UniteFunctionsUC::getGetVar("page", "", UniteFunctionsUC::SANITIZE_KEY);
 
 		$isPageMaster = (strpos($page, "unlimited-elements-master") !== false);
@@ -1060,7 +1060,9 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 
 		//if not inside plugin don't continue
 		if($this->isInsidePlugin() == true){
-
+			
+			GlobalsUC::$isInsidePlugin = true;
+			
 			$this->addAction(self::ACTION_ADD_SCRIPTS, "onAddScripts", true, 1, 9999);
 			$this->addLocalFilter("admin_body_class", "addAdminBodyClass");
 			$this->addLocalFilter("admin_title", "modifyAdminTitle");

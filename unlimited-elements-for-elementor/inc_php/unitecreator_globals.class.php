@@ -122,6 +122,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		public static $pathTemplates;
 		public static $pathViews;
 		public static $pathViewsObjects;
+		public static $pathFramework;
 		public static $pathLibrary;
 		public static $pathAssets;
 		public static $pathProvider;
@@ -187,7 +188,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		public static $enableInsideWidgetFreeVersionNotifiaction = true;
 		public static $colorPickerType = "spectrum";
 		public static $showQueryDebugByUrl = false;
-
+		public static $isInsidePlugin = false;	//set in provider_admin
+		
 		
 		/**
 		 * init globals
@@ -224,6 +226,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			self::$pathViewsObjects = self::$pathPlugin."views/objects/";
 			self::$pathSettings = self::$pathPlugin."settings/";
 			self::$pathPro = self::$pathPlugin."pro/";
+			self::$pathFramework = self::$pathPlugin."inc_php/framework/";
 
 			if(file_exists(self::$pathPro))
 				self::$isProVersion = true;

@@ -20,9 +20,11 @@ class GlobalsUnlimitedElements{
 	
 	public static $isGutenbergOnly = false;
 	
-	public static $showAdminNotices = false;
+	public static $showAdminNotices = true;		//show the banner
 	public static $debugAdminNotices = false;
-
+	
+	public static $blackFridayMode = true;
+	
 	public static $enableApiIntegrations = true;
 
 	public static $enableGoogleAPI = true;
@@ -35,10 +37,10 @@ class GlobalsUnlimitedElements{
 	public static $enableInsideNotification = true;
 
 	public static $enableInstagramErrorMessage = false;
-
+ 
 	//public static $insideNotificationText = "BLACK FRIDAY SALE STARTS NOW! <br> Grab the PRO version for 50% off. <br> <a href='https://unlimited-elements.com/pricing/' target='_blank'>Get It Now</a> ";
-	//public static $insideNotificationText = "Unlimited Elements Birthday Sale!!! <br> 50% OFF - all plans! <br> <a style='text-decoration:underline;' href='https://unlimited-elements.com/pricing/' target='_blank'>Get It Now!</a> ";
-	public static $insideNotificationText = "Unlock Access To All PRO Widgets and Features.  <a href='https://unlimited-elements.com/pricing/' target='_blank'>Upgrade Now</a> ";
+	public static $insideNotificationText = "🖤 Black Friday Sale! <br> Don’t Miss Out on the <br> BIGGEST SALE of the Year! 🎉<br> <a style='text-decoration:underline;' href='https://unlimited-elements.com/pricing/' target='_blank'>Get Deal Now!</a> ";
+	//public static $insideNotificationText = "Unlock Access To All PRO Widgets and Features.  <a href='https://unlimited-elements.com/pricing/' target='_blank'>Upgrade Now</a> ";
 	public static $insideNotificationUrl = "https://unlimited-elements.com/pricing/";
 
 	const PLUGIN_NAME = "unlimitedelements";
@@ -193,13 +195,17 @@ class GlobalsUnlimitedElements{
 
 		if(GlobalsUnlimitedElements::$showAdminNotices === false)
 			return;
-
-		UCAdminNotices::init(array(
-//			new UCAdminNoticeBanner(),
+		
+		$arrBanners = array();
+		
+		if(self::$blackFridayMode == true)
+			$arrBanners[] = new UCAdminNoticeBFBanner();
+		
 //			new UCAdminNoticeSimpleExample(),
 //			new UCAdminNoticeDoubly(),
 //			new UCAdminNoticeRating(),
-		));
+		
+		UCAdminNotices::init($arrBanners);
 
 	}
 

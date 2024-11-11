@@ -13,7 +13,7 @@ defined ('UNLIMITED_ELEMENTS_INC') or die ('restricted aceess');
 class UniteCreatorElementorPagination{
 
 	const SHOW_DEBUG = false;		//please turn it off
-
+	
 	/**
 	 * get data of the controls
 	 */
@@ -741,9 +741,23 @@ class UniteCreatorElementorPagination{
 			$isArchivePage = false;
 
 		//fix the archive
-
+		
+		//prefer to take by the query
+		
+		if($isArchivePage == true && !empty(GlobalsProviderUC::$lastPostQuery)){
+			
+			$isArchivePage = false;
+			
+			if($isDebug == true){
+				dmp("last query found");
+				dmp("change to custom");
+			}
+		}
+		
+		
+		/*
 		if($isArchivePage == true && !empty(GlobalsProviderUC::$lastPostQuery_paginationType) && GlobalsProviderUC::$lastPostQuery_paginationType != GlobalsProviderUC::QUERY_TYPE_CURRENT){
-
+			
 			$isArchivePage = false;
 
 			if($isDebug == true){
@@ -753,6 +767,7 @@ class UniteCreatorElementorPagination{
 				dmp("change to custom");
 			}
 		}
+		*/
 
 		//force format yes/no
 
@@ -769,16 +784,17 @@ class UniteCreatorElementorPagination{
 		if($isArchivePage == true){
 			
 			$options = $this->getArchivePageOptions($options);
-						
+			
 			$ucpage = $this->getUCPageFromGET();
-
+			
 			if(!empty($ucpage))
 				$options["current"] = $ucpage;
 				
 			$pagination = get_the_posts_pagination($options);
-			
+						
 			//put debug
 			if($isDebug == true){
+				
 				dmP("Archive Pagination");
 
 				global $wp_query;
@@ -805,7 +821,7 @@ class UniteCreatorElementorPagination{
 			
 			//skip for home pages
 			$options = $this->getSinglePageOptions($options, $forceFormat, $isDebug);
-						
+					
 			if($isDebug == true)
 				dmp("custom query pagination");
 			
@@ -887,7 +903,7 @@ class UniteCreatorElementorPagination{
 		}
 
 		$arrPagingData = $this->getPagingData();
-
+		
 		$hasMore = UniteFunctionsUC::getVal($arrPagingData, "has_more");
 
 		$nextPage = UniteFunctionsUC::getVal($arrPagingData, "next");

@@ -520,143 +520,6 @@ class HelperProviderCoreUC_EL{
 		return($arrControl);
 	}
 
-	/**
-	 * get elementor data from post id
-	 */
-	public static function getElementorContentByPostID($postID){
-
-		$postID = (int)$postID;
-
-		$strData = get_post_meta($postID,"_elementor_data",true);
-
-		if(empty($strData))
-			return(false);
-
-		$arrData = UniteFunctionsUC::jsonDecode($strData);
-
-		return($arrData);
-	}
-
-	/**
-	  * get widget elementor from content
-	 */
-	public static function getArrElementFromContent($arrContent, $elementID){
-
-		if(is_array($arrContent) == false)
-			return(null);
-
-		if(isset($arrContent["elType"]) && isset($arrContent["id"]) && $arrContent["id"] == $elementID)
-			return($arrContent);
-
-		foreach($arrContent as $child){
-
-			if(is_array($child) == false)
-				continue;
-
-			$arrElement = self::getArrElementFromContent($child, $elementID);
-
-			if(!empty($arrElement))
-				return($arrElement);
-		}
-
-		return(null);
-	}
-
-	/**
-	 * get addon settings from elementor content
-	 */
-	public static function getAddonValuesWithDataFromContent($arrContent, $elementID){
-
-		$addon = self::getAddonWithDataFromContent($arrContent, $elementID);
-
-		$arrValues = $addon->getProcessedMainParamsValues();
-
-		return($arrValues);
-	}
-
-
-	/**
-	  * get widget elementor from content
-	 */
-	public static function getAddonWithDataFromContent($arrContent, $elementID){
-
-		$arrElement = self::getArrElementFromContent($arrContent, $elementID);
-
-		if(empty($arrElement)){
-			UniteFunctionsUC::throwError("Elementor Widget with id: $elementID not found");
-		}
-
-		$type = UniteFunctionsUC::getVal($arrElement, "elType");
-
-		if($type != "widget")
-			UniteFunctionsUC::throwError("The element is not a widget");
-
-		$widgetType = UniteFunctionsUC::getVal($arrElement, "widgetType");
-
-		if(strpos($widgetType, "ucaddon_") === false){
-
-			if($widgetType == "global")
-				UniteFunctionsUC::throwError("The widget can't be global widget. Please change the grid to regular widget.");
-
-			UniteFunctionsUC::throwError("Cannot output widget content for widget: $widgetType");
-		}
-
-		$arrSettingsValues = UniteFunctionsUC::getVal($arrElement, "settings");
-
-		$widgetName = str_replace("ucaddon_", "", $widgetType);
-
-		$addon = new UniteCreatorAddon();
-		$addon->initByAlias($widgetName, GlobalsUC::ADDON_TYPE_ELEMENTOR);
-
-		$addon->setParamsValues($arrSettingsValues);
-
-		return($addon);
-	}
-
-
-	/**
-	 * put post content, or render with elementor
-	 */
-	public static function getPostContent($postID, $content=""){
-		
-		if(empty($postID))
-			return(false);
-
-		if(is_numeric($postID) == false)
-			return($content);
-
-		//protection against infinate loop
-
-		if(isset(self::$arrPostContentCache[$postID]))
-			return(self::$arrPostContentCache[$postID]);
-
-		$elementorTemplateType = get_post_meta($postID,"_elementor_template_type",true);
-
-		//not elementor - regular content
-		if(empty($elementorTemplateType)){
-
-			if(!empty($content)){
-
-				self::$arrPostContentCache[$postID]	= $content;
-				return($content);
-			}
-
-			$post = get_post($postID);
-			$content = UniteFunctionsWPUC::getPostContent($post);
-
-			self::$arrPostContentCache[$postID]	= $content;
-
-			return($content);
-		}
-
-		//elementor content
-
-		$content = self::getElementorTemplate($postID);
-
-		self::$arrPostContentCache[$postID]	= $content;
-
-		return($content);
-	}
 
 	/**
 	 * get elementor condition from param
@@ -744,6 +607,166 @@ class HelperProviderCoreUC_EL{
 
 		return($output);
 	}
+	
+	private static function ______ELEMENTOR_CONTENT________(){}
+	
+	/**
+	 * get elementor data from post id
+	 */
+	public static function getElementorContentByPostID($postID){
+
+		$postID = (int)$postID;
+
+		$strData = get_post_meta($postID,"_elementor_data",true);
+
+		if(empty($strData))
+			return(false);
+
+		$arrData = UniteFunctionsUC::jsonDecode($strData);
+
+		return($arrData);
+	}
+	
+	/**
+	 * check if the post has elementor content in it
+	 */
+	public static function isElementorContentPost($postID){
+		
+		if(empty($postID))
+			return(false);
+
+		if(is_numeric($postID) == false)
+			return(false);
+		
+		$elementorTemplateType = get_post_meta($postID,"_elementor_template_type",true);
+			
+		if(empty($elementorTemplateType))
+			return(false);
+			
+		return(true);
+	}
+	
+	
+	/**
+	 * put post content, or render with elementor
+	 */
+	public static function getPostContent($postID, $content=""){
+		
+		if(empty($postID))
+			return(false);
+
+		if(is_numeric($postID) == false)
+			return($content);
+
+		//protection against infinate loop
+
+		if(isset(self::$arrPostContentCache[$postID]))
+			return(self::$arrPostContentCache[$postID]);
+
+		$elementorTemplateType = get_post_meta($postID,"_elementor_template_type",true);
+
+		//not elementor - regular content
+		if(empty($elementorTemplateType)){
+
+			if(!empty($content)){
+
+				self::$arrPostContentCache[$postID]	= $content;
+				return($content);
+			}
+
+			$post = get_post($postID);
+			$content = UniteFunctionsWPUC::getPostContent($post);
+
+			self::$arrPostContentCache[$postID]	= $content;
+
+			return($content);
+		}
+
+		//elementor content - get with css
+
+		$content = self::getElementorTemplate($postID, true);
+		
+		self::$arrPostContentCache[$postID]	= $content;
+
+		return($content);
+	}
+	
+	/**
+	  * get widget elementor from content
+	 */
+	public static function getArrElementFromContent($arrContent, $elementID){
+
+		if(is_array($arrContent) == false)
+			return(null);
+
+		if(isset($arrContent["elType"]) && isset($arrContent["id"]) && $arrContent["id"] == $elementID)
+			return($arrContent);
+
+		foreach($arrContent as $child){
+
+			if(is_array($child) == false)
+				continue;
+
+			$arrElement = self::getArrElementFromContent($child, $elementID);
+
+			if(!empty($arrElement))
+				return($arrElement);
+		}
+
+		return(null);
+	}
+
+	/**
+	 * get addon settings from elementor content
+	 */
+	public static function getAddonValuesWithDataFromContent($arrContent, $elementID){
+
+		$addon = self::getAddonWithDataFromContent($arrContent, $elementID);
+
+		$arrValues = $addon->getProcessedMainParamsValues();
+
+		return($arrValues);
+	}
+
+
+	/**
+	  * get widget elementor from content
+	 */
+	public static function getAddonWithDataFromContent($arrContent, $elementID){
+
+		$arrElement = self::getArrElementFromContent($arrContent, $elementID);
+
+		if(empty($arrElement)){
+			UniteFunctionsUC::throwError("Elementor Widget with id: $elementID not found");
+		}
+
+		$type = UniteFunctionsUC::getVal($arrElement, "elType");
+
+		if($type != "widget")
+			UniteFunctionsUC::throwError("The element is not a widget");
+
+		$widgetType = UniteFunctionsUC::getVal($arrElement, "widgetType");
+
+		if(strpos($widgetType, "ucaddon_") === false){
+
+			if($widgetType == "global")
+				UniteFunctionsUC::throwError("The widget can't be global widget. Please change the grid to regular widget.");
+
+			UniteFunctionsUC::throwError("Cannot output widget content for widget: $widgetType");
+		}
+
+		$arrSettingsValues = UniteFunctionsUC::getVal($arrElement, "settings");
+
+		$widgetName = str_replace("ucaddon_", "", $widgetType);
+
+		$addon = new UniteCreatorAddon();
+		$addon->initByAlias($widgetName, GlobalsUC::ADDON_TYPE_ELEMENTOR);
+
+		$addon->setParamsValues($arrSettingsValues);
+
+		return($addon);
+	}
+	
 	
 	private static function ______PRELOAD_DB________(){}
 	

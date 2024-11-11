@@ -242,22 +242,18 @@ body.uc-blank-preview .unite-div-debug {
 	background-color:#000000 !important;
 	
 	padding-top:10px;
-	padding-bottom:0px;
-	
-	align-items:stretch;
+	padding-bottom:0px;	
 }
 
 .ue-header__inner{
 	display:flex;
 	justify-content:space-between;
-	align-items:stretch;
+	align-items:center;
 	width:100%;
-	
-	background-image:url('http://via.placeholder.com/831x110');
-	background-repeat:no-repeat;
-	background-size:contain;
-	background-position:300px bottom;	
-	
+}
+
+.ue-header__bf .uc-bf-banner__header{
+	height:86px;
 }
 
 .ue-header__bf .ue-header__logo{
@@ -267,16 +263,22 @@ body.uc-blank-preview .unite-div-debug {
 }
 
 .ue-header__bf .ue-go-pro-btn{
-	
-	background:linear-gradient(196deg, #ffffff 20.27%, #fafafa 73.21%);
-	color:#2959f9;
+	background:#FF0085;
 }
+.ue-header__bf .ue-go-pro-btn:hover{
+	background: #e60073;
+}
+
 .ue-header__bf .ue-go-pro-btn svg path{
 	fill: #2959f9;
 }
 
 .ue-header__bf .ue-go-pro-btn:hover svg path{
 	fill: #ffffff;
+}
+
+.ue-header__bf .ue-go-pro-btn svg{
+	display:none;
 }
 
 .ue-header__bf .ue-view-demo-btn{

@@ -1529,7 +1529,7 @@ function UEDynamicFilters(){
 			trace(objFilter);
 
 		}
-
+		
 		refreshAjaxGrid(objGrid);
 
 		return(false);
@@ -1587,9 +1587,9 @@ function UEDynamicFilters(){
 		
 		var filterDataObj = {};
 		objFilter.trigger(g_vars.EVENT_GET_FILTER_DATA, filterDataObj);
-
-		var filterData = getVal(filterDataObj,"output");
-
+		
+		var filterData = getVal(filterDataObj, "output");
+		
 		return(filterData);
 	}
 
@@ -1974,7 +1974,6 @@ function UEDynamicFilters(){
 		if(!objItemsWrapper || objItemsWrapper.length == 0)
 			throw new Error("Missing items wrapper: .uc-items-wrapper");
 
-
 		operateAjax_setHtmlDebug(response, objGrid);
 
 		//set grid items
@@ -2082,7 +2081,9 @@ function UEDynamicFilters(){
 				objItemsWrapper2.html(htmlItems2);
 
 		}
-
+		
+		
+		return(true);
 	}
 
 
@@ -2115,7 +2116,7 @@ function UEDynamicFilters(){
 			childResponse.query_data = queryData;
 
 			operateAjax_setHtmlGrid(childResponse, objGridWidget, isLoadMore);
-
+			
 			objGridWidget.trigger(g_vars.EVENT_AJAX_REFRESHED);
 			g_objBody.trigger(g_vars.EVENT_AJAX_REFRESHED_BODY, [objGridWidget]);
 
@@ -2228,8 +2229,8 @@ function UEDynamicFilters(){
 	 */
 	function operateAjaxRefreshResponse(response, objGrid, objFilters, isLoadMore, isNoScroll){
 		
-		operateAjax_setHtmlGrid(response, objGrid, isLoadMore);
-
+		var isGridRefreshed = operateAjax_setHtmlGrid(response, objGrid, isLoadMore);
+		
 		operateAjax_setHtmlWidgets(response, objFilters);
 
 		operateAjax_setHtmlSyngGrids(response, objGrid, isLoadMore);
@@ -2239,13 +2240,13 @@ function UEDynamicFilters(){
 
 		//trigger body as well
 
-		//scroll to top
-		if(isLoadMore == false && isNoScroll !== true){
-
+		//scroll to grid top
+		if(isLoadMore == false && isGridRefreshed == true && isNoScroll !== true){
+						
 			setTimeout(function(){
-
+				
 				scrollToGridTop(objGrid);
-
+					
 			},200);
 
 		}
@@ -2655,7 +2656,6 @@ function UEDynamicFilters(){
 	 */
 	function doGridAjaxRequest(ajaxUrl, objGrid, objFilters, isLoadMore, isFiltersInit){
 		
-				
 		var objEmptyMessage = getGridEmptyMessage(objGrid);
 
 		//set the loaders
@@ -2704,7 +2704,7 @@ function UEDynamicFilters(){
 
 			if(g_lastSyncGrids)
 				showMultipleAjaxLoaders(g_lastSyncGrids, false);
-
+			
 			operateAjaxRefreshResponse(response, objGrid, objFilters, isLoadMore);
 
 			onAfterGridRefresh(objGrid);
@@ -2961,6 +2961,7 @@ function UEDynamicFilters(){
 		var orderby_metaname = null;
 		var orderby_metatype = null;
 		var orderdir = null;
+		var title_start = null;
 		var addSyncedGrids = true;
 		var arrAllFiltersData;		//all data gethered for the active filters
 		var arrFiltersForInit = [];
@@ -3089,7 +3090,7 @@ function UEDynamicFilters(){
 							//add terms, if only children mode and the filter not child
 							if(initModeChildrens == true && filterRole != "child")
 								arrTerms.push(objTerm);
-
+							
 							//set selected terms string
 
 							var termID = objTerm.id;
@@ -3149,6 +3150,7 @@ function UEDynamicFilters(){
 					var filterData = getGeneralFilterData(objFilter);
 					
 					//add terms
+					
 					var dataTerms = getVal(filterData,"terms");
 					
 					if(dataTerms && dataTerms.length){
@@ -3175,11 +3177,16 @@ function UEDynamicFilters(){
 							arrTerms.push(dataTerms);	//multiple (grouping)
 						}
 						
-						
 						//set selected terms string if init mode
+						
 						if(isFiltersInitMode == true && dataTerms && dataTerms.length){
-														
-							jQuery.each(arrTerms, function(index, term){
+							
+							var arrTermsForSelect = [];
+							
+							if(jQuery.isArray(arrTerms))
+								arrTermsForSelect = arrTerms.flat();
+							
+							jQuery.each(arrTermsForSelect, function(index, term){
 								
 								var termID = getVal(term,"id");
 								
@@ -3197,9 +3204,9 @@ function UEDynamicFilters(){
 						
 					}
 					
-										
+					
 					if(g_showDebug == true){
-
+						
 						trace("Filter Data:");
 						trace(filterData);
 					}
@@ -3215,8 +3222,13 @@ function UEDynamicFilters(){
 						if(priceToArg)
 							price_to = roundToOneDecimal(priceToArg);
 					}
-
-
+					
+					//add title start
+					
+					var titleStartArg = getVal(filterData, "title_start");
+					if(titleStartArg)
+						title_start = titleStartArg;
+					
 					//handle sort
 					var argOrderby = getVal(filterData,"orderby");
 					if(argOrderby && argOrderby != "default"){
@@ -3390,7 +3402,17 @@ function UEDynamicFilters(){
 				trace(urlAjax);
 			}
 		}
-
+		
+		if(title_start){
+			
+			if(g_showDebug == true)
+				trace("add title start: "+title_start);
+			
+			urlAjax += "&titlestart="+title_start;
+			urlReplace = addUrlParam(urlReplace, "titlestart="+title_start);
+		}
+			
+		
 		if(page){
 			urlAjax += "&ucpage="+page;
 			
@@ -3435,7 +3457,8 @@ function UEDynamicFilters(){
 
 			urlReplace = addUrlParam(urlReplace, "ucorderdir="+orderdir);
 		}
-				
+		
+		
 		if(isFiltersInitMode && strSelectedTerms)
 			urlAjax += "&ucinitselectedterms="+strSelectedTerms;
 

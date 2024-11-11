@@ -29,6 +29,7 @@ class UniteCreatetorParamsProcessorMultisource{
 	const SOURCE_MENU = "menu";
 	const SOURCE_INSTAGRAM = "instagram";
 	const SOURCE_GALLERY = "gallery";
+	const SOURCE_RSS = "rss";
 	const SOURCE_API = "api";
 
 
@@ -685,6 +686,90 @@ class UniteCreatetorParamsProcessorMultisource{
 		return($arrGallery);
 	}
 
+    /**
+     * get rss data
+     */
+    private function getData_rss(){
+
+        $showDebug = $this->showDebugData;
+
+        if($showDebug == true){
+            dmp("---- the debug is ON, please turn it off before release --- ");
+        }
+
+        $url = UniteFunctionsUC::getVal($this->arrValues, $this->name."_rss_url");
+
+        if(empty($url)){
+
+            if($showDebug)
+                dmp("no url found for rss");
+
+            return(null);
+        }
+		
+        $dynamicFieldValue = HelperUC::$operations->getUrlContents($url, $showDebug);
+		
+        if(empty($dynamicFieldValue)){
+
+            if($showDebug)
+                dmp("no data given in the dynamic field");
+
+            return(null);
+        }
+
+        //try rss
+
+        $arrData = UniteFunctionsUC::maybeXmlDecode($dynamicFieldValue);
+		
+        //debug rss
+
+        if($showDebug == true && is_array($arrData)){
+
+            dmp("RSS data found ");
+            //dmp($arrData);
+
+            dmp("------------------------------");
+        }
+
+
+        if(is_array($arrData) == false){
+
+            if($showDebug == true){
+                dmp("No RSS data found. The input is: ");
+                echo "<div style='background-color:lightgray'>";
+                dmp(htmlspecialchars($dynamicFieldValue));
+                echo "</div>";
+                dmp("------------------------------");
+            }
+
+            return(null);
+        }
+
+        $arrData = HelperUC::$operations->simplifyRssDataArray($arrData);
+        
+        
+        //trim by main key
+
+        $dataMainKey = UniteFunctionsUC::getVal($this->arrValues, $this->name."_rss_mainkey");
+
+        if(!empty($dataMainKey))
+            $arrData = UniteFunctionsUC::getArrayValueByPath($arrData, $dataMainKey);
+
+        if($showDebug == true && is_array($arrData) && !empty($dataMainKey)){
+            dmp("get the array data from the key: {$dataMainKey}");
+        }
+
+        //trim by items limit
+        (int) $dataItemsLimit = UniteFunctionsUC::getVal($this->arrValues, $this->name."_rss_items_limit");
+        if(!empty($dataItemsLimit) && $dataItemsLimit > 0)
+            $arrData = array_slice($arrData, 0, $dataItemsLimit, true);
+
+        if($showDebug == true && is_array($arrData) && (!empty($dataItemsLimit) && $dataItemsLimit > 0)){
+            dmp("limit items to: {$dataItemsLimit}");
+        }
+
+        return($arrData);
+    }
 
 	/**
 	 * get multisource data
@@ -710,6 +795,8 @@ class UniteCreatetorParamsProcessorMultisource{
 				return $this->getData_instagram();
 			case self::SOURCE_GALLERY:
 				return $this->getData_gallery();
+            case self::SOURCE_RSS:
+                return $this->getData_rss();
 			case self::SOURCE_API:
 				return $this->getData_api();
 			default:

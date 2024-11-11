@@ -811,8 +811,9 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 	 * convert title to alias
 	 */
 	public static function convertTitleToAlias($title){
-
-		$handle = self::convertTitleToHandle($title, false);
+		
+		$handle = self::convertTitleToHandle($title);
+		
 		$alias = str_replace("_", "-", $handle);
 
 		return ($alias);

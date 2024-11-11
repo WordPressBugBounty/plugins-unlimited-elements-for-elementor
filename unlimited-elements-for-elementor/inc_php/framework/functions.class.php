@@ -1475,6 +1475,25 @@ class UniteFunctionsUC{
 	}
 
 
+    /**
+     * maybe xml decode
+     */
+    public static function maybeXmlDecode($str){
+
+        if(empty($str))
+            return($str);
+
+        if(is_string($str) == false)
+            return($str);
+
+        //try to decode xml
+        $arr = self::xmlDecode($str);
+        if(!empty($arr) && is_array($arr))
+            return($arr);
+
+        return($str);
+    }
+
 	/**
 	 * maybe decode content
 	 */
@@ -1560,6 +1579,72 @@ class UniteFunctionsUC{
 		return $arr;
 	}
 
+    /**
+     * decode content given from xml
+     */
+    public static function xmlDecode($content, $outputArray = false){
+
+        if($outputArray == true && empty($content))
+            return(array());
+
+        $xml = @simplexml_load_string($content, "SimpleXMLElement", LIBXML_NOCDATA);
+        $arrXml = self::parseXML($xml);
+        $arr = json_decode(json_encode($arrXml), true);
+
+        $arr = self::convertStdClassToArray($arr);
+
+        if(empty($arr))
+            return(array());
+
+        return $arr;
+    }
+
+    public static function parseXML($xml) {
+        $array = [];
+
+        // If there are attributes, add them to the array
+        foreach ($xml->attributes() as $key => $value) {
+            $array["@attributes"][$key] = (string)$value;
+        }
+
+        // Process namespaces and children
+        foreach ($xml->getNamespaces(true) as $prefix => $namespace) {
+            foreach ($xml->children($namespace) as $key => $child) {
+                // Use prefix only when it's a namespaced element
+                $prefixedKey = $prefix ? $prefix . ':' . $key : $key;
+
+                // Handle single or multiple entries
+                if (isset($array[$prefixedKey])) {
+                    // If this key already exists, convert it to an array if not already
+                    if (!is_array($array[$prefixedKey]) || !isset($array[$prefixedKey][0])) {
+                        $array[$prefixedKey] = [$array[$prefixedKey]];
+                    }
+                    $array[$prefixedKey][] = self::parseXML($child);
+                } else {
+                    $array[$prefixedKey] = self::parseXML($child);
+                }
+            }
+        }
+
+        // Process non-namespaced children
+        foreach ($xml->children() as $key => $child) {
+            if (isset($array[$key])) {
+                if (!is_array($array[$key]) || !isset($array[$key][0])) {
+                    $array[$key] = [$array[$key]];
+                }
+                $array[$key][] = self::parseXML($child);
+            } else {
+                $array[$key] = self::parseXML($child);
+            }
+        }
+
+        // If there's no child, add the node value directly
+        if (empty($array)) {
+            $array = (string)$xml;
+        }
+
+        return $array;
+    }
 
 	/**
 	 * clean path string
@@ -1865,7 +1950,7 @@ class UniteFunctionsUC{
 	public static function cleanUrl($url){
 
 		$url = preg_replace('/([^:])(\/{2,})/', '$1/', $url);
-		
+
 		return($url);
 	}
 

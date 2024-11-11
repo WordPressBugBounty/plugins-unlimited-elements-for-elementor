@@ -27,6 +27,20 @@
 	box-shadow: 0px 2px 40px 0px rgba(94, 95, 98, 0.04);
 }
 
+.ue-content-card.ue-dashboard-banner{
+	padding:0px;
+}
+
+.ue-dashboard-banner__image{
+	border-radius: 12px;
+	display:block;
+	width:100%;	
+}
+
+.ue-dashboard-banner__link{
+	display:block;
+}
+
 .ue-content-icon {
 	display: flex;
 	width: 62px;
@@ -416,6 +430,7 @@ img.ue-illustration {
 .ue-post:hover .ue-post-title {
 	color: #334bf4;
 }
+
 
 .ue-post-view-more {
 	margin-top: 8px;

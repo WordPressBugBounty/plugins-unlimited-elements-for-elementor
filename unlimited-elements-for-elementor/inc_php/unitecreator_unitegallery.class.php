@@ -720,6 +720,7 @@ class UniteCreatorUniteGallery{
 			$linkEnd = "";
 			
 			if(!empty($link)){
+				$link = esc_url($link);
 				$linkStart = "<a href=\"{$link}\">";
 				$linkEnd = "</a>";
 			}
@@ -734,18 +735,25 @@ class UniteCreatorUniteGallery{
 			$html .= $nl."<img alt=\"{$title}\"";
 			$html .= $nl."   src=\"$thumb\"";
 			
-			if(!empty($image))
+			if(!empty($image)){
+				$image = esc_attr($image);
 				$html .= $nl."    data-image=\"$image\"";
+			}
 			
-			if(!empty($title))
+			if(!empty($title)){
+				$title = esc_attr($title);
 				$html .= $nl."    data-title=\"$title\"";
-				
-			if(!empty($description))
+			}
+			
+			if(!empty($description)){
+				esc_attr($description);
 				$html .= $nl."    data-description=\"$description\"";
+			}
 			
-			if($type != "image")
+			if($type != "image"){
+				$type = esc_attr($type);
 				$html .= $nl."    data-type=\"$type\"";
-			
+			}
 				
 			switch($type){
 				
@@ -754,6 +762,7 @@ class UniteCreatorUniteGallery{
 				case "wistia":
 					
 					$videoID = UniteFunctionsUC::getVal($item, "videoid");
+					$videoID = esc_attr($videoID);
 					
 					if(!empty($videoID))
 						$html .= $nl."    data-videoid=\"$videoID\"";
@@ -763,13 +772,19 @@ class UniteCreatorUniteGallery{
 					
 					$urlMp4 = UniteFunctionsUC::getVal($item, "url_mp4");
 					
+					$urlMp4 = sanitize_url($urlMp4);
+					$urlMp4 = esc_attr($urlMp4);
+					
 					if(!empty($urlMp4))
 						$html .= $nl."    data-videomp4=\"$urlMp4\"";
-					
+										
 				break;
 				case "iframe":
 					
 					$urlVideo = UniteFunctionsUC::getVal($item, "url_video");
+					
+					$urlVideo = sanitize_url($urlVideo);
+					$urlVideo = esc_attr($urlVideo);
 					
 					if(!empty($urlVideo))
 						$html .= $nl."    data-videourl=\"$urlVideo\"";

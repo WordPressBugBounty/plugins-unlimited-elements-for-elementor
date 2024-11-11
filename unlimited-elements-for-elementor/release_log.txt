@@ -1,4 +1,13 @@
 
+version 1.5.127:
+
+* Feature: done the functionality for alphabet filter
+* Fix: fixed archive pagination number of pages
+* Fix: in filters disabled scroll to grid when the grid don't refreshed.
+* Fix: fixed init selected multiple checkbox filters
+* Fix: added some sanitize and escape to gallery fields output
+* Feature: added option for rss source in multisource
+* Change: set black friday deal compaign graphics
 
 
 version 1.5.126:

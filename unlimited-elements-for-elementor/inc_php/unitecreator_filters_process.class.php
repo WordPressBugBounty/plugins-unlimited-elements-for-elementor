@@ -43,8 +43,9 @@ class UniteCreatorFiltersProcess{
 
 	private $hasSelectedByRequest = false;
 	private $hasSelectedTerm = false;
-
-
+	
+	private $titleStart = false;	//title start string
+	
 	const TYPE_TABS = "tabs";
 	const TYPE_SELECT = "select";
 	const TYPE_CHECKBOX = "checkbox";
@@ -625,17 +626,22 @@ class UniteCreatorFiltersProcess{
 
 		$arrOutput = $this->getArrInputFilters_getOrderby($arrOutput, $request);
 
-
 		//orderdir
 
 		$orderDir = UniteFunctionsUC::getVal($request, "ucorderdir");
 
 		if($orderDir == "asc" || $orderDir == "desc")
 			$arrOutput["orderdir"] = $orderDir;
-
-
+		
+		//title start
+			
+		$titleStart = UniteFunctionsUC::getVal($request, "titlestart");
+		
+		if(!empty($titleStart) && UniteFunctionsUC::isAlphaNumeric($titleStart))
+			$arrOutput["titlestart"] = strtolower($titleStart);
+		
+		
 		self::$arrInputFiltersCache = $arrOutput;
-
 
 		return($arrOutput);
 	}
@@ -723,7 +729,14 @@ class UniteCreatorFiltersProcess{
 
 		if(!empty($priceTo) && is_numeric($priceTo))
 			self::$filters["price_to"] = $priceTo;
-
+		
+		//title start
+		
+		$titleStart = UniteFunctionsUC::getVal($arrInputFilters, "titlestart");
+		
+		if(!empty($titleStart))
+			self::$filters["titlestart"] = $titleStart;
+		
 
 		return(self::$filters);
 	}
@@ -900,8 +913,9 @@ class UniteCreatorFiltersProcess{
 		$orderdir = UniteFunctionsUC::getVal($arrFilters, "orderdir");
 		$priceFrom = UniteFunctionsUC::getVal($arrFilters, "price_from");
 		$priceTo = UniteFunctionsUC::getVal($arrFilters, "price_to");
-
-
+		$titleStart = UniteFunctionsUC::getVal($arrFilters, "titlestart");
+		
+		
 		if(!empty($page))
 			$args = $this->processRequestFilters_setPaging($args, $page, $numItems);
 
@@ -1031,8 +1045,19 @@ class UniteCreatorFiltersProcess{
 
 			$args["meta_query"] = array_merge($arrExistingMeta, $arrMetaQuery);
 		}
-
-
+		
+		//set the title start hook
+		
+		if(!empty($titleStart)){
+			
+			$this->titleStart = $titleStart;
+			
+			add_filter( 'posts_where', array($this,'setWhereTitleStart'), 10, 2 );
+			
+		}
+		
+		//set the title start
+		
 		if(self::$showDebug == true){
 
 			dmp("args:");
@@ -1045,7 +1070,36 @@ class UniteCreatorFiltersProcess{
 		
 		return($args);
 	}
+	
+	/**
+	 * set the where title start
+	 */
+	public function setWhereTitleStart($where, $wp_query){
+		
+		if(empty($this->titleStart))
+			return($where);
+		
+		global $wpdb;		
+		
+		$where .= $wpdb->prepare(" AND $wpdb->posts.post_title LIKE %s", $this->titleStart.'%');		
+		
+		return($where);
+	}
 
+	/**
+	 * on after query run
+	 */
+	public function afterQueryRun(){
+		
+		if(!empty($this->titleStart)){	//remove the filter
+			
+			$this->titleStart = null;
+			
+			remove_filter( 'posts_where', array($this,'setWhereTitleStart'), 10, 2);
+		}
+		
+		
+	}
 
 	private function _______AJAX__________(){}
 
@@ -2042,7 +2096,7 @@ class UniteCreatorFiltersProcess{
 				return($arrTerms);
 
 			UniteFunctionsUC::validateIDsList($strSelectedTermIDs,"selected terms");
-
+			
 			$selectedTermIDs = explode(",", $strSelectedTermIDs);
 
 			if(empty($selectedTermIDs))
@@ -2581,7 +2635,7 @@ class UniteCreatorFiltersProcess{
 
 		//modify the selected class
 		$arrTerms = $this->modifyOutputTerms_modifySelected($arrTerms, $data,$filterType);
-
+		
 		$arrTerms = $this->modifyOutputTerms_modifySelectedByRequest($arrTerms);
 		
 		$isFilterHidden = false;
@@ -2608,8 +2662,7 @@ class UniteCreatorFiltersProcess{
 		$arrTerms = $this->modifyOutputTerms_setSelectedClass($arrTerms, $filterType);
 
 		$arrTerms = $this->modifyOutputTerms_getDataAttributes($arrTerms, $filterType);
-
-
+		
 		//hide child filter at start
 
 		if(strpos($filterRole,"child") !== false &&

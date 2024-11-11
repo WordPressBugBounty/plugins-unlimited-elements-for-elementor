@@ -467,10 +467,21 @@ class UCOperations extends UniteElementsBaseUC{
 
 		return ($arrItems);
 	}
-
-	private function a____________DEBUG____________(){
+	
+	private function a____________RSS____________(){}
+	
+	/**
+	 * modify rss array to simplify the use
+	 */
+	public function simplifyRssDataArray($arrRss){
+		
+		
+		
+		return($arrRss);
 	}
-
+	
+	private function a____________DEBUG____________(){}
+		
 	/**
 	 * modify field for debug
 	 */

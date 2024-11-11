@@ -2466,11 +2466,13 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if($showDebugQuery == true && $debugType == "show_query"){
 			add_action("wp_error_added",array($this,"showWPErrorLog"),10,4);
 		}
-		
+				
 		$query->query($args);
 		
+		$objFiltersProcess->afterQueryRun();
+		
 		do_action("ue_after_custom_posts_query", $query);
-
+		
 		//custom posts debug
 
 		if($showDebugQuery == true && $debugType == "show_query"){
@@ -3391,7 +3393,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			case "html5":
 
 				$urlMp4 = UniteFunctionsUC::getVal($sourceItem, "url_html5");
-
+								
 				$item["type"] = "html5video";
 				$item["url_mp4"] = $urlMp4;
 

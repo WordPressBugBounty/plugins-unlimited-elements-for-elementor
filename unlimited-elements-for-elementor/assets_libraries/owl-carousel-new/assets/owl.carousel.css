@@ -20,7 +20,7 @@
     -moz-backface-visibility: hidden;
     /* fix firefox animation glitch */ }
   .owl-carousel .owl-stage:after {
-    content: ".";
+    content: "";
     display: block;
     clear: both;
     visibility: hidden;
