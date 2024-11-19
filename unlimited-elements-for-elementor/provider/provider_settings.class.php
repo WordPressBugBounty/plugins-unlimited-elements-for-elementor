@@ -1561,6 +1561,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$arrIncludeBy["ids_from_dynamic"] = __("Post IDs from Dynamic Field", "unlimited-elements-for-elementor");
 		$arrIncludeBy["terms_from_dynamic"] = __("Terms from Dynamic Field", "unlimited-elements-for-elementor");
 		$arrIncludeBy["terms_from_current_meta"] = __("Terms from Current Post Meta", "unlimited-elements-for-elementor");
+		$arrIncludeBy["terms_from_user_meta"] = __("Terms from Current User Meta", "unlimited-elements-for-elementor");
 		$arrIncludeBy["terms_free_selection"] = __("Terms Free Selection", "unlimited-elements-for-elementor");
 		$arrIncludeBy["current_query_base"] = __("Current Query as a Base", "unlimited-elements-for-elementor");
 		
@@ -1873,13 +1874,29 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		
 		$params = array();
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_TEXTFIELD;
-		$params["description"] = __("Enter current post meta field, that has the terms selection of the posts you want to bring. Use it to connect parent with children posts with terms", "unlimited-elements-for-elementor");
+		$params["description"] = __("Enter current post meta field, that has the terms selection of the posts you want to bring. Use it to connect parent with children posts with terms.", "unlimited-elements-for-elementor");
 		$params["placeholder"] = "Example: terms_select";
 		$params["add_dynamic"] = false;
 		$params["label_block"] = true;
 		$params["elementor_condition"] = $arrConditionIncludeDynamic;
 
 		$this->addTextBox($name . "_includeby_terms_from_meta", "", __("Current Post Terms Select Meta Field", "unlimited-elements-for-elementor"), $params);
+		
+		//----- include terms from current user meta field -------
+		
+		$arrConditionIncludeMeta = $arrConditionIncludeBy;
+		$arrConditionIncludeMeta[$name . "_includeby"] = "terms_from_user_meta";
+		
+		$params = array();
+		$params["origtype"] = UniteCreatorDialogParam::PARAM_TEXTFIELD;
+		$params["description"] = __("Enter current user meta field, that has the terms selection of the posts you want to bring. To show all fields write: <b>show</b>", "unlimited-elements-for-elementor");
+		$params["placeholder"] = "Example: terms_select";
+		$params["add_dynamic"] = false;
+		$params["label_block"] = true;
+		$params["elementor_condition"] = $arrConditionIncludeMeta;
+
+		$this->addTextBox($name . "_includeby_terms_from_user_meta", "", __("Select User Meta Field", "unlimited-elements-for-elementor"), $params);
+		
 		
 		// --------- terms free selection -------------
 		

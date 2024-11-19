@@ -493,7 +493,55 @@ class UniteCreatorElementorWidget extends Widget_Base {
     	return $arrItemsData;
     }
 
+    /**
+     * modify items controls
+     * add !important for better css generation, sometimes it's before the 
+     * style generate and not influence
+     */
+    private function modifyItemsControlsSelectorsUC($arrItemsControl){
+    	
+    	$type = UniteFunctionsUC::getVal($arrItemsControl, "type");
+    	
+    	if($type != "repeater")
+    		return($arrItemsControl);
+    	
+    	$fields = UniteFunctionsUC::getVal($arrItemsControl, "fields");
+    	
+    	if(empty($fields))
+    		return($arrItemsControl);
+    		
+    	foreach($fields as $index=>$field){
+    		
+    		$selectors = UniteFunctionsUC::getVal($field, "selectors");
+    		
+    		if(empty($selectors))
+    			continue;
+    			
+    		if(is_array($selectors) == false)
+    			continue;
 
+    		//modify selectors
+    		
+    		$hasChange = false;
+    		foreach($selectors as $key=>$value){
+    			
+    			if(empty($value))
+    				continue;
+    			
+    			$value = UniteFunctionsUC::addImportantToCss($value);
+    			
+    			$selectors[$key] = $value;
+    			$hasChange = true;
+    		}
+    		
+    		if($hasChange == true)
+    			$arrItemsControl["fields"][$index]["selectors"] = $selectors;
+    	}
+    	
+    	
+    	return($arrItemsControl);
+    }
+	
     /**
      * add items controls
      */
@@ -650,10 +698,8 @@ class UniteCreatorElementorWidget extends Widget_Base {
 				$repeater->add_control($name, $arrControl);
 			 }
 
-
 	    	//add some child params
 	    	$this->checkAddRelatedControls($param, $repeater);
-
          }
 
 	       //if inside some tab, in last option - close tabs
@@ -695,20 +741,24 @@ class UniteCreatorElementorWidget extends Widget_Base {
     		$arrItemsControl["condition"] = $condition;
 
     	}
-
+		
+    	//modify item controls selectors
+    	
+    	$arrItemsControl = $this->modifyItemsControlsSelectorsUC($arrItemsControl);
+    	
+    	
     	//add the control actually
 
     	$widgetName = $this->objAddon->getName();
-
+		
 
     	if(self::DEBUG_ITEMS_CONTROLS && $this->isBGWidget == false){
-
+			
 	    	dmp("---- debug items repeater ----");
 	    	dmp($widgetName);
 	    	dmp($controlName);
 	    	dmp($arrItemsControl);
     	}
-
 
          $this->objControls->add_control($controlName, $arrItemsControl);
 
@@ -1188,7 +1238,6 @@ class UniteCreatorElementorWidget extends Widget_Base {
     			else{
     				$arrControl["default"] = $arrDefaultValue;
     			}
-
 
     			//set selector
     			$arrSelectors = array();

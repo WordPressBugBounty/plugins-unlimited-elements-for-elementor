@@ -4,28 +4,28 @@
 * Plugin URI: http://unlimited-elements.com
 * Description: Unlimited Elements - Huge Widgets Pack for Elementor Website Builder, with html/css/js widget creator and editor
 * Author: Unlimited Elements
-* Version: 1.5.127
+* Version: 1.5.128
 * Author URI: http://unlimited-elements.com
 * Text Domain: unlimited-elements-for-elementor
 * Domain Path: /languages
 *  
-* Tested up to: 6.6.2
-* Elementor tested up to: 3.25.3
-* Elementor Pro tested up to: 3.25.4
+* Tested up to: 6.7
+* Elementor tested up to: 3.25.7
+* Elementor Pro tested up to: 3.25.3
 */
 
 if(!defined("UNLIMITED_ELEMENTS_INC"))
 	define("UNLIMITED_ELEMENTS_INC", true);
 
-	if ( ! function_exists( 'unl_fs' ) ) {
+if ( ! function_exists( 'uefe_fs' ) ) {
     // Create a helper function for easy SDK access.
-    function unl_fs() {
-        global $unl_fs;
+    function uefe_fs() {
+        global $uefe_fs;
 
-        if ( ! isset( $unl_fs ) ) {
+        if ( ! isset( $uefe_fs ) ) {
             // Include Freemius SDK.
             require_once dirname(__FILE__) . '/provider/freemius/start.php';
-
+	
             $unl_fs = fs_dynamic_init( array(
                 'id'                  => '4036',
                 'slug'                => 'unlimited-elements-for-elementor',
@@ -47,13 +47,14 @@ if(!defined("UNLIMITED_ELEMENTS_INC"))
             ) );
         }
 
-        return $unl_fs;
+        return $uefe_fs;
     }
-	
+
     // Init Freemius.
-    unl_fs();
+    uefe_fs();
     // Signal that SDK was initiated.
-    do_action( 'unl_fs_loaded' );
+    do_action( 'uefe_fs_loaded' );
+    
 }	
 	
 $mainFilepath = __FILE__;

@@ -1669,15 +1669,15 @@ class UniteCreatorParamsProcessorWork{
 	 * get date time data
 	 */
 	protected function getDateTimeData($data, $value, $name, $param, $processType){
-
+		
 		$isDebug = false;
-
+		
 		//not given or wrong type - return current date
-
+		
 		$formatFullDate = "d-M-Y, H:i";
 
 		if(empty($value) || is_array($value)){
-
+			
 			//$stamp = time();
 			//$data[$name."_stamp"] = $stamp;
 			//$data[$name] = date($formatFullDate, $stamp);
@@ -1714,8 +1714,8 @@ class UniteCreatorParamsProcessorWork{
 
 		//date is string
 
-		$stamp = strtotime($value);
-
+		$stamp = UniteFunctionsUC::date2Timestamp($value);
+		
 		$data[$name."_stamp"] = $stamp;
 
 		if($isDebug == true){
@@ -1827,6 +1827,7 @@ class UniteCreatorParamsProcessorWork{
 	 */
 	protected function getProcessedParamData($data, $value, $param, $processType){
 
+		
 		$type = UniteFunctionsUC::getVal($param, "type");
 		$name = UniteFunctionsUC::getVal($param, "name");
 

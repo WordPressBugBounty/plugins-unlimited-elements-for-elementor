@@ -577,14 +577,15 @@ class UCOperations extends UniteElementsBaseUC{
 		}
 
 		$htmlFields = HelperHtmlUC::getHtmlArrayTable($arrCustomFields, "No Meta Fields Found");
-
+		
 		$fieldsTitle = "Meta";
 
 		echo "<br>{$fieldsTitle} fields for term: <b>$name </b>, term id: $termID <br>";
 
 		dmp($htmlFields);
 	}
-
+	
+	
 	/**
 	 * terms custom fields debug
 	 */

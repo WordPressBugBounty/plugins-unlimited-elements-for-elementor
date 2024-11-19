@@ -860,7 +860,7 @@ function UEDynamicFilters(){
 	 * hide children and just clear the main filters
 	 */
 	function clearChildFilters(objGrid, objCurrentFilter, isHideChildren, termID, isClearAll){
-			
+		
 		var objFilters = getGridFilters(objGrid);
 		
 		if(!objFilters)
@@ -998,7 +998,7 @@ function UEDynamicFilters(){
 		jQuery.each(objFilters, function(index, filter){
 
 			var objFilter = jQuery(filter);
-
+			
 			objFilter.trigger(g_vars.ACTION_FILTER_UNSELECT_BY_KEY, [key]);
 			
 		});
@@ -2682,9 +2682,10 @@ function UEDynamicFilters(){
 
 		//ajax reload
 		g_lastGridAjaxCall = objGrid;
-
+		
 		objGrid.trigger(g_vars.EVENT_BEFORE_REFRESH);
-
+		
+		
 		var lastAjaxHandle = objGrid.data("last_ajax_refresh_handle");
 
 		if(lastAjaxHandle){
@@ -2877,7 +2878,7 @@ function UEDynamicFilters(){
 	 * get grid ajax options
 	 */
 	function getGridAjaxOptions(objFilters, objGrid, isFiltersInitMode, isLoadMoreMode, params){
-				
+		
 		if(!isLoadMoreMode)
 			var isLoadMoreMode = false;
 				
@@ -3316,7 +3317,6 @@ function UEDynamicFilters(){
 		});		//end filters iteration
 
 		
-		
 		//add init filters additions
 
 		var urlAddition_filtersTest = "";
@@ -3335,14 +3335,13 @@ function UEDynamicFilters(){
 			}
 		}
 
-
 		//test terms - only if there are terms in query, or mode init
-
-		if(strTaxIDs && (arrTerms.length || isFiltersInitMode == true || wasInitMode === true) ){
-
+				
+		if(strTaxIDs && (search || arrTerms.length || isFiltersInitMode == true || wasInitMode === true) ){
+			
 			if(urlAddition_filtersTest)
 				urlAddition_filtersTest += "&";
-
+			
 			urlAddition_filtersTest += "testtermids="+strTaxIDs;
 		}
 
@@ -3486,7 +3485,7 @@ function UEDynamicFilters(){
 		if(objGrid.hasClass("uc-avoid-duplicates") && isLoadMoreMode == true){
 			
 			var strExcludePostIDs = getExcludePostIDs();
-			 			
+						
 			if(strExcludePostIDs){
 				urlAjax += "&ucexclude="+strExcludePostIDs;
 				offset = null;
@@ -3556,8 +3555,21 @@ function UEDynamicFilters(){
 		
 		var objGrids = jQuery(".uc-avoid-duplicates");
 		
-		if(objGrids.length <= 1)
+		if(objGrids.length == 0)
 			return("");
+		
+		//check if rand of only grid, get id's, else not
+		
+		if(objGrids.length == 1){
+			var queryData = objGrids.attr("querydata");
+			
+			var objQueryData = JSON.parse(queryData);
+			var orderby = getVal(objQueryData,"orderby");
+			
+			if(orderby != "rand")
+				return("");
+		}
+		
 		
 		//get all the id's of all including the existing.
 		
@@ -3977,7 +3989,7 @@ function UEDynamicFilters(){
 		
 		if(!objAjaxOptions)
 			var objAjaxOptions = getGridAjaxOptions_simple(objGrid);
-
+		
 		var arrTerms = getVal(objAjaxOptions, "terms");
 
 		if(jQuery.isArray(arrTerms))
@@ -4141,9 +4153,9 @@ function UEDynamicFilters(){
 		objGrids.on(g_vars.EVENT_UNSELECT_FILTER, function(event, key){
 						
 			var objGrid = jQuery(this);
-
+			
 			unselectFilterItem(objGrid, key);
-
+			
 			objGrid.trigger(g_vars.ACTION_REFRESH_GRID);
 		});
 

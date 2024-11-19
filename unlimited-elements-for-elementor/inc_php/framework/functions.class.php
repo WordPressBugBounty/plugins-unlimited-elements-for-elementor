@@ -1880,6 +1880,16 @@ class UniteFunctionsUC{
 		return($newString);
 		}
 
+	/**
+	 * add !important to any css that ends with ";" and not has !important at it;
+	 */
+	public static function addImportantToCss($css){
+		
+		if(empty($css))
+			return($css);
+		
+    	return preg_replace('/([^:]+:\s*[^;]+);(?!\s*!important)/', '$1 !important;', $css);
+	}
 
 	public static function z__________URL__________(){}
 
@@ -3113,6 +3123,64 @@ class UniteFunctionsUC{
 
 		$strDate = date("d M Y",$stamp);	//27 Jun 2009
 		return($strDate);
+	}
+	
+	/**
+	 * detect date format by date string
+	 */
+	public static function detectDateFormat($strDate){
+	    
+	    $patterns = array(
+	        '/^\d{4}\/\d{2}\/\d{2}$/' => 'Y/m/d',    // 2024/12/31
+	        '/^\d{4}-\d{2}-\d{2}$/' => 'Y-m-d',      // 2024-12-31
+	        '/^\d{2}\/\d{2}\/\d{4}$/' => 'd/m/Y',    // 31/12/2024
+	        '/^\d{2}-\d{2}-\d{4}$/' => 'd-m-Y',      // 31-12-2024
+	        '/^\d{2}\/\d{2}\/\d{2}$/' => 'd/m/y',    // 31/12/24
+	        '/^\d{2}-\d{2}-\d{2}$/' => 'd-m-y',      // 31-12-24
+	        '/^\d{2}\/\d{4}$/' => 'm/d/Y',           // 12/31/2024
+	        '/^\d{2}-\d{4}$/' => 'm-d-Y',            // 12-31-2024
+	    );
+	    
+	    foreach ($patterns as $pattern => $format) {
+	        if (preg_match($pattern, $strDate)) {
+	            return $format;
+	        }
+	    }
+	    
+	    return("");
+	}
+	
+	
+	/**
+	 * convert date to timestamp
+	 * if format not given - try to guess format
+	 */
+	public static function date2Timestamp($strDate, $format = ""){
+	    
+	    if(empty($strDate))
+	        return("");
+
+	    $stamp = strtotime($strDate);
+	   
+	    if(!empty($stamp))
+	       return($stamp);
+	    
+	    //guess format
+	    
+	    if(empty($format))
+	        $format = self::detectDateFormat($strDate);
+	       
+	    if(empty($format))
+	       return("");
+	    	       
+	    $date = DateTime::createFromFormat($format, $strDate);
+	    
+	    if(empty($date))
+	       return("");
+	    
+	    $stamp = $date->getTimestamp();
+	    
+	    return($stamp);	    
 	}
 	
 	

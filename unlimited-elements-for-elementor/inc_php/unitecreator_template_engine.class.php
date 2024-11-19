@@ -465,7 +465,7 @@ class UniteCreatorTemplateEngineWork{
 	 * put font override
 	 */
 	public function putFontOverride($name, $selector, $useID = false){
-
+	
 		$arrFonts = $this->addon->getArrFonts();
 
 		if(empty($arrFonts))
@@ -621,7 +621,7 @@ class UniteCreatorTemplateEngineWork{
 		if(is_numeric($stamp) == false){
 
 			$hasTags = false;
-
+            
 			$objDate = DateTime::createFromFormat($formatDateFrom, $stamp);
 
 			if(!empty($objDate))

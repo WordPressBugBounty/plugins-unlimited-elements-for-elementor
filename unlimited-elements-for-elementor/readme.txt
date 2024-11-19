@@ -13,7 +13,17 @@ Elementor all-in-one addons pack that offers a wide range of features to enhance
 
 == Description ==
 
+<h3>Black Friday Sale!</h3>
 
+🚀 Get Unlimited Elements at half price this Black Friday!
+
+Now's your chance to access the full widget library and premium features at a massive discount. Don’t wait—this deal expires Nov 30!
+
+<a href="https://unlimited-elements.com/pricing/">Unlock 50% Off Now!</a>
+
+<br>
+<br>
+ 
 <strong>Elementor</strong> users, elevate your web design experience with <strong>Unlimited Elements for Elementor</strong>. An all in one plugin that instantly gives you the most advanced widgets and tools to make better Elementor websites faster.  Take your WordPress website to the next level. 
 
 <a href="https://unlimited-elements.com/elementor-widgets/">View Elementor Widgets Demos</a>
@@ -68,53 +78,55 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 1. [Flip Box (Free)](https://unlimited-elements.com/flip-box-widget-for-elementor/) 
 
-2. [SVG Animation (Free)](https://unlimited-elements.com/svg-animation-widget-for-elementor) 
+2. [Icon Bullets (Free)](https://unlimited-elements.com/docs/icon-bullets/) 
 
-3. [Animated Hamburger Icon (Free)](https://unlimited-elements.com/animated-hamburger-icon-for-elementor/) 
+3. [Number Box (Free)](https://unlimited-elements.com/number-box-widget-widget-for-elementor/) 
 
-4. [Timeline Bullets (Free)](https://unlimited-elements.com/timeline-bullets-widget-for-elementor/) 
+4. [Blob Shapes (Free)](https://unlimited-elements.com/blob-shape-widget-for-elementor/) 
 
-5. [Lordicon: Animated Icons (Free)](https://unlimited-elements.com/lordicon-animated-icons-widget-for-elementor/) 
+5. [SVG Animation (Free)](https://unlimited-elements.com/svg-animation-widget-for-elementor) 
 
-6. [Blob Shapes (Free)](https://unlimited-elements.com/blob-shape-widget-for-elementor/) 
+6. [Timeline Bullets (Free)](https://unlimited-elements.com/timeline-bullets-widget-for-elementor/) 
 
-7. [Number Box (Free)](https://unlimited-elements.com/number-box-widget-widget-for-elementor/) 
+7. [Lordicon: Animated Icons (Free)](https://unlimited-elements.com/lordicon-animated-icons-widget-for-elementor/) 
 
-8. [Icon Bullets (Free)](https://unlimited-elements.com/docs/icon-bullets/) 
+8. [Animated Hamburger Icon (Free)](https://unlimited-elements.com/animated-hamburger-icon-for-elementor/) 
 
 9. [Image Shapes (Pro)](https://unlimited-elements.com/image-shapes-for-elementor-page-builder/) 
 
-10. [Scroll Sequence (Pro)](https://unlimited-elements.com/scroll-sequence-widget-for-elementor/) 
+10. [Hexagon Grid (Pro)](https://unlimited-elements.com/hexagon-grid-widget-for-elementor/) 
 
-11. [Christmas Icons (Pro)](https://unlimited-elements.com/christmas-icons-widget-for-elementor/) 
+11. [Custom Cursor (Pro)](https://unlimited-elements.com/custom-cursor-widget-for-elementor/) 
 
-12. [Icon Box Accordion (Pro)](https://unlimited-elements.com/icon-box-accordion-widget-for-elementor/) 
+12. [Scroll Sequence (Pro)](https://unlimited-elements.com/scroll-sequence-widget-for-elementor/) 
 
-13. [Morph Slider (Pro)](https://unlimited-elements.com/morph-slider-widget-for-elementor/) 
+13. [Icon Box Accordion (Pro)](https://unlimited-elements.com/icon-box-accordion-widget-for-elementor/) 
 
-14. [Scroll Image Reveal (Pro)](https://unlimited-elements.com/image-reveal-on-scroll-widget-for-elementor) 
+14. [Morph Slider (Pro)](https://unlimited-elements.com/morph-slider-widget-for-elementor/) 
 
-15. [Image Accordion (Pro)](https://unlimited-elements.com/image-accordion-widget-for-elementor/) 
+15. [Scroll Image Reveal (Pro)](https://unlimited-elements.com/scroll-image-reveal-widget-for-elementor/) 
 
-16. [Image Zoom Magnifier (Pro)](https://unlimited-elements.com/image-zoom-magnifier-widget-for-elementor/) 
+16. [Icon Tabs (Pro)](https://unlimited-elements.com/icon-tabs-widget-for-elementor) 
 
 17. [Particle Image (Pro)](https://unlimited-elements.com/image-particle-widget-for-elementor/) 
 
-18. [Icon Accordion (Pro)](https://unlimited-elements.com/icon-accordion-widget-for-elementor/) 
+18. [Image Zoom Magnifier (Pro)](https://unlimited-elements.com/image-zoom-magnifier-widget-for-elementor/) 
 
 19. [Background Switcher (Pro)](https://unlimited-elements.com/background-switcher-widget-for-elementor/) 
 
-20. [Icon Tabs (Pro)](https://unlimited-elements.com/icon-tabs-widget-for-elementor) 
+20. [Before After (Pro)](https://unlimited-elements.com/before-after-widget-for-elementor/) 
 
-21. [Before After (Pro)](https://unlimited-elements.com/before-after-widget-for-elementor/) 
+21. [Shape Bullets (Pro)](https://unlimited-elements.com/shape-bullets-widget-for-elementor/) 
 
-22. [Shape Bullets (Pro)](https://unlimited-elements.com/shape-bullets-widget-for-elementor/) 
+22. [Flip Box Carousel (Pro)](https://unlimited-elements.com/flip-box-carousel-widget-for-elementor/) 
 
-23. [Flip Box Carousel (Pro)](https://unlimited-elements.com/flip-box-carousel-widget-for-elementor/) 
+23. [Rhombus Grid (Pro)](https://unlimited-elements.com/rhombus-grid-widget-for-elementor/) 
 
-24. [Rhombus Grid (Pro)](https://unlimited-elements.com/rhombus-grid-widget-for-elementor/) 
+24. [Icon Accordion (Pro)](https://unlimited-elements.com/icon-accordion-widget-for-elementor/) 
 
-25. [Custom Cursor (Pro)](https://unlimited-elements.com/custom-cursor-widget-for-elementor/) 
+25. [Image Accordion (Pro)](https://unlimited-elements.com/image-accordion-widget-for-elementor/) 
+
+26. [Christmas Icons (Pro)](https://unlimited-elements.com/christmas-icons-widget-for-elementor/) 
 
 
 === Tools for Elementor ===
@@ -129,33 +141,39 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 5. [Animated Mouse Scroll Icon (Free)](https://unlimited-elements.com/animated-mouse-scroll-icon-widget-for-elementor/) 
 
-6. [PDF Viewer (Pro)](https://unlimited-elements.com/pdf-viewer-widget-for-elementor/) 
+6. [Toggle Dropdown (Pro)](https://unlimited-elements.com/toggle-dropdown-widget-for-elementor/) 
 
-7. [Calendar (Pro)](https://unlimited-elements.com/calendar-widget-for-elementor/) 
+7. [Age Verification (Pro)](https://unlimited-elements.com/age-verification-widget-for-elementor/) 
 
-8. [Smooth Scroll (Pro)](https://unlimited-elements.com/smooth-scroll-widget-for-elementor/) 
+8. [Calendar (Pro)](https://unlimited-elements.com/calendar-widget-for-elementor/) 
 
-9. [QR Code (Pro)](https://unlimited-elements.com/qr-code-widget-for-elementor/) 
+9. [Smooth Scroll (Pro)](https://unlimited-elements.com/smooth-scroll-widget-for-elementor/) 
 
-10. [360 Panorama Virtual Tour (Pro)](https://unlimited-elements.com/360-panorama-virtual-tour-widget-for-elementor/) 
+10. [QR Code (Pro)](https://unlimited-elements.com/qr-code-widget-for-elementor/) 
 
-11. [Layers (Pro)](https://unlimited-elements.com/layers-widget-for-elementor/) 
+11. [360 Panorama Virtual Tour (Pro)](https://unlimited-elements.com/360-panorama-virtual-tour-widget-for-elementor/) 
 
-12. [Hotspots (Pro)](https://unlimited-elements.com/hotspots-for-elementor-page-builder/) 
+12. [Protected Content (Pro)](https://unlimited-elements.com/protected-content-widget-for-elementor/) 
 
-13. [Event List (Pro)](https://unlimited-elements.com/event-list-widget-for-elementor/) 
+13. [Hotspots (Pro)](https://unlimited-elements.com/hotspots-for-elementor-page-builder/) 
 
-14. [Weather (Pro)](https://unlimited-elements.com/weather-widget-for-elementor/) 
+14. [Event List (Pro)](https://unlimited-elements.com/event-list-widget-for-elementor/) 
 
-15. [Job Listing (Pro)](https://unlimited-elements.com/job-listing-widget-for-elementor/) 
+15. [Weather (Pro)](https://unlimited-elements.com/weather-widget-for-elementor/) 
 
-16. [Image Scroll (Pro)](https://unlimited-elements.com/image-scroll-widget-for-elementor/) 
+16. [Job Listing (Pro)](https://unlimited-elements.com/job-listing-widget-for-elementor/) 
 
-17. [Currency Converter (Pro)](https://unlimited-elements.com/currency-converter-widget-for-elementor/) 
+17. [PDF Viewer (Pro)](https://unlimited-elements.com/pdf-viewer-widget-for-elementor/) 
 
-18. [360° Product Viewer (Pro)](https://unlimited-elements.com/360-product-viewer-widget-for-elementor/) 
+18. [Image Scroll (Pro)](https://unlimited-elements.com/image-scroll-widget-for-elementor/) 
 
-19. [Age Verification (Pro)](https://unlimited-elements.com/age-verification-widget-for-elementor/) 
+19. [Currency Converter (Pro)](https://unlimited-elements.com/currency-converter-widget-for-elementor/) 
+
+20. [360 Product Viewer (Pro)](https://unlimited-elements.com/360-product-viewer-widget-for-elementor/) 
+
+21. [Layers (Pro)](https://unlimited-elements.com/layers-widget-for-elementor/) 
+
+22. [Cookie Consent (Pro)](https://unlimited-elements.com/cookie-consent-widget-for-elementor/) 
 
 
 === Post Widgets for Elementor ===
@@ -201,9 +219,9 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 === Post Filters & Tools for Elementor ===
 
-1. [Post Navigation (Free)](https://unlimited-elements.com/post-navigation-widget-for-elementor/) 
+1. [Post Pagination (Free)](https://unlimited-elements.com/post-pagination-widget-for-elementor/) 
 
-2. [Post Pagination (Free)](https://unlimited-elements.com/post-pagination-widget-for-elementor/) 
+2. [Post Navigation (Free)](https://unlimited-elements.com/post-navigation-widget-for-elementor/) 
 
 3. [AJAX Search (Pro)](https://unlimited-elements.com/ajax-search-widget-for-elementor/) 
 
@@ -229,7 +247,9 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 14. [Price Range Filter (Pro)](https://unlimited-elements.com/price-range-filter-widget-for-elementor/) 
 
-15. [Off Canvas Filters (Pro)](https://unlimited-elements.com/off-canvas-filters-widget-for-elementor/) 
+15. [Colors Swatches Filter (Pro)](https://unlimited-elements.com/color-swatches-filter-widget-for-elementor/) 
+
+16. [Off Canvas Filters (Pro)](https://unlimited-elements.com/off-canvas-filters-widget-for-elementor/) 
 
 
 === Form Builder for Elementor ===
@@ -285,72 +305,120 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 5. [Woo AJAX Search (Pro)](https://unlimited-elements.com/woo-ajax-search-widget-for-elementor/) 
 
-6. [Woo Product Slider (Pro)](https://unlimited-elements.com/woo-product-slider-widget-for-elementor/) 
+6. [Woo Category Grid (Pro)](https://unlimited-elements.com/woo-category-grid-for-elemenetor/) 
 
-7. [Woo Category Grid (Pro)](https://unlimited-elements.com/woo-category-grid-for-elemenetor/) 
+7. [Woo Product Slider (Pro)](https://unlimited-elements.com/woo-product-slider-widget-for-elementor/) 
 
 8. [Woo Category Carousel (Pro)](https://unlimited-elements.com/woo-category-carousel-widget-for-elementor/) 
 
-9. [Quantity Increment Buttons (Pro)](https://unlimited-elements.com/woocommerce-product-grid-widget-for-elementor/) 
+9. [Quantity Increment Buttons (Pro)](https://unlimited-elements.com/quantity-increment-buttons-widget-for-elementor/) 
 
 
 === Marketing Widgets for Elementor ===
 
-1. [Call To Action Button (Free)](https://unlimited-elements.com/call-to-action-button-widget-for-elementor/) 
+1. [Testimonial Box (Free)](https://unlimited-elements.com/box-testimonial-widget-for-elementor/) 
 
-2. [Business Hours (Free)](https://unlimited-elements.com/business-hours-widget-for-elementor) 
+2. [Testimonial Card (Free)](https://unlimited-elements.com/logo-card-testimonial-widget-for-elementor) 
 
-3. [Counter (Free)](https://unlimited-elements.com/statistic-counters-for-elementor) 
+3. [Overlay Product Box (Free)](https://unlimited-elements.com/overlay-product-box-widget-for-elementor/) 
 
-4. [Product Card (Free)](http://unlimited-elements.com/food-menu-box-widget-for-elementor/) 
+4. [Business Hours (Free)](https://unlimited-elements.com/business-hours-widget-for-elementor) 
 
-5. [Review Box (Free)](https://unlimited-elements.com/review-box-widget-for-elementor) 
+5. [Timer Countdown (Free)](https://unlimited-elements.com/timer-countdowns-for-elementor-page-builder/) 
 
-6. [Timer Countdown (Free)](https://unlimited-elements.com/timer-countdowns-for-elementor-page-builder/) 
+6. [Call To Action Button (Free)](https://unlimited-elements.com/call-to-action-button-widget-for-elementor/) 
 
-7. [List (Free)](https://unlimited-elements.com/list-widget-for-elementor/) 
+7. [Statistic Counter (Free)](https://unlimited-elements.com/statistic-counter-widget-for-elementor/) 
 
-8. [Overlay Product Box (Free)](https://unlimited-elements.com/overlay-product-box-widget-for-elementor/) 
+8. [Product Card (Free)](http://unlimited-elements.com/food-menu-box-widget-for-elementor/) 
 
-9. [Pricing Table (Free)](https://unlimited-elements.com/pricing-table-widget-for-elementor/) 
+9. [Review Box (Free)](https://unlimited-elements.com/review-box-widget-for-elementor) 
 
-10. [Price List (Free)](https://unlimited-elements.com/price-list-widget-for-elementor/) 
+10. [List (Free)](https://unlimited-elements.com/list-widget-for-elementor/) 
 
-11. [Product Box (Free)](https://unlimited-elements.com/product-box-widget-for-elementor/) 
+11. [Block Quote Box (Free)](https://unlimited-elements.com/block-quote-box-widget-for-elementor) 
 
-12. [Copy Coupon Code (Pro)](https://unlimited-elements.com/copy-coupon-code-widget-for-elementor) 
+12. [Team Member Box (Free)](https://unlimited-elements.com/team-member-box-widget-for-elementor/) 
 
-13. [Telegram Chat (Pro)](https://unlimited-elements.com/telegram-chat-widget-for-elementor) 
+13. [Price List (Free)](https://unlimited-elements.com/price-list-widget-for-elementor/) 
 
-14. [Timer Countdown Banner (Pro)](https://unlimited-elements.com/timer-countdown-banner-widget-for-elementor) 
+14. [Pricing Table (Free)](https://unlimited-elements.com/pricing-table-widget-for-elementor/) 
 
-15. [Review Carousel (Pro)](https://unlimited-elements.com/review-carousel-widget-for-elementor/) 
+15. [Block Quote Carousel Box (Free)](https://unlimited-elements.com/block-quote-carousel-box-widget-for-elementor) 
 
-16. [List Marquee (Pro)](https://unlimited-elements.com/list-marquee-widget-for-elementor/) 
+16. [Instagram Latest Image (Free)](https://unlimited-elements.com/latest-instagram-image-widget-for-elementor) 
 
-17. [Pricing Table Flip Box (Pro)](https://unlimited-elements.com/pricing-flip-box-widget-for-elementor/) 
+17. [Logo Grid (Free)](https://unlimited-elements.com/logo-grid-widget-for-elementor/) 
 
-18. [Unlimited Google Maps (Pro)](https://unlimited-elements.com/google-maps-widget-for-elementor) 
+18. [Block Quote Card (Free)](https://unlimited-elements.com/block-quote-card-widget-for-elementor/) 
 
-19. [Product Bullets (Pro)](https://unlimited-elements.com/product-bullets-widget-for-elementor) 
+19. [Logo Card (Free)](https://unlimited-elements.com/logo-card-widget-for-elementor) 
 
-20. [Icon Mobile Menu (Pro)](https://unlimited-elements.com/icon-mobile-menu-for-elementor) 
+20. [Team Member Card (Free)](http://unlimited-elements.com/team-member-card-widget-for-elementor/) 
 
-21. [Price Box (Pro)](https://unlimited-elements.com/price-box-widget-for-elementor/) 
+21. [Product Box (Free)](https://unlimited-elements.com/product-box-widget-for-elementor/) 
 
-22. [Product Highlights (Pro)](https://unlimited-elements.com/product-highlights-widget-for-elementor/) 
+22. [Logo Marquee (Pro)](https://unlimited-elements.com/logo-marquee-widget-for-elementor) 
 
-23. [Memory Game (Pro)](https://unlimited-elements.com/memory-game-widget-for-elementor/) 
+23. [Product Bullets (Pro)](https://unlimited-elements.com/product-bullets-widget-for-elementor) 
 
-24. [Pricing Plans (Pro)](https://unlimited-elements.com/pricing-plans-widget-for-elementor) 
+24. [Product Carousel (Pro)](https://unlimited-elements.com/product-carousel-widget-for-elementor) 
 
-25. [vCard (Pro)](https://unlimited-elements.com/vcard-widget-for-elementor/) 
+25. [Telegram Chat (Pro)](https://unlimited-elements.com/telegram-chat-widget-for-elementor) 
 
-26. [Floating Chat Buttons (Pro)](https://unlimited-elements.com/floating-chat-buttons-widget-for-elementor) 
+26. [Copy Coupon Code (Pro)](https://unlimited-elements.com/copy-coupon-code-widget-for-elementor) 
 
-27. [WhatsApp Chat (Pro)](https://unlimited-elements.com/whatsapp-chat-widget-for-elementor) 
+27. [Instagram Box (Pro)](https://unlimited-elements.com/instagram-teaser-box-for-elementor/) 
 
-28. [Product Carousel (Pro)](https://unlimited-elements.com/product-carousel-widget-for-elementor) 
+28. [Team Member Carousel (Pro)](http://unlimited-elements.com/team-member-carousel-widget-for-elementor/) 
+
+29. [Timer Countdown Banner (Pro)](https://unlimited-elements.com/timer-countdown-banner-widget-for-elementor) 
+
+30. [Review Carousel (Pro)](https://unlimited-elements.com/review-carousel-widget-for-elementor/) 
+
+31. [List Marquee (Pro)](https://unlimited-elements.com/list-marquee-widget-for-elementor/) 
+
+32. [Pricing Table Flip Box (Pro)](https://unlimited-elements.com/pricing-table-flip-box-widget-for-elementor/) 
+
+33. [Instagram Feed (Pro)](https://unlimited-elements.com/instagram-feed-widget-for-elementor/) 
+
+34. [Unlimited Google Maps (Pro)](https://unlimited-elements.com/google-maps-widget-for-elementor) 
+
+35. [Icon Mobile Menu (Pro)](https://unlimited-elements.com/icon-mobile-menu-for-elementor) 
+
+36. [Price Box (Pro)](https://unlimited-elements.com/price-box-widget-for-elementor/) 
+
+37. [Product Highlights (Pro)](https://unlimited-elements.com/product-highlights-widget-for-elementor/) 
+
+38. [Instagram Card (Pro)](https://unlimited-elements.com/instagram-card-widget-for-elementor/) 
+
+39. [Memory Game (Pro)](https://unlimited-elements.com/memory-game-widget-for-elementor/) 
+
+40. [Logo Carousel (Pro)](https://unlimited-elements.com/logo-carousel-widget-for-elementor/) 
+
+41. [Testimonial Carousel (Pro)](https://unlimited-elements.com/testimonial-carousel-widget-for-elementor/) 
+
+42. [Pricing Plans (Pro)](https://unlimited-elements.com/pricing-plans-widget-for-elementor) 
+
+43. [Team Member Sliding Effect (Pro)](https://unlimited-elements.com/team-member-sliding-effect-widget-for-elementor/) 
+
+44. [Team Member Grid (Pro)](http://unlimited-elements.com/team-member-grid-widget-for-elementor/) 
+
+45. [vCard (Pro)](https://unlimited-elements.com/vcard-widget-for-elementor/) 
+
+46. [Floating Chat Buttons (Pro)](https://unlimited-elements.com/floating-chat-buttons-widget-for-elementor) 
+
+47. [Block Quote Carousel (Pro)](https://unlimited-elements.com/block-quote-carousel-widget-for-elementor/) 
+
+48. [Instagram Metro Grid (Pro)](https://unlimited-elements.com/metro-instagram-widget-for-elementor) 
+
+49. [WhatsApp Chat (Pro)](https://unlimited-elements.com/whatsapp-chat-widget-for-elementor) 
+
+50. [Block Quote Slider (Pro)](https://unlimited-elements.com/block-quote-slider-widget-for-elementor) 
+
+51. [Team Member Icon Effect (Pro)](https://unlimited-elements.com/team-member-icon-effect-widget-for-elementor/) 
+
+52. [Badge (Pro)](https://unlimited-elements.com/badge-widget-for-elementor/) 
 
 
 === Loop Builder for Elementor ===
@@ -376,7 +444,7 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 3. [Remote Counter (Free)](https://unlimited-elements.com/remote-counter-widget-for-elementor/) 
 
-4. [Remote Play Pause (Free)](https://unlimited-elements.com/remote-control-widgets) 
+4. [Remote Play Pause (Free)](https://unlimited-elements.com/remote-play-pause-widget-for-elementor/) 
 
 5. [Remote Tabs (Pro)](https://unlimited-elements.com/remote-tabs-widget-for-elementor) 
 
@@ -395,7 +463,7 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 2. [Fullscreen Menu (Free)](https://unlimited-elements.com/fullscreen-menu-widget-for-elementor/) 
 
-3. [List Menu (Free)](https://unlimited-elements.com/simple-list-menu-widget-for-elementor) 
+3. [List Menu (Free)](https://unlimited-elements.com/list-menu-widget-for-elementor/) 
 
 4. [Mega Menu (Pro)](https://unlimited-elements.com/mega-menu-widget-for-elementor/) 
 
@@ -414,33 +482,47 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 === Content Widgets for Elementor ===
 
-1. [Content Accordion (Free)](https://unlimited-elements.com/content-accordion-widget-for-elementor/) 
+1. [Content Tabs (Free)](https://unlimited-elements.com/content-tabs-widget-for-elementor/) 
 
-2. [Simple Popup (Free)](https://unlimited-elements.com/simple-popup-widget-for-elementor/) 
+2. [Card Carousel (Free)](https://unlimited-elements.com/card-carousel-widget-for-elementor/) 
 
-3. [Content Tabs (Free)](https://unlimited-elements.com/content-tabs-widget-for-elementor/) 
+3. [Content Accordion (Free)](https://unlimited-elements.com/content-accordion-widget-for-elementor/) 
 
-4. [Expanding Content Cards (Pro)](https://unlimited-elements.com/expanding-content-cards-widget-for-elementor/) 
+4. [Simple Popup (Free)](https://unlimited-elements.com/simple-popup-widget-for-elementor/) 
 
-5. [Content Carousel (Pro)](https://unlimited-elements.com/content-carousel-widget-for-elementor/) 
+5. [Expanding Content Cards (Pro)](https://unlimited-elements.com/expanding-content-cards-widget-for-elementor/) 
 
-6. [Content Grid (Pro)](https://unlimited-elements.com/content-grid-widget-for-elementor/) 
+6. [Unlimited Grid (Pro)](https://unlimited-elements.com/unlimited-grid-widget-for-elementor/) 
 
-7. [Mega Slider (Pro)](https://unlimited-elements.com/mega-slider-widget-for-elementor/) 
+7. [Toggle Box (Pro)](https://unlimited-elements.com/toggle-box-widget-for-elementor/) 
 
-8. [Unfold Content (Pro)](https://unlimited-elements.com/unfold-content-widget-for-elementor/) 
+8. [Unlimited Table (Pro)](http://unlimited-elements.com/unlimited-table-widget-for-elementor/) 
 
-9. [Content Slider (Pro)](https://unlimited-elements.com/content-slider-widget-for-elementor) 
+9. [Content Switcher (Pro)](https://unlimited-elements.com/content-switcher-widget-for-elementor/) 
 
-10. [Content Switcher (Pro)](https://unlimited-elements.com/content-switcher-widget-for-elementor/) 
+10. [Content Slider (Pro)](https://unlimited-elements.com/content-slider-widget-for-elementor) 
 
-11. [Unlimited Table (Pro)](http://unlimited-elements.com/unlimited-table-widget-for-elementor/) 
+11. [Unfold Content (Pro)](https://unlimited-elements.com/unfold-content-widget-for-elementor/) 
 
-12. [Toggle Box (Pro)](https://unlimited-elements.com/toggle-box-widget-for-elementor/) 
+12. [Overlay Carousel (Pro)](https://unlimited-elements.com/overlay-carousel-widget-for-elementor) 
 
-13. [Unlimited Grid (Pro)](https://unlimited-elements.com/unlimited-grid-widget-for-elementor/) 
+13. [Mega Slider (Pro)](https://unlimited-elements.com/mega-slider-widget-for-elementor/) 
 
-14. [Content Ticker (Pro)](https://unlimited-elements.com/content-ticker-widget-for-elementor/) 
+14. [Swipe Carousel (Pro)](https://unlimited-elements.com/swipe-carousel-widget-for-elementor/) 
+
+15. [Unlimited Carousel (Pro)](https://unlimited-elements.com/unlimited-carousel-widget-for-elementor) 
+
+16. [Material Carousel (Pro)](https://unlimited-elements.com/material-carousel-widget-for-elementor/) 
+
+17. [Icon Carousel (Pro)](https://unlimited-elements.com/icon-carousel-widget-for-elementor/) 
+
+18. [Content Grid (Pro)](https://unlimited-elements.com/content-grid-widget-for-elementor/) 
+
+19. [Coverflow Carousel (Pro)](https://unlimited-elements.com/coverflow-carousel-widget-for-elementor/) 
+
+20. [Content Carousel (Pro)](https://unlimited-elements.com/content-carousel-widget-for-elementor/) 
+
+21. [Content Ticker (Pro)](https://unlimited-elements.com/content-ticker-widget-for-elementor/) 
 
 
 === Media Widgets for Elementor ===
@@ -461,38 +543,21 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 8. [Carousel Gallery (Pro)](https://unlimited-elements.com/carousel-gallery-widget-for-elementor/) 
 
-9. [Thumbnail Gallery (Pro)](https://unlimited-elements.com/unlimited-gallery-widget-for-elementor/) 
+9. [Justified Image Carousel (Pro)](https://unlimited-elements.com/justified-image-carousel-widget-for-elementor/) 
 
-10. [Audio Playlist (Pro)](https://unlimited-elements.com/audio-playlist-widget-for-elementor) 
+10. [Thumbnail Gallery (Pro)](https://unlimited-elements.com/thumbnail-gallery-widget-for-elementor/) 
 
-11. [Audio Player (Pro)](https://unlimited-elements.com/audio-player-widget-for-elementor/) 
+11. [Audio Playlist (Pro)](https://unlimited-elements.com/audio-playlist-widget-for-elementor) 
 
-12. [Thumbnail Slider (Pro)](https://unlimited-elements.com/thumbnail-slider-widget-for-elementor/) 
+12. [Portfolio Carousel (Pro)](https://unlimited-elements.com/portfolio-carousel-widget-for-elementor/) 
 
-13. [Image and Video Slider (Pro)](https://unlimited-elements.com/image-and-video-slider-widget-for-elementor/) 
+13. [Audio Player (Pro)](https://unlimited-elements.com/audio-player-widget-for-elementor/) 
 
-14. [Video Playlist (Pro)](https://unlimited-elements.com/video-playlist-widget-for-elementor/) 
+14. [Thumbnail Slider (Pro)](https://unlimited-elements.com/thumbnail-slider-widget-for-elementor/) 
 
+15. [Image and Video Slider (Pro)](https://unlimited-elements.com/image-and-video-slider-widget-for-elementor/) 
 
-=== Carousel Widgets for Elementor ===
-
-1. [Card Carousel (Free)](https://unlimited-elements.com/card-carousel-widget-for-elementor/) 
-
-2. [Unlimited Carousel (Pro)](https://unlimited-elements.com/unlimited-carousel-widget-for-elementor) 
-
-3. [Coverflow Carousel (Pro)](https://unlimited-elements.com/coverflow-carousel-widget-for-elementor/) 
-
-4. [Icon Carousel (Pro)](https://unlimited-elements.com/icon-carousel-widget-for-elementor/) 
-
-5. [Material Carousel (Pro)](https://unlimited-elements.com/material-carousel-widget-for-elementor/) 
-
-6. [Overlay Carousel (Pro)](https://unlimited-elements.com/overlay-carousel-widget-for-elementor) 
-
-7. [Justified Image Carousel (Pro)](https://unlimited-elements.com/justified-image-carousel-widget-for-elementor/) 
-
-8. [Swipe Carousel (Pro)](https://unlimited-elements.com/swipe-carousel-widget-for-elementor/) 
-
-9. [Portfolio Carousel (Pro)](https://unlimited-elements.com/portfolio-carousel-widget-for-elementor/) 
+16. [Video Playlist (Pro)](https://unlimited-elements.com/video-playlist-widget-for-elementor/) 
 
 
 === Infographic Widgets for Elementor ===
@@ -503,90 +568,64 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 3. [Pie chart (Free)](https://unlimited-elements.com/pie-chart-for-elementor) 
 
-4. [Line Chart (Free)](https://unlimited-elements.com/unlimited-charts-widget-for-elementor/) 
+4. [Line Chart (Free)](https://unlimited-elements.com/line-chart-widget-for-elementor/) 
 
-5. [Interactive Circle Infographic (Pro)](https://unlimited-elements.com/interactive-circle-infographic-widget-for-elementor/) 
+5. [Horizontal Timeline (Pro)](https://unlimited-elements.com/horizontal-timeline-widget-for-elementor/) 
 
 6. [Unlimited Charts (Pro)](https://unlimited-elements.com/unlimited-charts-widget-for-elementor) 
 
-7. [Funnel & Pyramid (Pro)](https://unlimited-elements.com/funnel-pyramid-widget-for-elementor/) 
+7. [Interactive Circle Infographic (Pro)](https://unlimited-elements.com/interactive-circle-infographic-widget-for-elementor/) 
 
-8. [Step Process (Pro)](https://unlimited-elements.com/step-process-widget-for-elementor) 
+8. [Funnel & Pyramid (Pro)](https://unlimited-elements.com/funnel-pyramid-widget-for-elementor/) 
 
-9. [Circle Progress Bar (Pro)](https://unlimited-elements.com/circle-progress-bar-widget-for-elementor/) 
+9. [Step Process (Pro)](https://unlimited-elements.com/step-process-widget-for-elementor) 
 
-10. [Semi Circle Progress Bar (Pro)](https://unlimited-elements.com/semi-circle-progress-bar-widget-for-elementor/) 
+10. [Circle Progress Bar (Pro)](https://unlimited-elements.com/circle-progress-bar-widget-for-elementor/) 
 
-11. [Vertical Progress Bar (Pro)](https://unlimited-elements.com/vertical-progress-bar-widget-for-elementor) 
+11. [Semi Circle Progress Bar (Pro)](https://unlimited-elements.com/semi-circle-progress-bar-widget-for-elementor/) 
 
-
-=== Testimonials for Elementor ===
-
-1. [Testimonial Box (Free)](https://unlimited-elements.com/box-testimonial-widget-for-elementor/) 
-
-2. [Testimonial Card (Free)](https://unlimited-elements.com/logo-card-testimonial-widget-for-elementor) 
-
-3. [Testimonial Carousel (Pro)](https://unlimited-elements.com/testimonial-carousel-widget-for-elementor/) 
-
-
-=== Team Members for Elementor ===
-
-1. [Team Member Card (Free)](http://unlimited-elements.com/team-member-card-widget-for-elementor/) 
-
-2. [Team Member Box (Free)](https://unlimited-elements.com/team-member-box-overlay-widget-for-elementor) 
-
-3. [Team Member Carousel (Pro)](http://unlimited-elements.com/team-member-carousel-widget-for-elementor/) 
-
-4. [Team Member Icon Effect (Pro)](https://unlimited-elements.com/icon-team-member-widget-for-elementor) 
-
-5. [Team Member Grid (Pro)](http://unlimited-elements.com/team-member-grid-widget-for-elementor/) 
-
-6. [Team Member Sliding Effect (Pro)](https://unlimited-elements.com/team-member-sliding-effect-widget-for-elementor/) 
+12. [Vertical Progress Bar (Pro)](https://unlimited-elements.com/vertical-progress-bar-widget-for-elementor) 
 
 
 === Content Boxes for Elementor ===
 
-1. [Content Reveal on Hover (Free)](https://unlimited-elements.com/content-reveal-on-hover-widget-for-elementor/) 
+1. [Icon Box (Free)](https://unlimited-elements.com/icon-box-widget-for-elementor/) 
 
-2. [Image Zoom Content Box (Free)](https://unlimited-elements.com/image-zoom-content-box-widget-for-elementor/) 
+2. [Sliding Icon Box (Free)](https://unlimited-elements.com/sliding-icon-box-widget-for-elementor/) 
 
-3. [Image Card (Free)](https://unlimited-elements.com/image-card-content-box-widget-for-elementor/) 
+3. [Image Zoom Content Box (Free)](https://unlimited-elements.com/image-zoom-content-box-widget-for-elementor/) 
 
-4. [Icon Image Content Box (Free)](https://unlimited-elements.com/icon-image-content-box-widget-for-elementor) 
+4. [Icon Card (Free)](https://unlimited-elements.com/material-footer-card-widget-for-elementor) 
 
-5. [Icon Content Box (Free)](https://unlimited-elements.com/icon-content-box-widget-for-elementor) 
+5. [Image Card (Free)](https://unlimited-elements.com/image-card-content-box-widget-for-elementor/) 
 
-6. [Content Box Zoom Caption Reveal (Pro)](https://unlimited-elements.com/zoom-caption-reveal-content-box-widget-for-elementor) 
+6. [Icon Content Box (Free)](https://unlimited-elements.com/icon-content-box-widget-for-elementor) 
 
-7. [Content Box Overlay (Pro)](https://unlimited-elements.com/subtle-overlay-content-box-widget-for-elementor/) 
+7. [Twist Hover Icon Box (Free)](https://unlimited-elements.com/twist-hover-icon-box-widget-for-elementor/) 
 
-8. [Animated Border Content Box (Pro)](https://unlimited-elements.com/animated-border-content-box-widget-for-elementor) 
+8. [Content Reveal on Hover (Free)](https://unlimited-elements.com/content-reveal-on-hover-widget-for-elementor/) 
 
-9. [Content Box Sliding Effect (Pro)](https://unlimited-elements.com/sliding-content-box-widget-for-elementor/) 
+9. [Icon Number Box (Free)](https://unlimited-elements.com/icon-number-box-widget-for-elementor) 
 
+10. [Icon Image Content Box (Free)](https://unlimited-elements.com/icon-image-content-box-widget-for-elementor) 
 
-=== Instagram Widgets for Elementor ===
+11. [Animated Border Content Box (Pro)](https://unlimited-elements.com/animated-border-content-box-widget-for-elementor) 
 
-1. [Instagram Latest Image (Free)](https://unlimited-elements.com/latest-instagram-image-widget-for-elementor) 
+12. [Content Box Sliding Effect (Pro)](https://unlimited-elements.com/sliding-content-box-widget-for-elementor/) 
 
-2. [Instagram Feed (Pro)](https://unlimited-elements.com/instagram-feed-widget-for-elementor/) 
+13. [Content Box Overlay (Pro)](https://unlimited-elements.com/content-box-overlay-widget-for-elementor/) 
 
-3. [Instagram Box (Pro)](https://unlimited-elements.com/instagram-teaser-box-for-elementor/) 
+14. [Icon Box Content Reveal (Pro)](https://unlimited-elements.com/content-reveal-icon-box-widget-for-elementor/) 
 
-4. [Instagram Card (Pro)](https://unlimited-elements.com/instagram-card-widget-for-elementor/) 
+15. [Animated Border Icon Box (Pro)](https://unlimited-elements.com/animated-border-icon-box-widget-for-elementor/) 
 
-5. [Instagram Metro Grid (Pro)](https://unlimited-elements.com/metro-instagram-widget-for-elementor) 
+16. [Icon Box Hover Effect (Pro)](https://unlimited-elements.com/icon-box-hover-effect-widget-for-elementor/) 
 
+17. [Caption Reveal Content Box (Pro)](https://unlimited-elements.com/caption-reveal-content-box-widget-for-elementor) 
 
-=== Logo Widgets for Elementor ===
+18. [Animated Icon Box (Pro)](https://unlimited-elements.com/animated-icon-box-widget-for-elementor/) 
 
-1. [Logo Grid (Free)](https://unlimited-elements.com/logo-grid-widget-for-elementor/) 
-
-2. [Logo Card (Free)](https://unlimited-elements.com/logo-card-widget-for-elementor) 
-
-3. [Logo Carousel (Pro)](https://unlimited-elements.com/logo-carousel-widget-for-elementor/) 
-
-4. [Logo Marquee (Pro)](https://unlimited-elements.com/logo-marquee-widget-for-elementor) 
+19. [Overlay Icon Box (Pro)](https://unlimited-elements.com/solid-color-overlay-icon-box-widget-for-elementor) 
 
 
 === Hover Effects for Elementor ===
@@ -595,62 +634,78 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 2. [Link Hover Effects (Free)](https://unlimited-elements.com/link-hover-effects/) 
 
-3. [Icon Hover Effects (Free)](https://unlimited-elements.com/icon-hover-effects-for-elementor/) 
+3. [Icon Hover Effects (Free)](https://unlimited-elements.com/icon-hover-effects-widget-for-elementor/) 
 
 4. [Creative Button Hovers (Free)](https://unlimited-elements.com/creative-button-hover-widget-for-elementor/) 
 
-5. [Caption Hover Effects (Free)](https://unlimited-elements.com/caption-hover-effects/) 
+5. [Caption Hover Effects (Free)](https://unlimited-elements.com/caption-hover-effects-widget-for-elementor/) 
 
-6. [Banner Hover Effects (Pro)](https://unlimited-elements.com/banner-hover-effect-widgets-for-elementor/) 
+6. [Banner Hover Effects (Pro)](https://unlimited-elements.com/banner-hover-effects-widget-for-elementor/) 
 
-7. [iHover Effect (Pro)](https://unlimited-elements.com/ihover-for-elementor/) 
+7. [iHover Effects (Pro)](https://unlimited-elements.com/ihover-effects-widget-for-elementor/) 
 
 8. [Border Link Hover Effects (Pro)](https://unlimited-elements.com/border-link-hover-effects-widget-for-elementor/) 
 
 
 === Button Widgets for Elementor ===
 
-1. [Button Group (Free)](https://unlimited-elements.com/button-group-widget-for-elementor/) 
+1. [Dark Mode (Free)](https://unlimited-elements.com/dark-mode-widget-for-elementor/) 
 
-2. [Gradient Button (Free)](https://unlimited-elements.com/gradient-button-widget-for-elementor/) 
+2. [Rotating Social Icons (Free)](https://unlimited-elements.com/rotating-social-icon-button-widgets-for-elementor) 
 
-3. [Video Play Button (Free)](https://unlimited-elements.com/video-play-button-popup-widget-for-elementor/) 
+3. [Button Group (Free)](https://unlimited-elements.com/button-group-widget-for-elementor/) 
 
-4. [Overlay Button (Free)](https://unlimited-elements.com/overlay-button-widget-for-elementor/) 
+4. [Toggle Text Button (Free)](https://unlimited-elements.com/toggle-text-button-widget-for-elementor/) 
 
-5. [Parallelogram Button (Free)](https://unlimited-elements.com/parellogram-button-widget-for-elementor/) 
+5. [Multi Line Button (Free)](https://unlimited-elements.com/multi-line-button-widget-for-elementor/) 
 
 6. [Underline Animated Button (Free)](https://unlimited-elements.com/underline-animated-button-widget-for-elementor/) 
 
-7. [Multi Line Button (Free)](https://unlimited-elements.com/multi-line-button-widget-for-elementor/) 
+7. [Social Icons With Label (Free)](https://unlimited-elements.com/label-social-icon-button-widgets-for-elementor) 
 
-8. [Toggle Text Button (Free)](https://unlimited-elements.com/toggle-text-button-widget-for-elementor/) 
+8. [Gradient Button (Free)](https://unlimited-elements.com/gradient-button-widget-for-elementor/) 
 
-9. [Scroll To Top (Free)](unlimited-elements.com/scroll-to-top-widget-for-elementor) 
+9. [Overlay Button (Free)](https://unlimited-elements.com/overlay-button-widget-for-elementor/) 
 
-10. [Dark Mode (Free)](https://unlimited-elements.com/dark-mode-widget-for-elementor/) 
+10. [Square to Circle Social Icons (Free)](https://unlimited-elements.com/square-to-circle-social-icon-button-widgets-for-elementor) 
 
-11. [Button Icon Hover Effect (Pro)](https://unlimited-elements.com/icon-hover-effect-button-widget-for-elementor/) 
+11. [Parallelogram Button (Free)](https://unlimited-elements.com/parellogram-button-widget-for-elementor/) 
 
-12. [Glare Button Effect (Pro)](https://unlimited-elements.com/glare-effect-button-widget-for-elementor/) 
+12. [3d Social Icon Buttons (Free)](https://unlimited-elements.com/3d-social-icon-buttons-widget-for-elementor) 
 
-13. [Gradient Hover Effect Button (Pro)](https://unlimited-elements.com/gradient-hover-effect-button-widget-for-elementor/) 
+13. [Video Play Button (Free)](https://unlimited-elements.com/video-play-button-popup-widget-for-elementor/) 
 
-14. [Liquid Button (Pro)](https://unlimited-elements.com/liquid-button-widget-for-elementor/) 
+14. [Scroll To Top (Free)](unlimited-elements.com/scroll-to-top-widget-for-elementor) 
 
-15. [Dropdown Button (Pro)](https://unlimited-elements.com/dropdown-button-widget-for-elementor/) 
+15. [Social Icons Glare Effect (Free)](https://unlimited-elements.com/social-icons-glare-effect-widget-for-elementor/) 
 
-16. [Border Button Effect (Pro)](https://unlimited-elements.com/border-button-effect-widget-for-elementor/) 
+16. [Glare Button Effect (Pro)](https://unlimited-elements.com/glare-effect-button-widget-for-elementor/) 
 
-17. [Icon Pointer Button (Pro)](https://unlimited-elements.com/icon-pointer-button-widget-for-elementor/) 
+17. [Gradient Hover Effect Button (Pro)](https://unlimited-elements.com/gradient-hover-effect-button-widget-for-elementor/) 
 
-18. [Simple Artistic Button (Pro)](https://unlimited-elements.com/simple-artistic-button-widget-for-elementor/) 
+18. [Button Icon Hover Effect (Pro)](https://unlimited-elements.com/icon-hover-effect-button-widget-for-elementor/) 
 
-19. [Underline Link Hover Effect (Pro)](http://unlimited-elements.com/underline-link-hover-effect-widget-for-elementor) 
+19. [Liquid Button (Pro)](https://unlimited-elements.com/liquid-button-widget-for-elementor/) 
 
-20. [Neon Glowing Button Effect (Pro)](https://unlimited-elements.com/neon-glowing-button-effect-widget-for-elementor/) 
+20. [Dropdown Button (Pro)](https://unlimited-elements.com/dropdown-button-widget-for-elementor/) 
 
-21. [Christmas Button (Pro)](https://unlimited-elements.com/christmas-button-widget-for-elementor) 
+21. [Social Icons With Circle Fill Effect (Pro)](https://unlimited-elements.com/circle-fill-social-icon-button-widgets-for-elementor) 
+
+22. [Border Button Effect (Pro)](https://unlimited-elements.com/border-button-effect-widget-for-elementor/) 
+
+23. [Icon Pointer Button (Pro)](https://unlimited-elements.com/icon-pointer-button-widget-for-elementor/) 
+
+24. [Simple Artistic Button (Pro)](https://unlimited-elements.com/simple-artistic-button-widget-for-elementor/) 
+
+25. [Gradient Border Button (Pro)](https://unlimited-elements.com/gradient-border-button-widget-for-elementor) 
+
+26. [Underline Link Hover Effect (Pro)](http://unlimited-elements.com/underline-link-hover-effect-widget-for-elementor) 
+
+27. [Neon Glowing Button Effect (Pro)](https://unlimited-elements.com/neon-glowing-button-effect-widget-for-elementor/) 
+
+28. [Shape Social Icons (Pro)](https://unlimited-elements.com/shapes-social-icons-widgets-for-elementor/) 
+
+29. [Christmas Button (Pro)](https://unlimited-elements.com/christmas-button-widget-for-elementor) 
 
 
 === Typography for Elementor ===
@@ -669,74 +724,23 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 7. [Text Marquee Effect (Free)](https://unlimited-elements.com/text-marquee-for-elementor/) 
 
-8. [Scroll Text Reveal (Pro)](https://unlimited-elements.com/scroll-reveal-text-widget-for-elementor/) 
+8. [Annotation (Pro)](https://unlimited-elements.com/annotation-widget-for-elementor/) 
 
-9. [Futuristic Typing Text Effect (Pro)](https://unlimited-elements.com/futuristic-typing-text-effect-widget-for-elementor/) 
+9. [Animated Split Text (Pro)](https://unlimited-elements.com/animated-split-text-widget-for-elementor/) 
 
-10. [Animated Split Text (Pro)](https://unlimited-elements.com/animated-split-text-widget-for-elementor/) 
+10. [Scroll Text Reveal (Pro)](https://unlimited-elements.com/scroll-reveal-text-widget-for-elementor/) 
 
-11. [Sideways Vertical Text (Pro)](https://unlimited-elements.com/sideways-vertical-text-widget-for-elementor) 
+11. [Futuristic Typing Text Effect (Pro)](https://unlimited-elements.com/futuristic-typing-text-effect-widget-for-elementor/) 
 
-12. [Image Background Text Effect (Pro)](https://unlimited-elements.com/image-background-text-effect-widget-for-elementor/) 
+12. [Sideways Vertical Text (Pro)](https://unlimited-elements.com/sideways-vertical-text-widget-for-elementor) 
 
-13. [Typewriter Text Effect (Pro)](https://unlimited-elements.com/typewriter-text-effect-for-elementor/) 
+13. [Image Background Text Effect (Pro)](https://unlimited-elements.com/image-background-text-effect-widget-for-elementor/) 
 
-14. [Side Line Heading (Pro)](https://unlimited-elements.com/side-line-heading-widget-for-elementor/) 
+14. [Typewriter Text Effect (Pro)](https://unlimited-elements.com/typewriter-text-effect-for-elementor/) 
 
-15. [Christmas Text (Pro)](https://unlimited-elements.com/christmas-text-widget-for-elementor) 
+15. [Side Line Heading (Pro)](https://unlimited-elements.com/side-line-heading-widget-for-elementor/) 
 
-
-=== Icon Boxes for Elementor ===
-
-1. [Icon Box (Free)](https://unlimited-elements.com/icon-box-widget-for-elementor/) 
-
-2. [Icon Card (Free)](https://unlimited-elements.com/material-footer-card-widget-for-elementor) 
-
-3. [Icon Number Box (Free)](https://unlimited-elements.com/icon-button-number-box-widget-for-elementor) 
-
-4. [Twist Hover Icon Box (Free)](https://unlimited-elements.com/twist-hover-icon-box-widget-for-elementor/) 
-
-5. [Sliding Icon Box (Free)](https://unlimited-elements.com/sliding-icon-box-widget-for-elementor/) 
-
-6. [Animated Icon Box (Pro)](https://unlimited-elements.com/animated-icon-box-widget-for-elementor/) 
-
-7. [Icon Box Hover Effect (Pro)](https://unlimited-elements.com/icon-box-hover-effect-widget-for-elementor/) 
-
-8. [Animated Border Icon Box (Pro)](https://unlimited-elements.com/animated-border-icon-box-widget-for-elementor/) 
-
-9. [Icon Box Content Reveal (Pro)](https://unlimited-elements.com/content-reveal-icon-box-widget-for-elementor/) 
-
-10. [Overlay Icon Box (Pro)](https://unlimited-elements.com/solid-color-overlay-icon-box-widget-for-elementor) 
-
-
-=== Block Quotes for Elementor ===
-
-1. [Block Quote Box (Free)](https://unlimited-elements.com/block-quote-box-widget-for-elementor) 
-
-2. [Block Quote Card (Free)](https://unlimited-elements.com/material-block-quote-widget-for-elementor/) 
-
-3. [Block Quote Carousel Box (Free)](https://unlimited-elements.com/block-quote-carousel-box-widget-for-elementor) 
-
-4. [Block Quote Carousel (Pro)](https://unlimited-elements.com/block-quote-carousel-widget-for-elementor/) 
-
-5. [Block Quote Slider (Pro)](https://unlimited-elements.com/block-quote-slider-widget-for-elementor) 
-
-
-=== Social Network Icons for Elementor ===
-
-1. [Social Icons Glare Effect (Free)](https://unlimited-elements.com/glare-social-icons-widget-for-elementor/) 
-
-2. [3d Social Icon Buttons (Free)](https://unlimited-elements.com/3d-social-icon-buttons-widget-for-elementor) 
-
-3. [Square to Circle Social Icons (Free)](https://unlimited-elements.com/square-to-circle-social-icon-button-widgets-for-elementor) 
-
-4. [Rotating Social Icons (Free)](https://unlimited-elements.com/rotating-social-icon-button-widgets-for-elementor) 
-
-5. [Social Icons With Label (Free)](https://unlimited-elements.com/label-social-icon-button-widgets-for-elementor) 
-
-6. [Shape Social Icons (Pro)](https://unlimited-elements.com/shape-social-icon-button-widgets-for-elementor) 
-
-7. [Social Icons With Circle Fill Effect (Pro)](https://unlimited-elements.com/circle-fill-social-icon-button-widgets-for-elementor) 
+16. [Christmas Text (Pro)](https://unlimited-elements.com/christmas-text-widget-for-elementor) 
 
 
 === Separators and Dividers for Elementor ===
@@ -785,6 +789,7 @@ Find everything you need in one convenient package and supercharge your <strong>
 11. [Service Box Hero (Pro)](https://unlimited-elements.com/service-box-hero-widget-for-elementor) 
 
 12. [Solid Color Hero (Pro)](https://unlimited-elements.com/solid-color-hero-widget-for-elementor) 
+
 
 
 === Background Widgets for Elementor ===
@@ -894,7 +899,50 @@ Note : This plugin works with Elementor. Make sure you have [Elementor](https://
 == Changelog ==
 
 
+version 1.5.128: 2024-11-19
+
+Plugin Changes
+
+* Feature: added internal color picker empty icon when no color selected
+* Feature: added option: terms from current user meta in post query selection
+* Change: changed freemius sdk integration code
+* Fix: fixed empty date stamp output in event list multisource on some date formats
+* Fix: adjutsed items css to new version elementor css optimization
+* Fix: fixed select2 dropdown gap in changelog page
+* Fix: post widgets avoid duplicates with random order load more 
+* Fix: delete empty category from the widget library
+
+
+Widgets Changes
+
+* Feature: Post List (Free) - Added Meta Date Position option, allowing users to customize the placement of the meta date element within the widget
+* Feature: Job Listing (Pro) - Introduced separate options for 'Badge Background Color' and 'Badge Color,' providing independent control over the styling of each badge element.
+* Feature: Event List (Pro) - Added a new &quot;Title Padding&quot; option, allowing users to adjust padding around the title for improved layout customization and spacing control
+* Feature: Job Listing (Pro) - Added a new option, &quot;Badge Two,&quot; which provides an additional badge element with customizable text.
+* Feature: Dynamic Post Popup (Pro) - Introduced a new option titled 'Close Popup After Adding to Cart,' which provides users with the ability to automatically close the popup window after a product has been successfully added to the cart.
+* Feature: Thumbnail Gallery (Pro) - Added a new 'Image Fit' option, allowing users to control how images are scaled within their containers
+* Feature: Compact Gallery (Free) - Added a new 'Image Fit' option, allowing users to control how images are scaled within their containers
+* Feature: Unfold Content (Pro) - Added support for the Elementor Tabs widget, ensuring seamless compatibility and functionality within the widget.
+* Feature: Job Listing (Pro) - Added a new Badge Link option, allowing users to set a custom link for the badge element, enhancing functionality and navigation possibilities.
+* Feature: Team Member Sliding Effect (Pro) - Added border radius.
+* Feature: Background Switcher (Pro) - Introduced a new option, available separately for both Desktop and Mobile, called &quot;Hide All Background Images On Hover.&quot; This option allows to hide all images when hovering over one item.
+* Fix: Fullscreen Menu (Free) - Fixed an issue where the menu was not opening.
+* Fix: Image Tooltip (Free) - Fixed an issue where tooltip text was not being parsed correctly within the JavaScript code.
+* Fix: One Page Scroll Navigation (Pro) - Resolved an issue where the navigation dots were not functioning correctly, preventing users from navigating between items.
+* Fix: Unlimited Google Maps (Pro) - Fixed an issue where the Places element on mobile devices did not hide as expected after using the search tool.
+* Fix: Woo Product Carousel (Pro) - Fixed a conflict with the Elementor button that was causing incorrect navigation dot heights in this widget. Also added a responsive option for navigation size.
+* Fix: Mega Menu (Pro) - Optimized widget code for improved performance and efficiency.
+* Fix: Background Switcher (Pro) - Fixed an issue where setting the Initial Selected option activated only the image, leaving the content unselected.
+* Fix: Checkboxes Filter (Pro) - Fixed an issue where the Hide Accordion When Filter Has No Terms option was incorrectly hiding all parent containers instead of only the closest one.
+* Fix: Smooth Scroll (Pro) - Fixed an issue where the Smooth Scroll widget was unable to influence the scroll behavior on pages that utilized the scroll-behavior: smooth CSS property.
+* Fix: Unlimited Grid (Pro) - Increased the CSS priority of the text selector to ensure that text styling is consistently applied as intended.
+* Fix: One Page Scroll Navigation (Pro) - Fixed issue when widget were not able to affect scroll behaviour of the pages that had scroll-bahaviour: smooth css property.
+* Fix: Checkboxes Filter (Pro) - Added trigger changed on delete by key function
+
+
 version 1.5.127: 2024-11-11
+ 
+Plugin Changes
 
 * Feature: done the functionality for alphabet filter
 * Feature: added option for rss source in multisource
@@ -903,6 +951,27 @@ version 1.5.127: 2024-11-11
 * Fix: in filters disabled scroll to grid when the grid don't refreshed.
 * Fix: fixed init selected multiple checkbox filters
 * Fix: added some sanitize and escape to gallery fields output
+
+Widgets Changes
+
+* Feature: Event List (Pro) - Added Show Tag option, allowing users to display or hide tags within the widget. This option enhances flexibility by providing control over tag visibility.
+* Feature: Date Field (Pro) - Added new option, Force Full Width, allowing content elements to expand and occupy the full available width of the container.
+* Feature: Grid Gallery (Pro) - Added styling options for Bullets, Gallery Navigation Arrows, Play Video Button, Fullscreen Icon, Play Slideshow Icon, and Open/Close Thumbpanel Icon. Each element now includes Color and Color Hover options.
+* Feature: Submit Button (Free) - Added responsive functionality to Button Justify Content and Button Align Content options, allowing adjustments for different screen sizes.
+* Feature: Product Card (Free) - Added a new option called Enable Link for the Whole Widget. This option allows users to configure the entire widget area as a clickable link.
+* Feature: Product Box (Free) - Added a new option called Enable Link for the Whole Widget. This option allows users to configure the entire widget area as a clickable link
+* Feature: Price Box (Pro) - Added a new option called Enable Link for the Whole Widget. This option allows users to configure the entire widget area as a clickable link.
+* Feature: Checkboxes Filter (Pro) - Added a new option, Hide Accordion When Filter Has No Terms, allowing the Accordion Button to automatically hide if no filter terms are available.
+* Change: Number Field (Pro) - Removed some unnecessary instructions from CSV Table option.
+* Change: Radio Button Field (Pro) - Changed Label element display CSS property - now it's hardcoded and equal to &quot;inline-block&quot;.
+* Change: Bubble Float Background (Free) - Changed 	Number of Bubbles option attribute from Slider to Number to fix initing issue in some cases.
+* Fix: Expanding Content Cards (Pro) - Fixed issue when Link element were not working if Sub Title element were not present in the widget.
+* Fix: Mega Menu (Pro) - Reduced z-index of the menu to fix overlapping issues with other elements.
+* Fix: Checkboxes Filter (Pro) - Optimized the JavaScript code within widgets to reduce resource usage.
+* Fix: Checkbox Field (Pro) - Added additional space between values that returns Checkbox Field - for Checkbox Value Handling &quot;Numeric Values&quot; or &quot;Text Values&quot;.
+* Fix: Price Box (Pro) - Enhanced the widgets' code efficiency by optimizing the HTML structure and CSS styling.
+* Fix: Product Card (Free) - Enhanced the widgets' code efficiency by optimizing the HTML structure and CSS styling.
+* Fix: Mega Menu (Pro) - Added a fix for the Floating Bars feature in Elementor within the Mega Menu widget, ensuring seamless compatibility and improved display functionality.
 
 
 version 1.5.126: 2024-11-04

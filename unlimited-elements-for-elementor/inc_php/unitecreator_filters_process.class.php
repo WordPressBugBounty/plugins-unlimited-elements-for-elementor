@@ -2224,7 +2224,7 @@ class UniteCreatorFiltersProcess{
 
 			$role = UniteFunctionsUC::getVal($data, "filter_role");
 
-			if(strpos($role,"child") !== false)
+			if(strpos($role, self::ROLE_CHILD) !== false)
 				$isSelectFirst = false;
 		}
 
@@ -2451,7 +2451,7 @@ class UniteCreatorFiltersProcess{
 
 	/**
 	 * check if filter should be hidden, if selected items avaliable
-	 * only for select filters / child roje and under ajax
+	 * only for select filters / child role and under ajax
 	 */
 	private function modifyOutputTerms_isFilterHidden($data, $arrTerms, $isUnderAjax){
 
@@ -2459,8 +2459,8 @@ class UniteCreatorFiltersProcess{
 			return(false);
 
 		$role = UniteFunctionsUC::getVal($data, "filter_role");
-
-		if($role != "child")
+				
+		if($role != self::ROLE_CHILD)
 			return(false);
 
 		if(empty($arrTerms))

@@ -1138,5 +1138,30 @@ class HelperProviderUC{
 		HelperUC::$operations->putPostsFullDebug($arrPosts);
 	}
 	
+	/**
+	 * show current user meta data for debug
+	 */
+	public static function showCurrentUserMetaDataDebug(){
+		
+		$userID = get_current_user_id();
+
+		if(empty($userID))
+			dmp("No current user found");
+		else{
+			$userData = UniteFunctionsWPUC::getUserData($userID);
+			$username = UniteFunctionsUC::getVal($userData, "username");
+			$userMeta = UniteFunctionsWPUC::getUserCustomFields($userID, false);
+			
+			$htmlFields = HelperHtmlUC::getHtmlArrayTable($userMeta, "No Meta Fields Found");
+			
+			dmp("User logged in: <b>$username</b>");
+			
+			dmp("Meta Data:");
+			
+			dmp($htmlFields);
+		}
+		
+	}
+	
 
 }

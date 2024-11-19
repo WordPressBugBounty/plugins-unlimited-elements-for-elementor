@@ -367,7 +367,8 @@ class UniteCreatorPluginIntegrations{
 		$objJetCW->wishlist_integration->add_wishlist_button_default();
 		
 	}
-
+	
+	
 	/**
 	 * check integrate with relevancy
 	 * add "relevancy" if search found and relevancy plugin exists

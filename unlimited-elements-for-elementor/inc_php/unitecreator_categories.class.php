@@ -852,10 +852,10 @@ class UniteCreatorCategoriesWork extends UniteElementsBaseUC{
 	 */
 	private function remove($catID){
 		
-		$catID = UniteFunctionsUC::validateNumeric($catID,"category id");
+		UniteFunctionsUC::validateNumeric($catID,"category id");
 		
 		$catID = (int)$catID;
-		
+				
 		$arrCat = $this->getCat($catID);
 		$type = UniteFunctionsUC::getVal($arrCat, "type");
 		
@@ -915,7 +915,7 @@ class UniteCreatorCategoriesWork extends UniteElementsBaseUC{
 		
 		$catID = UniteFunctionsUC::getVal($data, "catID");
 		$type = UniteFunctionsUC::getVal($data, "type");
-		
+				
 		$this->remove($catID, $type);
 				
 		$response = array();

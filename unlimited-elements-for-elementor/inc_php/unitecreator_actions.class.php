@@ -115,7 +115,7 @@ class UniteCreatorActions{
 					HelperProviderUC::verifyAdminPermission();
 
 					$response = $categories->removeFromData($data);
-
+					
 					HelperUC::ajaxResponseSuccess(esc_html__("The category deleted successfully", "unlimited-elements-for-elementor"), $response);
 				break;
 				case "update_category":

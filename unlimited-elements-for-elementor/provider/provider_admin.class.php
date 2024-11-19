@@ -1054,7 +1054,7 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 		$this->modifyPluginVariables();
 
 		$this->addAdminMenuLinks();
-
+		
 		//add internal hook for adding a menu in arrMenus
 		$this->addAction(self::ACTION_ADMIN_MENU, "addAdminMenu");
 
@@ -1069,10 +1069,12 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 		}else{
 			$this->addAction(self::ACTION_ADD_SCRIPTS, "onAddOutsideScripts");
 		}
-
+		
 		$this->addAction(self::ACTION_PRINT_SCRIPT, "onPrintFooterScripts");
 
 		$this->addAction(self::ACTION_AFTER_SWITCH_THEME, "afterSwitchTheme");
+				
+		UniteFunctionsWPUC::onAdminInit();
 		
 		$this->addEvent_onActivate();
 
@@ -1083,9 +1085,9 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 			$this->runProviderAction();
 
 		//start the external plugin api integration
-
+		
 		add_action("init", array($this, "checkRankmathAjaxCollision"));
-
+		
 		$this->addAction("admin_init", "onAdminInit");
 	}
 

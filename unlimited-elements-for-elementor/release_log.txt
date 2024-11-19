@@ -1,4 +1,17 @@
 
+
+version 1.5.128:
+
+* Fix: fixed empty date stamp output in event list multisource on some date formats
+* Fix: adjutsed items css to new version elementor css optimization
+* Fix: fixed select2 dropdown gap in changelog page
+* Feature: added option: terms from current user meta in post query selection
+* Fix: post widgets avoid duplicates with random order load more 
+* Fix: delete empty category from the widget library
+* Feature: added internal color picker empty icon when no color selected
+* Change: changed freemius sdk integration code
+
+
 version 1.5.127:
 
 * Feature: done the functionality for alphabet filter

@@ -21,7 +21,9 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		private static $arrThumbSizesCache = null;
 		public static $arrLastTermsArgs;
 		public static $cachePostContent = array();
-
+		public static $toDeregisterStyles = array();
+		public static $toDeregisterScripts = array();
+		
 		const SORTBY_NONE = "none";
 		const SORTBY_ID = "ID";
 		const SORTBY_AUTHOR = "author";
@@ -54,13 +56,14 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		const STATE_PUBLISHED = "publish";
 		const STATE_DRAFT = "draft";
 
+		
 
+		
 		/**
-		 *
 		 * init the static variables
 		 */
 		public static function initStaticVars(){
-
+			
 			self::$urlSite = site_url();
 
 			if(substr(self::$urlSite, -1) != "/")
@@ -69,7 +72,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			self::$urlAdmin = admin_url();
 			if(substr(self::$urlAdmin, -1) != "/")
 				self::$urlAdmin .= "/";
-
+						
 		}
 
 
@@ -3689,7 +3692,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		
 		$numPosts = null;
 		
-		if($$getNumPosts == true)
+		if($getNumPosts == true)
 			$numPosts = count_user_posts($userID);
 		
 		$userData = $objUser->data;
@@ -4183,10 +4186,56 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		
 	}
 	
+	public static function a___________INCLUDES_SCRIPTS__________(){}
 	
-	
-	public static function a___________OTHER_FUNCTIONS__________(){}
-	
+		/**
+		 * find and remove some include
+		 */
+		public static function findAndRemoveInclude($filename, $isJS = true) {
+			
+			if($isJS) 
+				self::$toDeregisterScripts[$filename] = true;
+			else
+				self::$toDeregisterStyles[$filename] = true;
+				
+		}
+		
+		
+		/**
+		 *
+		 * unregister styles and scripts after all includes formed
+		 */
+		public static function onStylesAndScriptsDeregister(){
+						
+			if(empty(self::$toDeregisterScripts) && empty(self::$toDeregisterStyles))
+				return(false);
+			
+			global $wp_scripts, $wp_styles;
+			
+			// scripts
+			foreach(self::$toDeregisterScripts as $filename=>$nothing) {
+				
+				foreach ($wp_scripts->registered as $handle => $script) {
+					
+					if($handle == $filename || strpos($script->src, $filename))
+						wp_deregister_script( $handle );
+				
+				}
+				
+			}
+			
+			
+			// styles
+			foreach(self::$toDeregisterStyles as $filename=>$nothing) {
+				
+				foreach ($wp_scripts->registered as $handle => $style) {
+					
+					if($handle == $filename || strpos($style->src, $filename))
+						wp_deregister_style( $handle );
+				}
+			}
+			
+		}
 	
 	
 	/**
@@ -4249,60 +4298,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		
 	}
 	
-	/**
-	 * find and remove some include
-	 */
-	public static function findAndRemoveInclude($filename, $isJS = true){
-
-		if($isJS == false)
-			$objScripts = wp_styles();
-		else
-			$objScripts = wp_scripts();
-
-		if(empty($objScripts))
-			return(false);
-
-		$arrDeleted = array();
+	public static function a___________OTHER_FUNCTIONS__________(){}
 		
-		foreach( $objScripts->queue as $scriptName ){
-
-			$objScript = UniteFunctionsUC::getVal($objScripts->registered, $scriptName);
-
-			if(empty($objScript))
-				continue;
-
-			$url = $objScript->src;
-
-			//find by handle
-			$isFound = false;
-
-			if($scriptName == $filename)
-				$isFound = true;
-			else{
-
-				//find by url
-
-				$url = strtolower($url);
-
-				$isFound = strpos($url, $filename);
-			}
-
-			if($isFound === false)
-				continue;
-
-			$arrDeleted[] = $url;
-
-			if($isJS == true)
-				wp_deregister_script( $scriptName );
-			else
-				wp_deregister_style( $scriptName );
-			
-		}
-
-
-		return($arrDeleted);
-	}
-
 
 	/**
 	 * set global author data variable
@@ -4672,11 +4669,30 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 		return ($arrAllKeys);
 	}
-
+	
+	/**
+	 * run on admin init - use for internal hooks
+	 */
+	public static function onAdminInit(){
+		
+		add_action('admin_print_scripts', array('UniteFunctionsWPUC', 'onStylesAndScriptsDeregister'), PHP_INT_MAX);
+		add_action('wp_print_scripts', array('UniteFunctionsWPUC', 'onStylesAndScriptsDeregister'), PHP_INT_MAX);
+		
+	}
+	
+	/**
+	 * on front init - use for front hooks
+	 */
+	public static function onFrontInit(){
+		
+		add_action('wp_print_scripts', array('UniteFunctionsWPUC', 'onStylesAndScriptsDeregister'), PHP_INT_MAX);
+		
+	}
+	
+	
 
 }  //end of the class
 
 //init the static vars
 UniteFunctionsWPUC::initStaticVars();
 
-?>

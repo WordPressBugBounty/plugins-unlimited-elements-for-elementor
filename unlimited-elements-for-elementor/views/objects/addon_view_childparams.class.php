@@ -341,7 +341,7 @@ class UniteCreatorAddonViewChildParams{
 		
 		$arrParams[] = $this->createChildParam_code($key, $text);
 
-		//----- get user data ------
+		//----- get post data ------
 		
 
 		$key = "getPostData()";
@@ -358,6 +358,19 @@ class UniteCreatorAddonViewChildParams{
 ";
 		
 		$arrParams[] = $this->createChildParam_code($key, $text);
+		
+		//----- variable from get ------
+
+		$key = "Data from GET";
+		$text = "
+{# get some variable from GET vars. Don't forget to escape this variable when put into html #}
+
+{% set myvar = ucfunc(\"get_variable\", somevar) %}
+{{ myvar|e('html') }}
+";
+		
+		$arrParams[] = $this->createChildParam_code($key, $text);
+		
 		
 
 		//----- get data from sql query ------
@@ -482,7 +495,8 @@ class UniteCreatorAddonViewChildParams{
 		
 		$arrParams[] = $this->createChildParam_code($key, $text);
 		
-
+		
+		
 		//----- hide id's in css ------
 
 		$key = "put_hide_ids_css()";

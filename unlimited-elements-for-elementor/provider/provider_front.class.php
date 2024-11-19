@@ -143,9 +143,8 @@ class UniteProviderFrontUC{
 
 		$this->addAction( 'plugins_loaded', 'onPluginsLoaded' );
 		
-		
-		//$this->checkDisableShortPixel();
-		
+		UniteFunctionsWPUC::onFrontInit();
+				
 	}
 	
 	

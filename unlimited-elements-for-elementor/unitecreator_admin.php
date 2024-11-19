@@ -75,6 +75,7 @@ class UniteCreatorAdmin extends UniteBaseAdminClassUC{
 	/**
 	 *
 	 * a must function. adds scripts on the page
+	 * add scripts only if inside the plugin
 	 * add all page scripts and styles here.
 	 * pelase don't remove this function
 	 * common scripts even if the plugin not load, use this function only if no choise.
@@ -91,8 +92,10 @@ class UniteCreatorAdmin extends UniteBaseAdminClassUC{
 		//take from view aliased if exists
 		if(isset(GlobalsUC::$arrViewAliases[$viewForIncludes]))
 			$viewForIncludes = GlobalsUC::$arrViewAliases[$viewForIncludes];
-
-
+		
+		//remove third party script if exists
+		UniteFunctionsWPUC::findAndRemoveInclude("selectWoo.full.min");
+		
 		//include dropzone
 		switch ($viewForIncludes){
 			case GlobalsUC::VIEW_EDIT_ADDON:

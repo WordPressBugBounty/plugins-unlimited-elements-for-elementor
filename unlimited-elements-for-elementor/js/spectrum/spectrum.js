@@ -248,7 +248,8 @@
             clickoutFiresChange = !opts.showButtons || opts.clickoutFiresChange,
             isEmpty = !initialColor,
             allowEmpty = opts.allowEmpty && !isInputTypeColor,
-			hideInitialInput = opts.hideInitInput;
+			hideInitialInput = opts.hideInitInput, 
+            colorPicked = false;
 			
         function applyOptions() {
 
@@ -289,7 +290,6 @@
         }
 
         function initialize() {
-
             if (IE) {
                 container.find("*:not(input)").attr("unselectable", "on");
             }
@@ -358,6 +358,7 @@
 
             cancelButton.text(opts.cancelText);
             cancelButton.bind("click.spectrum", function (e) {
+
                 e.stopPropagation();
                 e.preventDefault();
                 revert();
@@ -481,7 +482,6 @@
             }
 
             function paletteElementClick(e) {
-            	
                 if (e.data && e.data.ignore) {
                     set($(e.target).closest(".sp-thumb-el").data("color"));
                     move();
@@ -631,7 +631,6 @@
         }
 
         function show() {
-        	
         	if(boundElement.is(":disabled"))
         		return(true);
         	
@@ -676,6 +675,7 @@
 
         function clickout(e) {
             // Return on right click.
+
             if (e.button == 2) { return; }
 
             // If a drag event was happening during the mouseup, don't hide
@@ -712,7 +712,6 @@
         }
 
         function set(color, ignoreFormatChange) {
-        	
             if (tinycolor.equals(color, get())) {
                 // Update UI just in case a validation error needs
                 // to be cleared.
@@ -770,13 +769,12 @@
         
         
         function move() {
-            
+            colorPicked = true;
         	updateUI();
             
             var color = get();
                         
             callbacks.move(color);
-            
             
             updateOriginalInputFromTextInput();
             
@@ -788,8 +786,11 @@
          * on input change
          */
         function onInputChange(){
+
         	var color = jQuery(this).val();
-        	
+            if(color == '') {
+                colorPicked = false;
+            }        	
         	set(color);
         	updateUI();
         }
@@ -821,45 +822,46 @@
             previewElement.removeClass("sp-clear-display");
             previewElement.css('background-color', 'transparent');
 
-            if (!realColor && allowEmpty) {
-                // Update the replaced elements background with icon indicating no color selection
-                previewElement.addClass("sp-clear-display");
+            var realHex = realColor.toHexString(),
+                realRgb = realColor.toRgbString();
+
+            // Update the replaced elements background color (with actual selected color)
+            if (rgbaSupport || realColor.alpha === 1) {
+                previewElement.css("background-color", realRgb);
             }
             else {
-                var realHex = realColor.toHexString(),
-                    realRgb = realColor.toRgbString();
+                previewElement.css("background-color", "transparent");
+                previewElement.css("filter", realColor.toFilter());
+            }
 
-                // Update the replaced elements background color (with actual selected color)
-                if (rgbaSupport || realColor.alpha === 1) {
-                    previewElement.css("background-color", realRgb);
+            if(boundElement.val() == '' && !colorPicked) {
+                previewElement.css('background-color', 'transparent');
+                previewElement.parents('.sp-preview').addClass('sp-empty-icon');
+            } else {
+                previewElement.parents('.sp-preview').removeClass('sp-empty-icon');
+            }
+
+            if (opts.showAlpha) {
+                var rgb = realColor.toRgb();
+                rgb.a = 0;
+                var realAlpha = tinycolor(rgb).toRgbString();
+                var gradient = "linear-gradient(left, " + realAlpha + ", " + realHex + ")";
+
+                if (IE) {
+                    alphaSliderInner.css("filter", tinycolor(realAlpha).toFilter({ gradientType: 1 }, realHex));
                 }
                 else {
-                    previewElement.css("background-color", "transparent");
-                    previewElement.css("filter", realColor.toFilter());
+                    alphaSliderInner.css("background", "-webkit-" + gradient);
+                    alphaSliderInner.css("background", "-moz-" + gradient);
+                    alphaSliderInner.css("background", "-ms-" + gradient);
+                    // Use current syntax gradient on unprefixed property.
+                    alphaSliderInner.css("background",
+                        "linear-gradient(to right, " + realAlpha + ", " + realHex + ")");
                 }
-
-                if (opts.showAlpha) {
-                    var rgb = realColor.toRgb();
-                    rgb.a = 0;
-                    var realAlpha = tinycolor(rgb).toRgbString();
-                    var gradient = "linear-gradient(left, " + realAlpha + ", " + realHex + ")";
-
-                    if (IE) {
-                        alphaSliderInner.css("filter", tinycolor(realAlpha).toFilter({ gradientType: 1 }, realHex));
-                    }
-                    else {
-                        alphaSliderInner.css("background", "-webkit-" + gradient);
-                        alphaSliderInner.css("background", "-moz-" + gradient);
-                        alphaSliderInner.css("background", "-ms-" + gradient);
-                        // Use current syntax gradient on unprefixed property.
-                        alphaSliderInner.css("background",
-                            "linear-gradient(to right, " + realAlpha + ", " + realHex + ")");
-                    }
-                }
-
-                displayColor = realColor.toString(format);
-                
             }
+
+            displayColor = realColor.toString(format);
+
 
             // Update the text entry input as it changes happen
             if (opts.showInput) {
@@ -1145,6 +1147,7 @@
                 }
 
                 onmove.apply(element, [dragX, dragY, e]);
+
             }
         }
 

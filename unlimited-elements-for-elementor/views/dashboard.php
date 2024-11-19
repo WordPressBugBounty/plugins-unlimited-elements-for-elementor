@@ -54,10 +54,12 @@ $version = UNLIMITED_ELEMENTS_VERSION;
 
 HelperHtmlUC::putHtmlAdminNotices();
 
-$isBFMode = GlobalsUnlimitedElements::$blackFridayMode;
+$isBFMode = GlobalsUnlimitedElements::$blackFridayMode && $isProVersion == false;
 
-if($isBFMode){
-	$urlBannerImage = GlobalsUC::$urlPluginImages."banners/ue-dashboard-bf-banner.png";
+$showBFBanner = (GlobalsUnlimitedElements::$blackFridayMode == true);
+
+if($showBFBanner == true){
+	$urlBannerImage = GlobalsUC::$urlPluginImages."banners/ue-dashboard-bf-banner.png";	
 }
 
 ?>
@@ -220,17 +222,16 @@ if($isBFMode){
 	<!-- Sidebar start -->
 	<div class="ue-sidebar">
 		<div class="ue-cta-post-wrapper">
-
+		
+			<?php if($showBFBanner == true):?>
+			<div class="ue-content-card ue-dashboard-banner">
+				<a class="ue-dashboard-banner__link" href="<?php echo GlobalsUC::URL_BUY?>">
+					<img class="ue-dashboard-banner__image" src="<?php echo $urlBannerImage?>" target="_blank">
+				</a>
+			</div>
+			<?php endif?>
+	
 			<?php if($isProVersion === false): ?>
-				
-				<?php if($isBFMode == true):?>
-				<div class="ue-content-card ue-dashboard-banner">
-					<a class="ue-dashboard-banner__link" href="<?php echo GlobalsUC::URL_BUY?>">
-						<img class="ue-dashboard-banner__image" src="<?php echo $urlBannerImage?>" target="_blank">
-					</a>
-				</div>
-				<?php endif?>
-				
 				
 				<div class="ue-content-card ue-get-pro-cta">
 					<div class="ue-cta-bg-overlay"></div>

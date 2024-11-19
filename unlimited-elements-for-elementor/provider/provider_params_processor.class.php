@@ -1712,33 +1712,62 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		//includeby before filters
 		foreach($arrIncludeBy as $includeby){
-
+			
 			switch($includeby){
 				case "terms_from_dynamic":
 				case "terms_from_current_meta":
-
-					$strTermIDs = UniteFunctionsUC::getVal($value, $name."_includeby_terms_dynamic_field");
-
+				case "terms_from_user_meta":
+										
 					$arrTermIDs = array();
 
 					//get term id's
 
-					if($includeby == "terms_from_dynamic"){
-
-						$arrTermIDs = UniteFunctionsUC::getIDsArray($strTermIDs);
-
-					}else{
-
-						$metaFieldName = UniteFunctionsUC::getVal($value, "{$name}_includeby_terms_from_meta");
-						$postID = get_post();
-
-						if(!empty($metaFieldName) && !empty($postID)){
-
-							$strTermIDs = UniteFunctionsWPUC::getPostCustomField($postID, $metaFieldName);
+					switch($includeby){
+						default:
+						case "terms_from_dynamic":
+							$strTermIDs = UniteFunctionsUC::getVal($value, $name."_includeby_terms_dynamic_field");
 							$arrTermIDs = UniteFunctionsUC::getIDsArray($strTermIDs);
-						}
-
+						break;
+						case "terms_from_current_meta":
+							
+							$metaFieldName = UniteFunctionsUC::getVal($value, "{$name}_includeby_terms_from_meta");
+							$postID = get_post();
+	
+							if(!empty($metaFieldName) && !empty($postID)){
+	
+								$strTermIDs = UniteFunctionsWPUC::getPostCustomField($postID, $metaFieldName);
+								$arrTermIDs = UniteFunctionsUC::getIDsArray($strTermIDs);
+							}
+						break;
+						case "terms_from_user_meta":
+							
+							$metaFieldName = UniteFunctionsUC::getVal($value, "{$name}_includeby_terms_from_user_meta");
+							
+							//show current user data
+							
+							if($metaFieldName == "show"){
+								
+								echo "<hr>";
+								
+								dmp("Terms From User Meta Debug");
+								
+								HelperProviderUC::showCurrentUserMetaDataDebug();
+								
+								echo "<hr>";
+								
+								$metaFieldName = null;
+							}
+							
+							$userID = get_current_user_id();
+							
+							if(!empty($userID)){
+								$strTermIDs = UniteFunctionsWPUC::getUserCustomFields($userID);
+								$arrTermIDs = UniteFunctionsUC::getIDsArray($strTermIDs);
+							}
+							
+						break;
 					}
+					
 
 					if(!empty($arrTermIDs)){
 
