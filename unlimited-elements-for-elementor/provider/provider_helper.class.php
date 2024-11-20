@@ -10,12 +10,12 @@ class HelperProviderUC{
 	 */
 	public static function isActivatedByFreemius(){
 
-		global $unl_fs;
+		global $uefe_fs;
 
-		if(isset($unl_fs) === false)
+		if(isset($uefe_fs) === false)
 			return (false);
 
-		$isActivated = $unl_fs->is_paying();
+		$isActivated = $uefe_fs->is_paying();
 
 		return ($isActivated);
 	}
@@ -25,12 +25,12 @@ class HelperProviderUC{
 	 */
 	public static function getFreemiusAccountUrl(){
 
-		global $unl_fs;
+		global $uefe_fs;
 
-		if(isset($unl_fs) === false)
+		if(isset($uefe_fs) === false)
 			return "";
 
-		$url = $unl_fs->get_account_url();
+		$url = $uefe_fs->get_account_url();
 
 		return $url;
 	}

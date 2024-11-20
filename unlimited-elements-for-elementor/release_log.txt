@@ -1,5 +1,10 @@
 
 
+version 1.5.129:
+
+* Fix: fixed freemius sdk code, pro widgets download
+
+
 version 1.5.128:
 
 * Fix: fixed empty date stamp output in event list multisource on some date formats

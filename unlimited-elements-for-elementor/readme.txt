@@ -898,6 +898,10 @@ Note : This plugin works with Elementor. Make sure you have [Elementor](https://
 
 == Changelog ==
 
+version 1.5.129: 2024-11-20
+
+* Fix: fixed freemius sdk code, pro widgets download
+
 
 version 1.5.128: 2024-11-19
 

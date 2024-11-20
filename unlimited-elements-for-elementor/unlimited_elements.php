@@ -4,7 +4,7 @@
 * Plugin URI: http://unlimited-elements.com
 * Description: Unlimited Elements - Huge Widgets Pack for Elementor Website Builder, with html/css/js widget creator and editor
 * Author: Unlimited Elements
-* Version: 1.5.128
+* Version: 1.5.129
 * Author URI: http://unlimited-elements.com
 * Text Domain: unlimited-elements-for-elementor
 * Domain Path: /languages
@@ -26,7 +26,7 @@ if ( ! function_exists( 'uefe_fs' ) ) {
             // Include Freemius SDK.
             require_once dirname(__FILE__) . '/provider/freemius/start.php';
 	
-            $unl_fs = fs_dynamic_init( array(
+            $uefe_fs = fs_dynamic_init( array(
                 'id'                  => '4036',
                 'slug'                => 'unlimited-elements-for-elementor',
 				'premium_slug'        => 'unlimited-elements-pro',            
