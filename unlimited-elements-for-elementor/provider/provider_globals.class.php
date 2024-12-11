@@ -36,6 +36,7 @@ class GlobalsProviderUC{
 	public static $lastPostQuery_type = null;
 	public static $lastPostQuery_paginationType = null;
 	public static $skipRunPostQueryOnce = false;
+		
 	public static $lastQueryArgs = null;
 	public static $isUnderAjaxSearch = false;
 	public static $isUnderRenderPostItem = false;

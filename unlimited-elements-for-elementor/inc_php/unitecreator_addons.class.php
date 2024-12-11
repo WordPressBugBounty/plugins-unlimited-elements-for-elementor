@@ -139,8 +139,10 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 
 		$response = $this->db->fetch(GlobalsUc::$table_addons, $where, $order);
 
+
 		return ($response);
 	}
+
 
 	/**
 	 * get addons list with name / title

@@ -48,7 +48,7 @@ class UniteSettingsOutputUC extends UniteSettingsOutputUCWork{
 	 * draw post picker input
 	 */
 	protected function drawPostPickerInput($setting){
-
+	
 		$id = UniteFunctionsUC::getVal($setting, "id");
 		$name = UniteFunctionsUC::getVal($setting, "name");
 		$value = UniteFunctionsUC::getVal($setting, "value");
@@ -88,6 +88,7 @@ class UniteSettingsOutputUC extends UniteSettingsOutputUCWork{
 				data-placeholder="<?php esc_attr_e($placeholder); ?>"
 				data-selected-post-id="<?php esc_attr_e($selectedPostId); ?>"
 				data-selected-post-title="<?php esc_attr_e($selectedPostTitle); ?>"
+				data-name="<?php esc_attr_e($name); ?>"
 			></select>
 		</div>
 		<?php

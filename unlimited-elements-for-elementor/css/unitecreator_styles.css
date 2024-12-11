@@ -2071,3 +2071,8 @@ ul.uc-list-pages-thumbs li a i {
 .uc-preview-wrapper {
 	padding: 16px;
 }
+
+
+.uc-table-row-handle.attribute-pro-options{
+	background-color: #449644;
+}

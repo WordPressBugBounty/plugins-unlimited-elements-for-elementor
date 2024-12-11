@@ -1,6 +1,6 @@
 "use strict";
 
-//version: 1.18
+//version: 1.19
 
 function UnlimitedElementsForm(){
   
@@ -1095,3 +1095,12 @@ jQuery( document ).on( 'elementor/popup/show', (event, id, objPopup) => {
   g_ucUnlimitedForms.init();
   
 });	
+
+//template switcher script
+jQuery(document).ready(function(){
+  jQuery("body").on("uc_tsw_updated", function(){
+	  var g_ucUnlimitedForms = new UnlimitedElementsForm();
+
+	  g_ucUnlimitedForms.init();	
+	});
+});

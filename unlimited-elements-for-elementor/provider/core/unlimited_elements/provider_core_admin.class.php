@@ -47,6 +47,7 @@ class UniteProviderCoreAdminUC_Elementor extends UniteProviderAdminUC{
 			GlobalsUnlimitedElements::VIEW_SETTINGS_ELEMENTOR,
 			GlobalsUnlimitedElements::VIEW_CUSTOM_POST_TYPES,
 			GlobalsUnlimitedElements::VIEW_CHANGELOG,
+			GlobalsUnlimitedElements::VIEW_CHANGELOG_IMPORT,
 		);
 
 		HelperProviderCoreUC_EL::globalInit();
@@ -101,28 +102,38 @@ class UniteProviderCoreAdminUC_Elementor extends UniteProviderAdminUC{
 		
 		$mainMenuTitle = $this->pluginTitle;
 		
-		$widgetsTitle = __('Widgets', "unlimited-elements-for-elementor");
-		
-		if(GlobalsUnlimitedElements::$isGutenbergOnly == true){
-			$widgetsTitle = __('Gutenberg Blocks', "unlimited-elements-for-elementor");
-		
-			$urlMenuIcon = HelperProviderCoreUC_EL::$urlCore . "images/icon_menu_ub.png";
-		}
+		$verFlags = HelperUC::getActivePluginVersions();
 		
 		$this->addMenuPage($mainMenuTitle, "adminPages", $urlMenuIcon);
-		
-		if(GlobalsUnlimitedElements::$enableDashboard === true)
+
+		if(GlobalsUnlimitedElements::$enableDashboard === true) {
 			$this->addSubMenuPage(GlobalsUnlimitedElements::VIEW_DASHBOARD, __('Home', "unlimited-elements-for-elementor"), "adminPages");
+		}
+		
+		if($verFlags[GlobalsUC::VERSION_ELEMENTOR] && $verFlags[GlobalsUC::VERSION_GUTENBERG]) { 
+			$widgetsTitle = __('Widgets and Blocks', "unlimited-elements-for-elementor");
+		} elseif($verFlags[GlobalsUC::VERSION_GUTENBERG]) {
+			$widgetsTitle = __('Blocks', "unlimited-elements-for-elementor");
+		} else {
+			$widgetsTitle = __('Widgets', "unlimited-elements-for-elementor");
+		}
 		
 		$this->addSubMenuPage(GlobalsUnlimitedElements::VIEW_ADDONS_ELEMENTOR, $widgetsTitle, "adminPages");
-		
 				
-		if(HelperProviderUC::isBackgroundsEnabled() === true)
-			$this->addSubMenuPage(GlobalsUnlimitedElements::VIEW_BACKGROUNDS, __('Background Widgets', "unlimited-elements-for-elementor"), "adminPages");
+		if($verFlags[GlobalsUC::VERSION_ELEMENTOR] && $verFlags[GlobalsUC::VERSION_GUTENBERG]) { 
+			$bgWidgetsTitle = __('Background Widgets and Blocks', "unlimited-elements-for-elementor");
+		} elseif($verFlags[GlobalsUC::VERSION_GUTENBERG]) {
+			$bgWidgetsTitle = __('Background Blocks', "unlimited-elements-for-elementor");
+		} else {
+			$bgWidgetsTitle = __('Background Widgets', "unlimited-elements-for-elementor");
+		}	
 
-		if(GlobalsUnlimitedElements::$enableElementorSupport == true)
+		if(HelperProviderUC::isBackgroundsEnabled() === true)
+			$this->addSubMenuPage(GlobalsUnlimitedElements::VIEW_BACKGROUNDS, $bgWidgetsTitle, "adminPages");
+
+		if($verFlags[GlobalsUC::VERSION_ELEMENTOR]) {
 			$this->addSubMenuPage(GlobalsUnlimitedElements::VIEW_TEMPLATES_ELEMENTOR, __('Templates', "unlimited-elements-for-elementor"), "adminPages");
-		
+		}
 		if(HelperProviderUC::isFormEntriesEnabled() === true)
 			$this->addSubMenuPage(GlobalsUnlimitedElements::VIEW_FORM_ENTRIES, __('Form Entries', "unlimited-elements-for-elementor"), "adminPages");
 
@@ -139,11 +150,8 @@ class UniteProviderCoreAdminUC_Elementor extends UniteProviderAdminUC{
 		}
 
 		$this->addLocalFilter("plugin_action_links_" . $this->pluginFilebase, "modifyPluginViewLinks");
-
-		//$isFsActivated = HelperProviderUC::isActivatedByFreemius();
-
-		//if($isFsActivated == false)
-		//$this->addSubMenuPage("licenseelementor", __('Old License Activation',"unlimited-elements-for-elementor"), "adminPages");
+		
+		
 	}
 
 	/**

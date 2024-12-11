@@ -209,6 +209,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			$js .= self::TAB3.$jsArrayText.self::BR;
 			$js .= self::TAB2.'};'.self::BR;
 
+			
 			return($js);
 		}
 
@@ -529,12 +530,12 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		 * put global framework
 		 */
 		public static function putGlobalsHtmlOutput(){
-
+			
 			if(self::$isGlobalJSPut == true)
 				return(false);
 
 			?>
-			<script type="text/javascript">
+			<script type="text/javascript" id="unlimited_elements_admin_globals">
 
 				<?php echo self::getGlobalJsOutput();?>
 

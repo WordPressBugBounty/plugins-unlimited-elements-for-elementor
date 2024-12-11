@@ -1362,7 +1362,7 @@ class UniteCreatorAddonView{
 	 * get post child params
 	 */
 	public function getChildParams_post($postID = null, $arrAdditions = array()){
-
+		
 		$arrParams = $this->objChildParams->getChildParams_post($postID, $arrAdditions);
 
 		return($arrParams);
@@ -1485,7 +1485,7 @@ class UniteCreatorAddonView{
 	private function getChildPostOptions(){
 
 		$paramPostList = $this->objAddon->getParamByType(UniteCreatorDialogParam::PARAM_POSTS_LIST);
-
+				
 		$output = array();
 		$output["post_id"] = null;
 		$output["use_custom_fields"] = false;
@@ -1572,11 +1572,11 @@ class UniteCreatorAddonView{
 	protected function getParamChildKeys(){
 
 		$postOptions = $this->getChildPostOptions();
-
+		
 		$postID = $postOptions["post_id"];
 
 		$arrAdditions = $this->getParamChildKeys_getPostAdditions($postOptions);
-
+		
 		$arrPostParams = $this->getChildParams_post($postID, $arrAdditions);
 
 		$arrChildKeys = array();
@@ -1692,7 +1692,8 @@ class UniteCreatorAddonView{
 		
 		$options["items_type"] = $this->objAddon->getItemsType();
 		
-		$options = apply_filters("ue_modify_edit_addon_options", $options);
+		if(GlobalsUnlimitedElements::$enableEditProOptions == true)
+			$options["add_edit_pro"] = true;
 		
 		$dataOptions = UniteFunctionsUC::jsonEncodeForHtmlData($options, "options");
 
@@ -2078,10 +2079,10 @@ class UniteCreatorAddonView{
 		//dialog param
 		$objDialogParam = UniteCreatorDialogParam::getInstance($addonType);
 
-
 		$objDialogParam->init(UniteCreatorDialogParam::TYPE_MAIN, $this->objAddon);
 		$objDialogParam->outputHtml();
-
+		
+		
 		//dialog variable item
 
 		$objDialogVariableItem = UniteCreatorDialogParam::getInstance($addonType);
@@ -2092,7 +2093,7 @@ class UniteCreatorAddonView{
 		$objDialogVariableMain = UniteCreatorDialogParam::getInstance($addonType);
 		$objDialogVariableMain->init(UniteCreatorDialogParam::TYPE_MAIN_VARIABLE, $this->objAddon);
 		$objDialogVariableMain->outputHtml();
-
+				
 		$this->putBulkDialog();
 	}
 
@@ -2116,6 +2117,7 @@ class UniteCreatorAddonView{
 			$this->putHtml_top();
 		else
 			require HelperUC::getPathTemplate("header_missing");
+				
 		?>
 		<div class="content_wrapper unite-content-wrapper">
 		<?php
@@ -2123,15 +2125,15 @@ class UniteCreatorAddonView{
 			$this->putHtml_actionButtons();
 
 		$this->putHtml_beforeTabs();
-
+		
 		$this->putHtml_tabs();
 		$this->putHtml_content();
-
+		
 		$this->putConfig();
 		$this->putJs();
-
+		
 		$this->putDialogs();
-
+		
 		?>
 		</div>
 		<?php

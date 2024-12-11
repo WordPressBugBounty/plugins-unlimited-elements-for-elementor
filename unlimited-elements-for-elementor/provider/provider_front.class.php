@@ -108,6 +108,19 @@ class UniteProviderFrontUC{
 			define("DISABLE_DOUBLY", true);
 	}
 	
+	/**
+	 * show debug post data if available
+	 */
+	public function onFooterDebugPostData(){
+		
+		$showMetaFields = HelperUC::hasPermissionsFromQuery("ucpostmetadebug");
+		
+		if(empty($showMetaFields))
+			return(false);
+		
+		HelperProviderUC::showCurrentPostMetaDebug();
+		
+	}
 	
 	/**
 	 * on plugins loaded
@@ -140,8 +153,10 @@ class UniteProviderFrontUC{
 		
 		//set elementor canvas accorging "GET" variable
 		$this->addFilter("template_include", "onTemplateInclude",12);	//after elementor and woo
-
+		
 		$this->addAction( 'plugins_loaded', 'onPluginsLoaded' );
+		
+		$this->addAction( 'wp_footer', 'onFooterDebugPostData' );
 		
 		UniteFunctionsWPUC::onFrontInit();
 				

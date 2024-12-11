@@ -692,6 +692,7 @@ class UniteCreatetorParamsProcessorMultisource{
     private function getData_rss(){
 
         $showDebug = $this->showDebugData;
+        $showDataType = $this->showDataType;
 
         if($showDebug == true){
             dmp("---- the debug is ON, please turn it off before release --- ");
@@ -720,17 +721,15 @@ class UniteCreatetorParamsProcessorMultisource{
         //try rss
 
         $arrData = UniteFunctionsUC::maybeXmlDecode($dynamicFieldValue);
-		
-        //debug rss
 
-        if($showDebug == true && is_array($arrData)){
-
-            dmp("RSS data found ");
-            //dmp($arrData);
-
-            dmp("------------------------------");
+        if($showDebug == true && $showDataType == 'original_input' && is_array($arrData)) {
+			
+            dmp("Original rss data");
+            
+            $arrDataShow = UniteFunctionsUC::modifyDataArrayForShow($arrData);
+            
+            dmp($arrDataShow);
         }
-
 
         if(is_array($arrData) == false){
 
@@ -739,29 +738,21 @@ class UniteCreatetorParamsProcessorMultisource{
                 echo "<div style='background-color:lightgray'>";
                 dmp(htmlspecialchars($dynamicFieldValue));
                 echo "</div>";
-                dmp("------------------------------");
             }
 
             return(null);
         }
 
         $arrData = HelperUC::$operations->simplifyRssDataArray($arrData);
+
         
-        
-        //trim by main key
-
-        $dataMainKey = UniteFunctionsUC::getVal($this->arrValues, $this->name."_rss_mainkey");
-
-        if(!empty($dataMainKey))
-            $arrData = UniteFunctionsUC::getArrayValueByPath($arrData, $dataMainKey);
-
-        if($showDebug == true && is_array($arrData) && !empty($dataMainKey)){
-            dmp("get the array data from the key: {$dataMainKey}");
-        }
-
         //trim by items limit
-        (int) $dataItemsLimit = UniteFunctionsUC::getVal($this->arrValues, $this->name."_rss_items_limit");
-        if(!empty($dataItemsLimit) && $dataItemsLimit > 0)
+        
+        $dataItemsLimit = UniteFunctionsUC::getVal($this->arrValues, $this->name."_rss_items_limit");
+        
+        $dataItemsLimit = (int)$dataItemsLimit;
+        
+        if(!empty($dataItemsLimit) && $dataItemsLimit > 0 && !empty($arrData))
             $arrData = array_slice($arrData, 0, $dataItemsLimit, true);
 
         if($showDebug == true && is_array($arrData) && (!empty($dataItemsLimit) && $dataItemsLimit > 0)){

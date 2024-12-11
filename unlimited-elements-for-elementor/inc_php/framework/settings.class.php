@@ -786,7 +786,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		 * add post picker
 		 */
 		public function addPostPicker($name, $defaultValue = "", $text = "", $arrParams = array()){
-
+			
 			$arrParams["label_block"] = true;
 
 			$this->add($name, $defaultValue, $text, self::TYPE_POST, $arrParams);
@@ -1272,17 +1272,34 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		 * set sattes of the settings (enabled/disabled, visible/invisible) by controls
 		 */
 		public function setSettingsStateByControls(){
-
+			
+			//debugging this function
+			$debug = false;
+			
+			if($debug == true){
+				dmp("set state");
+			}
+				
 			if(empty($this->arrControls))
 				return(false);
 
-				
 			foreach($this->arrControlChildren as $childName => $arrParents){
-
+				
+				if($debug == true){
+					dmp("child");
+					dmp($childName);
+				}
+				
 				foreach($arrParents as $parentName){
-
+					
 					$arrControl = $this->arrControls[$parentName][$childName];
 					
+					if($debug == true){
+						dmp("parent");
+						dmp($parentName);
+						dmp($arrControl);
+					}
+						
 					$isSap = UniteFunctionsUC::getVal($arrControl, "forsap");
 					$isSap = UniteFunctionsUC::strToBool($isSap);
 					
@@ -1290,8 +1307,12 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 					
 					//check that exists, if not - throw error
 					
-					
 					$isParentExists = $this->isSettingExist($parentName);
+					
+					if($debug == true){
+						dmp("parent exists");
+						dmp($isParentExists);
+					}
 					
 					if($isParentExists == false){
 						
@@ -1311,8 +1332,11 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 					
 					$action = $this->getControlAction($parentName, $arrControl);
 					
-					$action = "";
-					
+					if($debug == true){
+						dmp("action");
+						dmp($action);
+					}
+										
 					if($action == "disable"){
 
 						if($isSap == true)
@@ -1324,7 +1348,11 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 					}
 
 					if($action == "hide"){
-
+						
+						if($debug == true){
+							dmp("update hidden");
+						}
+						
 						if($isSap == true)
 							$this->updateSapProperty($childName, "hidden", true);
 						else
@@ -1336,7 +1364,12 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				}
 
 			}
-
+			
+			if($debug == true){
+				dmp("the settings");
+				dmp($this->arrSettings);
+				exit();
+			}
 
 		}
 

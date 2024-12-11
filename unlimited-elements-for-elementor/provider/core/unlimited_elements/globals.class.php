@@ -12,35 +12,36 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 class GlobalsUnlimitedElements{
 
 	public static $enableDashboard = true;
-
-	public static $enableForms = true;
 	
 	public static $enableElementorSupport = true;
 	public static $enableGutenbergSupport = false;
 	
 	public static $isGutenbergOnly = false;
 	
-	public static $showAdminNotices = true;		//show the banner
+	public static $showAdminNotices = false;		//show the banner
 	public static $debugAdminNotices = false;
 	
-	public static $blackFridayMode = true;
+	public static $blackFridayMode = false;
 	
 	public static $enableApiIntegrations = true;
 
 	public static $enableGoogleAPI = true;
 	public static $enableWeatherAPI = true;
 	public static $enableCurrencyAPI = true;
-
+	
 	public static $enableGoogleCalendarScopes = false;
 	public static $enableGoogleYoutubeScopes = false;
 
 	public static $enableInsideNotification = true;
 
 	public static $enableInstagramErrorMessage = false;
- 
-	//public static $insideNotificationText = "BLACK FRIDAY SALE STARTS NOW! <br> Grab the PRO version for 50% off. <br> <a href='https://unlimited-elements.com/pricing/' target='_blank'>Get It Now</a> ";
-	public static $insideNotificationText = "🖤 Black Friday Sale! <br> Don’t Miss Out on the <br> BIGGEST SALE of the Year! 🎉<br> <a style='text-decoration:underline;' href='https://unlimited-elements.com/pricing/' target='_blank'>Get Deal Now!</a> ";
-	//public static $insideNotificationText = "Unlock Access To All PRO Widgets and Features.  <a href='https://unlimited-elements.com/pricing/' target='_blank'>Upgrade Now</a> ";
+  	
+	public static $enableEditProOptions = false;	 //set to enable edit pro options
+	
+	public static $enableLimitProFunctionality = false;	//enable limit pro options in elementor
+	
+	//public static $insideNotificationText = "🖤 Black Friday Sale! <br> Don’t Miss Out on the <br> BIGGEST SALE of the Year! 🎉<br> <a style='text-decoration:underline;' href='https://unlimited-elements.com/pricing/' target='_blank'>Get Deal Now!</a> ";
+	public static $insideNotificationText = "Unlock Access To All PRO Widgets and Features.  <a href='https://unlimited-elements.com/pricing/' target='_blank'>Upgrade Now</a> ";
 	public static $insideNotificationUrl = "https://unlimited-elements.com/pricing/";
 
 	const PLUGIN_NAME = "unlimitedelements";
@@ -55,6 +56,7 @@ class GlobalsUnlimitedElements{
 	const VIEW_BACKGROUNDS = "backgrounds";
 	const VIEW_FORM_ENTRIES = "form_entries";
 	const VIEW_CHANGELOG = "changelog";
+	const VIEW_CHANGELOG_IMPORT = "changelog_import";
 
 	const LINK_BUY = "https://unlimited-elements.com/pricing/";
 
@@ -165,7 +167,6 @@ class GlobalsUnlimitedElements{
 		//debug functions
 		if(GlobalsUC::$is_admin == true && HelperUC::hasPermissionsFromQuery("show_debug_function"))
 			GlobalsProviderUC::$showDebugFunction = true;
-		
 		
 	}
 

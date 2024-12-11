@@ -484,7 +484,27 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 
 		<?php
 	}
-
+	
+	/**
+	 * put pro setting checkbox
+	 */
+	protected function putProSettingCheckbox(){
+		
+		?>
+			<div class="vert_sap10"></div>
+			<hr>
+			<div class="vert_sap10"></div>
+			
+		<?php 
+		
+		$this->putCheckbox("is_pro", __("Pro Setting", "unlimited-elements-for-elementor"));
+		?>
+			
+		<div class="vert_sap10"></div>
+		
+		<?php 
+	}
+	
 	/**
 	 * put radio boolean param
 	 */
@@ -515,10 +535,13 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 
 				</tbody>
 			</table>
+
 		<?php
-
-		$this->addResponsiveInputs("radio_boolean");
-
+				
+		if(GlobalsUnlimitedElements::$enableEditProOptions == true)
+			$this->putProSettingCheckbox();
+					
+        $this->addResponsiveInputs("radio_boolean");
 
 	}
 
@@ -1057,9 +1080,9 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 		$this->putNoDefaultValueText();
 	}
 
-
 	private function ____NUMBER____(){}
-
+	
+	
 	/**
 	 * put number unit select
 	 */

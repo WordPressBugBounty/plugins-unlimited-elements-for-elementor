@@ -22,6 +22,7 @@ $htmlView = ob_get_contents();
 
 ob_end_clean();
 
+
 $htmlClassAdd = "";
 
 if(!empty($view)){

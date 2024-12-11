@@ -12,12 +12,12 @@ if(!defined('UNLIMITED_ELEMENTS_INC'))
 defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 if(!defined("UNLIMITED_ELEMENTS_VERSION"))
-	define("UNLIMITED_ELEMENTS_VERSION", "1.5.129");
+	define("UNLIMITED_ELEMENTS_VERSION", "1.5.130");
 
 //disable elementor support for debugging purposes. keep it commented
 //define("UE_DISABLE_ELEMENTOR_SUPPORT", true);
 
-	
+
 $currentFile = __FILE__;
 $currentFolder = dirname($currentFile);
 $folderIncludesMain = $currentFolder."/inc_php/";
@@ -118,6 +118,7 @@ require_once $folderIncludesMain . 'unitecreator_addon_changelog.class.php';
 require_once $folderIncludesMain . 'unitecreator_addon_revisioner.class.php';
 require_once $folderIncludesMain . 'unitecreator_api_integrations.class.php';
 require_once $folderIncludesMain . 'unitecreator_pagination.class.php';
+require_once $folderIncludesMain . 'unitecreator_import_changelog.class.php';
 
 
 //admin only, maybe split later

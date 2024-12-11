@@ -89,11 +89,18 @@ function UniteCreatorParamsDialog(){
 	 * get input name
 	 */
 	function getInputName(objInput){
-
+		
 		var paramName = objInput.prop("name");
 		if(!paramName)
 			paramName = objInput.data("name");
-
+		
+		/*
+		if(!paramName){
+			trace("params dialog: name not found");
+			trace(objInput);
+		}
+		*/
+		
 		return(paramName);
 	}
 
@@ -102,7 +109,7 @@ function UniteCreatorParamsDialog(){
 	 * get content of params dialog
 	 */
 	function getParamDialogContent(){
-
+		
 		var arrInputs = getCurrentInputs();
 
 		var objParam = {};
@@ -121,13 +128,13 @@ function UniteCreatorParamsDialog(){
 			var inputType = getInputType(objInput);
 
 			var paramName = getInputName(objInput);
-
+			
 			var hasName = true;
 			if(paramName == undefined || paramName == "")
 				hasName = false;
 
 			var isSpecialType = g_arrSpecialInputs.hasOwnProperty(inputType);
-
+			
 			//regular items
 			if(hasName == true && isSpecialType == false){
 
@@ -300,8 +307,7 @@ function UniteCreatorParamsDialog(){
 		clearParamDialog();
 
 		selectParamDialogTabByType(objData.type);
-
-
+		
 		var objInputs = getCurrentInputs();
 
 		//fill simple type the inputs
@@ -368,7 +374,6 @@ function UniteCreatorParamsDialog(){
 				objSpecialInput.onFillInputData(objInput, objData);
 			
 		});
-
 
 		//limit edit
 		if(objData.hasOwnProperty("limited_edit") && g_ucAdmin.strToBool(objData.limited_edit) == true)
@@ -462,10 +467,12 @@ function UniteCreatorParamsDialog(){
 
 		//---- action click
 
+
+
 		buttonOpts[actionTitle] = function(){
 			
 			var objParam = getParamDialogContent();
-			
+						
 			if(typeof onActionFunc != "function")
 				throw new Error("on add/edit function not passed");
 
@@ -491,8 +498,7 @@ function UniteCreatorParamsDialog(){
 		if(isEdit == false){
 			unlimitDialog();
 		}
-
-
+				
 		g_objWrapper.dialog({
 			dialogClass:"unite-ui unite-dialog-responsive",
 			buttons:buttonOpts,
@@ -508,8 +514,9 @@ function UniteCreatorParamsDialog(){
 				else{
 					g_objWrapper.data("rowindex", rowIndex);
 					g_objData = objData;
-
+					
 					fillParamsDialog(objData);
+					
 				}
 
 				//focus only if empty
@@ -521,8 +528,9 @@ function UniteCreatorParamsDialog(){
 				}
 
 				triggerEvent(events.OPEN);
-
+				
 			}
+		
 		});
 
 	}
@@ -552,7 +560,6 @@ function UniteCreatorParamsDialog(){
 	}
 
 	function ____________DROPDOWN_PARAM____________(){};
-
 
 	/**
 	 * add row to dropdown param
@@ -687,9 +694,10 @@ function UniteCreatorParamsDialog(){
 			default_value: defaultOption
 		};
 		
-		if(optionsPro.length)
+		if(optionsPro.length){
 			objOutput.pro_options = optionsPro;
-		
+			objOutput.is_pro = true;
+		}
 		
 		return(objOutput);
 	}
@@ -870,7 +878,7 @@ function UniteCreatorParamsDialog(){
 		
 		//default icon click
 		if(g_isEnableEditPro){
-			
+
 			objTableDropdown.on("click", ".uc-dropdown-item-pro", function(){
 				
 				var objIcon = jQuery(this);
@@ -1030,7 +1038,7 @@ function UniteCreatorParamsDialog(){
 		}
 
 
-		t.addSpecialInput("radio_boolean", objRadioBoolean);
+			t.addSpecialInput("radio_boolean", objRadioBoolean);
 
 	}
 
@@ -1538,7 +1546,7 @@ function UniteCreatorParamsDialog(){
 	function fillConditionSelectRow(objSelect, arrParams){
 
 		var selectName = objSelect.prop("name");
-
+		
 		var currentValue = g_ucAdmin.getVal(g_objData, selectName);
 		if(!currentValue)
 			currentValue = "";
@@ -1791,10 +1799,13 @@ function UniteCreatorParamsDialog(){
 	/**
 	 * set pro param mode
 	 */
-	function setProParamMode(){
+	function setProParamMode(containsProMode){
 
 		g_objWrapper.addClass("uc-pro-param");
-
+		
+		if(containsProMode == true)
+			g_objWrapper.addClass("uc-contains-pro");
+		
 		var objDialogUI = getDialogUIWrapper();
 		if(!objDialogUI)
 			return(true);
@@ -1813,8 +1824,9 @@ function UniteCreatorParamsDialog(){
 	 * unset pro mode
 	 */
 	function unsetProParamMode(){
-
+		
 		g_objWrapper.removeClass("uc-pro-param");
+		g_objWrapper.removeClass("uc-contains-pro");
 
 		var objDialogUI = getDialogUIWrapper();
 		if(!objDialogUI)
@@ -1873,7 +1885,7 @@ function UniteCreatorParamsDialog(){
 	 * on select type change
 	 */
 	function onSelectTypeChange(){
-
+				
 		var isLimited = isDialogLimited();
 		if(isLimited == true)
 			return(false);
@@ -1884,11 +1896,18 @@ function UniteCreatorParamsDialog(){
 		//show current content
 		g_objTabContentWrapper.find(".uc-tab-content").not(objContent).removeClass("uc-content-selected").hide();
 		objContent.addClass("uc-content-selected").show();
-
+		
+		//check if set pro param mode
 		var isPro = objContent.hasClass("uc-pro-param");
-
-		if(isPro == true)
-			setProParamMode();
+		
+		//check if contains pro param
+		var containsPro = g_ucAdmin.getVal(g_objData, "is_pro");
+		
+		//one of the two exits
+		var isSetPro = isPro || containsPro == true && g_isEnableEditPro == false;
+		
+		if(isSetPro == true)
+			setProParamMode(containsPro);
 		else
 			unsetProParamMode();
 
@@ -2179,7 +2198,7 @@ function UniteCreatorParamsDialog(){
 				
 		if(isAddPro == true && dialogType == "main")
 			g_isEnableEditPro = true;
-				
+		
 		initTabs();
 
 		initEvents();

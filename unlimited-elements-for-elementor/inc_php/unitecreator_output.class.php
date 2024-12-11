@@ -1535,9 +1535,9 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 	 * put debug data html
 	 */
 	private function putDebugDataHtml_default($arrData, $arrItemData){
-
+		
 		$isShowData = $this->debugDataType != "items_only";
-
+	
 		$html = "";
 
 		if($isShowData == true){
@@ -1576,7 +1576,7 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 	 * modify debug array
 	 */
 	private function modifyDebugArray($arrDebug){
-
+		
 		if(is_array($arrDebug) == false)
 			$arrDebug = (array)$arrDebug;
 
@@ -1623,7 +1623,7 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 		}
 
 		$arrPost = $this->modifyDebugArray($post);
-
+		
 		$html = dmpGet("<b> ------- Post  ------- </b>");
 
 		$html .= dmpGet($arrPost);
@@ -1768,7 +1768,7 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 
 		//get data from listing
 		$paramListing = $this->addon->getListingParamForOutput();
-
+		
 		if(!empty($paramListing) && $this->itemsType == "template"){
 
 			$arrItemData = $this->putDebugDataHtml_getItemsFromListing($paramListing, $arrData);
@@ -1777,9 +1777,9 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 		switch($this->debugDataType){
 			case "post_titles":
 			case "post_meta":
-
+			
 				$html .= $this->putDebugDataHtml_posts($arrItemData);
-
+			
 			break;
 			case "current_post_data":
 

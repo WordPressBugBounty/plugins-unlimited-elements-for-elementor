@@ -45,7 +45,7 @@ class UniteCreatorElementorPagination{
 		if($enableAjax == true)
 			$textSection = esc_html__("Posts Pagination and Filtering", "unlimited-elements-for-elementor");
 
-				$data["section"] = array(
+			$data["section"] = array(
 			"name"=>"section_pagination",
 			"label"=>$textSection,
 			"condition"=>$condition,
@@ -485,7 +485,7 @@ class UniteCreatorElementorPagination{
 
 		if($isEditMode == true){
 
-			if(self::SHOW_DEBUG == true){
+			if($isDebug == true){
 				dmp("edit mode!!!");
 			}
 
@@ -517,26 +517,40 @@ class UniteCreatorElementorPagination{
 			dmp(GlobalsProviderUC::$lastPostQuery->query);
 		}
 
-
 		global $wp_rewrite;
 		$isUsingPermalinks = $wp_rewrite->using_permalinks();
 
 		if( $isUsingPermalinks == true){		//with permalinks - add /2
 
 			$permalink = get_permalink();
-
+			
 			$isFront = is_front_page();
-			$isArchive = is_archive();
-
-			if($isFront == true)
+			$isArchive = UniteFunctionsWPUC::isArchiveLocation();
+			
+			
+			if($isFront == true){
 				$permalink = GlobalsUC::$url_site;
-
-			$urlCurrentPage = UniteFunctionsWPUC::getUrlCurrentPage(true);
-
-			if($isArchive == true)
+				
+				if($isDebug == true)
+					dmp("url site permalink".GlobalsUC::$url_site);
+			}
+			
+			if($isArchive == true || $isSearchPage = true){
+				
+				$urlCurrentPage = UniteFunctionsWPUC::getUrlCurrentPage(true);
+				
 				$permalink = $urlCurrentPage;
-
+				
+				if($isDebug == true)
+					dmp("take current page as permalink: $urlCurrentPage");
+				
+			}
+			
 			$options['base'] = trailingslashit( $permalink ) . '%_%';
+			
+			if($isDebug)
+				dmp("the base: ".$options['base']);
+			
 			$options['format'] = user_trailingslashit( '%#%', 'single_paged' );
 
 			if($isFront || $isArchive || $forceFormat == "page")
@@ -609,7 +623,7 @@ class UniteCreatorElementorPagination{
 		$totalPages = $this->getTotalPages();
 
 		$nextOffset = null;
-
+		
 		if(GlobalsProviderUC::$lastPostQuery){
 
 			$currentOffset = GlobalsProviderUC::$lastPostQuery_offset;
@@ -678,15 +692,19 @@ class UniteCreatorElementorPagination{
 		
 		if(self::SHOW_DEBUG == true)
 			$isDebug = true;
-
+		
 		if(GlobalsUC::$showQueryDebugByUrl == true)
 			$isDebug = true;
 		
+		$isPaginationDebug = HelperUC::hasPermissionsFromQuery("ucpaginationdebug");
+
+		if($isPaginationDebug == true)
+			$isDebug = true;
 		
 		$forceFormat = UniteFunctionsUC::getVal($args, "force_format");
 		if($forceFormat == "none")
 			$forceFormat = null;
-
+		
 		//--------- prepare options
 
 		$options = array();
@@ -722,7 +740,7 @@ class UniteCreatorElementorPagination{
 		//-------- put pagination html
 
 		$isArchivePage = UniteFunctionsWPUC::isArchiveLocation();
-
+		
 		if($isDebug == true){
 			echo "<div class='uc-pagination-debug'>";
 
@@ -754,8 +772,6 @@ class UniteCreatorElementorPagination{
 			}
 		}
 		
-		
-		/*
 		if($isArchivePage == true && !empty(GlobalsProviderUC::$lastPostQuery_paginationType) && GlobalsProviderUC::$lastPostQuery_paginationType != GlobalsProviderUC::QUERY_TYPE_CURRENT){
 			
 			$isArchivePage = false;
@@ -767,8 +783,7 @@ class UniteCreatorElementorPagination{
 				dmp("change to custom");
 			}
 		}
-		*/
-
+		
 		//force format yes/no
 
 		switch($forceFormat){
@@ -779,7 +794,6 @@ class UniteCreatorElementorPagination{
 				$isArchivePage = false;
 			break;
 		}
-		
 		
 		if($isArchivePage == true){
 			
@@ -821,7 +835,7 @@ class UniteCreatorElementorPagination{
 			
 			//skip for home pages
 			$options = $this->getSinglePageOptions($options, $forceFormat, $isDebug);
-					
+			
 			if($isDebug == true)
 				dmp("custom query pagination");
 			

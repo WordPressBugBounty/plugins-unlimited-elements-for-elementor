@@ -1748,6 +1748,22 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	}
 
 	/**
+	 * check if pro param exists
+	 */
+	public function isParamProExists(){
+
+		$arrParams = $this->params;
+
+		foreach ($arrParams as $subArrParams) {
+			if (!empty($subArrParams['is_pro'] ) || !empty($subArrParams['pro_options'])) {
+				return (true);
+			}
+		}
+
+		return (false);
+	}
+
+	/**
 	 * check if param type exists
 	 */
 	public function isParamTypeExists($type){

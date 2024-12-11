@@ -3,8 +3,6 @@
 defined('UNLIMITED_ELEMENTS_INC') or die;
 
 class UniteCreatorAddonViewProvider extends UniteCreatorAddonView{
-	
-	
 
 	/**
 	 * add dynamic fields child keys

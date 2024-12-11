@@ -685,7 +685,8 @@ class UniteCreatorElementorWidget extends Widget_Base {
 	          		}//not emtpy tabName
 
 
-         	$arrControl = $this->getControlArrayUC($param, true);
+         	 $arrControl = $this->getControlArrayUC($param, true);
+
 
 			//add control (responsive or not)
 			if(isset($arrControl["uc_responsive"])){
@@ -880,6 +881,19 @@ class UniteCreatorElementorWidget extends Widget_Base {
     		$this->isAddSapBefore = false;
     	}
 
+    	//protect pro options in control
+    	
+    	if(GlobalsUnlimitedElements::$enableLimitProFunctionality == true){
+		    
+    		$isProControl = UniteFunctionsUC::getVal($param, "is_pro");
+	    	
+			if($isProControl && GlobalsUC::$isProVersion == false){
+				$arrControl['classes'] = 'uc-has-pro-option';
+			}
+    		
+    	}
+		
+    	
     	switch($type){
     		case "uc_post":
     		case UniteCreatorDialogParam::PARAM_TEXTFIELD:
@@ -1149,8 +1163,10 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     			$options = UniteFunctionsUC::getVal($param, "options", array());
 
+
     			$options = array_flip($options);
     			$arrControl["options"] = $options;
+
 
     			if($isMultiple == true){
     				$arrControl["multiple"] = true;
@@ -2064,8 +2080,8 @@ class UniteCreatorElementorWidget extends Widget_Base {
     						$objControls->add_responsive_control($name, $arrControl);
 
     					}else{
+							$objControls->add_control( $name, $arrControl );
 
-    						$objControls->add_control($name, $arrControl);
     					}
 
     				break;
@@ -2084,8 +2100,9 @@ class UniteCreatorElementorWidget extends Widget_Base {
      */
     private function addImageSizesControl($paramImage, $objControls){
 
+
     	$param = HelperProviderUC::getImageSizesParamFromPostListParam($paramImage);
-		
+
     	$this->addElementorParamUC($param, $objControls);
     }
 

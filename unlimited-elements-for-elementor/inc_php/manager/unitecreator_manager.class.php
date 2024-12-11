@@ -201,7 +201,13 @@ class UniteCreatorManager{
 			<div id="cats_section" class="cats_section">
 				<div class="cat_list_wrapper">			 
 					<ul id="list_cats" class="list_cats">
-						<?php echo UniteProviderFunctionsUC::escCombinedHtml($htmlCatList)?>
+						<?php 
+						$verFlags = HelperUC::getActivePluginVersions();
+						if($verFlags[GlobalsUC::VERSION_GUTENBERG] && !$verFlags[GlobalsUC::VERSION_ELEMENTOR]) { 
+							$htmlCatList = str_replace('Widgets', 'Blocks', $htmlCatList);
+						}
+						echo UniteProviderFunctionsUC::escCombinedHtml($htmlCatList);
+						?>
 					</ul>					
 				</div>
 			</div>			 	

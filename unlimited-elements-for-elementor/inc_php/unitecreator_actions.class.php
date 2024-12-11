@@ -145,6 +145,11 @@ class UniteCreatorActions{
 
 					$manager = UniteCreatorManager::getObjManagerByAddonType($addonType, $data);
 					$response = $manager->getCatAddonsHtmlFromData($data);
+					
+					$verFlags = HelperUC::getActivePluginVersions();
+					if($verFlags[GlobalsUC::VERSION_GUTENBERG] && !$verFlags[GlobalsUC::VERSION_ELEMENTOR]) { 
+						$response = str_replace('Widgets', 'Blocks', $response);
+					}
 
 					HelperUC::ajaxResponseData($response);
 				break;

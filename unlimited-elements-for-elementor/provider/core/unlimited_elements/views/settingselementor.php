@@ -20,17 +20,6 @@ class UniteCreatorViewElementorSettings extends UniteCreatorSettingsView{
 
 		$objSettings = HelperProviderUC::modifyGeneralSettings_memoryLimit($objSettings);
 
-		//show the setting that was hidden in first place
-		if(GlobalsUC::$inDev == true)	//dynamic visibility
-			$objSettings->updateSettingProperty("enable_dynamic_visibility", "hidden", "false");
-
-		if(GlobalsUnlimitedElements::$enableForms == false){
-			$objSettings->hideSetting("enable_form_entries");
-			$objSettings->hideSetting("save_form_logs");
-
-			$objSettings->hideSap("forms");
-		}
-
 		if(GlobalsUnlimitedElements::$enableGoogleAPI == false){
 			
 			$objSettings->hideSetting("google_connect_heading");

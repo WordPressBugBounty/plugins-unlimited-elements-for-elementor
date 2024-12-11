@@ -10,6 +10,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 
 function ueCheckCatalog(){
+
+	HelperProviderUC::showPostsDebug($arrPosts);
 	
 	$webAPI = new UniteCreatorWebAPI();
 
@@ -19,8 +21,9 @@ function ueCheckCatalog(){
 	
 	$arrAddons = $webAPI->getCatalogAddonsByTags(UniteCreatorWebAPI::TAG_ANIMATION);
 	
-	dmp("addons that support animation");
 	
+	dmp("addons that support animation");
+	UniteFunctionsUC::getGetVar("preview_id","",UniteFunctionsUC::SANITIZE_KEY);
 	dmp($arrAddons);
 	exit();
 	
@@ -29,7 +32,10 @@ function ueCheckCatalog(){
 
 function checkSomeFunc(){
 
+	$webAPI = new UniteCreatorWebAPI();
+	$data = $webAPI->getCatalogArray_pages();
 	
+	dmp($data);
 	
 	dmp("check some func");
 	exit();

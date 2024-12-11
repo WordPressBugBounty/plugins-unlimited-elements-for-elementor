@@ -825,17 +825,23 @@ class UniteFunctionsUC{
 	 * convert single array like in post meta
 	 */
 	public static function modifyDataArrayForShow($arrData, $convertSingleArray = false){
-
+		
 		if(is_array($arrData) == false)
 			return($arrData);
 
+		$truncateSize = 200;
+		
 		$arrDataNew = array();
 		foreach($arrData as $key=>$value){
 
 			$key = htmlspecialchars($key);
-		
-			//if(is_string($value) == true)
-				//$value = htmlspecialchars($value);
+			
+			if(is_string($value) == true && strlen($value) > $truncateSize){
+				
+				$value = UniteFunctionsUC::truncateString($value, $truncateSize);
+				$value = htmlspecialchars($value);
+				
+			}
 			
 			$key = " $key";
 
@@ -1601,40 +1607,60 @@ class UniteFunctionsUC{
 
     public static function parseXML($xml) {
         $array = [];
-
-        // If there are attributes, add them to the array
-        foreach ($xml->attributes() as $key => $value) {
-            $array["@attributes"][$key] = (string)$value;
-        }
-
         // Process namespaces and children
         foreach ($xml->getNamespaces(true) as $prefix => $namespace) {
             foreach ($xml->children($namespace) as $key => $child) {
-                // Use prefix only when it's a namespaced element
-                $prefixedKey = $prefix ? $prefix . ':' . $key : $key;
 
-                // Handle single or multiple entries
-                if (isset($array[$prefixedKey])) {
-                    // If this key already exists, convert it to an array if not already
-                    if (!is_array($array[$prefixedKey]) || !isset($array[$prefixedKey][0])) {
-                        $array[$prefixedKey] = [$array[$prefixedKey]];
+                if (!empty($prefix) && !empty($key)) {
+                    // Use prefix only when it's a namespaced element
+                    $prefixedKey = $prefix . '_' . $key;
+
+                    if ($prefixedKey == 'content_encoded') {
+                        $prefixedKey = 'content';
                     }
-                    $array[$prefixedKey][] = self::parseXML($child);
-                } else {
-                    $array[$prefixedKey] = self::parseXML($child);
+
+                    $attributes = $child->attributes();
+                    if(!empty($attributes)) {
+                        foreach ($attributes as $attr_key => $attr_value) {
+                            $array[$prefixedKey . '_' . $attr_key] = (string) $attr_value;
+                        }
+                    }
+
+                    $parsedContent = self::parseXML($child);
+                    if (!empty($parsedContent)) {
+                        $array[$prefixedKey] = $parsedContent;
+                    }
                 }
             }
         }
 
         // Process non-namespaced children
         foreach ($xml->children() as $key => $child) {
+            if ($key == 'pubDate') {
+                $key = 'publish_date';
+            }
+
+            $attributes = $child->attributes();
+            if(!empty($attributes)) {
+                foreach ($attributes as $attr_key => $attr_value) {
+                    $array[$key . '_' . $attr_key] = (string) $attr_value;
+                }
+            }
+
             if (isset($array[$key])) {
                 if (!is_array($array[$key]) || !isset($array[$key][0])) {
                     $array[$key] = [$array[$key]];
                 }
-                $array[$key][] = self::parseXML($child);
+
+                $parsedContent = self::parseXML($child);
+                if (!empty($parsedContent)) {
+                    $array[$key][] = $parsedContent;
+                }
             } else {
-                $array[$key] = self::parseXML($child);
+                $parsedContent = self::parseXML($child);
+                if (!empty($parsedContent)) {
+                    $array[$key] = $parsedContent;
+                }
             }
         }
 
@@ -3139,6 +3165,7 @@ class UniteFunctionsUC{
 	        '/^\d{2}-\d{2}-\d{2}$/' => 'd-m-y',      // 31-12-24
 	        '/^\d{2}\/\d{4}$/' => 'm/d/Y',           // 12/31/2024
 	        '/^\d{2}-\d{4}$/' => 'm-d-Y',            // 12-31-2024
+	    	'/^\d{8}$/' => 'Ymd'
 	    );
 	    
 	    foreach ($patterns as $pattern => $format) {
@@ -3159,30 +3186,46 @@ class UniteFunctionsUC{
 	    
 	    if(empty($strDate))
 	        return("");
-
-	    $stamp = strtotime($strDate);
-	   
-	    if(!empty($stamp))
-	       return($stamp);
 	    
 	    //guess format
 	    
 	    if(empty($format))
-	        $format = self::detectDateFormat($strDate);
-	       
-	    if(empty($format))
-	       return("");
-	    	       
+	       $format = self::detectDateFormat($strDate);
+	          
+	    if(empty($format)){
+	    		    	
+	    	$stamp = strtotime($strDate);
+	    	return($stamp);
+	    }
+	   	
 	    $date = DateTime::createFromFormat($format, $strDate);
 	    
-	    if(empty($date))
-	       return("");
-	    
+	    if(empty($date)){
+	    	$stamp = strtotime($strDate);
+	    	return($stamp);
+	    }
+	    	    
 	    $stamp = $date->getTimestamp();
 	    
 	    return($stamp);	    
 	}
 	
+	/**
+	 * check if some variable is time stamp
+	 */
+	public static function isTimeStamp($number) {
+		
+	    if (!is_numeric($number) || intval($number) != $number)
+	        return false;
+	
+	    // Check if the number has exactly 10 digits
+	    if (strlen((string)$number) != 10)
+	    	return(false);
+	
+ 		$date = date('Y-m-d H:i:s', $number);
+ 		
+    	return (strtotime($date) === (int)$number);	    	
+	}
 	
 	public static function z___________OTHERS__________(){}
 	
@@ -3461,6 +3504,22 @@ class UniteFunctionsUC{
 		header("Content-Disposition: attachment; filename=\"$filename\"");
 		header("Content-Length: $filesize");
 		header("Content-Type: text/plain");
+
+		echo UniteProviderFunctionsUC::escCombinedHtml($text);
+		exit;
+	}
+
+
+	/**
+	 * Download json file
+	 */
+	public static function downloadJson($filename, $text){
+
+		$filesize = strlen($text);
+
+		header("Content-Disposition: attachment; filename=\"$filename\"");
+		header("Content-Length: $filesize");
+		header("Content-Type: application/json");
 
 		echo UniteProviderFunctionsUC::escCombinedHtml($text);
 		exit;

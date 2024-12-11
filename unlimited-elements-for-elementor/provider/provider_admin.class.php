@@ -533,6 +533,8 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 	 * add admin menus from the list.
 	 */
 	public function addAdminMenu(){
+				
+		$this->addAdminMenuLinks();
 
 		//add blox menu
 		$this->addAdminMenu_putActually(self::$arrMenuPages, self::$arrSubMenuPages);
@@ -937,6 +939,9 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 		$this->setUserCapability();
 
 		$this->initAddonRevisioner();
+		
+		
+		// $this->addAdminMenuLinks();
 
 		//next stuff run only if inside the plugin
 
@@ -1052,12 +1057,10 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 		$this->setPluginTitle();
 
 		$this->modifyPluginVariables();
-
-		$this->addAdminMenuLinks();
 		
 		//add internal hook for adding a menu in arrMenus
 		$this->addAction(self::ACTION_ADMIN_MENU, "addAdminMenu");
-
+		
 		//if not inside plugin don't continue
 		if($this->isInsidePlugin() == true){
 			

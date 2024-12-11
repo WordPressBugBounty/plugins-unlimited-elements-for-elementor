@@ -346,7 +346,7 @@ class UniteCreatorAdmin extends UniteBaseAdminClassUC{
 	public function adminPages(){
 
 		$this->validatePHPExtensions();
-
+		
 		if(self::$view != GlobalsUC::VIEW_MEDIA_SELECT)
 			self::setMasterView("master_view");
 

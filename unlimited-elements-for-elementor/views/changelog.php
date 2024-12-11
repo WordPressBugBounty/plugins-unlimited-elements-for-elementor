@@ -14,14 +14,15 @@ class UCChangelogView extends WP_List_Table{
 	const ACTION_EDIT = "edit";
 	const ACTION_DELETE = "delete";
 	const ACTION_EXPORT = "export";
-
+	const ACTION_EXPORT_JSON = "export-json";
+	const ACTION_IMPORT_JSON = "import-json";
 	const FILTER_ID = "id";
 	const FILTER_ADDON = "addon";
 	const FILTER_VERSION = "version";
 
 	const EDIT_FIELD_TYPE = "type";
 	const EDIT_FIELD_TEXT = "text";
-
+		
 	private $service;
 
 	/**
@@ -52,6 +53,16 @@ class UCChangelogView extends WP_List_Table{
 
 		if($action === self::ACTION_EXPORT){
 			$this->processExportAction();
+			exit;
+		}
+
+		if($action === self::ACTION_EXPORT_JSON){
+			$this->processExportJsonAction();
+			exit;
+		}
+
+		if($action === self::ACTION_IMPORT_JSON){
+			$this->processImportJsonAction();
 			exit;
 		}
 
@@ -99,6 +110,13 @@ class UCChangelogView extends WP_List_Table{
 
 		if(isset($_REQUEST[self::ACTION_EXPORT]))
 			return self::ACTION_EXPORT;
+
+		if(isset($_REQUEST[self::ACTION_EXPORT_JSON]))
+			return self::ACTION_EXPORT_JSON;
+
+		if(isset($_REQUEST[self::ACTION_IMPORT_JSON]))
+			return self::ACTION_IMPORT_JSON;
+
 
 		return parent::current_action();
 	}
@@ -335,15 +353,43 @@ class UCChangelogView extends WP_List_Table{
 		$selectedAddon = $this->getFilter(self::FILTER_ADDON);
 		$selectedVersion = $this->getFilter(self::FILTER_VERSION);
 
+		$urlViewImport = HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_CHANGELOG_IMPORT);
+		$isChangelogImportDisabled = HelperProviderUC::isAddonChangelogImportDisabled();
+
 		?>
+        <script>
+            jQuery(document).ready(function (){
+               jQuery('.migrate-button').click(function(){
+                  jQuery(this).hide();
+                  jQuery('.import-button, .export-button').show();
+               });
+            });
+        </script>
+
 		<div class="alignleft actions">
 			<?php $this->displayFilterSelect(self::FILTER_ADDON, __("Filter by Widget", "unlimited-elements-for-elementor"), __("All Widgets", "unlimited-elements-for-elementor"), $addons, $selectedAddon); ?>
 			<?php $this->displayFilterSelect(self::FILTER_VERSION, __("Filter by Version", "unlimited-elements-for-elementor"), __("All Versions", "unlimited-elements-for-elementor"), $versions, $selectedVersion); ?>
 			<?php submit_button(__("Filter", "unlimited-elements-for-elementor"), "", "", false, array("id" => "filter-submit")); ?>
 		</div>
-		<div class="alignright" style="margin-left: 8px;">
+
+        <div class="alignright migrate-button" style="margin-left: 8px;">
+            <a style="text-decoration: none; margin-top: 5px; display: block; width: 100%" href="javascript:void(0);" title="Migrate"><span class="dashicons dashicons-migrate"></span></a>
+        </div>
+
+        <?php if(!$isChangelogImportDisabled): ?>
+        <div class="alignright import-button" style="margin-left: 8px; display: none" >
+            <a class="button button-primary" href="<?php echo $urlViewImport; ?>"><?php echo __("Import Changelog", "unlimited-elements-for-elementor"); ?></a>
+        </div>
+        <?php endif; ?>
+
+        <div class="alignright export-button" style="margin-left: 8px; display: none" >
+			<?php submit_button(__("Export Changelog", "unlimited-elements-for-elementor"), "primary", self::ACTION_EXPORT_JSON, false, array("id" => "export-json-submit")); ?>
+        </div>
+
+		<div class="alignright" style="margin-left: 8px;" >
 			<?php submit_button(__("Export", "unlimited-elements-for-elementor"), "primary", self::ACTION_EXPORT, false, array("id" => "export-submit")); ?>
 		</div>
+
 		<?php
 	}
 
@@ -460,6 +506,29 @@ class UCChangelogView extends WP_List_Table{
 		
 		UniteFunctionsUC::downloadTxt($filename, $content);
 	}
+
+
+	/**
+	 * Process the export json action.
+	 *
+	 * @return void
+	 */
+	public function processExportJsonAction(){
+        $export = new UniteCreatorImportExportChangelog();
+		$export->exportChangelog('export-file');
+	}
+
+
+	/**
+	 * Process the import json action.
+	 *
+	 * @return void
+	 */
+	private function processImportJsonAction(){
+		$import = new UniteCreatorImportExportChangelog();
+		$import->importChangelog();
+	}
+
 
 	/**
 	 * Prepares the list of items.

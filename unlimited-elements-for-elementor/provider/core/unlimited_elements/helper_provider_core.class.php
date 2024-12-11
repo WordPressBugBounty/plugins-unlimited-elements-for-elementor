@@ -922,7 +922,7 @@ class HelperProviderCoreUC_EL{
 			return(null);
 		
 		$cacheKey =  self::getFrameCacheKey($arrTemplates);
-						
+		
 		$content = wp_cache_get( $cacheKey );
 						
 		if(!empty($content))

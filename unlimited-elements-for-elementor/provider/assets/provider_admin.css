@@ -518,3 +518,9 @@ body.uc-blox-page .uc-edit-post-button-return-to-wp{
 .uc-dashboard-widget-release-log{
 	margin-top:10px;
 }
+
+.item-addon{
+	background: #2271b1;
+	padding: 5px 10px;
+	color: #fff
+}

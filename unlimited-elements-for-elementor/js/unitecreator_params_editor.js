@@ -292,7 +292,7 @@ function UniteCreatorParamsEditor(){
 	 *
 	 */
 	function getParamRowHtml(objParam){
-
+		
 		var typeTitle = getTypeTitle(objParam.type);
 
 		var html = "<tr>";
@@ -336,14 +336,17 @@ function UniteCreatorParamsEditor(){
 
 		if(tabName)
 			tabText = tabName;
-
+		
+		var proOptionsClass = (objParam.is_pro == true) ? 'attribute-pro-options' : '';
+		
 		//icon move
-		html += " <td class='uc-hide-on-movemode uc-table-nowrap'><div class='uc-table-row-handle'></div><div class='uc-table-admin-label"+adminLabelClass+"' title='Admin Label'></div></td>";
+		html += " <td class='uc-hide-on-movemode uc-table-nowrap'><div class='uc-table-row-handle "+proOptionsClass+"'></div><div class='uc-table-admin-label"+adminLabelClass+"' title='Admin Label'></div></td>";
 		html += " <td class='uc-show-on-movemode'> <input type='checkbox' class='uc-check-param-move' data-name='" + objParam.name + "'> </td>";
 
 		//title link
 		html += " <td>";
 		html += "<a class='uc-button-edit-param"+linkClass+"' "+linkTitle+" href='javascript:void(0)'>" + objParam.title + "</a>";
+
 
 		if(enableCondition)
 			html += "<div class='uc-text-condition' title='"+g_uctext["display_condition"]+"'>" + conditionText + "</div>";
@@ -1586,7 +1589,6 @@ function UniteCreatorParamsEditor(){
 
 		g_objLastParam = objParam;
 
-		//trigger change event
 		triggerEvent(t.events.UPDATE);
 	}
 
@@ -1664,6 +1666,7 @@ function UniteCreatorParamsEditor(){
 
 		var objRow = jQuery(this).parents("tr");
 		var paramData = getRowData(objRow);
+
 
 		switch(paramData.type){
 			case "uc_imagebase":
@@ -1864,7 +1867,7 @@ function UniteCreatorParamsEditor(){
 	 * init the params editor by wrapper and params
 	 */
 	this.init = function(objWrapper, objParams, objDialog, arrParamsCats){
-
+		
 		g_objWrapper = objWrapper;
 
 		g_objCatsWrapper = g_objWrapper.find(".uc-attr-cats-wrapper");

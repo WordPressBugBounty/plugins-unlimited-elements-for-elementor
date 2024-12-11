@@ -339,9 +339,9 @@ class UCEmptyTemplate{
 			GlobalsProviderUC::$renderTemplateID = $templateID;
 			GlobalsProviderUC::$renderJSForHiddenContent = true;
 			GlobalsProviderUC::$isInsideHiddenTemplate = true;
-			
+						
 			$output = HelperProviderCoreUC_EL::getElementorTemplate($templateID, true);
-			
+						
 			//set hidden content
 			
 			$class = "";
@@ -375,6 +375,30 @@ class UCEmptyTemplate{
 				
 	}
 	
+	/**
+	 * get tmeplate widgets html
+	 */
+	private function getTemplateWidgetsHTML($arrTempalteWidgets){
+		
+		if(empty($arrTempalteWidgets))
+			return("");
+		
+		$html = "<div class='uc-template-widgets-list' style='display:none'>";
+		
+		foreach($arrTempalteWidgets as $widget){
+			
+			$title = UniteFunctionsUC::getVal($widget, "title");
+			
+			$link = UniteFunctionsUC::getVal($widget, "link");
+
+			$html .= "<a href='{$link}' target='_blank' class='uc-template-widgets-list__link'>{$title}</a>";			
+		}
+		
+		$html .= "</div>";
+		
+		return($html);		
+	}
+	
 	
 	/**
 	 * render multiple template for templates widget output
@@ -402,7 +426,6 @@ class UCEmptyTemplate{
 		
 		foreach($arrTemplates as $index => $templateID){
 			
-			
 			//sanitize and check template ID
 			
 			UniteFunctionsUC::validateNumeric($templateID,"template id");
@@ -423,10 +446,18 @@ class UCEmptyTemplate{
 				$isHidden = true;
 			}
 			
+			do_action("ue_template_render_start");
+			
 			$output = HelperProviderCoreUC_EL::getElementorTemplate($templateID, true);
 			
-			//set hidden content
+			$arrTempalteWidgets = apply_filters("ue_get_template_widgets",array());
 			
+			$htmlTemplateWidgets = $this->getTemplateWidgetsHTML($arrTempalteWidgets);
+			
+			do_action("ue_template_render_end");
+			
+			//set hidden content
+						
 			$class = "";
 			if($isHidden == true){
 				
@@ -440,7 +471,10 @@ class UCEmptyTemplate{
 			
 			$urlTemplate = esc_attr($urlTemplate);
 			
-			$content .= "<div id='uc_template_$templateID' class='uc-template-holder{$class}' data-id='$templateID' data-link='$urlTemplate'>$output</div>";
+			$content .= "<div id='uc_template_$templateID' class='uc-template-holder{$class}' data-id='$templateID' data-link='$urlTemplate'>
+				$output
+				$htmlTemplateWidgets
+			</div>";
 			
 			GlobalsProviderUC::$renderJSForHiddenContent = false;
 			
@@ -473,7 +507,11 @@ class UCEmptyTemplate{
 		$content = ob_get_contents();
 		ob_end_clean();
 		
+		//cache the content without scripts
 		if($cacheContent == true){
+			
+			$cacheKey = HelperProviderCoreUC_EL::getFrameCacheKey($arrTemplates);
+			
 			$success = wp_cache_set( $cacheKey, $content, '', GlobalsUnlimitedElements::FRAME_CACHE_EXPIRE_SECONDS );
 		}
 		

@@ -388,12 +388,27 @@ class UniteCreatorPluginIntegrations{
 		return($args);
 	}
 	
+	
+	/**
+	 * check if installed multi language plugins - polylang or wpml, and add "lang" argument
+	 */
+	public static function checkPostQueryLanguage($args){
+		
+		if(function_exists('pll_current_language') || UniteCreatorWpmlIntegrate::isWpmlExists())
+			$args['lang'] = UniteFunctionsWPUC::getLanguage();
+		
+		return($args);
+	}
+	
+	
 	/**
 	 * modify post query integrations
 	 */
 	public static function modifyPostQueryIntegrations($args){
 		
 		$args = self::checkPostQueryRelevancy($args);
+		
+		$args = self::checkPostQueryLanguage($args);
 		
 		return($args);
 	}

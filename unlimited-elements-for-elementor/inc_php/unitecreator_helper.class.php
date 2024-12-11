@@ -1883,6 +1883,33 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				HelperHtmlUC::outputExceptionBox($e, HelperUC::getText("addon_library") . " Error");
 		}
 	}
+		
+	/**
+	 * get active plugin versions
+	 */
+	public static function getActivePluginVersions() {
+		
+		$flagElementor = false;
+		$flagGutenberg = false;
+		foreach(GlobalsUC::$active_plugins_versions as $plugin) {
+			if(strpos($plugin, 'gutenberg') > 0) {
+				$flagGutenberg = true;
+			} elseif(strpos($plugin, 'elementor') > 0) {
+				$flagElementor = true;
+			}
+		}
+		
+		//some protection
+		if($flagGutenberg == false)
+			$flagElementor = true;
+		
+		$output = array();
+		$output[GlobalsUC::VERSION_GUTENBERG] = $flagGutenberg;
+		$output[GlobalsUC::VERSION_ELEMENTOR] = $flagElementor;
+		
+		return $output;
+	}
+	
 
 	/**
 	 * some test function for auto completion. keep empty

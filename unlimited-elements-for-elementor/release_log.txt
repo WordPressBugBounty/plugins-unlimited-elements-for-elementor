@@ -1,5 +1,18 @@
 
 
+version 1.5.130:
+
+* Fix: custom fields didn't show up in the params dialog in widget editor
+* Feature: dome change log export / import feature
+* Feature: added rss multisource setting
+* Fix: fixed bug with general settings was not hidden at start
+* Feature: added some existing letters for alphabet filter functionality
+* Feature: made integration with polylang in post query to show posts only by current language
+* Fix: fixed permalink for multisite, allow post list for multiple sites in one request
+* Fix: fixed pagination widget small bugs in archive page
+
+
+
 version 1.5.129:
 
 * Fix: fixed freemius sdk code, pro widgets download

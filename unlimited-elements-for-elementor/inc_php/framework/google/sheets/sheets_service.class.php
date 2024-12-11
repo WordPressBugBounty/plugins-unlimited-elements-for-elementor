@@ -80,6 +80,7 @@ class UEGoogleAPISheetsService extends UEGoogleAPIClient{
 		return $request;
 	}
 
+
 	/**
 	 * Get the update cells request.
 	 *
@@ -92,17 +93,22 @@ class UEGoogleAPISheetsService extends UEGoogleAPIClient{
 	 */
 	public function getUpdateCellsRequest($sheetId, $startIndex, $endIndex, $rows){
 
+		$columnsCount = isset($rows[0]['values']) ? count($rows[0]['values']) : 0;
+
 		$request = array(
 			"updateCells" => array(
 				"range" => array(
 					"sheetId" => $sheetId,
 					"startRowIndex" => $startIndex,
 					"endRowIndex" => $endIndex,
+					"startColumnIndex" => 0,
+					"endColumnIndex" => $columnsCount
 				),
 				"rows" => $rows,
 				"fields" => "*",
 			),
 		);
+
 
 		return $request;
 	}
@@ -176,6 +182,50 @@ class UEGoogleAPISheetsService extends UEGoogleAPIClient{
 	protected function getBaseUrl(){
 
 		return "https://sheets.googleapis.com/v4/spreadsheets";
+	}
+
+
+	/**
+	 * Get sheet properties.
+	 *
+	 * @param string $spreadsheetId
+	 * @param int $sheetId
+	 *
+	 * @return array
+	 */
+	public function getSheetProperties($spreadsheetId, $sheetId) {
+		$response = $this->get("/$spreadsheetId");
+
+		foreach ($response['sheets'] as $sheet) {
+
+			if ($sheet['properties']['sheetId'] == $sheetId) {
+				return $sheet['properties']['gridProperties'];
+			}
+		}
+
+		throw new Exception("Sheet properties not found.");
+	}
+
+
+	/**
+	 * Batch update the spreadsheet.
+	 *
+	 * @param string $spreadsheetId
+	 * @param array $requests
+	 *
+	 * @return array
+	 */
+
+	public function addColumnsIfNeeded( $spreadsheetId, $sheetId, $columnsToAdd ) {
+		$request = array(
+			'appendDimension' => array(
+				'sheetId'   => $sheetId,
+				'dimension' => 'COLUMNS',
+				'length'    => $columnsToAdd,
+			)
+		);
+
+		return $this->batchUpdateSpreadsheet( $spreadsheetId, $request );
 	}
 
 }

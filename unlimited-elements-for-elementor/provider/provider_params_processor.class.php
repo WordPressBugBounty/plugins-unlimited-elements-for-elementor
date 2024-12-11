@@ -803,7 +803,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 			if(!empty($postLinkAdd))
 				$link = UniteFunctionsUC::addUrlParams($link, $postLinkAdd);
-						
+			
 			$arrData["link"] = $link;
 
 			//link attributes
@@ -2615,7 +2615,6 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 		//show debug meta if needed
 		$this->showPostsDebyMeta($arrPosts, $value, $name);
-
         
 		return($arrPosts);
 	}
@@ -3213,7 +3212,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			break;
 			default:		//custom
-
+			
 				$arrPosts = $this->getPostListData_custom($value, $name, $processType, $param, $data, $nameListing);
 				
 				$filters = array();
@@ -3256,11 +3255,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if($useCategory == true && $useForListing == false)
 			UniteFunctionsWPUC::cachePostsTermsQueries($arrPosts);
 
-
 		$arrPostAdditions = HelperProviderUC::getPostDataAdditions($useCustomFields, $useCategory);
 
 		HelperUC::addDebug("post additions", $arrPostAdditions);
-
+		
 
 		//image sizes
 		$showImageSizes = UniteFunctionsUC::getVal($param, "show_image_sizes");
@@ -3299,7 +3297,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			$data = $objFilters->addWidgetFilterableVariables($data, $this->addon, $this->arrCurrentPostIDs);
 		}
-
+		
+		
 		$arrData = array();
 		$arrPostIDs = array();
 
@@ -3336,6 +3335,11 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			HelperProviderUC::printDebugQueries(true);
 		}
+		
+		$showPostListDebug = HelperUC::hasPermissionsFromQuery("ucpostlistdebug");
+		
+		if($showPostListDebug == true)
+			HelperProviderUC::showPostsDebug($arrPosts,true);
 		
 		//turn off the query debug flag
 		GlobalsProviderUC::$showPostsQueryDebug = false;
@@ -5246,8 +5250,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		if(!empty($depth) && is_numeric($depth))
 			$args["depth"] = $depth;
-
-
+		
 		$args["menu"] = $menuID;
 
 		$arrKeysToAdd = array(

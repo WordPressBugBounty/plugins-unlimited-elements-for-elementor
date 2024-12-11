@@ -601,35 +601,37 @@ class UniteCreatorTemplateEngineWork{
 
 		if(empty($format))
 			$format = get_option("date_format");
-
+		
 		if(empty($format))
 			$format = "d F Y";
 
 		$hasTags = false;
 		$stamp = $dateStamp;
 
-		//try to stip tags
+		//try to strip tags
 		if(is_numeric($dateStamp) == false){
 			$hasTags = true;
 			$stamp = strip_tags($dateStamp);
 			$stamp = trim($stamp);
 		}
 
-		/**
-		 * convert from string
-		 */
-		if(is_numeric($stamp) == false){
-
+		// get time stamp from string
+		
+		$isTimeStamp = UniteFunctionsUC::isTimeStamp($stamp);
+		
+		if($isTimeStamp == false){
+			
 			$hasTags = false;
-            
-			$objDate = DateTime::createFromFormat($formatDateFrom, $stamp);
-
-			if(!empty($objDate))
-				$stamp = @$objDate->getTimeStamp();
-			else
+			
+			if($formatDateFrom == "detect")
+				$formatDateFrom = "";
+			
+			$stamp = UniteFunctionsUC::date2Timestamp($stamp, $formatDateFrom);
+			
+			if(empty($stamp))
 				$stamp = time();
 		}
-
+		
 		$strDate = date_i18n($format, $stamp);
 
 		if($hasTags == true)
@@ -1630,6 +1632,13 @@ class UniteCreatorTemplateEngineWork{
 				}
 				
 				return($arrAlphabet);
+			break;
+			case "get_alphabet_sync":
+				
+				$objFilters = new UniteCreatorFiltersProcess();
+				$arrData = $objFilters->syncAlphabetWithGrid($arg1);
+				
+				return($arrData);
 			break;
 			default:
 

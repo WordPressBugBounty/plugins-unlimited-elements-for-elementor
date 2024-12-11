@@ -832,6 +832,18 @@ class HelperProviderUC{
 		return $isChangelogEnabled;
 	}
 
+
+	/**
+	 * check if addon changelog is enabled
+	 */
+	public static function isAddonChangelogImportDisabled(){
+
+		$isChangelogImportDisabled = HelperProviderCoreUC_EL::getGeneralSetting("disable_import_changelog");
+		$isChangelogImportDisabled = UniteFunctionsUC::strToBool($isChangelogImportDisabled);
+
+		return $isChangelogImportDisabled;
+	}
+
 	/**
 	 * verify if addon changelog is enabled, use it before ajax actions
 	 */
@@ -883,9 +895,6 @@ class HelperProviderUC{
 	 * check if form entries are enabled
 	 */
 	public static function isFormEntriesEnabled(){
-
-		if(GlobalsUnlimitedElements::$enableForms == false)
-			return(false);
 
 		$isEntriesEnabled = HelperProviderCoreUC_EL::getGeneralSetting("enable_form_entries");
 		$isEntriesEnabled = UniteFunctionsUC::strToBool($isEntriesEnabled);
@@ -1133,9 +1142,9 @@ class HelperProviderUC{
 	/**
 	 * show posts debug
 	 */
-	public static function showPostsDebug($arrPosts){
+	public static function showPostsDebug($arrPosts,$includePostObject = false){
 		
-		HelperUC::$operations->putPostsFullDebug($arrPosts);
+		HelperUC::$operations->putPostsFullDebug($arrPosts, $includePostObject);
 	}
 	
 	/**
@@ -1160,6 +1169,17 @@ class HelperProviderUC{
 			
 			dmp($htmlFields);
 		}
+		
+	}
+	
+	/**
+	 * show current post meta debug
+	 */
+	public static function showCurrentPostMetaDebug(){
+		
+		$post = get_post();
+		
+		HelperUC::$operations->putPostCustomFieldsDebug($post->ID);
 		
 	}
 	

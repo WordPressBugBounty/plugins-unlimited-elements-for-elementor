@@ -9,7 +9,6 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 	
 	$sapIDPrefix = "uc_tab_";
-	
 ?>
 <div class="content_wrapper unite-content-wrapper">	
 
@@ -103,5 +102,3 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 	});
 
 </script>
-
-

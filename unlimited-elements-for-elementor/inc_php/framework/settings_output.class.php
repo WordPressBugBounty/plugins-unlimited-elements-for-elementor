@@ -1633,7 +1633,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 	 * draw radio input
 	 */
 	protected function drawRadioInput($setting){
-
+				
 		$id = UniteFunctionsUC::getVal($setting, "id");
 		$name = UniteFunctionsUC::getVal($setting, "name");
 		$items = UniteFunctionsUC::getVal($setting, "items");
@@ -1665,9 +1665,11 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 				if($itemValue == $defaultValue)
 					$itemAttr .= ' data-defaultchecked="true"';
 
-				if($itemValue == $value)
+				if($itemValue == $value){
 					$itemAttr .= ' data-initchecked="true"';
-
+					$itemAttr .= " checked='checked'";
+				}
+				
 				?>
 
 				<input

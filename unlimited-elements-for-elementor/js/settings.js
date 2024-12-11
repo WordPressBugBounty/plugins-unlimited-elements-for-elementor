@@ -2277,6 +2277,7 @@ function UniteSettingsUC(){
 	 * init icon picker dialog
 	 */
 	function iconPicker_initDialog(type) {
+		
 		if (!type)
 			type = "fa";
 
@@ -2289,7 +2290,7 @@ function UniteSettingsUC(){
 
 			return objDialogWrapper;
 		}
-
+		
 		if (type === "elementor" && g_ucFaIcons.length === 0)
 			type = "fa";
 
@@ -3676,7 +3677,7 @@ function UniteSettingsUC(){
 
 				var objParent = {
 					id: parentID,
-					value: parentValue
+					value: parentValue 
 				};
 
 				action = getControlAction(objParent, objControl);
@@ -4657,6 +4658,7 @@ function UniteSettingsUC(){
 
 	}
 
+
 	/**
 	 * update placeholders
 	 */
@@ -4676,6 +4678,8 @@ function UniteSettingsUC(){
 		});
 
 	};
+
+
 
 	/**
 	 * focus first input
@@ -4909,6 +4913,7 @@ function UniteSettingsUC(){
 		t.enableTriggerChange();
 
 		g_temp.isInited = true;
+
 	};
 
 }

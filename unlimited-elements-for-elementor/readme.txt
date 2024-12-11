@@ -898,6 +898,80 @@ Note : This plugin works with Elementor. Make sure you have [Elementor](https://
 
 == Changelog ==
 
+
+version 1.5.130: 2024-12-11
+
+Plugin Changes:
+
+* Feature: dome change log export / import feature
+* Feature: added rss multisource setting
+* Feature: added some existing letters for alphabet filter functionality
+* Feature: made integration with polylang in post query to show posts only by current language
+* Fix: custom fields didn't show up in the params dialog in widget editor
+* Fix: fixed bug with general settings was not hidden at start
+* Fix: fixed permalink for multisite, allow post list for multiple sites in one request
+* Fix: fixed pagination widget small bugs in archive page
+
+Widgets Changes:
+
+* Feature: Post Accordion (Free) - Added Show Categories option, allowing users to display categories as needed.
+* Feature: Post Grid (Pro) - Added a new option: Open Button Link In New Tab, enabling users to choose whether button links open in a new browser tab.
+* Feature: Side Menu (Pro) - Added a new option: Toggle Background Color Active, which allows users to set a specific background color for the active toggle state.
+* Feature: Side Menu (Pro) - Added new option: Open Sub Menus From Side, allowing users to customize the behavior and positioning of submenus for a more intuitive navigation experience.
+* Feature: Post Accordion (Free) - Added option Additional Data Position, allowing users to define the placement of additional data elements.
+* Feature: Post Slider (Pro) - Added Title Link Type option, allowing users to customize how the title link behaves.
+* Feature: Service Box Hero (Pro) - Added a &quot;Content Max Width&quot; option to provide enhanced customization capabilities.
+* Feature: Post Grid (Pro) - Added a new Image Object Position option, enabling users to control the positioning of images for enhanced customization.
+* Feature: Content Tabs (Free) - Added drag functionality for cases when the Scrollable Tabs option is enabled.
+* Feature: Stacking Cards (Pro) - Added Show Item option for each item, allowing users to hide specific items as needed.
+* Feature: Post Grid (Pro) - Added a new option: Image Vertical Align, allowing users to control the vertical alignment of images within the widget.
+* Feature: Woo Product Grid (Pro) - Added styling options for the SKU element, allowing customization of font, color, size, and alignment to enhance its appearance.
+* Feature: Select Dropdown Filter (Pro) - Added &quot;Show Number of Posts in All Item&quot; option, enabling users to display the total number of posts within the &quot;All&quot; item.
+* Feature: Woo Category Carousel (Pro) - Added a new Stage Padding option, allowing users to set offset for the prev and next slide.
+* Feature: Thumbnail Slider (Pro) - Added an Image attribute to the Multisource feature, enhancing its functionality for better image handling.
+* Feature: Unlimited Table (Pro) - Added a new option called Row Text Align, allowing users to adjust the text alignment within rows for better customization and layout control.
+* Feature: Logo Marquee (Pro) - Added a new Margin option for Tablet, and Mobile, allowing greater flexibility in adjusting spacing and layout for different device sizes.
+* Feature: Justified Image Carousel (Pro) - Added a new value to the Title Position option: &quot;Over the Image.&quot; This enhancement allows the title to be positioned in the middle of the image
+* Feature: Checkboxes Filter (Pro) - Added &quot;No Terms Found Text&quot; option, allowing users to customize the message displayed when no terms are available.
+* Feature: Stacking Cards (Pro) - Added Button Hover Styles, providing customization options for button hover effects.
+* Change: Comparison List (Pro) - Enhanced widget functionality and added separate color customization options for the feature text and icon in each item.
+* Change: Service Box Hero (Pro) - Enhanced the widget's overall functionality with HTML layout changes and significant updates, providing users with increased customization options.
+* Change: Stacking Cards (Pro) - Resolved issues where HTML tags within the title were not rendering correctly and an issue with the title color and text shadow not applying.
+* Change: 360 Panorama Virtual Tour (Pro) - Updated the Yaw / Vertical View option by changing the minimum possible value from -50 to -90, allowing for greater flexibility in vertical adjustments.
+* Change: Radio Button Field (Pro) - Rewrote some JavaScript code to use jQuery for improved compatibility and readability.
+* Change: Toggle Dropdown (Pro) - Enabled responsive options for dropbar offsets.
+* Change: Thumbnail Slider (Pro) - Added a condition to ensure that an image is assigned to each item; if no image is provided, the item will not be displayed.
+* Change: Alphabet Filter (Pro) - Removed unnecessary options: Filter Logic and Override Query Terms.
+* Change: Unlimited Google Maps (Pro) - Hid the Current Location Button option if Show Coordinates Finder option is diabled.
+* Change: Unlimited Google Maps (Pro) - The tag for Geocoding Error element has been changed from h3 to div.
+* Change: WordPress Menu (Free) - Implemented functionality to close all submenus upon entering a responsive breakpoint after a resize event.
+* Change: Side Menu (Pro) - Changed position of the following options from &quot;General&quot; to &quot;Layout&quot;: Show Overlay, Show Arrows for Parents, Show Menu, and Menu Top Spacing.
+* Change: Toggle Dropdown (Pro) - Renamed dropbar offset options for clearer and more accurate descriptions.
+* Fix: Woo Product Grid (Pro) - Fixed issue where the Sale Price was not displaying correctly when the &quot;Show Only Lowest Variable Price&quot; option was enabled.
+* Fix: Sorting Filter (Pro) - Fixed issue where the Sorting Filter would reset after selecting another filter.
+* Fix: Unlimited Google Maps (Pro) - Fixed issue where the Current Location toggle element was not opening the current location information.
+* Fix: Stacking Cards (Pro) - Enabled Font Awesome Icon library support.
+* Fix: Quantity Increment Buttons (Pro) - Fixed issue when Quantity Increment Buttons were still shown when Product was out of stock.
+* Fix: Content Tabs (Free) - Fixed issue where the Content Tabs widget did not open the corresponding tab after clicking an anchor link.
+* Fix: Testimonial Carousel (Pro) - Fixed issue where the Testimonials Carousel widget in the Marquee layout type was not compatible with the Logo Marquee widget.
+* Fix: Stacking Cards (Pro) - Added the class &quot;uc-items-wrapper&quot; to resolve the filter functionality issue.
+* Fix: Off Canvas Filters (Pro) - Added support for the Accordion Filters widget, ensuring seamless functionality and integration.
+* Fix: Unlimited Google Maps (Pro) - Fixed issue with the data-category-index attribute where it was not equal to the appropriate category index
+* Fix: Flip Box (Free) - Fixed an issue where the Image Border Radius option was not working correctly in certain cases.
+* Fix: iHover Effects (Pro) - Optimized the HTML code to improve performance, reduce loading times, and enhance overall structure and readability.
+* Fix: Side Menu (Pro) - Increased z-index of the hamburger icon element to ensure it is always visible.
+* Fix: Post List (Free) - Resolved issues with hover effects for Title and Image when the &quot;Link Whole Item&quot; option is enabled.
+* Fix: Alphabet Filter (Pro) - Fixed issue with the Sync to Posts Widget After Load option.
+* Fix: Content Accordion (Free) - Optimized the HTML structure of widgets for improved performance and cleaner code output.
+* Fix: Unlimited Table (Pro) - Fixed issue where the Override Icon Color option was not working in certain cases
+* Fix: Floating Chat Buttons (Pro) - Added a fix to address cases where custom SVG icons uploaded in the widget were not displaying due to conflicting CSS code embedded within the SVG.
+* Fix: Colors Swatches Filter (Pro) - Fixed issue where the Border Radius option was not working for checked checkbox items.
+* Fix: Sorting Filter (Pro) - Fixed an issue in the JavaScript code that caused unexpected behavior in certain scenarios.
+* Fix: Checkbox Field (Pro) - Fixed issue where, with Layout Type Image, image elements were not visible due to overriding CSS code that applied a background color to the input element.
+* Fix: Side Menu (Pro) - Optimized widgets code to improve performance, reduce load times, and ensure smoother functionality across all supported platforms.
+* Fix: Accordion Filters (Pro) - Added support for the Off Canvas Filters widget, ensuring seamless functionality and integration.
+
+
 version 1.5.129: 2024-11-20
 
 * Fix: fixed freemius sdk code, pro widgets download

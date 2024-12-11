@@ -22,7 +22,8 @@ class UniteCreatorFiltersProcess{
 	private static $arrFiltersAssocCache = null;
 	private static $currentTermCache = null;
 	private static $isModeInit = false;
-
+	private static $lastFiltersInitRequest = null;
+	
 	private static $isGutenberg = false;
 	private static $platform = false;
 	private static $objGutenberg = null;
@@ -977,12 +978,13 @@ class UniteCreatorFiltersProcess{
 		//if mode init - the filters should be set by "all" the posts set, not by the selected ones.
 		
 		if(!empty($arrTerms) && self::$isModeInit == false){	
-
+			
 			//combine the tax queries
 			$arrTaxQuery = $this->getTaxQuery($arrTerms);
-
+			
 			if(!empty($arrTaxQuery))
 				$args = $this->setArgsTaxQuery($args, $arrTaxQuery);
+			
 		}
 
 		//exclude
@@ -1100,9 +1102,129 @@ class UniteCreatorFiltersProcess{
 		
 		
 	}
+	
+	private function _______SYNC__________(){}
+	
+	/**
+	 * get last grid request
+	 */
+	private function getLastGridRequest(){
+		
+		if(!empty($lastFiltersInitRequest))
+			return($lastFiltersInitRequest);
+			
+		$args = GlobalsProviderUC::$lastQueryArgs;
+			
+		if(self::$showDebug == true){
+			dmp("--- Last Query Args:");
+			dmp($args);
+		}
+			
+		$query = new WP_Query($args);
+		
+		if (is_wp_error($query)) {
+		    $error_message = $query->get_error_message();
+		    UniteFunctionsUC::throwError("test terms query failed: ".$error_message);
+		}
+			
+		$request = $query->request;
+					
+		//some times other hooks distrubting the request
+		//clear filters and run again if empty requests
+		
+		if(empty($request)){
+			
+			UniteFunctionsWPUC::clearAllWPFilters();
+			
+			$query = new WP_Query($args);
+			$request = $query->request;
+		}
+		
+		if(self::$showDebug == true){
+			
+			if(empty($request))
+				dmp("EMPTY TAX REQUEST!!! - WILL CAUSE ERRORS IN TEST TERMS!");
+		}
+		
+		return($request);
+	}
+	
+	/**
+	 * modify the request - change the buggy items
+	 */
+	private function modifySyncPostsRequest($request){
+		
+		$posLimit = strpos($request, "LIMIT");
 
+		if($posLimit){
+			$request = substr($request, 0, $posLimit-1);
+			$request = trim($request);
+		}
+		
+		$request = str_replace("SQL_CALC_FOUND_ROWS", "", $request);
+
+		$prefix = UniteProviderFunctionsUC::$tablePrefix;
+
+		$request = str_replace($prefix."posts.*", $prefix."posts.id", $request);
+		
+		return($request);
+	}
+	
+	/**
+	 * return only existing by thr grid letters
+	 */
+	public function syncAlphabetWithGrid($arrAlphabet){
+		
+		if(self::$isUnderAjax == false)
+			return(array());
+		
+		$request = $this->getLastGridRequest();
+		$request = $this->modifySyncPostsRequest($request);
+		
+		$prefix = UniteProviderFunctionsUC::$tablePrefix;
+		
+		
+		$sql = "
+		SELECT DISTINCT UPPER(LEFT(post_title, 1)) AS first_letter
+		FROM {$prefix}posts AS p
+		JOIN (
+		    $request
+		) AS req ON p.id = req.id
+		ORDER BY first_letter ASC;
+		";	
+
+		$db = HelperUC::getDB();
+		try{
+	
+			$response = @$db->fetchSql($sql);
+			
+		}catch(Exception $e){
+			//leave it empty
+		}
+
+	if(empty($response))
+		return(array());
+	
+	$arrAlphabet = UniteFunctionsUC::arrayToAssoc($arrAlphabet);
+			
+	$arrPostLetters = array();
+	
+	foreach($response as $arr){
+		
+		$letter = UniteFunctionsUC::getVal($arr, "first_letter");
+		
+		if(isset($arrAlphabet[$letter]) == false)
+			continue;
+		
+		$arrPostLetters[] = $letter;		
+	}
+	
+	
+	return($arrPostLetters);
+}
+	
 	private function _______AJAX__________(){}
-
+		
 	/**
 	 * get addon post list name
 	 */
@@ -1392,7 +1514,9 @@ class UniteCreatorFiltersProcess{
 		
 		if(strpos($request, "WHERE 1=2") !== false)
 			return(null);
-
+		
+		//trim the limit
+		
 		$posLimit = strpos($request, "LIMIT");
 
 		if($posLimit){
@@ -1446,7 +1570,7 @@ class UniteCreatorFiltersProcess{
 			GROUP BY p.`id`";
 		
 		$query .= $sql;
-
+		
 		$fullQuery = "SELECT $selectTop from($query) as summary";
 
 
@@ -1475,7 +1599,8 @@ class UniteCreatorFiltersProcess{
 		return($arrTermsAssoc);
 	}
 
-
+	
+	
 	/**
 	 * get widget ajax data
 	 */
@@ -1560,7 +1685,6 @@ class UniteCreatorFiltersProcess{
 				dmp($args);
 			}
 			
-			
 			$query = new WP_Query($args);
 			
 			if (is_wp_error($query)) {
@@ -1569,7 +1693,7 @@ class UniteCreatorFiltersProcess{
 			}
 			
 			$request = $query->request;
-			
+						
 			//some times other hooks distrubting the request
 			//clear filters and run again if empty requests
 			
@@ -1587,7 +1711,8 @@ class UniteCreatorFiltersProcess{
 					dmp("EMPTY TAX REQUEST!!! - WILL CAUSE ERRORS IN TEST TERMS!");
 			}
 			
-			
+			self::$lastFiltersInitRequest = $request;
+			 
 			$taxRequest = $this->getInitFiltersTaxRequest($request, $testTermIDs);
 			
 			if(self::$showDebug == true){
@@ -1692,7 +1817,8 @@ class UniteCreatorFiltersProcess{
 	}
 
 	private function _______AJAX_SEARCH__________(){}
-
+	
+	
 	/**
 	 * before custom posts query
 	 * if under ajax search then et main query
@@ -2115,7 +2241,6 @@ class UniteCreatorFiltersProcess{
 				return($arrTerms);
 
 		}
-
 
 		$arrSelected = array();
 

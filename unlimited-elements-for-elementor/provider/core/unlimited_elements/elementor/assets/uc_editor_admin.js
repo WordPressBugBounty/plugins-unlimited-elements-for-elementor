@@ -93,6 +93,32 @@ function UniteCreatorElementorEditorAdmin(){
 		
 	}
 	
+	/**
+	 * init the protection controls - if it's is_pro
+	 */
+	function initProtectProControls(){
+		
+		function protectControls() {
+			var objPanel = getObjElementorPanel();
+			
+			objPanel.find('.uc-has-pro-option').each(function() {
+				jQuery(this).css({ 'pointer-events': 'none', 'opacity': 0.5, 'user-select': 'none' })
+			});
+		}
+
+		protectControls();
+		
+		// Monitor changes in the DOM and protect again if necessary
+		var observer = new MutationObserver(function() {
+			protectControls();
+		});
+
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true,
+		});
+	}
+	
 	
 	/**
 	 * get object property
@@ -1682,12 +1708,15 @@ function UniteCreatorElementorEditorAdmin(){
 		g_objSettingsPanel = jQuery("#elementor-panel");
 		
 		//initPreviewThumbs();
+    
+		initProtectProControls()
 		
 		initAudioControl();
 		
 		initPostTypeSelectControl();
 		
 		initEvents();
+
 		
 	}
 	
@@ -1748,4 +1777,3 @@ jQuery(document).ready(function(){
 	g_objUCElementorEditorAdmin.init();
 	
 });
-

@@ -94,11 +94,20 @@
       <option value="editor" text="Editor" />
     </field>
 
+    <field type="control" parent="enable_changelog" child="disable_import_changelog" ctype="show" value="true" />
+
     <field name="enable_changelog"
       type="boolean"
       default="false"
       label="Enable Changelog"
       description="Enable changelog for widgets">
+    </field>
+
+    <field name="disable_import_changelog"
+           type="boolean"
+           default="false"
+           label="Disable Import"
+           description="Disable Import for widgets">
     </field>
 
     <field name="enable_revisions"
