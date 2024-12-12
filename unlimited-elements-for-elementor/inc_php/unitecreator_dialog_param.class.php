@@ -1397,7 +1397,7 @@ class UniteCreatorDialogParamWork{
 			UniteFunctionsUC::throwError("Attribute: {$paramType} is not found in param list.");
 
 		$addHtml = "";
-		if($isProParam == true){
+		if($isProParam == true && GlobalsUC::$isProVersion == false){
 			$title .= " (pro)";
 			$addHtml .= " data-ispro='true'";
 		}
@@ -1856,7 +1856,7 @@ class UniteCreatorDialogParamWork{
 								//is pro param
 								$isProParam = $this->isProParam($paramType);
 								
-								if($isProParam == true)
+								if($isProParam == true && GlobalsUC::$isProVersion == false)
 									$addClass .= " uc-pro-param";
 
 								?>

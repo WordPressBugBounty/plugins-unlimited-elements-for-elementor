@@ -12,17 +12,6 @@ Elementor all-in-one addons pack that offers a wide range of features to enhance
 
 
 == Description ==
-
-<h3>Black Friday Sale!</h3>
-
-🚀 Get Unlimited Elements at half price this Black Friday!
-
-Now's your chance to access the full widget library and premium features at a massive discount. Don’t wait—this deal expires Nov 30!
-
-<a href="https://unlimited-elements.com/pricing/">Unlock 50% Off Now!</a>
-
-<br>
-<br>
  
 <strong>Elementor</strong> users, elevate your web design experience with <strong>Unlimited Elements for Elementor</strong>. An all in one plugin that instantly gives you the most advanced widgets and tools to make better Elementor websites faster.  Take your WordPress website to the next level. 
 
@@ -897,6 +886,12 @@ Note : This plugin works with Elementor. Make sure you have [Elementor](https://
 
 
 == Changelog ==
+
+
+version 1.5.131: 2024-12-12
+
+* Fix: attributes edit was blocked
+* Fix: php warning in getPermalink function
 
 
 version 1.5.130: 2024-12-11

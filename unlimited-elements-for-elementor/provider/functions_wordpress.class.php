@@ -4632,14 +4632,13 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 	/**
 	 * get permalist with check of https
+	 * $post - is post object or post id
 	 */
 	public static function getPermalink($post){
 		
 		$debugMultisite = false;
 		
 		$url = get_permalink($post);
-		
-		$postID = $post->ID;
 		
 		//fix for multisource
 		
@@ -4661,8 +4660,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			   $blogDetails = get_blog_details($blogID);
 				
 			   switch_to_blog($blogID);
-        
-        	   $url = get_permalink($postID);
+        	
+        	   $url = get_permalink($post);
       
           	   restore_current_blog();				
 			}
@@ -4671,7 +4670,6 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				dmp("multisite");
 				dmp("current: $currentBlogID");
 				dmp("blogid: $blogID");
-				dmp("postid: $postID");
 				dmp("url: $url");
 			}			
 			

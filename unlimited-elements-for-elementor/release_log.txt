@@ -1,5 +1,11 @@
 
 
+version 1.5.131:
+
+* Fix: attributes edit was blocked
+* Fix: php warning in getPermalink function
+
+
 version 1.5.130:
 
 * Fix: custom fields didn't show up in the params dialog in widget editor

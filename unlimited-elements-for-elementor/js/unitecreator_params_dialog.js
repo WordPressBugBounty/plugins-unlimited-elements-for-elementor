@@ -1776,7 +1776,7 @@ function UniteCreatorParamsDialog(){
 	 * return if the dialog is limited
 	 */
 	function isDialogLimited(){
-
+		
 		if(g_objWrapper.hasClass("uc-dialog-limited"))
 			return(true);
 
@@ -1800,7 +1800,7 @@ function UniteCreatorParamsDialog(){
 	 * set pro param mode
 	 */
 	function setProParamMode(containsProMode){
-
+		
 		g_objWrapper.addClass("uc-pro-param");
 		
 		if(containsProMode == true)
@@ -1814,7 +1814,7 @@ function UniteCreatorParamsDialog(){
 
 		g_ucAdmin.disableInput(g_objParamTitle);
 		g_ucAdmin.disableInput(g_objParamName);
-
+		
 		var objTextarea = g_objWrapper.find("textarea");
 		g_ucAdmin.disableInput(objTextarea);
 
@@ -1827,7 +1827,7 @@ function UniteCreatorParamsDialog(){
 		
 		g_objWrapper.removeClass("uc-pro-param");
 		g_objWrapper.removeClass("uc-contains-pro");
-
+		
 		var objDialogUI = getDialogUIWrapper();
 		if(!objDialogUI)
 			return(true);
@@ -1885,7 +1885,7 @@ function UniteCreatorParamsDialog(){
 	 * on select type change
 	 */
 	function onSelectTypeChange(){
-				
+		
 		var isLimited = isDialogLimited();
 		if(isLimited == true)
 			return(false);
@@ -1900,18 +1900,24 @@ function UniteCreatorParamsDialog(){
 		//check if set pro param mode
 		var isPro = objContent.hasClass("uc-pro-param");
 		
+		//check the 
+		var isSetPro = isPro;
+		var containsPro = false;
+		
+		/*
 		//check if contains pro param
 		var containsPro = g_ucAdmin.getVal(g_objData, "is_pro");
 		
 		//one of the two exits
 		var isSetPro = isPro || containsPro == true && g_isEnableEditPro == false;
+		*/
+		
 		
 		if(isSetPro == true)
 			setProParamMode(containsPro);
 		else
 			unsetProParamMode();
-
-
+		
 		//focus title if empty
 		var title = g_objParamTitle.val();
 		if(title == "")
