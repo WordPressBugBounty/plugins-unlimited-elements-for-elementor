@@ -282,11 +282,11 @@ class UniteCreatorManager{
 			
 				<div class="unite-dialog-top"></div>
 			
-				<?php esc_html_e("Are you sure you want to delete the: ")?>
+				<?php esc_html_e("Are you sure you want to delete the: ", "unlimited-elements-for-elementor")?>
 				
 				<b><span id="uc_dialog_delete_category_catname"></span></b>
 				
-				<?php esc_html_e(" category and all it's widgets?")?>
+				<?php esc_html_e(" category and all it's widgets?", "unlimited-elements-for-elementor")?>
 				
 			<?php 
 				$prefix = "uc_dialog_delete_category";

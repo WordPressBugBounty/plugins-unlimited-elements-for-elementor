@@ -387,6 +387,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 			$accessToken = UEGoogleAPIHelper::getFreshAccessToken();
 		}catch(Exception $exception){
 			if(UEGoogleAPIHelper::getAccessToken())
+				// translators: %s is a string
 				$error = sprintf(__("Unable to refresh the access token. Please connect to Google again. (Reason: \"%s\")", "unlimited-elements-for-elementor"), $exception->getMessage());
 		}
 
@@ -402,7 +403,10 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 			
 			?>
 			<div class="uc-google-connect-message">
-				<?php echo sprintf(__("Connected to: <b>%s</b>", "unlimited-elements-for-elementor"), esc_html($email)); ?>
+				<?php 
+				// translators: %s is a string
+				echo sprintf(__("Connected to: <b>%s</b>", "unlimited-elements-for-elementor"), esc_html($email)); 
+				?>
 			</div>
 			<a class="button" href="<?php echo UEGoogleAPIHelper::getRevokeUrl(); ?>">
 				<?php esc_html_e("Disconnect from Google Sheets", "unlimited-elements-for-elementor"); ?>
@@ -424,7 +428,10 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		if(empty($error) === false){
 			?>
 			<div class="uc-google-connect-error">
-				<?php echo sprintf(__("Error: %s", "unlimited-elements-for-elementor"), esc_html($error)); //Security Update 1 ?>
+				<?php 
+				// translators: %s is a string
+				echo sprintf(__("Error: %s", "unlimited-elements-for-elementor"), esc_html($error)); //Security Update 1 
+				?>
 			</div>
 			<?php
 		}
@@ -606,13 +613,13 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 
 		?>
 		<div
-			id="<?php esc_attr_e($id); ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
 			class="unite-setting-switcher unite-setting-input-object"
 			data-settingtype="switcher"
-			data-name="<?php esc_attr_e($name); ?>"
-			data-value="<?php esc_attr_e($value); ?>"
-			data-checkedvalue="<?php esc_attr_e($checkValue); ?>"
-			data-uncheckedvalue="<?php esc_attr_e($uncheckValue); ?>"
+			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
+			data-value="<?php esc_attr_e($value, "unlimited-elements-for-elementor"); ?>"
+			data-checkedvalue="<?php esc_attr_e($checkValue, "unlimited-elements-for-elementor"); ?>"
+			data-uncheckedvalue="<?php esc_attr_e($uncheckValue, "unlimited-elements-for-elementor"); ?>"
 			<?php echo $addHtml; ?>
 		>
 			<div class="unite-setting-switcher-toggle"></div>
@@ -653,7 +660,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		<div
 			class="unite-dimentions unite-setting-input-object unite-settings-exclude"
 			data-settingtype="dimentions"
-			data-name="<?php esc_attr_e($name); ?>"
+			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
 			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 		>
 
@@ -670,17 +677,17 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 				<div class="unite-dimentions-field">
 					<input
 						class="unite-dimentions-field-input"
-						id="<?php esc_attr_e($fieldId); ?>"
+						id="<?php esc_attr_e($fieldId, "unlimited-elements-for-elementor"); ?>"
 						type="number"
-						name="<?php esc_attr_e($fieldName); ?>"
-						value="<?php esc_attr_e($fieldValue); ?>"
-						data-key="<?php esc_attr_e($dimentionValue); ?>"
+						name="<?php esc_attr_e($fieldName, "unlimited-elements-for-elementor"); ?>"
+						value="<?php esc_attr_e($fieldValue, "unlimited-elements-for-elementor"); ?>"
+						data-key="<?php esc_attr_e($dimentionValue, "unlimited-elements-for-elementor"); ?>"
 					/>
 					<label
 						class="unite-dimentions-field-label"
-						for="<?php esc_attr_e($fieldId); ?>"
+						for="<?php esc_attr_e($fieldId, "unlimited-elements-for-elementor"); ?>"
 					>
-						<?php esc_html_e($dimentionTitle); ?>
+						<?php esc_html_e($dimentionTitle, "unlimited-elements-for-elementor"); ?>
 					</label>
 				</div>
 
@@ -702,7 +709,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 
 			<div
 				class="unite-dimentions-link unite-setting-button uc-tip <?php echo $isLinked === true ? "unite-active" : ""; ?>"
-				data-key="<?php esc_attr_e($fieldName); ?>"
+				data-key="<?php esc_attr_e($fieldName, "unlimited-elements-for-elementor"); ?>"
 				data-title-link="<?php esc_attr_e(__("Link Values", "unlimited-elements-for-elementor")); ?>"
 				data-title-unlink="<?php esc_attr_e(__("Unlink Values", "unlimited-elements-for-elementor")); ?>"
 			>

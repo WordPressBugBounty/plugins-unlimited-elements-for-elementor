@@ -3,19 +3,22 @@
 function UniteCreatorParamsEditor(){
 
 	var t = this;
-
 	var g_objWrapper, g_objTableBody, g_objEmptyParams, g_type;
 	var g_objDialog = new UniteCreatorParamsDialog(), g_buttonAddParam;
 	var g_buttonAddImageBase, g_objLastParam, g_objCatsWrapper, g_objCopyCatSection;
 	var g_objParamsDialogSpecial;
+	var g_isLimitProFunctionality;
+	var g_isProVersion;
 
 	if(!g_ucAdmin)
 		var g_ucAdmin = new UniteAdminUC();
+
 
 	this.events = {
 			UPDATE: "update",	//update list event
 			BULK: "bulk"
 	};
+
 
 	var g_temp = {
 			hasCats:false,
@@ -295,6 +298,13 @@ function UniteCreatorParamsEditor(){
 		
 		var typeTitle = getTypeTitle(objParam.type);
 
+		var containsPro = g_ucAdmin.getVal(objParam, "is_pro");
+
+		var handleContainsProClass = '';
+
+		if (containsPro === true && g_isLimitProFunctionality === true)
+			handleContainsProClass = 'uc-handle-contains-pro';
+
 		var html = "<tr>";
 
 		var paramError = null;
@@ -310,6 +320,7 @@ function UniteCreatorParamsEditor(){
 			linkClass = " unite-color-red";
 			textRowAdd = "class='unite-color-red' title='"+paramError+"'";
 		}
+
 
 		var isAdminLabel = g_ucAdmin.getVal(objParam, "admin_label", false, g_ucAdmin.getvalopt.FORCE_BOOLEAN);
 
@@ -337,10 +348,10 @@ function UniteCreatorParamsEditor(){
 		if(tabName)
 			tabText = tabName;
 		
-		var proOptionsClass = (objParam.is_pro == true) ? 'attribute-pro-options' : '';
+
 		
 		//icon move
-		html += " <td class='uc-hide-on-movemode uc-table-nowrap'><div class='uc-table-row-handle "+proOptionsClass+"'></div><div class='uc-table-admin-label"+adminLabelClass+"' title='Admin Label'></div></td>";
+		html += " <td class='uc-hide-on-movemode uc-table-nowrap'><div class='uc-table-row-handle "+handleContainsProClass+"'></div><div class='uc-table-admin-label"+adminLabelClass+"' title='Admin Label'></div></td>";
 		html += " <td class='uc-show-on-movemode'> <input type='checkbox' class='uc-check-param-move' data-name='" + objParam.name + "'> </td>";
 
 		//title link
@@ -435,6 +446,7 @@ function UniteCreatorParamsEditor(){
 		var deleteClass = "";
 		if(paramError)
 			deleteClass = " unite-bold";
+
 
 		//add operations
 		html += " <td class='uc-table-nowrap'>";
@@ -1156,7 +1168,6 @@ function UniteCreatorParamsEditor(){
 
 	}
 
-
 	/**
 	* show copy section part
 	*/
@@ -1220,18 +1231,29 @@ function UniteCreatorParamsEditor(){
 		if(!objData)
 			return(false);
 
+		// get params copied section
+		var params = g_ucAdmin.getVal(objData, "params");
+
+		// check if pro version and if exist pro options in copied section
+		var isProVersion = g_isProVersion;
+		var isProOptions = checkProOptionsInCopiedSection(params);
+
+		if(isProVersion == false && isProOptions == true){
+			alert(g_uctext.prohibition_section_attribute_copied);
+			return(false);
+		}
+
 		// add category
-
 		var title = g_ucAdmin.getVal(objData, "title");
-
 		var catID = addCatToTab(tab, title, null, objData);
 
 		// add attributes
-
-		var params = g_ucAdmin.getVal(objData, "params");
-
 		if(!params)
 			params = [];
+		else
+			// delete pro options in copied section
+		    params = deleteProOptionsInCopiedSection(params);
+
 
 		jQuery.each(params,function(index, param){
 			param["__attr_catid__"] = catID;
@@ -1248,6 +1270,37 @@ function UniteCreatorParamsEditor(){
 		selectCategory(objCat);
 
 	}
+
+
+	/**
+	 * check if exist pro options in copy section
+	 */
+	function checkProOptionsInCopiedSection(params){
+		for (const param of params) {
+			if (param.hasOwnProperty('is_pro') || param.hasOwnProperty('pro_options')) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * delete pro options in copy section
+	 */
+	function deleteProOptionsInCopiedSection(params){
+		for (const param of params) {
+			if (param.hasOwnProperty('is_pro'))
+				delete param.is_pro;
+
+			if (param.hasOwnProperty('pro_options'))
+				delete param.pro_options;
+		}
+
+		return params;
+	}
+
 
 	/**
 	 * init copies section div event
@@ -1619,6 +1672,13 @@ function UniteCreatorParamsEditor(){
 
 		var rowData = getRowData(objRow);
 		var name = rowData.name;
+
+		if(rowData.hasOwnProperty('is_pro'))
+			delete rowData.is_pro;
+
+		if(rowData.hasOwnProperty('pro_options'))
+			delete rowData.pro_options;
+
 		rowData.name = getDuplicateNewName(name);
 
 		addParamRow(rowData, objRow);
@@ -1655,6 +1715,17 @@ function UniteCreatorParamsEditor(){
 	function onDeleteParamClick(){
 
 		var objRow = jQuery(this).parents("tr");
+		var paramData = getRowData(objRow);
+
+		var isPro = g_ucAdmin.getVal(paramData, "is_pro");
+		var containsProOptions = g_ucAdmin.getVal(paramData, "pro_options");
+		var isProVersion = g_isProVersion;
+
+		if((isPro == true || containsProOptions.length > 0) && isProVersion == false){
+			alert(g_uctext.prohibition_setting_attribute_deletion);
+			return(false);
+		}
+
 		removeParamRow(objRow);
 	}
 
@@ -1700,12 +1771,25 @@ function UniteCreatorParamsEditor(){
 	};
 
 
+
+
 	/**
 	 * on duplicate param click
 	 */
 	function onDuplicateParamClick(){
 
 		var objRow = jQuery(this).parents("tr");
+		var paramData = getRowData(objRow);
+
+		var isPro = g_ucAdmin.getVal(paramData, "is_pro");
+		var containsProOptions = g_ucAdmin.getVal(paramData, "pro_options");
+		var isProVersion = g_isProVersion;
+
+		if((isPro == true || containsProOptions.length > 0) && isProVersion == false){
+			alert(g_uctext.prohibition_setting_attribute_duplication);
+			return(false);
+		}
+
 		duplicateParamRow(objRow);
 
 	}
@@ -1867,6 +1951,10 @@ function UniteCreatorParamsEditor(){
 	 * init the params editor by wrapper and params
 	 */
 	this.init = function(objWrapper, objParams, objDialog, arrParamsCats){
+
+		g_isLimitProFunctionality = (g_ucAdmin.getOption("uc_limit_pro_functionality") === true);
+
+		g_isProVersion = (g_ucAdmin.getOption("uc_pro_version") === true);
 		
 		g_objWrapper = objWrapper;
 

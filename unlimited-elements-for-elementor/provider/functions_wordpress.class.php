@@ -3535,7 +3535,10 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 	 * check if current user has some permissions
 	 */
 	public static function isCurrentUserHasPermissions(){
-
+		
+		if(function_exists("current_user_can") == false)
+			return(false);
+		
 		$canEdit = current_user_can("manage_options");
 
 		return ($canEdit);

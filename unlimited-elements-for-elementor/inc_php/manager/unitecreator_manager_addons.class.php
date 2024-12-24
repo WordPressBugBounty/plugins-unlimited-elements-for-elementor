@@ -1315,7 +1315,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 				<div class="unite-inputs-sap"></div>
 
 				<div class="unite-inputs-label">
-					<?php echo esc_html($this->textSingle.__(" Name"))?>:
+					<?php echo esc_html($this->textSingle.__(" Name", "unlimited-elements-for-elementor"))?>:
 				</div>
 
 				<input type="text" id="dialog_add_addon_name" class="dialog_addon_input unite-input-100" />
@@ -1339,7 +1339,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 					<div class="unite-inputs-sap"></div>
 
 					<div class="unite-inputs-label">
-						<?php echo esc_html($this->textSingle).esc_html__(" Description")?>:
+						<?php echo esc_html($this->textSingle).esc_html__(" Description", "unlimited-elements-for-elementor")?>:
 					</div>
 
 					<textarea id="dialog_add_addon_description" class="dialog_addon_input unite-input-100" ></textarea>
@@ -1402,7 +1402,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 				$warningText = __("Notice: Your php setting: max_execution_time is <b>$maxExecutionTime</b> seconds. It is not efficient enough for importing the template. Please increase this value in php.ini. If you don't know how to change it please contact your hosting provider.");
 		}
 
-		$dialogTitle = __("Preview Template");
+		$dialogTitle = __("Preview Template", "unlimited-elements-for-elementor");
 		$confirmImportAgainMessage = __("This import will overwrite the existing imported template. Continue?");
 		$confirmImportAgainMessage = htmlspecialchars($confirmImportAgainMessage);
 

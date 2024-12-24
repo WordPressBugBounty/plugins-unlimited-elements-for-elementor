@@ -887,6 +887,40 @@ Note : This plugin works with Elementor. Make sure you have [Elementor](https://
 
 == Changelog ==
 
+version 1.5.132: 2024-12-23
+
+Plugin Changes:
+
+* Feature: added rss single settings
+* Feature: added simple repeater setting
+* Fix: fixed some small php bug in form submissions php file
+* Fix: small php error in calendar API
+* Fix: bug fix: fixed some pagination php bug
+
+
+Widgets Changes:
+
+* Feature: AJAX Search (Pro) - Added &quot;With Type&quot; option that allows setting a custom width for the Results element.
+* Feature: Scroll Sequence (Pro) - Made the &quot;Field of View&quot; option responsive, allowing users to customize the setting for different devices and screen sizes, enhancing flexibility and user experience
+* Feature: Post Ticker (Free) - Added &quot;Enable Post Link In Title&quot; option, allowing users to make the post title clickable and link it to the post.
+* Feature: Border Link Hover Effects (Pro) - Added Padding option to Link elements, allowing users to adjust the space between the border and the text for better customization.
+* Feature: Custom Cursor (Pro) - Created log: Added support for Elementor Popups, enabling seamless integration and functionality within popup designs.
+* Feature: Before After (Pro) - Added support for Elementor Swiper Carousel, enabling seamless integration and enhanced functionality for creating advanced and customizable carousel sliders within Elementor.
+* Feature: Overlay Carousel (Pro) - Added Slide Transition option, allowing users to customize the transition effects between slides for a smoother and more visually appealing experience.
+* Feature: Date Field (Pro) - Added Min Date option, allowing users to set a minimum selectable date for improved date input control and validation.
+* Feature: WordPress Menu (Free) - Added the &quot;Close on Body Click&quot; option, allowing users to configure the widget to automatically close when clicking anywhere outside of it, enhancing usability and ensuring a smoother interaction experience.
+* Feature: Content Carousel (Pro) - Added the &quot;Button Hover Style&quot; option, providing users with the ability to customize the hover effect for buttons, allowing for greater design flexibility and improved visual interactivity.
+* Change: Timer Countdown Banner (Pro) - Enhanced the banner functionality by introducing options for inline or fixed positioning, a close button with cookie support, a &quot;Show After Scroll&quot; feature to display the banner only after the user scrolls, and the ability to add a graphic element for improved customization.
+* Fix: Team Member Carousel (Pro) - Fixed issue where the Button was not working when Source was set to Items.
+* Fix: Woo Mini Cart (Pro) - Fixed issue where incrementing the product quantity in the Mini Cart widget was not working correctly in some cases.
+* Fix: Stacking Cards (Pro) - Fixed issue where the Button Hover Style option was not working correctly, ensuring proper functionality and expected styling behavior.
+* Fix: Creative Button Hovers (Free) - Transferred CSS styles from an external file to the general widgets CSS file. This improvement helps prevent overriding issues with other widgets and ensures better compatibility and styling consistency.
+* Fix: Unlimited Google Maps (Pro) - Fixed issue where the Map widget did not display the location pin when the &quot;Show Info Window&quot; option was disabled.
+* Fix: Toggle Dropdown (Pro) - Fixed an issue where icons were not displaying correctly.
+* Fix: Content Carousel (Pro) - Fixed an issue where the &quot;Button Hover Animation&quot; option was not functioning correctly, ensuring smooth and consistent hover animations for buttons.
+* Fix: Author List (Pro) - Fixed an issue where HTML tags were incorrectly displayed as visible text in text elements, ensuring proper rendering and a cleaner user interface.
+* Fix: Step Process (Pro) - Added the &quot;alt&quot; attribute to images, improving accessibility and enhancing SEO compliance.
+
 
 version 1.5.131: 2024-12-12
 

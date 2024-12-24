@@ -950,12 +950,12 @@ class UniteCreatorAssets{
 	 * create folder
 	 */
 	protected function createFolder($path, $folderName){
-		
+		global $wp_filesystem;
 		$folderName = trim($folderName);
 		
 		$pathCreate = $this->validateCreateNewFileFolder($path, $folderName, false);
 		
-		@mkdir($pathCreate);
+		@$wp_filesystem->mkdir($pathCreate);
 
 		if(is_dir($pathCreate) == false)
 			UniteFunctionsUC::throwError("Can't create folder <b>{$folderName}</b>, please check parent folder permissions");
@@ -1127,7 +1127,7 @@ class UniteCreatorAssets{
 	 * handle upload files
 	 */
 	protected function handleUploadFile($uploadPath, $arrFile){
-		
+		global $wp_filesystem;
 		try{
 			
 			$this->validateStartPath();
@@ -1143,7 +1143,13 @@ class UniteCreatorAssets{
 			if(is_file($tempFilepath) == false)
 				UniteFunctionsUC::throwError("wrong upload filepath!");
 
-			$success = move_uploaded_file($tempFilepath, $destFilepath);
+			$success = false;
+			$uploaded_file = wp_handle_upload( $arrFile );
+			if ( isset( $uploaded_file['file'] ) ) {
+				$wp_filesystem->move( $uploaded_file['file'], $destFilepath, true );
+				$success = true;
+			}
+			// $success = move_uploaded_file($tempFilepath, $destFilepath);
 			
 			if($success == false)
 				UniteFunctionsUC::throwError("Upload Failed to: $destFilepath");
@@ -1189,14 +1195,14 @@ class UniteCreatorAssets{
 						</b>
 					</div>
 					
-					<form id="uc_form_dropzone" action="<?php echo GlobalsUC::$url_ajax?>" class="dropzone">
-						<input type="hidden" name="action" value="<?php echo GlobalsUC::PLUGIN_NAME?>_ajax_action">
+					<form id="uc_form_dropzone" action="<?php echo esc_url(GlobalsUC::$url_ajax)?>" class="dropzone">
+						<input type="hidden" name="action" value="<?php echo esc_html(GlobalsUC::PLUGIN_NAME)?>_ajax_action">
 						<input type="hidden" id="uc_input_upload_path" name="upload_path" value="">
 						<input type="hidden" id="uc_input_pathkey" name="pathkey" value="">
 						<input type="hidden" name="client_action" value="assets_upload_files">
 						
 						<?php if(!empty($addonID)):?>
-							<input type="hidden" name="addonID" value="<?php echo $addonID?>">
+							<input type="hidden" name="addonID" value="<?php echo esc_attr($addonID)?>">
 						<?php endif?>
 						
 						<?php if(!empty($nonce)):?>
@@ -1483,9 +1489,13 @@ class UniteCreatorAssets{
 				$htmlError = HelperUC::getHtmlErrorMessage($message,$trace, "Assets Manager Error: ");
 				?>
 				<div <?php echo UniteProviderFunctionsUC::escAddParam($id)?> data-pathkey="<?php echo esc_attr($this->pathKey)?>" class="uc-assets-wrapper" <?php echo UniteProviderFunctionsUC::escAddParam($wrapperStyle)?> data-isbrowser="<?php echo esc_attr($this->isBrowerMode)?>" data-path="<?php echo esc_attr($activePathData)?>" data-startpath="<?php echo esc_attr($startPathData)?>" data-options="<?php echo esc_attr($jsonOptions)?>">
-				<?php 
-				echo "<div class='uc-assets-startup-error'>".$htmlError."</div>";
-				echo "</div>";
+				<div class='uc-assets-startup-error'>
+					<?php 
+					echo esc_html($htmlError);
+					?>
+				</div>
+				</div>
+				<?php
 				return(false);
 			}
 			
@@ -1538,12 +1548,15 @@ class UniteCreatorAssets{
 				$trace = $e->getTraceAsString();
 				
 			$htmlError = HelperUC::getHtmlErrorMessage($message,$trace, "Assets Manager Error: ");
-			
-			echo "<div class='uc-assets-startup-error'>".esc_html($htmlError)."</div>";
+			?>
+			<div class='uc-assets-startup-error'>
+				<?php
+					echo esc_html($htmlError);
+				?>
+			</div>
+			<?php
 		}
-		
 		?>
-		
 			<div class="unite-clear"></div>
 		</div>
 		

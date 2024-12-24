@@ -17,7 +17,7 @@ $addonsListUrl = HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_ADDONS_ELEM
 
 <div id="uc_addondefaults_wrapper" class="uc-addondefaults-wrapper">
 
-	<h1><?php esc_html_e("Widget Defaults", "unlimited-elements-for-elementor"); ?> - <?php esc_html_e($addonTitle); ?></h1>
+	<h1><?php esc_html_e("Widget Defaults", "unlimited-elements-for-elementor"); ?> - <?php esc_html_e($addonTitle, "unlimited-elements-for-elementor"); ?></h1>
 
 	<div class="uc-preview-addon-actions">
 		<div class="uc-preview-addon-actions-primary">

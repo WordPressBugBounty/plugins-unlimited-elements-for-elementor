@@ -29,7 +29,6 @@ class UniteCreatorAdmin extends UniteBaseAdminClassUC{
 	 * init all actions
 	 */
 	protected function init(){
-
 		//some init content
 	}
 

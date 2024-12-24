@@ -101,11 +101,11 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 		<select class="unite-responsive-picker">
 			<?php foreach($devices as $type => $device): ?>
 				<option
-					value="<?php esc_attr_e($type); ?>"
-					data-content="<?php esc_attr_e('<div class="unite-responsive-picker-item uc-tip" title="' . esc_attr($device["title"]) . '" data-tipsy-gravity="w">' . $device["icon"] . '</div>'); ?>"
+					value="<?php esc_attr_e($type, "unlimited-elements-for-elementor"); ?>"
+					data-content="<?php esc_attr_e('<div class="unite-responsive-picker-item uc-tip" title="' . esc_attr($device["title"]) . '" data-tipsy-gravity="w">' . $device["icon"] . '</div>', "unlimited-elements-for-elementor"); ?>"
 					<?php echo $type === $selectedType ? "selected" : ""; ?>
 				>
-					<?php esc_html_e($device["title"]); ?>
+					<?php esc_html_e($device["title"], "unlimited-elements-for-elementor"); ?>
 				</option>
 			<?php endforeach; ?>
 		</select>
@@ -156,11 +156,11 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 
 		?>
 		<li
-			id="<?php esc_attr_e($id); ?>_row"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>_row"
 			<?php echo UniteProviderFunctionsUC::escAddParam($rowClass); ?>
 			<?php echo UniteProviderFunctionsUC::escAddParam($addAttr); ?>
-			data-name="<?php esc_attr_e($name); ?>"
-			data-type="<?php esc_attr_e($type); ?>"
+			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
+			data-type="<?php esc_attr_e($type, "unlimited-elements-for-elementor"); ?>"
 		>
 
 			<div class="unite-setting-field">
@@ -215,16 +215,16 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 		$rowClass = $this->drawSettingRow_getRowClass($setting);
 
 		?>
-		<li id="<?php esc_attr_e($id) ?>_row" <?php echo UniteProviderFunctionsUC::escAddParam($rowClass); ?>>
+		<li id="<?php esc_attr_e($id, "unlimited-elements-for-elementor") ?>_row" <?php echo UniteProviderFunctionsUC::escAddParam($rowClass); ?>>
 
 			<?php if(empty($label) === false): ?>
 				<span class="unite-settings-text-label">
-					<?php esc_html_e($label) ?>
+					<?php esc_html_e($label, "unlimited-elements-for-elementor") ?>
 				</span>
 			<?php endif ?>
 
-			<span class="unite-settings-static-text<?php esc_attr_e($classAdd); ?>">
-				<?php esc_html_e($text); ?>
+			<span class="unite-settings-static-text<?php esc_attr_e($classAdd, "unlimited-elements-for-elementor"); ?>">
+				<?php esc_html_e($text, "unlimited-elements-for-elementor"); ?>
 			</span>
 
 		</li>
@@ -266,19 +266,19 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 
 		?>
 		<div
-			id="<?php esc_attr_e($id) ?>"
-			class="<?php esc_attr_e($class); ?>"
-			data-tab="<?php esc_attr_e($tab); ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor") ?>"
+			class="<?php esc_attr_e($class, "unlimited-elements-for-elementor"); ?>"
+			data-tab="<?php esc_attr_e($tab, "unlimited-elements-for-elementor"); ?>"
 		>
 
 			<?php if($this->showSapTitle === true): ?>
 				<div class="unite-postbox-title">
 
 					<?php if(empty($classIcon) === false): ?>
-						<i class="unite-postbox-icon <?php esc_attr_e($classIcon); ?>"></i>
+						<i class="unite-postbox-icon <?php esc_attr_e($classIcon, "unlimited-elements-for-elementor"); ?>"></i>
 					<?php endif; ?>
 
-					<span><?php esc_html_e($text); ?></span>
+					<span><?php esc_html_e($text, "unlimited-elements-for-elementor"); ?></span>
 
 					<?php if($this->isAccordion === true): ?>
 						<div class="unite-postbox-arrow"></div>
@@ -312,8 +312,8 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 		$rowClass = $this->drawSettingRow_getRowClass($setting);
 
 		?>
-		<li id="<?php esc_attr_e($id) ?>_row" <?php echo UniteProviderFunctionsUC::escAddParam($rowClass) ?>>
-			<hr id="<?php esc_attr_e($id) ?>">
+		<li id="<?php esc_attr_e($id, "unlimited-elements-for-elementor") ?>_row" <?php echo UniteProviderFunctionsUC::escAddParam($rowClass) ?>>
+			<hr id="<?php esc_attr_e($id, "unlimited-elements-for-elementor") ?>">
 		</li>
 		<?php
 	}

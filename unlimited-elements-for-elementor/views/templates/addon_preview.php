@@ -11,7 +11,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 ?>
 
-<div id="uc_preview_addon_wrapper" class="uc-preview-addon-wrapper" data-addonid="<?php esc_attr_e($addonID); ?>">
+<div id="uc_preview_addon_wrapper" class="uc-preview-addon-wrapper" data-addonid="<?php esc_attr_e($addonID, "unlimited-elements-for-elementor"); ?>">
 
 	<?php UniteProviderFunctionsUC::putInitHelperHtmlEditor(); ?>
 

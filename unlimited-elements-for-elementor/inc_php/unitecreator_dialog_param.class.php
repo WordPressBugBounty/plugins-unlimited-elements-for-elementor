@@ -317,7 +317,7 @@ class UniteCreatorDialogParamWork{
 		?>
 			<label class="unite-inputs-label-inline-free">
 					<?php echo esc_html($text)?>:
-				 	<input type="checkbox" onfocus="this.blur()" name="<?php echo $name?>">
+				 	<input type="checkbox" onfocus="this.blur()" name="<?php echo esc_attr($name)?>">
 			</label>
 
 		<?php
@@ -401,7 +401,7 @@ class UniteCreatorDialogParamWork{
 
 		?>
 				<div class="unite-inputs-label">
-					<?php echo $text?>:
+					<?php echo esc_html($text)?>:
 				</div>
 
 				<?php if($isTextarea == false):?>
@@ -449,7 +449,7 @@ class UniteCreatorDialogParamWork{
 					<?php _e("Placeholder Text","unlimited-elements-for-elementor")?>:
 				</div>
 
-				<input type="text" name="placeholder" <?php echo $strClass?> value="">
+				<input type="text" name="placeholder" <?php echo esc_attr($strClass)?> value="">
 
 			<?php endif?>
 
@@ -1739,7 +1739,7 @@ class UniteCreatorDialogParamWork{
 				
 				<?php 
 					if($debugDialog == true)	
-						echo "<h2 style='color:red;'>Params Dialog Debug</h2>";
+						echo "<h2 style='color:red;'>Params Dialog Debug</h2>"; 
 				?>
 				
 				<div class="dialog-param-wrapper unite-inputs">
@@ -1755,7 +1755,7 @@ class UniteCreatorDialogParamWork{
 							<?php if($this->option_putTitle == true): ?>
 
 								<div class="unite-inputs-label">
-								<?php esc_html_e("Title")?>:
+								<?php esc_html_e("Title", "unlimited-elements-for-elementor")?>:
 								</div>
 
 								<input type="text" class="uc-param-title" name="title" value="">
@@ -1858,7 +1858,7 @@ class UniteCreatorDialogParamWork{
 								
 								if($isProParam == true && GlobalsUC::$isProVersion == false)
 									$addClass .= " uc-pro-param";
-
+							
 								?>
 
 								<!-- <?php echo esc_html($paramType)?> fields -->

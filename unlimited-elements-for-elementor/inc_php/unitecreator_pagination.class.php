@@ -527,7 +527,6 @@ class UniteCreatorElementorPagination{
 			$isFront = is_front_page();
 			$isArchive = UniteFunctionsWPUC::isArchiveLocation();
 			
-			
 			if($isFront == true){
 				$permalink = GlobalsUC::$url_site;
 				
@@ -535,7 +534,7 @@ class UniteCreatorElementorPagination{
 					dmp("url site permalink".GlobalsUC::$url_site);
 			}
 			
-			if($isArchive == true || $isSearchPage = true){
+			if($isArchive == true){
 				
 				$urlCurrentPage = UniteFunctionsWPUC::getUrlCurrentPage(true);
 				
@@ -547,7 +546,7 @@ class UniteCreatorElementorPagination{
 			}
 			
 			$options['base'] = trailingslashit( $permalink ) . '%_%';
-			
+							
 			if($isDebug)
 				dmp("the base: ".$options['base']);
 			
@@ -697,7 +696,7 @@ class UniteCreatorElementorPagination{
 			$isDebug = true;
 		
 		$isPaginationDebug = HelperUC::hasPermissionsFromQuery("ucpaginationdebug");
-
+		
 		if($isPaginationDebug == true)
 			$isDebug = true;
 		

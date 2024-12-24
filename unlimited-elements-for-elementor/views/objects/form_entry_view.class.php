@@ -84,7 +84,7 @@ class UCFormEntryView{
 	 * @return void
 	 */
 	private function displayHeader(){
-
+		// translators: %d is a number 
 		$headerTitle = sprintf(__("Form Entry (ID %d)", "unlimited-elements-for-elementor"), $this->entry["id"]);
 
 		require HelperUC::getPathTemplate("header");

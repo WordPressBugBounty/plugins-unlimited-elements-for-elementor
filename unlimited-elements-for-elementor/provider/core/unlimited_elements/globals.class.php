@@ -36,9 +36,9 @@ class GlobalsUnlimitedElements{
 
 	public static $enableInstagramErrorMessage = false;
   	
-	public static $enableEditProOptions = false;	 //set to enable edit pro options
-	
 	public static $enableLimitProFunctionality = false;	//enable limit pro options in elementor
+	
+	public static $enableEditProOptions = false;	 //set to enable edit pro options
 	
 	//public static $insideNotificationText = "🖤 Black Friday Sale! <br> Don’t Miss Out on the <br> BIGGEST SALE of the Year! 🎉<br> <a style='text-decoration:underline;' href='https://unlimited-elements.com/pricing/' target='_blank'>Get Deal Now!</a> ";
 	public static $insideNotificationText = "Unlock Access To All PRO Widgets and Features.  <a href='https://unlimited-elements.com/pricing/' target='_blank'>Upgrade Now</a> ";
@@ -180,12 +180,17 @@ class GlobalsUnlimitedElements{
 
 		self::$urlPluginGutenberg = self::$urlPlugin."gutenberg/";
 		
-		
 		if(self::$isGutenbergOnly == true){
 			
 			self::$pluginTitleCurrent = self::PLUGIN_TITLE_GUTENBERG;
 		}
-				
+		
+		if(defined("UE_ENABLE_FREEPRO_FUNCTIONALITY") == true)
+			self::$enableLimitProFunctionality = true;		
+
+		if(self::$enableLimitProFunctionality == false)
+			self::$enableEditProOptions = false;	
+		
 	}
 	
 	
@@ -207,7 +212,7 @@ class GlobalsUnlimitedElements{
 //			new UCAdminNoticeRating(),
 		
 		UCAdminNotices::init($arrBanners);
-
+		
 	}
 
 	

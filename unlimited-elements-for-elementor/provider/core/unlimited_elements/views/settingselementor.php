@@ -50,6 +50,9 @@ class UniteCreatorViewElementorSettings extends UniteCreatorSettingsView{
 
 		}
 
+		if(GlobalsUC::$isProVersion == false || GlobalsUnlimitedElements::$enableLimitProFunctionality == false)
+			$objSettings->hideSetting("edit_pro_settings");
+
 		return($objSettings);
 	}
 

@@ -132,7 +132,7 @@ class UniteZipUC{
 	 * check if dir exists, if not, create it recursively
 	 */
 	private function checkCreateDir($filepath){
-
+		global $wp_filesystem;
 		$dir = dirname($filepath);
 
 		if(is_dir($dir) == false)
@@ -142,7 +142,7 @@ class UniteZipUC{
 
 		//this dir is not exists, and all parent dirs exists
 
-		@mkdir($dir);
+		@$wp_filesystem->mkdir($dir);
 		if(is_dir($dir) == false)
 			UniteFunctionsUC::throwError("Can't create directory: {$dir} maybe zip file is brocken");
 	}
@@ -151,16 +151,17 @@ class UniteZipUC{
 	 * write some file
 	 */
 	private function writeFile($str, $filepath){
-
+		
+		global $wp_filesystem;
+		
 		//create folder if not exists
 		$this->checkCreateDir($filepath);
-
-		$fp = fopen($filepath, "w+");
-		fwrite($fp, $str);
-		fclose($fp);
-
-		if(file_exists($filepath) == false)
+		
+		$wp_filesystem->put_contents($filepath, $str);
+	
+		if($wp_filesystem->exists($filepath) == false)
 			UniteFunctionsUC::throwError("can't write file: $filepath");
+		
 	}
 
 	/**

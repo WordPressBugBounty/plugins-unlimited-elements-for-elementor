@@ -113,7 +113,7 @@ class UniteProviderFunctionsUC{
 	 * set assets path
 	*/
 	public static function setAssetsPath($dirAssets = null, $returnValues = false){
-
+		global $wp_filesystem;
 		if(empty($dirAssets))
 			$dirAssets = "ac_assets";
 
@@ -143,7 +143,7 @@ class UniteProviderFunctionsUC{
 		//make base path
 		$pathAssets = $pathBase.$dirAssets."/";
 		if(is_dir($pathAssets) == false)
-			@mkdir($pathAssets);
+			@$wp_filesystem->mkdir($pathAssets);
 
 		if(is_dir($pathAssets) == false)
 			UniteFunctionsUC::throwError("Can't create folder: {$pathAssets}");
@@ -844,11 +844,11 @@ class UniteProviderFunctionsUC{
 
 				<br>
 				<br>
-				<?php esc_html_e("Post Max Size")?>: <?php echo esc_html($postMaxSize)?>
+				<?php esc_html_e("Post Max Size", "unlimited-elements-for-elementor")?>: <?php echo esc_html($postMaxSize)?>
 				<br>
-				<?php esc_html_e("Max Upload Size")?>: <?php echo esc_html($maxUploadSize)?>
+				<?php esc_html_e("Max Upload Size", "unlimited-elements-for-elementor")?>: <?php echo esc_html($maxUploadSize)?>
 				<br>
-				<?php esc_html_e("You can change those settings in php.ini or contact your hosting provider")?>
+				<?php esc_html_e("You can change those settings in php.ini or contact your hosting provider", "unlimited-elements-for-elementor")?>
 			</div>
 
 			<br>
@@ -963,6 +963,7 @@ class UniteProviderFunctionsUC{
 	 * Update Plugin
 	 */
 	public static function updatePlugin(){
+		global $wp_filesystem;
 
 		$linkBack = HelperUC::getViewUrl_Default();
 		$htmlLinkBack = HelperHtmlUC::getHtmlLink($linkBack, "Go Back");
@@ -1038,7 +1039,7 @@ class UniteProviderFunctionsUC{
 			//remove all files in the update folder
 			$arrNotDeleted = UniteFunctionsUC::deleteDir($pathUpdate, false);
 
-			if(!empty($arrNotDeleted)){
+			if(!empty($arrNotDeleted)){ 
 				$strNotDeleted = print_r($arrNotDeleted,true);
 				UniteFunctionsUC::throwError("Could not delete those files from the update folder: $strNotDeleted");
 			}
@@ -1046,7 +1047,13 @@ class UniteProviderFunctionsUC{
 			//copy the zip file.
 			$filepathZip = $pathUpdate.$filename;
 
-			$success = move_uploaded_file($filepathTemp, $filepathZip);
+			$success = false;
+			$uploaded_file = wp_handle_upload( $arrFiles );
+			if ( isset( $uploaded_file['file'] ) ) {
+				$wp_filesystem->move( $uploaded_file['file'], $filepathZip, true ); 
+				$success = true;
+			}
+			// $success = move_uploaded_file($filepathTemp, $filepathZip);
 			if($success == false)
 				UniteFunctionsUC::throwError("Can't move the uploaded file here: ".$filepathZip.".");
 

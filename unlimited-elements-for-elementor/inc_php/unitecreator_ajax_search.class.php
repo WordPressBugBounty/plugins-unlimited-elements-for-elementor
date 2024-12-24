@@ -148,9 +148,36 @@ class UniteCreatorAjaxSeach{
 			return($arrPosts);
 		
 		$arrPosts = array_merge($arrNewPosts, $arrPosts);
-		
+
+		//remove duplicates if there are posts with the same ID in the array after merging two arrays "$arrNewPosts" and "$arrPosts"
+		if (!empty($arrPosts))
+			$arrPosts = $this->deletePostsDuplicate($arrPosts);
+
+
 		return($arrPosts);
 	}
+
+
+	/**
+	 *  delete posts duplicate
+	 */
+
+	private function deletePostsDuplicate($arrPosts){
+		// Initialize an empty array to store unique posts.
+		$uniquePosts = [];
+
+		// Loop through each post and add it to the result if its 'ID' is not already added.
+		foreach ($arrPosts as $post) {
+			if (!isset($uniquePosts[$post->ID])) {
+				$uniquePosts[$post->ID] = $post;
+			}
+		}
+		// Re-index the array to have sequential numeric keys.
+		$arrPosts = array_values($uniquePosts);
+
+		return($arrPosts);
+	}
+
 	
 	/**
 	 * get posts from meta query

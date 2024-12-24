@@ -709,14 +709,6 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 		$this->setValuesFromDefaultData();
 	}
 
-	/**
-	 * init base widgets, for output or config output
-	 */
-	public function initBaseWidgets(){
-		
-		$objBaseWidgets = new UniteCreatorBaseWidgets();
-		$objBaseWidgets->initAddon($this);
-	}
 	
 	protected function a_________GETTERS_________(){
 	}
@@ -2086,9 +2078,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	public function getHtmlConfig($putMode = false, $isOutputSidebar = false, $options = array()){
 		
 		$this->validateInited();
-		
-		$this->initBaseWidgets();
-		
+				
 		//check if need to add background extra settings for gutenberg editor
 		
 		$isGutenbergEditorBG = $this->isBGForGutenbergEditor();

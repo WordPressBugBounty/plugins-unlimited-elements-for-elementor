@@ -208,7 +208,6 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			$js .= self::TAB2.'var g_uctext = {'.self::BR;
 			$js .= self::TAB3.$jsArrayText.self::BR;
 			$js .= self::TAB2.'};'.self::BR;
-
 			
 			return($js);
 		}

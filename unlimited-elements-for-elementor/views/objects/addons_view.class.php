@@ -95,7 +95,7 @@ class UniteCreatorAddonsView{
 	protected function init(){
 		
 		$view = UniteCreatorAdmin::getView();
-				
+		
 		$this->objManager = new UniteCreatorManagerAddons();
 		$this->objManager->init($this->addonType);
 		
@@ -125,6 +125,17 @@ class UniteCreatorAddonsView{
 			require HelperUC::getPathTemplate("header_missing");
 		
 		$pluginName = GlobalsUC::PLUGIN_NAME;
+
+		
+		$replacingMessage = null;
+		
+		if($this->addonType == GlobalsUnlimitedElements::ADDONSTYPE_ELEMENTOR_TEMPLATE)
+			$replacingMessage = __("We are working on a new, updated Templates Catalog. 
+				<br><br> Will be available in the next version release.
+				<br><br>
+				 Meanwhile you can visit <a href='https://unlimited-elements.com/elementor-templates/' target='_blank'>templates demo</a> in our site and copy paste directly from there.
+				 
+				","unlimited-elements-for-elementor");
 		
 	?>
 		
@@ -134,7 +145,18 @@ class UniteCreatorAddonsView{
 		?>
 		
 		<div class="content_wrapper unite-content-wrapper">
-			<?php $this->objManager->outputHtml() ?>
+			<?php 
+				
+				if(!empty($replacingMessage)){
+					?>
+					<div class="unite-replacing-message">
+						<?php echo wp_kses($replacingMessage, HelperUC::getKsesAllowedHTML()); ?>
+					</div>
+					<?php 
+				}
+				else
+					$this->objManager->outputHtml() 
+			?>
 		</div>
 		
 		<div class="uc-addons-bottom">
@@ -144,7 +166,7 @@ class UniteCreatorAddonsView{
 				
 				if(method_exists("UniteProviderFunctionsUC", "putUpdatePluginHtml"))
 					UniteProviderFunctionsUC::putUpdatePluginHtml($pluginName, $this->pluginTitle);
-			
+				
 			}
 		?>
 		

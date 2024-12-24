@@ -1352,7 +1352,6 @@ class UniteCreatorFiltersProcess{
 			$arrSettingsValues = UniteFunctionsUC::getVal($arrElement, "settings");
 		else
 			$arrSettingsValues = self::$objGutenberg->getSettingsFromBlock($arrElement);
-
 		
 		//init addon
 
@@ -1861,6 +1860,7 @@ class UniteCreatorFiltersProcess{
 		//for outside filters - check that under ajax
 
 		$arrHtmlWidget = $this->getContentWidgetHtml($arrContent, $elementID);
+
 
 		GlobalsProviderUC::$isUnderAjaxSearch = false;
 

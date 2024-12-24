@@ -37,7 +37,7 @@ if(!empty($objAddonType->addonView_urlBack))
 
 		<div class="uc-panel-save-wrapper">
 			<a id="uc_addondefaults_button_save" href="javascript:void(0)" class="unite-button-primary"><?php esc_html_e("Save Defaults", "unlimited-elements-for-elementor")?></a>
-			<span id="uc_addondefaults_loader_save" class="loader-text" style="display:none"><?php esc_html_e("saving...")?></span>
+			<span id="uc_addondefaults_loader_save" class="loader-text" style="display:none"><?php esc_html_e("saving...", "unlimited-elements-for-elementor")?></span>
 		</div>
 
 		<a id="uc_button_preview" href="javascript:void(0)" class="unite-button-secondary" <?php echo UniteProviderFunctionsUC::escAddParam($isPreviewMode?$styleHide:$styleShow)?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>

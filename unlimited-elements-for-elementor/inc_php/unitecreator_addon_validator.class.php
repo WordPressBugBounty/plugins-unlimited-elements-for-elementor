@@ -242,7 +242,7 @@ class UniteCreatorAddonValidator{
 		$html = $this->objAddon->getHtml();
 		$pos = strpos($html, 'g fill="#ffffff"');
 		if($pos === false)
-			$this->arrMessages[] = __("Not valid fill color!");
+			$this->arrMessages[] = __("Not valid fill color!", "unlimited-elements-for-elementor");
 	}
 	
 	

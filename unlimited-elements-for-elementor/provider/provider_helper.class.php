@@ -4,6 +4,7 @@ class HelperProviderUC{
 
 	private static $numQueriesStart = null;
 
+	private function _______SETTINGS_________(){}
 	
 	/**
 	 * is activated by freemius
@@ -475,7 +476,368 @@ class HelperProviderUC{
 
 		return($objSettings);
 	}
+	
+	private function _______REPEATER_SETTINGS_AND_DATA_________(){}
+	
+	/**
+	 * add repeater settings
+	 */
+	public static function addRepeaterSettings($objSettings, $name, $condition = null, $addDebug = false){
+		
+		$isAcfExists = UniteCreatorAcfIntegrate::isAcfActive();
 
+		//-------------- repeater meta name ----------------
+
+		$params = array();
+		$params["origtype"] = UniteCreatorDialogParam::PARAM_TEXTFIELD;
+		
+		if(!empty($condition))
+			$params["elementor_condition"] = $condition;
+	
+		if($isAcfExists == false)
+			$params["description"] = __("Choose meta field name it should be some array at the output", "unlimited-elements-for-elementor");
+		else
+			$params["description"] = __("Choose ACF field name. Repeater, Media, or types with items array output", "unlimited-elements-for-elementor");
+
+
+		if($isAcfExists == false)
+			$text = __("Meta Field Name", "unlimited-elements-for-elementor");
+		else
+			$text = __("ACF Field Name", "unlimited-elements-for-elementor");
+
+		$objSettings->addTextBox($name."_repeater_name", "", $text, $params);
+
+		// --- fields location -----------
+
+		$params = array();
+		$params["origtype"] = UniteCreatorDialogParam::PARAM_DROPDOWN;
+		
+		if(!empty($condition))
+			$params["elementor_condition"] = $condition;
+
+		if($isAcfExists == false)
+			$text = __("Meta Field Location", "unlimited-elements-for-elementor");
+		else
+			$text = __("ACF Field Location", "unlimited-elements-for-elementor");
+
+		$arrLocations = array();
+		$arrLocations["current_post"] = __("Current Post", "unlimited-elements-for-elementor");
+		$arrLocations["parent_post"] = __("Parent Post", "unlimited-elements-for-elementor");
+		$arrLocations["selected_post"] = __("Select Post", "unlimited-elements-for-elementor");
+		$arrLocations["current_term"] = __("Current Term", "unlimited-elements-for-elementor");
+		$arrLocations["parent_term"] = __("Parent Term", "unlimited-elements-for-elementor");
+		$arrLocations["current_user"] = __("Current User", "unlimited-elements-for-elementor");
+
+		$arrLocations = array_flip($arrLocations);
+		
+		$objSettings->addSelect($name."_repeater_location", $arrLocations, $text, "current_post", $params);
+
+		// --- location post select -----------
+
+		if($isAcfExists == false)
+			$text = __("Meta Field From Post", "unlimited-elements-for-elementor");
+		else
+			$text = __("ACF Field From Post", "unlimited-elements-for-elementor");
+
+		$conditionRepeaterPost = $condition;
+		
+		if(empty($conditionRepeaterPost))
+			$conditionRepeaterPost = array();
+		
+		$conditionRepeaterPost[$name."_repeater_location"] = "selected_post";
+
+		$objSettings->addPostIDSelect($name."_repeater_post", $text, $conditionRepeaterPost, "single");
+		
+		if($addDebug == false)
+			return(false);
+
+		// ----- ADD DEBUG OPTIONS
+			
+		$params = array();
+		$params["origtype"] = UniteCreatorDialogParam::PARAM_HR;
+			
+		$objSettings->addHr($name."_repeater_before_debug", $params);
+		
+		$params = array();
+		$params["origtype"] = UniteCreatorDialogParam::PARAM_RADIOBOOLEAN;
+		
+		if(!empty($condition))
+			$params["elementor_condition"] = $condition;
+		
+		
+		$objSettings->addRadioBoolean($name."_repeater_debug_data", __("Show Debug Data", "unlimited-elements-for-elementor"), false,"Yes", "No", $params);
+				
+		$objSettings->addRadioBoolean($name."_repeater_debug_meta", __("Show Debug Meta", "unlimited-elements-for-elementor"), false,"Yes", "No", $params);
+		
+	}
+	
+	/**
+	 * get repeater data
+	 */
+	public static function getRepeaterItems($arrValues, $name, $showDebugData = false, $showDebugMeta = false){
+		
+		if(empty($arrValues))
+			return(false);
+		
+		$repeaterName = UniteFunctionsUC::getVal($arrValues, "{$name}_repeater_name");
+
+		$location = UniteFunctionsUC::getVal($arrValues, "{$name}_repeater_location");
+		
+		$arrRepeaterItems = array();
+
+		$postID = null;
+		$post = null;
+		$termID = null;
+		$userID = null;
+		
+		
+		switch($location){
+			case "selected_post":
+
+				$repeaterPostID = UniteFunctionsUC::getVal($arrValues, "{$name}_repeater_post");
+
+				if(empty($repeaterPostID) || is_numeric($repeaterPostID) == 0){
+
+					if($showDebugData == true)
+						dmp("wrong post id $repeaterPostID");
+	
+					return(null);
+				}
+
+				$postID = $repeaterPostID;
+
+				$post = get_post($postID);
+
+				if(empty($post)){
+
+					if($showDebugData == true)
+						dmp("post with id: $postID not found");
+
+					return(null);
+				}
+
+			break;
+			case "current_post":
+
+				$post = get_post();
+
+				if(empty($post)){
+
+					if($showDebugData == true)
+						dmp("get data from current post - no current post found");
+
+					return(null);
+				}
+
+				$postID = $post->ID;
+
+			break;
+			case "parent_post":
+
+				$post = get_post_parent();
+
+				if(empty($post)){
+
+					if($showDebugData == true)
+						dmp("get data from parent post - no parent post found");
+
+					return(null);
+				}
+
+				$postID = $post->ID;
+
+			break;
+			case "current_term":
+
+				$termID = UniteFunctionsWPUC::getCurrentTermID();
+
+				if(empty($termID)){
+
+					if($showDebugData == true)
+						dmp("get data from current term - no current term found. try to load from some category archive page.");
+
+					return(null);
+				}
+
+			break;
+			case "parent_term":
+
+				$termID = UniteFunctionsWPUC::getCurrentTermID();
+
+				if(empty($termID)){
+
+					if($showDebugData == true)
+						dmp("get parent term - no current term found. try to load from some category archive page.");
+
+					return(null);
+				}
+
+				$termID = wp_get_term_taxonomy_parent_id($termID);
+
+				if(empty($termID)){
+
+					if($showDebugData == true)
+						dmp("get parent term - no parent term found from term id: $termID. check this term if it has parent.");
+
+					return(null);
+				}
+
+			break;
+			case "current_user":
+
+				$userID = get_current_user_id();
+
+				if(empty($userID)){
+
+					if($showDebugData == true)
+						dmp("get current user no logged in user found.");
+
+					return(null);
+				}
+
+			break;
+			default:
+				dmp("get data from location: $location !!!!!!!!!!!!!!!!!!!!!");
+			break;
+		}
+		
+		
+		$arrCustomFields = array();
+		
+		//---- load from post
+
+		if(!empty($postID)){
+
+			$arrCustomFields = UniteFunctionsWPUC::getPostCustomFields($postID, false);
+		}
+
+		//------ load from term
+
+		if(!empty($termID)){
+
+			$arrCustomFields = UniteFunctionsWPUC::getTermCustomFields($termID, false);
+		}
+
+		if(!empty($userID))
+			$arrCustomFields = UniteFunctionsWPUC::getUserCustomFields($userID, false);
+					
+		
+		//show debug meta text
+
+		if($showDebugMeta == true){
+
+			if(!empty($postID)){
+
+				$text = "Post <b>".$post->post_title." ($postID)</b>";
+
+				HelperUC::$operations->putCustomFieldsArrayDebug($arrCustomFields, $text);
+			}
+
+			if(!empty($termID)){
+
+				$text = "Term <b>".$term->name." ($termID)</b>";
+
+				HelperUC::$operations->putCustomFieldsArrayDebug($arrCustomFields, $text);
+			}
+
+			if(!empty($userID)){
+
+				$text = "User <b>".$user["name"]." ($userID)</b>";
+
+				HelperUC::$operations->putCustomFieldsArrayDebug($arrCustomFields, $text);
+			}
+
+
+			if(empty($repeaterName)){
+
+				dmp("items from repeater: please enter repeater name");
+				return(array());
+			}
+
+		}
+		
+		
+		if($showDebugData == true){
+			
+			dmp("<b>Custom Fields Found!</b>");
+			
+			$arrShow = UniteFunctionsUC::modifyDataArrayForShow($arrCustomFields);
+			
+			dmp($arrShow);
+		}
+		
+		
+		//get the items
+
+		$arrRepeaterItems = UniteFunctionsUC::getVal($arrCustomFields, $repeaterName);
+		
+		//show debug data text
+
+		if($showDebugData == true){
+
+			$text = "Getting meta data from field: <b>$repeaterName</b> from <b>$location</b>";
+			
+			switch($location){
+				case "parent_post":
+				case "selected_post":
+				case "current_post":
+						$text .= ", <b>".$post->post_title."</b>";
+				break;
+				case "current_term":
+				case "parent_term":
+
+					$term = get_term($termID);
+
+					$text .= ", <b>".$term->name."</b>";
+				break;
+				case "current_user":
+
+					$user = UniteFunctionsWPUC::getUserData($userID);
+
+					$userName = UniteFunctionsUC::getVal($user, "name");
+
+					$text .= ", <b>".$userName."</b>";
+
+				break;
+			}
+
+			dmp($text);
+		}
+
+
+		//get the data from repeater
+
+		if(empty($arrRepeaterItems) && !empty($postID) ){
+
+			$previewID = UniteFunctionsUC::getGetVar("preview_id","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
+
+			if(!empty($previewID)){
+				dmp("preview data from repeater: you are under elementor preview, the output may be wrong. Please open the post without the preview");
+			}
+
+			return(array());
+		}
+
+		//try to get the array type: field_array (output from acf)
+		
+		if(is_array($arrRepeaterItems) == false){
+			
+			$arrRepeaterItems = UniteFunctionsUC::getVal($arrCustomFields, "{$repeaterName}_array");
+			
+			if(empty($arrRepeaterItems))
+				return(array());
+			
+			$arrRepeaterItems = UniteFunctionsUC::arrayToArrAssocItems($arrRepeaterItems,"title");
+						
+			return($arrRepeaterItems);
+		}
+		
+		
+		return($arrRepeaterItems);
+	}
+	
+	private function _______OTHERS_________(){}
+	
 
 	/**
 	 * check if layout editor plugin exists, or exists addons for it
@@ -503,7 +865,16 @@ class HelperProviderUC{
 		load_plugin_textdomain("unlimited-elements-for-elementor", false, GlobalsUC::$pathWPLanguages);
 		
 		UniteCreatorWooIntegrate::initActions();
-		
+
+		// WP_Filesystem init
+		global $wp_filesystem;
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+		if ( ! WP_Filesystem() ) {
+			wp_die( __( 'Could not initialize WP Filesystem.', 'textdomain' ) );
+		}
+				
 	}
 
 	/**

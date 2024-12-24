@@ -83,6 +83,7 @@ class UEOpenWeatherAPIForecast extends UEOpenWeatherAPIModel{
 	public function getPressure(){
 
 		$pressure = $this->getAttribute("pressure");
+		// translators: %s is a string
 		$pressure = sprintf(__("%s hPa", "unlimited-elements-for-elementor"), $pressure);
 
 		return $pressure;
@@ -479,7 +480,7 @@ class UEOpenWeatherAPIForecast extends UEOpenWeatherAPIModel{
 	 * @return string
 	 */
 	private function formatPercentage($value){
-
+		// translators: %s is a string
 		return sprintf(__("%s%%", "unlimited-elements-for-elementor"), $value);
 	}
 
@@ -498,6 +499,7 @@ class UEOpenWeatherAPIForecast extends UEOpenWeatherAPIModel{
 		if(is_array($value))
 			$value = 0;
 
+		// translators: %s is a string
 		return sprintf(__("%s mm", "unlimited-elements-for-elementor"), $value);
 	}
 
@@ -512,8 +514,10 @@ class UEOpenWeatherAPIForecast extends UEOpenWeatherAPIModel{
 
 		switch($this->getUnits()){
 			case self::UNITS_IMPERIAL:
+				// translators: %s is a string
 				return sprintf(__("%s mph", "unlimited-elements-for-elementor"), $value);
 			default:
+				// translators: %s is a string
 				return sprintf(__("%s m/s", "unlimited-elements-for-elementor"), $value);
 		}
 	}
@@ -530,6 +534,7 @@ class UEOpenWeatherAPIForecast extends UEOpenWeatherAPIModel{
 		if(is_numeric($value))
 			$value = round($value);
 
+		// translators: %s is a string
 		return sprintf(__("%s°", "unlimited-elements-for-elementor"), $value);
 
 		//switch($this->getUnits()){

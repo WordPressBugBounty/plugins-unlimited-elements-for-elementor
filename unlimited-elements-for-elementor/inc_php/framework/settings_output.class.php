@@ -405,10 +405,10 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 			<div class="unite-setting-link-field">
 				<input
-					id="<?php esc_attr_e($id); ?>"
+					id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
 					type="text"
-					name="<?php esc_attr_e($name); ?>"
-					value="<?php esc_attr_e($urlValue); ?>"
+					name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
+					value="<?php esc_attr_e($urlValue, "unlimited-elements-for-elementor"); ?>"
 					placeholder="<?php esc_attr_e("Search or enter URL", "unlimited-elements-for-elementor"); ?>"
 					data-settingtype="link"
 					<?php echo UniteProviderFunctionsUC::escAddParam($class); ?>
@@ -436,23 +436,23 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 				<div class="unite-setting-link-option">
 					<div class="unite-setting-link-checkbox">
 						<input
-							id="<?php esc_attr_e($externalId); ?>"
+							id="<?php esc_attr_e($externalId, "unlimited-elements-for-elementor"); ?>"
 							class="unite-setting-link-external"
 							type="checkbox"
 							<?php echo $externalChecked ? "checked" : ""; ?>
 						/>
-						<label for="<?php esc_attr_e($externalId); ?>">
+						<label for="<?php esc_attr_e($externalId, "unlimited-elements-for-elementor"); ?>">
 							<?php esc_html_e("Open in new window", "unlimited-elements-for-elementor"); ?>
 						</label>
 					</div>
 					<div class="unite-setting-link-checkbox">
 						<input
-							id="<?php esc_attr_e($nofollowId); ?>"
+							id="<?php esc_attr_e($nofollowId, "unlimited-elements-for-elementor"); ?>"
 							class="unite-setting-link-nofollow"
 							type="checkbox"
 							<?php echo $nofollowChecked ? "checked" : ""; ?>
 						/>
-						<label for="<?php esc_attr_e($nofollowId); ?>">
+						<label for="<?php esc_attr_e($nofollowId, "unlimited-elements-for-elementor"); ?>">
 							<?php esc_html_e("Add nofollow", "unlimited-elements-for-elementor"); ?>
 						</label>
 					</div>
@@ -464,10 +464,10 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 						</div>
 					</div>
 					<input
-						id="<?php esc_attr_e($attributesId); ?>"
+						id="<?php esc_attr_e($attributesId, "unlimited-elements-for-elementor"); ?>"
 						class="unite-setting-link-attributes"
 						type="text"
-						value="<?php esc_attr_e($attributesValue); ?>"
+						value="<?php esc_attr_e($attributesValue, "unlimited-elements-for-elementor"); ?>"
 						placeholder="<?php esc_attr_e("key|value", "unlimited-elements-for-elementor"); ?>"
 					/>
 					<div class="unite-setting-helper">
@@ -549,20 +549,22 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 			$addHtml .= " data-image-id=\"$imageId\"";
 
 		$urlName = UniteFunctionsUC::getVal($setting, "url_name");
+		// translators: %s is a string
 		$urlTitle = sprintf(__("%s URL", "unlimited-elements-for-elementor"), $title);
 		$urlValue = $imageUrl;
 
 		$sizes = UniteFunctionsWPUC::getArrThumbSizes();
 		$sizeName = UniteFunctionsUC::getVal($setting, "size_name");
+		// translators: %s is a string
 		$sizeTitle = sprintf(__("%s Size", "unlimited-elements-for-elementor"), $title);
 		$sizeValue = $imageSize;
 
 		?>
 		<div
-			id="<?php esc_attr_e($id); ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
 			class="unite-setting-image unite-setting-input-object unite-settings-exclude"
 			data-settingtype="image"
-			data-name="<?php esc_attr_e($name); ?>"
+			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
 			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 		>
 
@@ -586,7 +588,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 			<?php if(empty($error) === false): ?>
 				<div class="unite-setting-image-error unite-setting-error">
-					<?php esc_html_e($error); ?>
+					<?php esc_html_e($error, "unlimited-elements-for-elementor"); ?>
 				</div>
 			<?php endif; ?>
 
@@ -594,15 +596,15 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 				<div class="unite-setting-field">
 					<div class="unite-setting-text-wrapper">
 						<div class="unite-setting-text">
-							<?php esc_html_e($urlTitle); ?>
+							<?php esc_html_e($urlTitle, "unlimited-elements-for-elementor"); ?>
 						</div>
 					</div>
 					<div class="unite-setting-input">
 						<input
 							class="unite-setting-image-url"
 							type="text"
-							name="<?php esc_attr_e($urlName); ?>"
-							value="<?php esc_attr_e($urlValue); ?>"
+							name="<?php esc_attr_e($urlName, "unlimited-elements-for-elementor"); ?>"
+							value="<?php esc_attr_e($urlValue, "unlimited-elements-for-elementor"); ?>"
 							placeholder="<?php esc_attr_e("Image URL", "unlimited-elements-for-elementor"); ?>"
 						/>
 					</div>
@@ -613,20 +615,20 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 				<div class="unite-setting-field">
 					<div class="unite-setting-text-wrapper">
 						<div class="unite-setting-text">
-							<?php esc_html_e($sizeTitle); ?>
+							<?php esc_html_e($sizeTitle, "unlimited-elements-for-elementor"); ?>
 						</div>
 					</div>
 					<div class="unite-setting-input">
 						<select
 							class="unite-setting-image-size"
-							name="<?php esc_attr_e($sizeName); ?>"
+							name="<?php esc_attr_e($sizeName, "unlimited-elements-for-elementor"); ?>"
 						>
 							<?php foreach($sizes as $size => $label): ?>
 								<option
-									value="<?php esc_attr_e($size); ?>"
+									value="<?php esc_attr_e($size, "unlimited-elements-for-elementor"); ?>"
 									<?php echo $size === $sizeValue ? "selected" : ""; ?>
 								>
-									<?php esc_html_e($label); ?>
+									<?php esc_html_e($label, "unlimited-elements-for-elementor"); ?>
 								</option>
 							<?php endforeach; ?>
 						</select>
@@ -714,10 +716,10 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 			</div>
 			<div class="unite-iconpicker-error unite-setting-error"></div>
 			<input
-				id="<?php esc_attr_e($id); ?>"
+				id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
 				type="hidden"
-				name="<?php esc_attr_e($name); ?>"
-				value="<?php esc_attr_e($value); ?>"
+				name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
+				value="<?php esc_attr_e($value, "unlimited-elements-for-elementor"); ?>"
 				<?php echo UniteProviderFunctionsUC::escAddParam($class); ?>
 				<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 			/>
@@ -778,7 +780,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		$addHtml = $this->getDefaultAddHtml($setting);
 		$addHtml .= " data-addontype=\"{$addonType}\" style='display:none'";
 
-		$textSelect = __("Select ").$objAddonType->textSingle;
+		$textSelect = __("Select ", "unlimited-elements-for-elementor").$objAddonType->textSingle;
 
 		$showTitle = true;
 		if(isset($setting["noaddontitle"]))
@@ -894,10 +896,10 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 		<div
-			id="<?php esc_attr_e($id); ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
 			class="unite-setting-gallery unite-setting-input-object"
 			data-settingtype="gallery"
-			data-name="<?php esc_attr_e($name); ?>"
+			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
 			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 		>
 			<div
@@ -1074,18 +1076,18 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 		<div
-			id="<?php esc_attr_e($id); ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
 			class="unite-setting-buttons-group unite-setting-input-object unite-settings-exclude"
 			data-settingtype="buttons_group"
-			data-name="<?php esc_attr_e($name); ?>"
-			data-deselectable="<?php esc_attr_e($deselectable); ?>"
+			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
+			data-deselectable="<?php esc_attr_e($deselectable, "unlimited-elements-for-elementor"); ?>"
 			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 		>
 			<?php foreach($items as $itemValue => $item): ?>
 				<div
 					class="unite-setting-button uc-tip"
-					title="<?php esc_attr_e($item["title"]); ?>"
-					data-value="<?php esc_attr_e($itemValue); ?>"
+					title="<?php esc_attr_e($item["title"], "unlimited-elements-for-elementor"); ?>"
+					data-value="<?php esc_attr_e($itemValue, "unlimited-elements-for-elementor"); ?>"
 				>
 					<?php echo $item["icon"]; ?>
 				</div>
@@ -1109,10 +1111,10 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 		<div
-			id="<?php esc_attr_e($id); ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
 			class="unite-setting-tabs unite-setting-input-object unite-settings-exclude"
 			data-settingtype="tabs"
-			data-name="<?php esc_attr_e($name); ?>"
+			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
 			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 		>
 			<?php foreach($items as $itemText => $itemValue): ?>
@@ -1121,17 +1123,17 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 				<div class="unite-setting-tabs-item">
 					<input
-						id="<?php esc_attr_e($itemId); ?>"
+						id="<?php esc_attr_e($itemId, "unlimited-elements-for-elementor"); ?>"
 						class="unite-setting-tabs-item-input"
 						type="radio"
-						name="<?php esc_attr_e($name); ?>"
-						value="<?php esc_attr_e($itemValue); ?>"
+						name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
+						value="<?php esc_attr_e($itemValue, "unlimited-elements-for-elementor"); ?>"
 					/>
 					<label
 						class="unite-setting-tabs-item-label"
-						for="<?php esc_attr_e($itemId); ?>"
+						for="<?php esc_attr_e($itemId, "unlimited-elements-for-elementor"); ?>"
 					>
-						<?php esc_html_e($itemText); ?>
+						<?php esc_html_e($itemText, "unlimited-elements-for-elementor"); ?>
 					</label>
 				</div>
 
@@ -1154,11 +1156,11 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 		<div
-			id="<?php esc_attr_e($id); ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
 			class="unite-setting-group-selector unite-setting-input-object"
 			data-settingtype="group_selector"
-			data-name="<?php esc_attr_e($name); ?>"
-			data-replace="<?php esc_attr_e($selectorReplace); ?>"
+			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
+			data-replace="<?php esc_attr_e($selectorReplace, "unlimited-elements-for-elementor"); ?>"
 			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 		></div>
 		<?php
@@ -1304,27 +1306,27 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 		<div
-			id="<?php esc_attr_e($id); ?>"
-			class="unite-setting-range unite-setting-input-object unite-settings-exclude <?php esc_attr_e($wrapperClass); ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
+			class="unite-setting-range unite-setting-input-object unite-settings-exclude <?php esc_attr_e($wrapperClass, "unlimited-elements-for-elementor"); ?>"
 			data-settingtype="range"
-			data-name="<?php esc_attr_e($name); ?>"
+			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
 			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 		>
 
 			<?php if($showSlider === true): ?>
 				<div
 					class="unite-setting-range-slider"
-					data-value="<?php esc_attr_e($value); ?>"
-					data-min="<?php esc_attr_e($min); ?>"
-					data-max="<?php esc_attr_e($max); ?>"
-					data-step="<?php esc_attr_e($step); ?>"
+					data-value="<?php esc_attr_e($value, "unlimited-elements-for-elementor"); ?>"
+					data-min="<?php esc_attr_e($min, "unlimited-elements-for-elementor"); ?>"
+					data-max="<?php esc_attr_e($max, "unlimited-elements-for-elementor"); ?>"
+					data-step="<?php esc_attr_e($step, "unlimited-elements-for-elementor"); ?>"
 				></div>
 			<?php endif; ?>
 
 			<input
 				class="unite-setting-range-input"
 				type="number"
-				value="<?php esc_attr_e($value); ?>"
+				value="<?php esc_attr_e($value, "unlimited-elements-for-elementor"); ?>"
 			/>
 
 			<?php if(empty($units) === false): ?>
@@ -1397,20 +1399,20 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 		<div
-			id="<?php esc_attr_e($setting["id"]); ?>"
+			id="<?php esc_attr_e($setting["id"], "unlimited-elements-for-elementor"); ?>"
 			class="unite-setting-repeater unite-setting-input-object"
 			data-settingtype="repeater"
-			data-name="<?php esc_attr_e($setting["name"]); ?>"
-			data-item-title="<?php esc_attr_e($itemTitle); ?>"
-			data-text-delete="<?php esc_attr_e($deleteButtonText); ?>"
-			data-text-duplicate="<?php esc_attr_e($duplicateButtonText); ?>"
+			data-name="<?php esc_attr_e($setting["name"], "unlimited-elements-for-elementor"); ?>"
+			data-item-title="<?php esc_attr_e($itemTitle, "unlimited-elements-for-elementor"); ?>"
+			data-text-delete="<?php esc_attr_e($deleteButtonText, "unlimited-elements-for-elementor"); ?>"
+			data-text-duplicate="<?php esc_attr_e($duplicateButtonText, "unlimited-elements-for-elementor"); ?>"
 			<?php echo UniteProviderFunctionsUC::escAddParam($strData); ?>
 		>
 			<div class="unite-repeater-template unite-hidden">
 				<?php $output->draw("settings_item_repeater", false); ?>
 			</div>
 			<div class="unite-repeater-empty" <?php echo UniteProviderFunctionsUC::escAddParam($emptyTextAddHtml); ?>>
-				<?php esc_html_e($emptyText); ?>
+				<?php esc_html_e($emptyText, "unlimited-elements-for-elementor"); ?>
 			</div>
 			<div class="unite-repeater-items"></div>
 			<div class="unite-repeater-actions">
@@ -1442,11 +1444,11 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		>
 			<?php foreach($units as $unit): ?>
 				<option
-					value="<?php esc_attr_e($unit); ?>"
-					data-content="<?php esc_attr_e('<div class="unite-units-picker-item">' . $unit . '</div>'); ?>"
+					value="<?php esc_attr_e($unit, "unlimited-elements-for-elementor"); ?>"
+					data-content="<?php esc_attr_e('<div class="unite-units-picker-item">' . $unit . '</div>', "unlimited-elements-for-elementor"); ?>"
 					<?php echo $unit === $selectedUnit ? "selected" : ""; ?>
 				>
-					<?php esc_html_e($unit); ?>
+					<?php esc_html_e($unit, "unlimited-elements-for-elementor"); ?>
 				</option>
 			<?php endforeach; ?>
 		</select>
@@ -1517,14 +1519,14 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		$class = $this->getInputClassAttr($setting, $defaultClass);
 
 		?>
-		<div class="unite-input-wrapper <?php esc_attr_e($wrapperClass); ?>">
+		<div class="unite-input-wrapper <?php esc_attr_e($wrapperClass, "unlimited-elements-for-elementor"); ?>">
 
 			<input
 				<?php echo UniteProviderFunctionsUC::escAddParam($class); ?>
-				id="<?php esc_attr_e($id); ?>"
-				type="<?php esc_attr_e($type); ?>"
-				name="<?php esc_attr_e($name); ?>"
-				value="<?php esc_attr_e($value); ?>"
+				id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
+				type="<?php esc_attr_e($type, "unlimited-elements-for-elementor"); ?>"
+				name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
+				value="<?php esc_attr_e($value, "unlimited-elements-for-elementor"); ?>"
 				<?php echo UniteProviderFunctionsUC::escAddParam($style); ?>
 				<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 			/>
@@ -1552,10 +1554,10 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 		<input
-			id="<?php esc_attr_e($id); ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
 			type="hidden"
-			name="<?php esc_attr_e($name); ?>"
-			value="<?php esc_attr_e($value); ?>"
+			name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
+			value="<?php esc_attr_e($value, "unlimited-elements-for-elementor"); ?>"
 			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 		/>
 		<?php
@@ -1648,7 +1650,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 		<div
-			id="<?php esc_attr_e($id) ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor") ?>"
 			class="unite-radio-wrapper"
 			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 		>
@@ -1673,17 +1675,17 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 				?>
 
 				<input
-					id="<?php esc_attr_e($itemId); ?>"
+					id="<?php esc_attr_e($itemId, "unlimited-elements-for-elementor"); ?>"
 					type="radio"
-					name="<?php esc_attr_e($name); ?>"
-					value="<?php esc_attr_e($itemValue); ?>"
+					name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
+					value="<?php esc_attr_e($itemValue, "unlimited-elements-for-elementor"); ?>"
 					<?php echo UniteProviderFunctionsUC::escAddParam($itemAttr); ?>
 				/>
 				<label
 					class="unite-radio-item-label"
-					for="<?php esc_attr_e($itemId); ?>"
+					for="<?php esc_attr_e($itemId, "unlimited-elements-for-elementor"); ?>"
 				>
-					<?php esc_html_e($itemText); ?>
+					<?php esc_html_e($itemText, "unlimited-elements-for-elementor"); ?>
 				</label>
 
 			<?php endforeach; ?>
@@ -1791,8 +1793,8 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 		<select
-			id="<?php esc_attr_e($id); ?>"
-			name="<?php esc_attr_e($name); ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
+			name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
 			<?php echo UniteProviderFunctionsUC::escAddParam($class); ?>
 			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 			<?php echo UniteProviderFunctionsUC::escAddParam($args); ?>
@@ -1806,10 +1808,10 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 				?>
 				<option
-					value="<?php esc_attr_e($itemValue); ?>"
+					value="<?php esc_attr_e($itemValue, "unlimited-elements-for-elementor"); ?>"
 					<?php echo $itemSelected === true ? "selected" : ""; ?>
 				>
-					<?php esc_html_e($itemText); ?>
+					<?php esc_html_e($itemText, "unlimited-elements-for-elementor"); ?>
 				</option>
 			<?php endforeach; ?>
 		</select>
@@ -1970,11 +1972,11 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 		<div
-			id="<?php esc_attr_e($id); ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
 			class="unite-sub-settings unite-setting-input-object"
-			data-settingtype="<?php esc_attr_e($type); ?>"
-			data-name="<?php esc_attr_e($name); ?>"
-			data-dialog-id="<?php esc_attr_e($type); ?>"
+			data-settingtype="<?php esc_attr_e($type, "unlimited-elements-for-elementor"); ?>"
+			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
+			data-dialog-id="<?php esc_attr_e($type, "unlimited-elements-for-elementor"); ?>"
 			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 		>
 			<button
@@ -2023,7 +2025,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 			?>
 			<div
 				class="unite-sub-settings-dialog unite-settings-exclude"
-				data-id="<?php esc_attr_e($type); ?>"
+				data-id="<?php esc_attr_e($type, "unlimited-elements-for-elementor"); ?>"
 			>
 				<?php $output->draw($type . "_sub_settings_dialog", false); ?>
 			</div>

@@ -268,10 +268,21 @@ class UniteCreatorAPIIntegrations{
 			
 			$params = array();
 			$params["origtype"] = $field["type"];
-			$params["description"] = isset($field["desc"]) ? $field["desc"] : "";
+			$params["description"] = UniteFunctionsUC::getVal($field, "desc");
+			$params["label_block"] = UniteFunctionsUC::getVal($field, "label_block", false);
 			
+			if(isset($field["placeholder"])) {
+                $params["placeholder"] = $field["placeholder"];
+            }
+
 			if(!empty($condition))
 				$params["elementor_condition"] = $condition;
+
+            if (isset($field['conditions'])) {
+                foreach($field['conditions'] as $condition_key => $field_condition){
+                    $params["elementor_condition"][$name . "_" . $condition_key] = $field_condition;
+                }
+            }
 				
 			$paramName = $name . "_" . $field["id"];
 			$paramDefault = isset($field["default"]) ? $field["default"] : "";
@@ -294,6 +305,9 @@ class UniteCreatorAPIIntegrations{
 					$params["add_dynamic"] = true;
 					$settingsManager->addSelect($paramName, array_flip($field["options"]), $field["text"], $paramDefault, $params);
 				break;
+                case UniteCreatorDialogParam::PARAM_RADIOBOOLEAN:
+                    $settingsManager->addRadioBoolean($paramName, $field["text"], $paramDefault, "Yes", "No", $params);
+                break;
 				default:
 					UniteFunctionsUC::throwError(__FUNCTION__ . " Error: Field type \"{$field["type"]}\" is not implemented");
 			}
@@ -419,6 +433,7 @@ class UniteCreatorAPIIntegrations{
 		if(empty($label) === true)
 			$label = $key;
 
+		// translators: %s is param name
 		UniteFunctionsUC::throwError(sprintf(__("%s is required.", "unlimited-elements-for-elementor"), $label));
 	}
 
@@ -521,12 +536,14 @@ class UniteCreatorAPIIntegrations{
 				"id" => self::CURRENCY_EXCHANGE_FIELD_CURRENCY,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Currency Code", "unlimited-elements-for-elementor"),
+				// translators: %s is page url
 				"desc" => sprintf(__("Enter the three-letter <a href='%s' target='_blank'>currency code</a>.", "unlimited-elements-for-elementor"), "https://exchangerate-api.com/docs/supported-currencies"),
 			),
 			array(
 				"id" => self::CURRENCY_EXCHANGE_FIELD_PRECISION,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Rate Precision", "unlimited-elements-for-elementor"),
+				// translators: %1$d is a number, %2$d is a number
 				"desc" => sprintf(__("Optional. You can specify the number of decimals for the rate: from %d to %d. The default value is %d.", "unlimited-elements-for-elementor"), self::CURRENCY_EXCHANGE_MIN_PRECISION, self::CURRENCY_EXCHANGE_MAX_PRECISION, self::CURRENCY_EXCHANGE_DEFAULT_PRECISION),
 			),
 			array(
@@ -539,6 +556,7 @@ class UniteCreatorAPIIntegrations{
 				"id" => self::CURRENCY_EXCHANGE_FIELD_CACHE_TIME,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Cache Time", "unlimited-elements-for-elementor"),
+				// translators: %d is a number
 				"desc" => sprintf(__("Optional. You can specify the cache time of results in minutes. The default value is %d minutes.", "unlimited-elements-for-elementor"), self::CURRENCY_EXCHANGE_DEFAULT_CACHE_TIME),
 				"default" => self::CURRENCY_EXCHANGE_DEFAULT_CACHE_TIME,
 			),
@@ -593,6 +611,7 @@ class UniteCreatorAPIIntegrations{
 				"id" => self::GOOGLE_EVENTS_FIELD_LIMIT,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Events Limit", "unlimited-elements-for-elementor"),
+				// translators: %d is a number
 				"desc" => sprintf(__("Optional. You can specify the maximum number of events: from 1 to 2500. The default value is %d.", "unlimited-elements-for-elementor"), self::GOOGLE_EVENTS_DEFAULT_LIMIT),
 				"default" => self::GOOGLE_EVENTS_DEFAULT_LIMIT,
 			),
@@ -606,6 +625,7 @@ class UniteCreatorAPIIntegrations{
 				"id" => self::GOOGLE_EVENTS_FIELD_CACHE_TIME,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Cache Time", "unlimited-elements-for-elementor"),
+				// translators: %d is a number
 				"desc" => sprintf(__("Optional. You can specify the cache time of results in minutes. The default value is %d minutes.", "unlimited-elements-for-elementor"), self::GOOGLE_EVENTS_DEFAULT_CACHE_TIME),
 				"default" => self::GOOGLE_EVENTS_DEFAULT_CACHE_TIME,
 			),
@@ -628,12 +648,14 @@ class UniteCreatorAPIIntegrations{
 				"id" => self::GOOGLE_REVIEWS_FIELD_PLACE_ID,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Place ID", "unlimited-elements-for-elementor"),
+				// translators: %s is page url
 				"desc" => sprintf(__("You can find the place ID by using <a href='%s' target='_blank'>Place ID Finder</a>.", "unlimited-elements-for-elementor"), "https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder"),
 			),
 			array(
 				"id" => self::GOOGLE_REVIEWS_FIELD_CACHE_TIME,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Cache Time", "unlimited-elements-for-elementor"),
+				// translators: %d is a number
 				"desc" => sprintf(__("Optional. You can specify the cache time of results in minutes. The default value is %d minutes.", "unlimited-elements-for-elementor"), self::GOOGLE_REVIEWS_DEFAULT_CACHE_TIME),
 				"default" => self::GOOGLE_REVIEWS_DEFAULT_CACHE_TIME,
 			),
@@ -656,18 +678,21 @@ class UniteCreatorAPIIntegrations{
 				"id" => self::GOOGLE_SHEETS_FIELD_ID,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Spreadsheet ID", "unlimited-elements-for-elementor"),
+				// translators: %s is a string
 				"desc" => sprintf(__("You can find the spreadsheet ID in a Google Sheets URL: %s", "unlimited-elements-for-elementor"), "https://docs.google.com/spreadsheets/d/<b>[YOUR_SPREADSHEET_ID]</b>/edit#gid=0"),
 			),
 			array(
 				"id" => self::GOOGLE_SHEETS_FIELD_SHEET_ID,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Sheet ID", "unlimited-elements-for-elementor"),
+				// translators: %s is page url
 				"desc" => sprintf(__("Optional. You can find the sheet ID in a Google Sheets URL: %s", "unlimited-elements-for-elementor"), "https://docs.google.com/spreadsheets/d/aBC-123_xYz/edit#gid=<b>[YOUR_SHEET_ID]</b>"),
 			),
 			array(
 				"id" => self::GOOGLE_SHEETS_FIELD_CACHE_TIME,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Cache Time", "unlimited-elements-for-elementor"),
+				// translators: %d is a number
 				"desc" => sprintf(__("Optional. You can specify the cache time of results in minutes. The default value is %d minutes.", "unlimited-elements-for-elementor"), self::GOOGLE_SHEETS_DEFAULT_CACHE_TIME),
 				"default" => self::GOOGLE_SHEETS_DEFAULT_CACHE_TIME,
 			),
@@ -693,6 +718,7 @@ class UniteCreatorAPIIntegrations{
 				"id" => self::YOUTUBE_PLAYLIST_FIELD_ID,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Playlist ID", "unlimited-elements-for-elementor"),
+				// translators: %1$s is page url, %2$s is page url
 				"desc" => sprintf(__("You can find the playlist ID in a YouTube URL: <br />— %s<br />— %s", "unlimited-elements-for-elementor"), "https://youtube.com/playlist?list=<b>[YOUR_PLAYLIST_ID]</b>", "https://youtube.com/watch?v=aBC-123xYz&list=<b>[YOUR_PLAYLIST_ID]</b>"),
 			),
 			array(
@@ -714,6 +740,7 @@ class UniteCreatorAPIIntegrations{
 				"id" => self::YOUTUBE_PLAYLIST_FIELD_LIMIT,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Videos Limit", "unlimited-elements-for-elementor"),
+				// translators: %d is a number
 				"desc" => sprintf(__("Optional. You can specify the maximum number of videos: from 1 to 50. The default value is %d.", "unlimited-elements-for-elementor"), self::YOUTUBE_PLAYLIST_DEFAULT_LIMIT),
 				"default" => self::YOUTUBE_PLAYLIST_DEFAULT_LIMIT,
 			),
@@ -721,6 +748,7 @@ class UniteCreatorAPIIntegrations{
 				"id" => self::YOUTUBE_PLAYLIST_FIELD_CACHE_TIME,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Cache Time", "unlimited-elements-for-elementor"),
+				// translators: %d is a number
 				"desc" => sprintf(__("Optional. You can specify the cache time of results in minutes. The default value is %d minutes.", "unlimited-elements-for-elementor"), self::YOUTUBE_PLAYLIST_DEFAULT_CACHE_TIME),
 				"default" => self::YOUTUBE_PLAYLIST_DEFAULT_CACHE_TIME,
 			),
@@ -1008,8 +1036,7 @@ class UniteCreatorAPIIntegrations{
 		return $data;
 	}
 
-	private function _________WEATHER_________(){
-	}
+	private function _________WEATHER_________(){}
 
 	/**
 	 * get open weather api key
@@ -1037,6 +1064,7 @@ class UniteCreatorAPIIntegrations{
 				"id" => self::WEATHER_FORECAST_FIELD_COUNTRY,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Country Code", "unlimited-elements-for-elementor"),
+				// translators: %s is page url
 				"desc" => sprintf(__("Specify the two-letter <a href='%s' target='_blank'>country code</a>.", "unlimited-elements-for-elementor"), "https://en.wikipedia.org/wiki/ISO_3166-2#Current_codes"),
 				"default" => "GB",
 			),
@@ -1068,6 +1096,7 @@ class UniteCreatorAPIIntegrations{
 				"id" => self::WEATHER_FORECAST_FIELD_CACHE_TIME,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Cache Time", "unlimited-elements-for-elementor"),
+				// translators: %d is a number
 				"desc" => sprintf(__("Optional. You can specify the cache time of results in minutes. The default value is %d minutes.", "unlimited-elements-for-elementor"), self::CURRENCY_EXCHANGE_DEFAULT_CACHE_TIME),
 				"default" => self::WEATHER_FORECAST_DEFAULT_CACHE_TIME,
 			),
@@ -1225,7 +1254,10 @@ class UniteCreatorAPIIntegrations{
 
 		return $items;
 	}
-
+	
+	
+    private function _________OTHERS_________(){}
+    
 	/**
 	 * get youtube playlist data
 	 */
@@ -1347,6 +1379,7 @@ class UniteCreatorAPIIntegrations{
 			$fields[] = array(
 				"id" => $id,
 				"type" => UniteCreatorDialogParam::PARAM_STATIC_TEXT,
+				// translators: %s is key name
 				"text" => sprintf(__("%s key is missing. Please add the key in the \"General Settings > Integrations\".", "unlimited-elements-for-elementor"), $name),
 			);
 		}

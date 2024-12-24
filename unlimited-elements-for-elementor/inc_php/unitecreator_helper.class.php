@@ -339,6 +339,24 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			return(false);
 		}
 
+		/**
+		 * get kses allowed html
+		 */
+		public static function getKsesAllowedHTML(){
+			
+			$allowedHtml = array(
+			    'br' => array(),
+				'a' => array(
+			        'href'   => array(),
+			        'title'  => array(),
+			        'target' => array(),
+			        'rel'    => array(),
+				)
+			);					
+			
+			return($allowedHtml);
+		}
+		
 		public static function a_______DEBUG________(){}
 
 
@@ -1891,13 +1909,17 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		
 		$flagElementor = false;
 		$flagGutenberg = false;
+				
 		foreach(GlobalsUC::$active_plugins_versions as $plugin) {
-			if(strpos($plugin, 'gutenberg') > 0) {
-				$flagGutenberg = true;
-			} elseif(strpos($plugin, 'elementor') > 0) {
+			
+			if(strpos($plugin, 'elementor') > 0)
 				$flagElementor = true;
-			}
+			else
+				$flagGutenberg = true;
 		}
+
+		if(defined("UE_ENABLE_GUTENBERG_SUPPORT"))
+			$flagGutenberg = true;
 		
 		//some protection
 		if($flagGutenberg == false)

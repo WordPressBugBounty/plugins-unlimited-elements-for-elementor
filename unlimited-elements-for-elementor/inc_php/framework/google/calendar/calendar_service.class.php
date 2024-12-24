@@ -8,7 +8,6 @@ class UEGoogleAPICalendarService extends UEGoogleAPIClient{
 	
 	/**
 	 * convert times
-	 * function not needed for now...
 	 */
 	private function convertItemTimes($arrTime,$targetTimezone){
 		
@@ -25,17 +24,24 @@ class UEGoogleAPICalendarService extends UEGoogleAPIClient{
 		if(class_exists("DateTimeZone") == false)
 			return($arrTime);
 		
-		$objSourceTimezone = new DateTimeZone($sourceTimezone);
-		$objTargetTimezone = new DateTimeZone($targetTimezone);
+		try{
+			$objSourceTimezone = new DateTimeZone($sourceTimezone);
+			$objTargetTimezone = new DateTimeZone($targetTimezone);
+			
+			$objDate = new DateTime($time, $objSourceTimezone);
+			
+			$objDate->setTimezone($objTargetTimezone);
+			
+			$strDate = $objDate->format('Y-m-d\TH:i:s');
+			
+			$arrTime["dateTime"] = $strDate;
 		
-		$objDate = new DateTime($time, $objSourceTimezone);
-		
-		$objDate->setTimezone($objTargetTimezone);
-		
-		$strDate = $objDate->format('Y-m-d\TH:i:s');
-		
-		$arrTime["dateTime"] = $strDate;
-		
+		}catch(Exception $e){
+					
+			$message = $e->getMessage();
+			
+			dmp("Convert time error: ".$message);
+		}
 		
 		return($arrTime);
 	}

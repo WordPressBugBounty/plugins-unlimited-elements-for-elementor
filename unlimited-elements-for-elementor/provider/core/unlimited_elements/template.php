@@ -27,7 +27,7 @@ class UCEmptyTemplate{
 			
 			//escape html for the error message
 			
-			esc_html_e($message);
+			esc_html_e($message, "unlimited-elements-for-elementor");
 		}
 				
 		dmp("no output");		

@@ -1303,7 +1303,7 @@ var json = {{ucfunc(\"csv_to_json\",yourattribute)}};
 		//add large
 		$sizeLargeDesc = UniteFunctionsUC::getVal($arrSizes, "large");
 		if(empty($sizeLargeDesc))
-			$sizeLargeDesc = __("Large (max width 780)");
+			$sizeLargeDesc = __("Large (max width 780)", "unlimited-elements-for-elementor");
 		
 		$arrSizesOutput["thumb_large"] = $sizeLargeDesc;
 			

@@ -2132,9 +2132,17 @@ function UniteCreatorAdmin(){
 		var arrOptions = objConfig.data("options");
 
 		var isAddEditPro = g_ucAdmin.getVal(arrOptions,"add_edit_pro");
+		var isLimitProFunctionality = g_ucAdmin.getVal(arrOptions,"enable_limit_pro_functionality");
+		var isProVersion = g_ucAdmin.getVal(arrOptions,"is_pro_version");
 		
 		if(isAddEditPro === true)
 			g_ucAdmin.setOption("uc_edit_pro", true);
+
+		if(isLimitProFunctionality === true)
+			g_ucAdmin.setOption("uc_limit_pro_functionality", true);
+
+		if(isProVersion === true)
+			g_ucAdmin.setOption("uc_pro_version", true);
 
 		var objSettingsWrapper = jQuery("#uc_general_settings");
 

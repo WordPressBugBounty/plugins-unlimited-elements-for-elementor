@@ -107,7 +107,10 @@ class UCEmailTestView{
 		}catch(Exception $exception){
 			?>
 			<div style="color: red; margin-top: 5px;">
-				<?php echo sprintf(__("Error: %s", "unlimited-elements-for-elementor"), $exception->getMessage()); ?>
+				<?php 
+				// translators: %s is a string
+				echo sprintf(__("Error: %s", "unlimited-elements-for-elementor"), $exception->getMessage()); 
+				?>
 			</div>
 			<?php
 		}

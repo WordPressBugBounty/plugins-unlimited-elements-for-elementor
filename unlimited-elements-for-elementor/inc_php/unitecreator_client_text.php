@@ -159,9 +159,13 @@ GlobalsUC::$arrClientSideText = array(
 		"copy_section"=>esc_html__("Copy Section", "unlimited-elements-for-elementor"),
 		"delete_section"=>esc_html__("Delete Section", "unlimited-elements-for-elementor"),
 		"delete_section_error"=>esc_html("This section is not empty.\\nYou can delete only empty sections.","unlimited-elements-for-elementor"),
-		"delete_default_section_error"=>esc_html("You can not delete this section.","unlimited-elements-for-elementor"),
-		"empty_text"=>esc_html("Empty Text","unlimited-elements-for-elementor"),
-		"display_condition"=>esc_html("Display Condition","unlimited-elements-for-elementor")
+		"delete_default_section_error"=>esc_html__("You can not delete this section.","unlimited-elements-for-elementor"),
+		"empty_text"=>esc_html__("Empty Text","unlimited-elements-for-elementor"),
+		"display_condition"=>esc_html__("Display Condition","unlimited-elements-for-elementor"),
+
+		"prohibition_setting_attribute_deletion"=>__("This setting contains Pro options, and can't be deleted.","unlimited-elements-for-elementor"),
+		"prohibition_setting_attribute_duplication"=>__("This setting contains Pro options, and can't be duplicated.","unlimited-elements-for-elementor"),
+		"prohibition_section_attribute_copied"=>__("This section contains Pro options, and can't be copied.","unlimited-elements-for-elementor")
 );
 
 $filepathProviderClientText = GlobalsUC::$pathProvider."provider_client_text.php";

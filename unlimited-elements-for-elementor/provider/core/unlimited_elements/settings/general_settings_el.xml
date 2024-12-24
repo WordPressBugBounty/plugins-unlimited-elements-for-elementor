@@ -8,7 +8,7 @@
 	
   <fieldset name="widgets" label="Widgets">
   	
-      <field name="js_in_footer"
+    <field name="js_in_footer"
       type="boolean"
       default="true"
       label="		Js Always in Footer"
@@ -69,17 +69,7 @@
       label="Show Remote Errors to Admins Only"
       description="Show remote widgets errors only to logged in users">
     </field>
-    
-    <!-- 
-    <field name="single_term_filter_rewrite"
-      type="text"
-      default=""
-      label="Single Term Filter Url Rewrite"
-      placeholder="category- -mycat"
-      description="Add rule to rewrite single term url filter from url?ucterms=term:value to url?yourname:value. It will apply only for this single term filter. Example 'category- -mycat' will allow to have url: url?mycat:value">
-    </field>
-	-->
-  		
+      		
   </fieldset>
 
 
@@ -106,10 +96,17 @@
     <field name="disable_import_changelog"
            type="boolean"
            default="false"
-           label="Disable Import"
+           label="		Disable Import Changelog"
            description="Disable Import for widgets">
     </field>
 
+    <field type="control"
+      parent="enable_changelog"
+      child="disable_import_changelog"
+      ctype="show"
+      value="true">
+    </field>
+	
     <field name="enable_revisions"
       type="boolean"
       default="false"
@@ -117,7 +114,15 @@
       description="Enable revisions in widgets editor">
     </field>
 
+    <field name="edit_pro_settings"
+           type="boolean"
+           default="false"
+           label="Edit Pro Settings"
+           description="Edit Pro Settings for the Widgets">
+    </field>
+	
   </fieldset>
+  
   <fieldset name="instagram" label="Instagram">
 
     <field name="instagram_integration"
@@ -381,7 +386,7 @@
     <field name="before_show_php_message"
       type="hr">
     </field>
-
+	
     <field name="show_php_error"
       type="boolean"
       default="false"

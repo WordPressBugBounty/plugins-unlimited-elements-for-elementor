@@ -479,6 +479,7 @@ class UniteCreatorForm{
 						switch($ruleName){
 							case "required":
 								if($fieldValue === "")
+									// translators: %s is field name
 									$errors[] = sprintf(esc_html__("%s field is empty.", "unlimited-elements-for-elementor"), $errorTitle);
 							break;
 
@@ -488,6 +489,7 @@ class UniteCreatorForm{
 									$depFieldValue = UniteFunctionsUC::getVal($formSettings, $depFieldKey);
 
 									if($depFieldValue === $depFieldRequiredValue && $fieldValue === ""){
+										// translators: %s is field name
 										$errors[] = sprintf(esc_html__("%s field is empty.", "unlimited-elements-for-elementor"), $errorTitle);
 										break;
 									}
@@ -498,6 +500,7 @@ class UniteCreatorForm{
 								$validEmail = $this->isEmailValid($fieldValue);
 
 								if($fieldValue !== "" && $validEmail === false)
+									// translators: %s is field name
 									$errors[] = sprintf(esc_html__("%s field has an invalid email address: $fieldValue .", "unlimited-elements-for-elementor"), $errorTitle);
 							break;
 
@@ -508,6 +511,7 @@ class UniteCreatorForm{
 									$validEmail = $this->isEmailValid($email);
 
 									if($validEmail === false)
+										// translators: %s is field name
 										$errors[] = sprintf(esc_html__("%s field has an invalid email address: %s.", "unlimited-elements-for-elementor"), $errorTitle, $email);
 								}
 							break;
@@ -519,6 +523,7 @@ class UniteCreatorForm{
 								try{
 									UEGoogleAPIHelper::getFreshAccessToken();
 								}catch(Exception $exception){
+									// translators: %s is a string
 									$errors[] = sprintf(__("%s Google access token is missing or expired. Please connect to Google in the \"General Settings > Integrations\".", "unlimited-elements-for-elementor"), $errorTitle);
 								}
 							break;
@@ -527,6 +532,7 @@ class UniteCreatorForm{
 								$validUrl = UniteFunctionsUC::isUrlValid($fieldValue);
 
 								if($fieldValue !== "" && $validUrl === false)
+									// translators: %s is page url
 									$errors[] = sprintf(esc_html__("%s field has an invalid URL.", "unlimited-elements-for-elementor"), $errorTitle);
 							break;
 
@@ -844,7 +850,13 @@ class UniteCreatorForm{
 				$fileName = wp_unique_filename($folderPath, $file["name"]);
 				$filePath = $folderPath . "/" . $fileName;
 
-				$moved = move_uploaded_file($file["tmp_name"], $filePath);
+				$moved = false;
+				$uploaded_file = wp_handle_upload( $file );
+				if ( isset( $uploaded_file['file'] ) ) {
+					$wp_filesystem->move( $uploaded_file['file'], $filePath, true );
+					$moved = true;
+				}
+				// $moved = move_uploaded_file($file["tmp_name"], $filePath);
 
 				if($moved === false){
 					$errors[] = "Unable to move uploaded file: $filePath";
@@ -852,7 +864,7 @@ class UniteCreatorForm{
 					continue;
 				}
 
-				$chmoded = chmod($filePath, 0644);
+				$chmoded = $wp_filesystem->chmod($filePath, 0644);
 
 				if($chmoded === false){
 					$errors[] = "Unable to change file permissions: $filePath";
@@ -952,6 +964,9 @@ class UniteCreatorForm{
 		
 		$formFieldPlaceholders = $arrResponse[0];
 		$emailReplaces = $arrResponse[1];
+		
+		if(empty($formFieldPlaceholders))
+			$formFieldPlaceholders = array();
 		
 		$emailPlaceholders = array_merge(array(
 			self::PLACEHOLDER_ADMIN_EMAIL,
@@ -1342,7 +1357,7 @@ class UniteCreatorForm{
 	 * get file type error message
 	 */
 	private function getFileTypeErrorMessage($extensions){
-
+		// translators: %s is file type
 		$fallback = __("The file must be of type: %s.", "unlimited-elements-for-elementor");
 		$message = $this->getFormMessage("file_type_error_message", $fallback);
 		$message = sprintf($message, implode(", ", $extensions));

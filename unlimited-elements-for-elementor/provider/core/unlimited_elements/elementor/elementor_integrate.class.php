@@ -940,7 +940,7 @@ class UniteCreatorElementorIntegrate{
     	$arrAddons = $this->getArrAddons();
 
     	$objAddons = new UniteCreatorAddons();
-
+	
     	$urlAssets = GlobalsUC::$url_assets;
 
     	$script = "";
@@ -957,6 +957,9 @@ class UniteCreatorElementorIntegrate{
     	$urlAdmin = admin_url();
 
     	$script .= "var g_ucAdminUrl=\"{$urlAdmin}\";\n";
+
+	    if(GlobalsUnlimitedElements::$enableLimitProFunctionality == true)
+	        $script .= "var g_ucEnableLimitProFunctionality=true;\n";
 
 
     	return($script);
@@ -1394,64 +1397,124 @@ class UniteCreatorElementorIntegrate{
 	 * check allow pagination for single page pagination
 	 */
 	public function checkAllowWidgetPagination($filterValue, $wp_query){
-
+		
+		$showDebug = false;
+		
+		if($showDebug == true){
+			dmp("Debug check allow pagination function");
+		}
+		
 		$objFilters = new UniteCreatorFiltersProcess();
 		$isAjaxRequest = $objFilters->isFrontAjaxRequest();
 
 		//get post id from request
 		if($isAjaxRequest){
-
+			
+			if($showDebug == true){
+				dmp("ajax request");
+			}
+			
 			$postID = UniteFunctionsUC::getPostGetVariable("layoutid","",UniteFunctionsUC::SANITIZE_KEY);
 			if(empty($postID))
 				return($filterValue);
 
-			if(is_numeric($postID) == false)
+			if(is_numeric($postID) == false){
+				
+				if($showDebug == true){
+					dmp("not numeric - return false");
+					exit();
+				}
+				
 				return(false);
+			}
 
 		}else{
 
 			//get post id from query
-
-			if(is_admin() == true || is_singular() == false)
+			
+			if($showDebug == true){
+				dmp("not ajax");
+			}
+			
+			if(is_admin() == true || is_singular() == false){
+				
+				if($showDebug == true){
+					dmp("ajax - singular - exit: $filterValue");
+					exit();
+				}
+				
 				return($filterValue);
+			}
 
 			if(@is_front_page() == true)
 				return($filterValue);
 
-			if(empty(self::$arrPostsWidgetNames))
+			if(empty(self::$arrPostsWidgetNames)){
+				
+				if($showDebug == true){
+					dmp("no widget names - exit: $filterValue");
+					exit();
+				}
+				
 				return($filterValue);
+			}
 
 			$postID = $wp_query->queried_object_id;
 
 		}
-
+		
 		if(empty($postID))
 			return($filterValue);
 
 		$document = Plugin::$instance->documents->get( $postID );
-
-		if(empty($document))
+		
+		if(empty($document)){
+			
+			if($showDebug == true){
+				dmp("no document - exit: $filterValue");
+				exit();
+			}
+			
 			return($filterValue);
-
+		}
+		
 		$editorData = $document->get_elements_data();
-
-		Plugin::$instance->db->iterate_data($editorData, function( $element ) use ( &$filterValue ) {
-
+		
+		Plugin::$instance->db->iterate_data($editorData, function( $element ) use ( &$filterValue, $showDebug ) {
+						
 			$widgetName = UniteFunctionsUC::getVal($element, "widgetType");
 
 			if(!empty($widgetName)){
-
+				
+				if($showDebug == true){
+					dmp("widget found: $widgetName");
+				}
+				
 				$widgetName = str_replace("ucaddon_", "", $widgetName);
 
 				$isPostWidget = isset(self::$arrPostsWidgetNames[$widgetName]);
 
 				if($isPostWidget){
-
+					
+					if($showDebug == true){
+						dmp("post widet");
+					}
+					
 					$settings = UniteFunctionsUC::getVal($element, "settings");
 
 					$paginationType = UniteFunctionsUC::getVal($settings, "pagination_type");
-
+					
+					if($showDebug == true){
+						dmp("pagination type: ".$paginationType);
+					}
+					
 					if(!empty($paginationType)){
+						
+						if($showDebug == true){
+							dmp("return true");
+						}
+						
+						
 						$filterValue = true;
 						return($filterValue);
 					}//if
@@ -1462,7 +1525,12 @@ class UniteCreatorElementorIntegrate{
 
 		});//iterate
 
-
+		if($showDebug == true){
+			dmp("return value: $filterValue");
+			exit();
+		}
+		
+		
 		return($filterValue);
 	}
 
@@ -1748,7 +1816,7 @@ class UniteCreatorElementorIntegrate{
 		
     	add_action('elementor/frontend/after_register_scripts', array($this, 'onRegisterFrontScripts'), 10);
     	add_action('elementor/editor/after_enqueue_scripts', array($this, 'onEnqueueEditorScripts'), 10);
-
+		
     	if($this->isOldElementorVersion == true)
     		add_action('elementor/controls/controls_registered', array($this, 'onRegisterControls'));
     	else

@@ -236,6 +236,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 			if(defined("UC_TEST_FREE_VERSION"))
 				self::$isProVersion = false;
+				
+			
 
 			Global $mainFilepath;		//defined at plugin start
 			self::$pathPluginFile = $mainFilepath;
@@ -314,8 +316,9 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				GlobalsUC::$SHOW_TRACE_FRONT = true;
 				GlobalsUC::$SHOW_TRACE = true;
 			}
-						
+			
 		}
+		
 		
 		/**
 		 * init after plugins loaded
@@ -333,6 +336,13 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			$showQueryDebugByUrl = HelperUC::hasPermissionsFromQuery("ucquerydebug");
 			if($showQueryDebugByUrl == true)
 				self::$showQueryDebugByUrl = true;
+
+			
+			//test free version
+			
+			$isTestFree = HelperUC::hasPermissionsFromQuery("testfreeversion");
+			if($isTestFree == true)
+				GlobalsUC::$isProVersion = false;
 			
 		}
 

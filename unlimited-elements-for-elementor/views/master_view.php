@@ -48,12 +48,12 @@ switch($view){
 <?php HelperHtmlUC::putGlobalsHtmlOutput(); ?>
 
 <script type="text/javascript">
-	var g_view = "<?php echo self::$view; ?>";
+	var g_view = "<?php echo esc_attr(self::$view); ?>";
 </script>
 
 <?php HelperHtmlUC::putInternalAdminNotices() ?>
 
-<div id="viewWrapper" class="unite-view-wrapper unite-admin unite-inputs <?php echo $htmlClassAdd; ?>">
+<div id="viewWrapper" class="unite-view-wrapper unite-admin unite-inputs <?php echo esc_attr($htmlClassAdd); ?>">
 
 	<?php require_once(GlobalsUC::$pathTemplates . "head.php"); ?>
 
@@ -102,7 +102,7 @@ if(file_exists($filepathProviderMasterView))
 
 	<div class="unite-plugin-version-line unite-admin <?php echo esc_attr($bottomLineClass)?>">
 		<?php UniteProviderFunctionsUC::putFooterTextLine() ?>
-		<?php esc_html_e("Plugin version", "unlimited-elements-for-elementor"); ?> <?php echo UNLIMITED_ELEMENTS_VERSION; ?>
+		<?php esc_html_e("Plugin version", "unlimited-elements-for-elementor"); ?> <?php echo esc_html(UNLIMITED_ELEMENTS_VERSION); ?>
 		<?php if(defined("UNLIMITED_ELEMENTS_UPRESS_VERSION")) esc_html_e("upress", "unlimited-elements-for-elementor"); ?>
 		(<a id="uc_version_link" href="#"><?php esc_html_e("view changelog", "unlimited-elements-for-elementor"); ?></a>)
 		<?php UniteProviderFunctionsUC::doAction(UniteCreatorFilters::ACTION_BOTTOM_PLUGIN_VERSION)?>

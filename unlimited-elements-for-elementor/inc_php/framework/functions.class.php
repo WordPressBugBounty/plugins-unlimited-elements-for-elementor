@@ -820,42 +820,50 @@ class UniteFunctionsUC{
 		return($arrIDs);
 	}
 
+	
 	/**
-	 * modify data array for show - for DEBUG purposes
-	 * convert single array like in post meta
+	 * Modify data array for show - for DEBUG purposes
+	 * Convert single arrays like in post meta (multi-level support)
 	 */
-	public static function modifyDataArrayForShow($arrData, $convertSingleArray = false){
-		
-		if(is_array($arrData) == false)
-			return($arrData);
-
-		$truncateSize = 200;
-		
-		$arrDataNew = array();
-		foreach($arrData as $key=>$value){
-
-			$key = htmlspecialchars($key);
-			
-			if(is_string($value) == true && strlen($value) > $truncateSize){
-				
-				$value = UniteFunctionsUC::truncateString($value, $truncateSize);
-				$value = htmlspecialchars($value);
-				
-			}
-			
-			$key = " $key";
-
-			$arrDataNew[$key] = $value;
-			
-			//convert single array
-			if($convertSingleArray == true && is_array($value) && count($value) == 1 && isset($value[0]))
-				$arrDataNew[$key] = $value[0];
-
-		}
-
-		return($arrDataNew);
+	public static function modifyDataArrayForShow($arrData, $convertSingleArray = false) {
+	    // Check if input is not an array
+	    if (!is_array($arrData)) {
+	        return $arrData;
+	    }
+	
+	    $truncateSize = 200; // Truncate size for strings
+	    $arrDataNew = array();
+	
+	    foreach ($arrData as $key => $value) {
+	        // Sanitize the key
+	        $key = htmlspecialchars($key);
+	        $key = " $key"; // Add space before key
+	
+	        // If the value is a string and exceeds truncate size
+	        if (is_string($value) && strlen($value) > $truncateSize) {
+	            $value = UniteFunctionsUC::truncateString($value, $truncateSize);
+	        }
+	        
+	        if(is_string($value))
+	        	$value = htmlspecialchars($value);
+	        
+	        // If the value is an array, process it recursively
+	        if (is_array($value)) {
+	            $value = self::modifyDataArrayForShow($value, $convertSingleArray);
+	
+	            // Convert single-element arrays to single values
+	            if ($convertSingleArray && count($value) == 1 && isset($value[0])) {
+	                $value = $value[0];
+	            }
+	        }
+	
+	        // Add the processed key-value pair to the new array
+	        $arrDataNew[$key] = $value;
+	    }
+	
+	    return $arrDataNew;
 	}
-
+	
 
 	/**
 	 * get id's array from any input

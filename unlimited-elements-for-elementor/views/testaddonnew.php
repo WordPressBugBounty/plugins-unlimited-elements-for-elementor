@@ -37,7 +37,7 @@ class UniteCreatorTestAddonNewView{
 
 		?>
 
-		<h1><?php esc_html_e("Widget Preview", "unlimited-elements-for-elementor"); ?> - <?php esc_html_e($addonTitle); ?></h1>
+		<h1><?php esc_html_e("Widget Preview", "unlimited-elements-for-elementor"); ?> - <?php esc_html_e($addonTitle, "unlimited-elements-for-elementor"); ?></h1>
 
 		<div class="uc-preview-addon-actions">
 			<div class="uc-preview-addon-actions-primary">

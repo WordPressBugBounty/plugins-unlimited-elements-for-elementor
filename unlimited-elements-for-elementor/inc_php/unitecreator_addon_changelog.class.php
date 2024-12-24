@@ -61,6 +61,7 @@ class UniteCreatorAddonChangelog{
 
 			return $addon->getTitle();
 		}catch(Exception $exception){
+			// translators: %s is exception fallback
 			return sprintf(__("%s (deleted)", "unlimited-elements-for-elementor"), $fallback);
 		}
 	}

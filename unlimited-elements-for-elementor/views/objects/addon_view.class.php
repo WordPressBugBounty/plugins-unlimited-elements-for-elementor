@@ -672,7 +672,7 @@ class UniteCreatorAddonView{
 				</tbody>
 			</table>
 
-			<div id="uc_dialog_unclude_settings" title="<?php esc_html_e("Include Settings")?>" class="unite-inputs" style="display:none">
+			<div id="uc_dialog_unclude_settings" title="<?php esc_html_e("Include Settings", "unlimited-elements-for-elementor")?>" class="unite-inputs" style="display:none">
 				<div class="unite-dialog-inside">
 
 					<?php esc_html_e("Include When:", "unlimited-elements-for-elementor")?>
@@ -796,7 +796,7 @@ class UniteCreatorAddonView{
 						<?php esc_html_e("Select type", "unlimited-elements-for-elementor"); ?>
 					</option>
 					<?php foreach($types as $value => $label): ?>
-						<option value="<?php esc_attr_e($value); ?>"><?php esc_html_e($label); ?></option>
+						<option value="<?php esc_attr_e($value, "unlimited-elements-for-elementor"); ?>"><?php esc_html_e($label, "unlimited-elements-for-elementor"); ?></option>
 					<?php endforeach; ?>
 				</select>
 				<textarea name="text" placeholder="<?php esc_attr_e("Enter text", "unlimited-elements-for-elementor"); ?>"></textarea>
@@ -1694,13 +1694,19 @@ class UniteCreatorAddonView{
 		
 		if(GlobalsUnlimitedElements::$enableEditProOptions == true)
 			$options["add_edit_pro"] = true;
+					
+		if(GlobalsUC::$isProVersion == true)
+			$options["is_pro_version"] = true;
 		
+		if(GlobalsUnlimitedElements::$enableLimitProFunctionality == true)
+			$options["enable_limit_pro_functionality"] = true;
+					
 		$dataOptions = UniteFunctionsUC::jsonEncodeForHtmlData($options, "options");
 
 		$params = $this->objAddon->getParams();
 		$dataParams = UniteFunctionsUC::jsonEncodeForHtmlData($params, "params");
 
-
+		
 		$paramsItems = $this->objAddon->getParamsItems();
 		$dataParamsItems = UniteFunctionsUC::jsonEncodeForHtmlData($paramsItems, "params-items");
 
@@ -1903,7 +1909,7 @@ class UniteCreatorAddonView{
 		<br>
 
 		<span class='uc-section-selected'>
-			<span id='uc_bulk_dialog_num_selected'><?php echo esc_html($numSelected)?></span> <?php esc_html_e("selected")?>
+			<span id='uc_bulk_dialog_num_selected'><?php echo esc_html($numSelected)?></span> <?php esc_html_e("selected", "unlimited-elements-for-elementor")?>
 		</span>
 
 		<span class="hor_sap"></span>
@@ -1948,10 +1954,10 @@ class UniteCreatorAddonView{
 		<?php else: ?>
 			<ul class="uc-changelogs">
 				<?php foreach($changelogs as $log): ?>
-					<li class="uc-changelog" data-id="<?php esc_attr_e($log["id"]); ?>" data-log="<?php esc_attr_e(json_encode($log)); ?>">
+					<li class="uc-changelog" data-id="<?php esc_attr_e($log["id"], "unlimited-elements-for-elementor"); ?>" data-log="<?php esc_attr_e(json_encode($log), "unlimited-elements-for-elementor"); ?>">
 						<div class="uc-changelog-content">
 							<div class="uc-changelog-text">
-								<b><?php esc_html_e($log["type_title"]); ?>:</b>
+								<b><?php esc_html_e($log["type_title"], "unlimited-elements-for-elementor"); ?>:</b>
 								<?php echo $log["text_html"]; ?>
 							</div>
 							<div class="uc-changelog-info" title="<?php echo $log["created_date"]; ?>">

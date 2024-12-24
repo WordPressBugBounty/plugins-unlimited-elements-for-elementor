@@ -51,13 +51,13 @@ if(!empty($objAddonType->addonView_urlBack))
 
 		<span id="uc_testaddon_slot1" class="uc-testaddon-slot" <?php echo UniteProviderFunctionsUC::escAddParam($slot1AddHtml)?>>
 			<a id="uc_testaddon_button_restore" href="javascript:void(0)" class="unite-button-secondary"><?php esc_html_e("Restore Data", "unlimited-elements-for-elementor")?></a>
-			<span id="uc_testaddon_loader_restore" class="loader-text" style="display:none"><?php esc_html_e("loading...")?></span>
+			<span id="uc_testaddon_loader_restore" class="loader-text" style="display:none"><?php esc_html_e("loading...", "unlimited-elements-for-elementor")?></span>
 			<a id="uc_testaddon_button_delete" href="javascript:void(0)" class="unite-button-secondary"><?php esc_html_e("Delete Data", "unlimited-elements-for-elementor")?></a>
-			<span id="uc_testaddon_loader_delete" class="loader-text" style="display:none"><?php esc_html_e("deleting...")?></span>
+			<span id="uc_testaddon_loader_delete" class="loader-text" style="display:none"><?php esc_html_e("deleting...", "unlimited-elements-for-elementor")?></span>
 		</span>
 
 		<a id="uc_testaddon_button_save" href="javascript:void(0)" class="unite-button-secondary"><?php esc_html_e("Save Data", "unlimited-elements-for-elementor")?></a>
-		<span id="uc_testaddon_loader_save" class="loader-text" style="display:none"><?php esc_html_e("saving...")?></span>
+		<span id="uc_testaddon_loader_save" class="loader-text" style="display:none"><?php esc_html_e("saving...", "unlimited-elements-for-elementor")?></span>
 
 		<a id="uc_testaddon_button_clear" href="javascript:void(0)" class="unite-button-secondary"><?php esc_html_e("Clear", "unlimited-elements-for-elementor")?></a>
 

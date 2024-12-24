@@ -883,11 +883,13 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     	//protect pro options in control
     	
-    	if(GlobalsUnlimitedElements::$enableLimitProFunctionality == true){
+    	$isProControl = false;
+    	
+    	if(GlobalsUnlimitedElements::$enableLimitProFunctionality == true && GlobalsUC::$isProVersion == false){
 		    
     		$isProControl = UniteFunctionsUC::getVal($param, "is_pro");
 	    	
-			if($isProControl && GlobalsUC::$isProVersion == false){
+			if($isProControl === true){
 				$arrControl['classes'] = 'uc-has-pro-option';
 			}
     		
@@ -937,7 +939,11 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     				$arrControl["return_value"] = "true";
     			}
-
+				
+    			if($isProControl == true){
+					$title .= __(" - Pro","unlimited-elements-for-elementor");    				
+    			}
+    			
     		break;
     		case UniteCreatorDialogParam::PARAM_TEXTAREA:
     			$controlType = Controls_Manager::TEXTAREA;
@@ -1197,6 +1203,17 @@ class UniteCreatorElementorWidget extends Widget_Base {
     				$arrControl["mobile_default"] = $defaultValueMobile;
     			}
 
+    			
+				// get pro options from dropdown
+				
+    			if(GlobalsUnlimitedElements::$enableLimitProFunctionality == true && GlobalsUC::$isProVersion == false){
+    				
+			        $proOptions = UniteFunctionsUC::getVal( $param, "pro_options", array() );
+		            
+			        if(!empty($proOptions))
+			            $arrControl = $this->disableDropdownControlProOptions($proOptions, $arrControl);
+    			}
+    			
 
     		break;
     		case UniteCreatorDialogParam::PARAM_PADDING:
@@ -1858,12 +1875,12 @@ class UniteCreatorElementorWidget extends Widget_Base {
     	if($labelBlock === true)
     		$arrControl["label_block"] = true;
 
-    	/*
-    	if($name == "another"){//dmp($arrControl);exit();}
-    	*/
+
 
     	return($arrControl);
     }
+
+
 
 
     /**
@@ -2763,6 +2780,72 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
    }
 
+   private function a_______PRO_SETTINGS_______(){}
+   
+	/**
+	 * disable dropdown pro options for elementor controls
+	 */
+	protected function disableDropdownControlProOptions($proOptions, $arrControl) {
+		
+		// check if it no Pro Version and dropdown contains pro options
+		
+		if(empty($proOptions))
+			return($arrControl);
+		
+		$proOptions = UniteFunctionsUC::arrayToAssoc($proOptions);
+			
+		$arrNewOptions = array();
+		$arrAvailableOptions = array();
+		$arrDisabledOptions = array();
+		
+		$arrControl['classes'] = 'uc-has-pro-dropdown-options';
+		
+		$arrOptions = UniteFunctionsUC::getVal($arrControl, "options",array());
+		
+		//set variables
+				
+		foreach($arrOptions as $key => $value) {
+			
+			if(isset($proOptions[$key])){
+				
+				// set disabled key for pro option
+				$arrNewOptions[ 'is-pro-' . $key] = $value.__(" - Pro","unlimited-elements-for-elementor");
+			}
+			else {
+				$arrNewOptions[$key] = $value;
+				$arrAvailableOptions[$key] = $key;
+			}
+		}
+		
+		$arrControl["options"] = $arrNewOptions;
+		
+		//set new default
+		
+		$defaultValue = UniteFunctionsUC::getVal($arrControl, "default");
+		
+		if(is_string($defaultValue) == false)
+			return($arrControl);
+		
+		$isDefaultExists = isset($arrAvailableOptions[$defaultValue]);
+		
+		if($isDefaultExists == true)
+			return($arrControl);
+			
+		$newDefault = reset($arrAvailableOptions);
+			
+		$defaultKeys = array("default", "desktop_default", "mobile_default", "tablet_default");
+				
+		foreach($defaultKeys as $key) {					
+			
+			if(isset($arrControl[$key]))
+				$arrControl[$key] = $newDefault;
+		}
+		
+		
+		return($arrControl);
+	}
+   
+   
    private function a__________DYNAMIC_SECTIONS_________(){}
 
 

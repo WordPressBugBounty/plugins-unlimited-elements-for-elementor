@@ -255,7 +255,7 @@ class UCOperations extends UniteElementsBaseUC{
 	 * the image must be relative path to the platform base
 	 */
 	public function createThumbs($urlImage, $thumbSize = null){
-
+		global $wp_filesystem;
 		if(empty($urlImage))
 			UniteFunctionsUC::throwError("empty image url");
 
@@ -269,7 +269,7 @@ class UCOperations extends UniteElementsBaseUC{
 		$pathThumbs = $info["path_thumbs"];
 
 		if(!is_dir($pathThumbs))
-			@mkdir($pathThumbs);
+			@$wp_filesystem->mkdir($pathThumbs);
 
 		if(!is_dir($pathThumbs))
 			UniteFunctionsUC::throwError("Can't make thumb folder: {$pathThumbs}. Please check php and folder permissions");
@@ -468,146 +468,7 @@ class UCOperations extends UniteElementsBaseUC{
 		return ($arrItems);
 	}
 	
-	private function a____________RSS____________(){}
 	
-	/**
-	 * modify rss array to simplify the use
-	 */
-	public function simplifyRssDataArray($arrRss){
-		if($items = $this->findRssItems($arrRss)) {
-			$items = $this->createNiceKeys($items);
-
-			return $items;
-		}
-
-		$arrRss = $this->createNiceKeys($arrRss);
-
-		return($arrRss);
-	}
-
-	private function createNiceKeys($arrRss, $prefix = '') {
-		$niceArr = [];
-
-		foreach ($arrRss as $key => $value) {
-			// Replace colons with underscores and append to prefix
-			$newKey = $prefix . ($prefix ? '_' : '') . str_replace(':', '_', $key);
-
-			if (is_array($value)) {
-				// If the key is numeric, keep it as part of the array
-				if (is_numeric($key)) {
-					$niceArr[$key] = $this->createNiceKeys($value);
-				} else {
-					$niceArr = array_merge($niceArr, $this->createNiceKeys($value, $newKey));
-				}
-			} else {
-				if (is_numeric($key)) {
-					$niceArr[$prefix][$key] = $value;
-				} else {
-					$niceArr[$newKey] = $value;
-				}
-			}
-		}
-
-		return $niceArr;
-	}
-
-	private function createDate($arrRss, $dateFormat) {
-		$niceArr = [];
-
-		foreach ($arrRss as $key => $value) {
-			if (is_array($value)) {
-				$niceArr[$key] = $this->createDate($value, $dateFormat);
-			} else {
-				$timestamp = $this->date2Timestamp($value);
-				if (!empty($timestamp)) {
-					$formatedDate = date($dateFormat, $timestamp);
-					if (empty($formatedDate)) {
-						$formatedDate = date('d/m/Y H:i:s', $timestamp);
-					}
-
-					$niceArr[$key] = $formatedDate;
-				} else {
-					$niceArr[$key] = $value;
-				}
-			}
-		}
-
-		return $niceArr;
-	}
-
-	/**
-	 * convert date to timestamp
-	 * if format not given - try to guess format
-	 */
-	public static function date2Timestamp($strDate, $format = ""){
-		if(empty($strDate))
-			return("");
-
-		$stamp = strtotime($strDate);
-
-		if(!empty($stamp))
-			return($stamp);
-
-		//guess format
-
-		if(empty($format))
-			$format = self::detectDateFormat($strDate);
-
-		if(empty($format))
-			return("");
-
-		$date = DateTime::createFromFormat($format, $strDate);
-
-		if(empty($date))
-			return("");
-
-		$stamp = $date->getTimestamp();
-
-		return($stamp);
-	}
-
-	/**
-	 * detect date format by date string
-	 */
-	public static function detectDateFormat($strDate){
-
-		$patterns = array(
-			'/^\d{4}\/\d{2}\/\d{2}$/' => 'Y/m/d',    // 2024/12/31
-			'/^\d{4}-\d{2}-\d{2}$/' => 'Y-m-d',      // 2024-12-31
-			'/^\d{2}\/\d{2}\/\d{4}$/' => 'd/m/Y',    // 31/12/2024
-			'/^\d{2}-\d{2}-\d{4}$/' => 'd-m-Y',      // 31-12-2024
-			'/^\d{2}\/\d{2}\/\d{2}$/' => 'd/m/y',    // 31/12/24
-			'/^\d{2}-\d{2}-\d{2}$/' => 'd-m-y',      // 31-12-24
-			'/^\d{2}\/\d{4}$/' => 'm/d/Y',           // 12/31/2024
-			'/^\d{2}-\d{4}$/' => 'm-d-Y',            // 12-31-2024
-		);
-
-		foreach ($patterns as $pattern => $format) {
-			if (preg_match($pattern, $strDate)) {
-				return $format;
-			}
-		}
-
-		return("");
-	}
-
-	private function findRssItems($arrRss) {
-		if (array_key_exists('item', $arrRss)) {
-			return $arrRss['item'];
-		} elseif (array_key_exists('entry', $arrRss)) {
-			return $arrRss['entry'];
-		} else {
-			foreach ($arrRss as $value) {
-				if (is_array($value)) {
-					if ($items = $this->findRssItems($value)) {
-						return $items;
-					}
-				}
-			}
-		}
-
-		return false;
-	}
 	
 	private function a____________DEBUG____________(){}
 		

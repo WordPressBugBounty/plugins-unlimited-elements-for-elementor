@@ -4,7 +4,7 @@
 * Plugin URI: http://unlimited-elements.com
 * Description: Unlimited Elements - Huge Widgets Pack for Elementor Website Builder, with html/css/js widget creator and editor
 * Author: Unlimited Elements
-* Version: 1.5.131
+* Version: 1.5.132
 * Author URI: http://unlimited-elements.com
 * Text Domain: unlimited-elements-for-elementor
 * Domain Path: /languages
@@ -16,7 +16,7 @@
 
 if(!defined("UNLIMITED_ELEMENTS_INC"))
 	define("UNLIMITED_ELEMENTS_INC", true);
-
+	
 if ( ! function_exists( 'uefe_fs' ) ) {
     // Create a helper function for easy SDK access.
     function uefe_fs() {
@@ -77,12 +77,16 @@ try{
 		
 	}
     
-    if(in_array('unlimited-elements-for-elementor', GlobalsUC::$active_plugins_versions)) {
-        define("UC_BOTH_VERSIONS_ACTIVE", true);
-    } else {
-        GlobalsUC::$active_plugins_versions[] = 'unlimited-elements-for-elementor';
-    }
-    
+	//check for double include
+	if(property_exists('GlobalsUC', 'active_plugins_versions')){
+		
+	    if(in_array('unlimited-elements-for-elementor', GlobalsUC::$active_plugins_versions))
+		    define("UC_BOTH_VERSIONS_ACTIVE", true);
+	    else
+	        GlobalsUC::$active_plugins_versions[] = 'unlimited-elements-for-elementor';
+	}
+
+	
 }catch(Exception $e){
 	$message = $e->getMessage();
 	$trace = $e->getTraceAsString();

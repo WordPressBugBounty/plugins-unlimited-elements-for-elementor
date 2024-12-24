@@ -45,9 +45,10 @@ class FilesystemCache implements CacheInterface
 
     public function write(string $key, string $content): void
     {
+        global $wp_filesystem;
         $dir = \dirname($key);
         if (!is_dir($dir)) {
-            if (false === @mkdir($dir, 0777, true)) {
+            if (false === @$wp_filesystem->mkdir($dir, 0777)) {
                 clearstatcache(true, $dir);
                 if (!is_dir($dir)) {
                     throw new \RuntimeException(sprintf('Unable to create the cache directory (%s).', $dir));
@@ -59,7 +60,7 @@ class FilesystemCache implements CacheInterface
 
         $tmpFile = tempnam($dir, basename($key));
         if (false !== @file_put_contents($tmpFile, $content) && @rename($tmpFile, $key)) {
-            @chmod($key, 0666 & ~umask());
+            @$wp_filesystem->chmod($key, 0666 & ~umask());
 
             if (self::FORCE_BYTECODE_INVALIDATION == ($this->options & self::FORCE_BYTECODE_INVALIDATION)) {
                 // Compile cached file into bytecode cache

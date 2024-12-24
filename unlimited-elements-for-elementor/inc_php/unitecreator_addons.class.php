@@ -714,10 +714,6 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 			else
 				$objAddon->initByAlias($addonName, $addonType);
 		}
-
-		//init base widget if for output
-		if($isForOutput == true)
-			$objAddon->initBaseWidgets();
 		
 		$elementorSettings = UniteFunctionsUC::getVal($addonData, "elementor_settings");
 

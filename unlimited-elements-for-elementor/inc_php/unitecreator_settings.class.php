@@ -356,6 +356,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 		//add number of items
 		$params = array();
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_TEXTFIELD;
+		// translators: %d is a number
 		$desciption = __("Number of instagram items. Leave empty for default number ( %d ) set by the widget", "unlimited-elements-for-elementor");
 		$desciption = sprintf($desciption, $defaultMaxItems);
 		$params["description"] = $desciption;
@@ -810,6 +811,19 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 			case "weather_api":
 				UniteCreatorAPIIntegrations::getInstance()->addServiceSettingsFields($this, UniteCreatorAPIIntegrations::TYPE_WEATHER_FORECAST, $name, $condition);
 			break;
+            case "rss_feed":
+                
+            	$objRss = new UniteCreatorRSS();
+            	
+            	$fields = $objRss->getRssFields($name);
+                
+                UniteCreatorAPIIntegrations::getInstance()->addSettingsFields($this, $fields, $name, $condition);
+            break;
+            case "repeater":
+            	
+            	HelperProviderUC::addRepeaterSettings($this, $name,"",true);
+            	
+            break;
 			case "base_widget":	//operate base widget addon object
 			break;
 			default:
@@ -1327,6 +1341,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 				$selector = UniteFunctionsUC::getVal($param, "selector");
 
 				$typeName = $name . "_type";
+				// translators: %s is a string
 				$typeTitle = sprintf(__("%s Type", "unlimited-elements-for-elementor"), $title);
 				$typeDefault = UniteFunctionsUC::getVal($param, "border_type");
 				$typeCondition = array($typeName . "!" => array("", "none"));
@@ -1337,7 +1352,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 				));
 
 				$this->addSelect($typeName, $types, $typeTitle, $typeDefault, $typeParams);
-
+				// translators: %s is a string
 				$widthTitle = sprintf(__("%s Width", "unlimited-elements-for-elementor"), $title);
 
 				$widthParams = array_merge($extra, array(
@@ -1367,7 +1382,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 
 					$this->addDimentionsSetting("{$name}_width{$suffix}", $addValue, $widthTitle, $widthParams);
 				}
-
+				// translators: %s is a string
 				$colorTitle = sprintf(__("%s Color", "unlimited-elements-for-elementor"), $title);
 				$colorDefault = UniteFunctionsUC::getVal($param, "border_color");
 

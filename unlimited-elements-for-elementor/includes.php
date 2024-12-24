@@ -12,7 +12,7 @@ if(!defined('UNLIMITED_ELEMENTS_INC'))
 defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 if(!defined("UNLIMITED_ELEMENTS_VERSION"))
-	define("UNLIMITED_ELEMENTS_VERSION", "1.5.131");
+	define("UNLIMITED_ELEMENTS_VERSION", "1.5.132");
 
 //disable elementor support for debugging purposes. keep it commented
 //define("UE_DISABLE_ELEMENTOR_SUPPORT", true);
@@ -56,7 +56,6 @@ require_once $folderIncludesMain . 'unitecreator_params_processor.class.php';
 require_once GlobalsUC::$pathProvider . 'provider_params_processor.class.php';
 require_once GlobalsUC::$pathProvider . 'provider_params_processor_multisource.class.php';
 require_once $folderIncludesMain . 'unitecreator_addons.class.php';
-require_once $folderIncludesMain . 'unitecreator_base_widgets.class.php';
 require_once $folderIncludesMain . 'unitecreator_helper.class.php';
 require_once $folderIncludesMain . 'unitecreator_helperhtml.class.php';
 require_once $folderIncludesMain . 'unitecreator_output.class.php';
@@ -117,6 +116,7 @@ require_once GlobalsUC::$pathProvider . 'provider_layouts_exporter.class.php';
 require_once $folderIncludesMain . 'unitecreator_addon_changelog.class.php';
 require_once $folderIncludesMain . 'unitecreator_addon_revisioner.class.php';
 require_once $folderIncludesMain . 'unitecreator_api_integrations.class.php';
+require_once $folderIncludesMain . 'unitecreator_rss.class.php';
 require_once $folderIncludesMain . 'unitecreator_pagination.class.php';
 require_once $folderIncludesMain . 'unitecreator_import_changelog.class.php';
 
@@ -140,7 +140,7 @@ if(GlobalsUC::$is_admin){
 //require pro version files
 if(file_exists(GlobalsUC::$pathPro."includes_pro.php"))
 	require GlobalsUC::$pathPro."includes_pro.php";
- 	
+
  	
 GlobalsUC::initAfterIncludes();
  

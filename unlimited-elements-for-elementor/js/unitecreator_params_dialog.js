@@ -9,6 +9,8 @@ function UniteCreatorParamsDialog(){
 
 	var g_arrSpecialInputs = {};	//array of special inputs
 	var g_isEnableEditPro = false;
+	var g_enableLimitPro = false;
+	var g_isProVersion = false;
 	
 	var events = {
 			CHANGE_NAME: "name_change",
@@ -216,7 +218,7 @@ function UniteCreatorParamsDialog(){
 	 * clear params dialog
 	 */
 	function clearParamDialog(){
-
+		
 		var objInputs = getAllInputs(true);
 
 		//clear simple inputs
@@ -508,8 +510,10 @@ function UniteCreatorParamsDialog(){
 			open:function(){
 
 				if(isEdit == false){
-					clearParamDialog();
+					
 					g_objData = null;
+					
+					clearParamDialog();
 				}
 				else{
 					g_objWrapper.data("rowindex", rowIndex);
@@ -572,6 +576,7 @@ function UniteCreatorParamsDialog(){
 		var valueValue = "";
 		var selectedClass = "";
 		var classProSelected = "";
+		var classProSelectedRow = "";
 		
 		if(objData){
 
@@ -586,13 +591,17 @@ function UniteCreatorParamsDialog(){
 			
 			var isPro = g_ucAdmin.getVal(objData,"isPro");
 			
-			if(isPro === true)
+			if(isPro === true){
 				classProSelected = " uc-selected";
+				classProSelectedRow = " uc-pro-selected";
+			}
+
+
 		}
 		
 		valueValue = g_ucAdmin.htmlspecialchars(valueValue);
 
-		html += "<tr>";
+		html += "<tr class='"+classProSelectedRow+"'>";
 		html += "<td><div class='uc-dropdown-item-handle'></div></td>";
 		html += "<td><input type=\"text\" value=\""+valueName+"\" class='uc-dropdown-item-name'></td>";
 		html += "<td><input type=\"text\" value=\""+valueValue+"\" class='uc-dropdown-item-value'></td>";
@@ -600,7 +609,7 @@ function UniteCreatorParamsDialog(){
 		html += "<div class='uc-dropdown-icon uc-dropdown-item-delete' title=\"Delete Item\"></div>";
 		html += "<div class='uc-dropdown-icon uc-dropdown-item-add' title=\"Add Item\"></div>";
 		html += "<div class='uc-dropdown-icon uc-dropdown-item-default"+selectedClass+"' title=\"Default Item\"></div>";
-				
+		
 		if(g_isEnableEditPro == true){
 			html += "<div class='uc-dropdown-icon uc-dropdown-item-pro"+classProSelected+"' title=\"Pro Setting\"></div>";
 		}else{
@@ -616,7 +625,7 @@ function UniteCreatorParamsDialog(){
 			objTable.children("tbody").append(objNewRow);
 		else
 			objNewRow.insertAfter(objRowBefore);
-
+		
 		return(objNewRow);
 	}
 
@@ -1037,8 +1046,18 @@ function UniteCreatorParamsDialog(){
 
 		}
 
+		t.addSpecialInput("radio_boolean", objRadioBoolean);
 
-			t.addSpecialInput("radio_boolean", objRadioBoolean);
+        //pro settings checkbox action
+		var objProSettingsCheckbox = g_objWrapper.find(".pro-settings-checkbox input[type=checkbox]");
+		objProSettingsCheckbox.on('click', function (){
+			var objCheckbox = jQuery(this);
+			if(objCheckbox.prop('checked'))
+				g_objWrapper.addClass('uc-radioboolean-contains-pro');
+			else
+				g_objWrapper.removeClass('uc-radioboolean-contains-pro');
+
+		});
 
 	}
 
@@ -1802,7 +1821,7 @@ function UniteCreatorParamsDialog(){
 	function setProParamMode(containsProMode){
 		
 		g_objWrapper.addClass("uc-pro-param");
-		
+
 		if(containsProMode == true)
 			g_objWrapper.addClass("uc-contains-pro");
 		
@@ -1902,16 +1921,20 @@ function UniteCreatorParamsDialog(){
 		
 		//check the 
 		var isSetPro = isPro;
-		var containsPro = false;
-		
-		/*
-		//check if contains pro param
 		var containsPro = g_ucAdmin.getVal(g_objData, "is_pro");
+		var attributeType = g_ucAdmin.getVal(g_objData, "type");
+
+		if(containsPro == true && attributeType == 'uc_radioboolean')
+			g_objWrapper.addClass("uc-radioboolean-contains-pro");
+		else
+			g_objWrapper.removeClass("uc-radioboolean-contains-pro");
 		
-		//one of the two exits
-		var isSetPro = isPro || containsPro == true && g_isEnableEditPro == false;
-		*/
+		//check if contains pro param
 		
+		if(g_enableLimitPro == true){
+			if(containsPro == true && g_isProVersion == false)
+				isSetPro = true;
+		}
 		
 		if(isSetPro == true)
 			setProParamMode(containsPro);
@@ -2199,10 +2222,15 @@ function UniteCreatorParamsDialog(){
 		g_objSettings = new UniteSettingsUC();
 		
 		var isAddPro = g_ucAdmin.getOption("uc_edit_pro");
+		var isLimitProFunctionality = g_ucAdmin.getOption("uc_limit_pro_functionality");
 		
+		g_enableLimitPro = (isLimitProFunctionality === true);
+		
+		g_isProVersion = (g_ucAdmin.getOption("uc_pro_version") === true);
+				
 		var dialogType = g_objWrapper.data("type");
 				
-		if(isAddPro == true && dialogType == "main")
+		if(isAddPro == true && dialogType == "main" && g_enableLimitPro == true)
 			g_isEnableEditPro = true;
 		
 		initTabs();

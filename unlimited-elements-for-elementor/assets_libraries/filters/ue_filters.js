@@ -11,6 +11,9 @@ function UEDynamicFilters(){
 
 	var g_showDebug = false;
 	var g_debugInitMode = false;
+	
+	var g_debugBeforeRefreshMode = false;	//debug filters state before refresh
+	
 	var g_isGutenberg = false;
 	
 	var g_types = {
@@ -2643,7 +2646,6 @@ function UEDynamicFilters(){
 		}
 		
 		
-		
 		initGrid_setActiveFiltersData(objGrid, objAjaxOptions);
 		
 		doGridAjaxRequest(ajaxUrl, objGrid, objFilters, isLoadMore, isFiltersInit);
@@ -2685,13 +2687,20 @@ function UEDynamicFilters(){
 		
 		objGrid.trigger(g_vars.EVENT_BEFORE_REFRESH);
 		
-		
 		var lastAjaxHandle = objGrid.data("last_ajax_refresh_handle");
 
 		if(lastAjaxHandle){
 			lastAjaxHandle.abort();
 		}
-
+		
+		//--- debug before refresh
+		
+		if(g_debugBeforeRefreshMode == true){
+			
+			alert("Debug before refresh - please turn if off");
+			return(false);
+		}
+		
 		var ajaxHandle = ajaxRequest(ajaxUrl,null,null, function(response){
 
 			if(isLoadMore !== true){

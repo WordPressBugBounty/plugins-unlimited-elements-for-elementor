@@ -194,7 +194,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 	
 		<div class="unite-clear"></div>	
 		
-		<div id="dv_error_message" class="dv_error_message mtop_25" style="display:none;" data-notfound="<?php esc_html_e("Video not found or error occured. Please search again.")?>"></div>
+		<div id="dv_error_message" class="dv_error_message mtop_25" style="display:none;" data-notfound="<?php esc_html_e("Video not found or error occured. Please search again.", "unlimited-elements-for-elementor")?>"></div>
 		
 		
 	</div>	<!-- dialog inner -->

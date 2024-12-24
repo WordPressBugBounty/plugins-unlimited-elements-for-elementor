@@ -1512,7 +1512,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				$getRelatedProducts = true;
 				$productID = $post->ID;
 
-				if($relatePostsType == "checkout");
+				if($relatePostsType == "checkout")
 					$filters["posttype"] = "product";		//rewrite the post type argument
 
 

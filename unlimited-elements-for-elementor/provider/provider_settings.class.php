@@ -564,7 +564,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		// --------- add include by specific term -------------
 
 		$params = array();
-		$params["description"] = __("Only those selected terms will be loaded");
+		$params["description"] = __("Only those selected terms will be loaded", "unlimited-elements-for-elementor");
 
 		$elementorCondition = array($name."_includeby"=>"spacific_terms");
 
@@ -1447,8 +1447,11 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 			
 			
 			$arrSourceOptions = array_flip(array(
+				// translators: %s is a string
 				"custom" => sprintf(__("Custom %s", "unlimited-elements-for-elementor"), $textPosts),
+				// translators: %s is a string
 				"current" => sprintf(__("Current Query %s", "unlimited-elements-for-elementor"), $textPosts),
+				// translators: %s is a string
 				"related" => sprintf(__("Related %s", "unlimited-elements-for-elementor"), $textPosts),
 				"manual" => __("Manual Selection", "unlimited-elements-for-elementor"),
 			));
@@ -1459,6 +1462,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 			$params["origtype"] = UniteCreatorDialogParam::PARAM_DROPDOWN;
 			//$params["description"] = esc_html__("Choose the source of the posts list", "unlimited-elements-for-elementor");
 
+			// translators: %s is a string
 			$this->addSelect($name . "_source", $arrSourceOptions, sprintf(esc_html__("%s Source", "unlimited-elements-for-elementor"), $textPosts), $source, $params);
 
 			//-------- add static text - current --------
@@ -1684,7 +1688,8 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$arrConditionIncludeParents = $arrConditionIncludeBy;
 		$arrConditionIncludeParents[$name . "_includeby"] = "parent";
 
-		$this->addPostIDSelect($name . "_includeby_parent", sprintf(__("Select %s Parents"), $textPosts), $arrConditionIncludeParents, $isForWooProducts);
+		// translators: %s is a string
+		$this->addPostIDSelect($name . "_includeby_parent", sprintf(__("Select %s Parents", "unlimited-elements-for-elementor"), $textPosts), $arrConditionIncludeParents, $isForWooProducts);
 
 		//-------- include by post parent - add the parent page--------
 		$arrItems = array_flip(array(
@@ -2028,7 +2033,8 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$this->addRadioBoolean($name . "_terms_include_children", __("Include Terms Children", "unlimited-elements-for-elementor"), $isIncludeChildren, "Yes", "No", $params);
 
 		//---- manual selection search and replace -----
-		$textManualSelect = sprintf(__("Seach And Select %s"), $textPosts);
+		// translators: %s is a string
+		$textManualSelect = sprintf(__("Seach And Select %s", "unlimited-elements-for-elementor"), $textPosts);
 
 		$this->addPostIDSelect($name . "_manual_select_post_ids", $textManualSelect, $arrManualElementorCondition, $isForWooProducts);
 
@@ -2088,11 +2094,16 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		}
 
 		$arrExclude["terms"] = __("Terms", "unlimited-elements-for-elementor");
+		// translators: %s is a string
 		$arrExclude["current_post"] = sprintf(__("Current %s", "unlimited-elements-for-elementor"), $textPost);
+		// translators: %s is a string
 		$arrExclude["specific_posts"] = sprintf(__("Specific %s", "unlimited-elements-for-elementor"), $textPosts);
 		$arrExclude["author"] = __("Author", "unlimited-elements-for-elementor");
+		// translators: %s is a string
 		$arrExclude["no_image"] = sprintf(__("%s Without Featured Image", "unlimited-elements-for-elementor"), $textPost);
+		// translators: %s is a string
 		$arrExclude["current_category"] = sprintf(__("%s with Current Category", "unlimited-elements-for-elementor"), $textPosts);
+		// translators: %s is a string
 		$arrExclude["current_tags"] = sprintf(__("%s With Current Tags", "unlimited-elements-for-elementor"), $textPosts);
 		$arrExclude["offset"] = sprintf(__("Offset", "unlimited-elements-for-elementor"), $textPosts);
 		$arrExclude["avoid_duplicates"] = sprintf(__("Avoid Duplicates", "unlimited-elements-for-elementor"), $textPosts);
@@ -2179,6 +2190,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params = array();
 		$params["elementor_condition"] = $conditionExcludeBySpecific;
 
+		// translators: %s is a string
 		$this->addPostIDSelect($name . "_exclude_specific_posts", sprintf(__("Specific %s To Exclude", "unlimited-elements-for-elementor"), $textPosts), $conditionExcludeBySpecific, $isForWooProducts);
 
 		//----- hr -------
@@ -2214,6 +2226,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params["add_dynamic"] = true;
 		$params["elementor_condition"] = $arrCustomAndRelatedElementorCondition;
 
+		// translators: %s is a string
 		$this->addTextBox($name . "_maxitems", $maxItems, sprintf(esc_html__("Max %s", "unlimited-elements-for-elementor"), $textPosts), $params);
 		
 		//------- manual max items --------
@@ -2224,6 +2237,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params["add_dynamic"] = true;
 		$params["elementor_condition"] = $arrManualElementorCondition;
 		
+		// translators: %s is a string
 		$this->addTextBox($name . "_maxitems_manual", "", sprintf(esc_html__("Max %s", "unlimited-elements-for-elementor"), $textPosts), $params);
 		
 		
@@ -2239,10 +2253,12 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		//------- max items for current --------
 		$params = array("unit" => "posts");
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_TEXTFIELD;
+		// translators: %s is a string
 		$params["description"] = sprintf(__("Override Number Of %s, remain empty for default. If you are using pagination widget, leave it empty", "unlimited-elements-for-elementor"), $textPosts);
 		$params["add_dynamic"] = true;
 		$params["elementor_condition"] = $arrCurrentElementorCondition;
 
+		// translators: %s is a string
 		$this->addTextBox($name . "_maxitems_current", "", sprintf(esc_html__("Max %s", "unlimited-elements-for-elementor"), $textPosts), $params);
 
 		//----- hr before orderby --------
@@ -2364,7 +2380,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$arrNames = array_flip($arrNames);
 
 		$params = array(
-			"description"=>__("This name will be used to connect and control this widget by other widgets"),
+			"description"=>__("This name will be used to connect and control this widget by other widgets", "unlimited-elements-for-elementor"),
 			"origtype" => UniteCreatorDialogParam::PARAM_DROPDOWN,
 			"elementor_condition" => $condition,
 		);
@@ -2400,7 +2416,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$arrNames = array_flip($arrNames);
 
 		$params = array(
-			"description"=>__("Choose the sync group"),
+			"description"=>__("Choose the sync group", "unlimited-elements-for-elementor"),
 			"origtype" => UniteCreatorDialogParam::PARAM_DROPDOWN,
 			"elementor_condition" => $conditionSync,
 		);
@@ -2436,7 +2452,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$arrNames = array_flip($arrNames);
 
 		$params = array(
-			"description"=>__("Select the name of the parent for connetion"),
+			"description"=>__("Select the name of the parent for connetion", "unlimited-elements-for-elementor"),
 			"origtype" => UniteCreatorDialogParam::PARAM_DROPDOWN,
 		);
 		
@@ -2453,7 +2469,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 			$this->addRadioBoolean($prefix."more_parent", __("Connect To One More Parent", "unlimited-elements-for-elementor"), false, "Yes", "No", $params);
 
 			$params = array(
-				"description"=>__("Select the name of the second parent for connetion both parents in one click"),
+				"description"=>__("Select the name of the second parent for connetion both parents in one click", "unlimited-elements-for-elementor"),
 				"origtype" => UniteCreatorDialogParam::PARAM_DROPDOWN,
 				"elementor_condition" => array($prefix."more_parent"=>"true"),
 			);

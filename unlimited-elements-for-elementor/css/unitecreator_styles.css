@@ -74,6 +74,12 @@
 	line-height:30px;
 }
 
+.unite-replacing-message{
+	padding-top:20px;
+	padding-bottom:20px;
+	line-height:30px;
+	font-size:18px;
+}
 
 .----------------OBJECTS_LIST------------- {
 }
@@ -958,7 +964,7 @@
 .uc-table-dropdown-items tr.uc-pro-selected,
 .uc-table-dropdown-items tr.uc-pro-selected input,
 .uc-table-dropdown-items tr.uc-pro-selected .uc-dropdown-item-handle{
-	background-color:#c5dbc5;
+	background-color:#449644;
 }
 
 
@@ -2073,6 +2079,24 @@ ul.uc-list-pages-thumbs li a i {
 }
 
 
-.uc-table-row-handle.attribute-pro-options{
+.uc-table-row-handle.uc-handle-contains-pro{
+	background-color: #449644;
+}
+
+
+.uc-contains-pro-options-message{
+	display: none;
+}
+
+.uc-contains-pro .uc-contains-pro-options-message{
+	display: block;
+}
+
+.uc-contains-pro .uc-pro-message{
+	display: none;
+}
+
+.uc-radioboolean-contains-pro #uc_tabparam_main_uc_radioboolean tbody tr,
+.uc-radioboolean-contains-pro #uc_tabparam_main_uc_radioboolean tbody tr input[type=text]{
 	background-color: #449644;
 }

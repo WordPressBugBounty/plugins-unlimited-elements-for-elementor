@@ -77,18 +77,18 @@ class UniteSettingsOutputUC extends UniteSettingsOutputUCWork{
 
 		?>
 		<div
-			id="<?php esc_attr_e($id); ?>"
+			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
 			class="unite-settings-postpicker-wrapper unite-setting-input-object unite-settings-exclude"
 			data-settingtype="post"
-			data-name="<?php esc_attr_e($name); ?>"
+			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
 			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
 		>
 			<select
 				<?php echo UniteProviderFunctionsUC::escAddParam($class); ?>
-				data-placeholder="<?php esc_attr_e($placeholder); ?>"
-				data-selected-post-id="<?php esc_attr_e($selectedPostId); ?>"
-				data-selected-post-title="<?php esc_attr_e($selectedPostTitle); ?>"
-				data-name="<?php esc_attr_e($name); ?>"
+				data-placeholder="<?php esc_attr_e($placeholder, "unlimited-elements-for-elementor"); ?>"
+				data-selected-post-id="<?php esc_attr_e($selectedPostId, "unlimited-elements-for-elementor"); ?>"
+				data-selected-post-title="<?php esc_attr_e($selectedPostTitle, "unlimited-elements-for-elementor"); ?>"
+				data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
 			></select>
 		</div>
 		<?php
