@@ -460,7 +460,7 @@ class UniteCreatorActions{
 				case "get_version_text":
 
 					$content = HelperHtmlUC::getVersionText();
-
+					
 					HelperUC::ajaxResponseData(array("text" => $content));
 				break;
 				case "update_plugin":

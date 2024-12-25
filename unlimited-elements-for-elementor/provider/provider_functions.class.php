@@ -113,7 +113,9 @@ class UniteProviderFunctionsUC{
 	 * set assets path
 	*/
 	public static function setAssetsPath($dirAssets = null, $returnValues = false){
+		
 		global $wp_filesystem;
+		
 		if(empty($dirAssets))
 			$dirAssets = "ac_assets";
 
@@ -143,7 +145,7 @@ class UniteProviderFunctionsUC{
 		//make base path
 		$pathAssets = $pathBase.$dirAssets."/";
 		if(is_dir($pathAssets) == false)
-			@$wp_filesystem->mkdir($pathAssets);
+			mkdir($pathAssets);
 
 		if(is_dir($pathAssets) == false)
 			UniteFunctionsUC::throwError("Can't create folder: {$pathAssets}");

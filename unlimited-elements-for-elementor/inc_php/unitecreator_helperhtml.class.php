@@ -228,22 +228,22 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			return($html);
 		}
 
-
-
-
+		
 		/**
 		 * get version text
 		 */
 		public static function getVersionText(){
 
-			$filepath = GlobalsUC::$pathPlugin . "readme.txt";
+			$filepath = GlobalsUC::$pathPlugin . "changelog.txt";
+			
+			if(file_exists($filepath) == false)
+				UniteFunctionsUC::throwError("file: $filepath not exists");
+			
 			$content = file_get_contents($filepath);
-			$content = explode("== Changelog ==", $content); // get changelog start
-			$content = end($content);
-			$content = explode("==", $content); // get the changelog end
-			$content = reset($content);
 			$content = trim($content);
-
+			
+			//$content = substr($content, 0, 10000);
+			
 			return ($content);
 		}
 

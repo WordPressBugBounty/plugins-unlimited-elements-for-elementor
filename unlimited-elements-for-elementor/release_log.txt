@@ -1,4 +1,7 @@
 
+version 1.5.133:
+
+* Fix: fixed a small php bug that was avoid plugin activation
 
 version 1.5.132:
 

@@ -31,6 +31,17 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 						
 		$json = json_encode($response);
 		
+		if($json == false){
+			
+			$message = json_last_error_msg();
+			
+			$response = array();
+			$response["success"] = false;
+			$response["message"] = "Json Encode error: ".$message;
+			
+			$json = json_encode($response);			
+		}
+			
 		
 		// clean the buffier, 
 		// but return the content if exists for showing the warnings
@@ -49,7 +60,7 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 		if($isJsonOutput == true)
 			header('Content-Type: application/json');
 		
-		
+			
 		echo UniteProviderFunctionsUC::escCombinedHtml($json);
 		exit();
 	}
@@ -62,8 +73,8 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 				
 		if(gettype($arrData) == "string")
 			$arrData = array("data"=>$arrData);
-	
-		self::ajaxResponse(true,"",$arrData);
+		
+		self::ajaxResponse(true,"changelog returned",$arrData);
 	}
 	
 	/**

@@ -2,9 +2,9 @@
 /*
 * Plugin Name: Unlimited Elements for Elementor
 * Plugin URI: http://unlimited-elements.com
-* Description: Unlimited Elements - Huge Widgets Pack for Elementor Website Builder, with html/css/js widget creator and editor
+* Description: Elementor all-in-one addons pack with the best widgets for Elementor, offering 100+ free widgets, templates, and tools to create stunning websites!
 * Author: Unlimited Elements
-* Version: 1.5.132
+* Version: 1.5.133
 * Author URI: http://unlimited-elements.com
 * Text Domain: unlimited-elements-for-elementor
 * Domain Path: /languages
