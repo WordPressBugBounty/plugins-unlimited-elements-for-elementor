@@ -3699,7 +3699,6 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			$numPosts = count_user_posts($userID);
 		
 		$userData = $objUser->data;
-
 		
 		$userData = UniteFunctionsUC::convertStdClassToArray($userData);
 

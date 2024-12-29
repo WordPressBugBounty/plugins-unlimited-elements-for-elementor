@@ -44,11 +44,11 @@ class UniteCreatorActions{
 			$data = $_REQUEST;
 
 		if(is_string($data)){
-			$arrData = (array)json_decode($data);
+			$arrData = json_decode($data,true);
 
 			if(empty($arrData)){
 				$arrData = stripslashes(trim($data));
-				$arrData = (array)json_decode($arrData);
+				$arrData = json_decode($arrData, true);
 			}
 
 			$data = $arrData;
@@ -98,9 +98,8 @@ class UniteCreatorActions{
 		$data = $this->getDataFromRequest();
 		$addonType = $addons->getAddonTypeFromData($data);
 
-		$data = UniteFunctionsUC::convertStdClassToArray($data);
 		$data = UniteProviderFunctionsUC::normalizeAjaxInputData($data);
-
+	
 		try{
 
 			//protection - it's intended to logged in users only with the capabilities defined in the plugin
@@ -462,18 +461,6 @@ class UniteCreatorActions{
 					$content = HelperHtmlUC::getVersionText();
 					
 					HelperUC::ajaxResponseData(array("text" => $content));
-				break;
-				case "update_plugin":
-
-					HelperProviderUC::verifyAdminPermission();
-
-					if(method_exists("UniteProviderFunctionsUC", "updatePlugin"))
-						UniteProviderFunctionsUC::updatePlugin();
-					else{
-						echo "Functionality Don't Exists";
-						exit;
-					}
-
 				break;
 				case "update_general_settings":
 

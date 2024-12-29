@@ -1909,7 +1909,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		
 		$flagElementor = false;
 		$flagGutenberg = false;
-				
+		
 		foreach(GlobalsUC::$active_plugins_versions as $plugin) {
 			
 			if(strpos($plugin, 'elementor') > 0)
@@ -1920,6 +1920,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 		if(defined("UE_ENABLE_GUTENBERG_SUPPORT"))
 			$flagGutenberg = true;
+		
+		$flagGutenberg = false;		//remove me
 		
 		//some protection
 		if($flagGutenberg == false)

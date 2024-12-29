@@ -1255,8 +1255,7 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 	public function initAddonByData($data){
 				
 		if(is_string($data)){
-			$data = json_decode($data);
-			$data = UniteFunctionsUC::convertStdClassToArray($data);
+			$data = json_decode($data, true);
 		}
 
 		$addonID = UniteFunctionsUC::getVal($data, "id");

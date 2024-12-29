@@ -1701,7 +1701,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 					
 					$arrExcludeIDsDynamic = UniteFunctionsUC::getVal($value, $name."_exclude_dynamic_field");
 					$arrExcludeIDsDynamic = UniteFunctionsUC::getIDsArray($arrExcludeIDsDynamic);
-
+					
 				break;
 			}
 

@@ -21,7 +21,6 @@ class UniteCreatorAddonsView{
 	protected $objManager;
 	protected $product;
 	protected $pluginTitle;
-	protected $putUpdatePluginsButton = false;
 	
 	
 	/**
@@ -159,18 +158,6 @@ class UniteCreatorAddonsView{
 			?>
 		</div>
 		
-		<div class="uc-addons-bottom">
-		
-		<?php 
-			if($this->putUpdatePluginsButton == true){
-				
-				if(method_exists("UniteProviderFunctionsUC", "putUpdatePluginHtml"))
-					UniteProviderFunctionsUC::putUpdatePluginHtml($pluginName, $this->pluginTitle);
-				
-			}
-		?>
-		
-		</div>
 		<?php 
 					
 	}

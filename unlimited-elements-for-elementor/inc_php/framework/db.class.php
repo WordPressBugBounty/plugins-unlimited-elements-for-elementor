@@ -283,8 +283,6 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			
 			$this->checkForErrors("fetch");
 			
-			$rows = UniteFunctionsUC::convertStdClassToArray($rows);
-			
 			return($rows);
 		}
 		

@@ -141,13 +141,11 @@ class UniteCreatorLayoutsExporterElementor extends UniteCreatorLayoutsExporter{
 	 */
 	protected function importElementorLayoutByContent($content, $layoutID = null){
 		
-		$arrLayout = @json_decode($content);
+		$arrLayout = @json_decode($content, true);
 		
 		if(empty($arrLayout))
 			UniteFunctionsUC::throwError("Wrong file format");
-		
-		$arrLayout = UniteFunctionsUC::convertStdClassToArray($arrLayout);
-		
+				
 		$objLayouts = new UniteCreatorLayouts();
 		
 		//set Title

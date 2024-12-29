@@ -850,13 +850,7 @@ class UniteCreatorForm{
 				$fileName = wp_unique_filename($folderPath, $file["name"]);
 				$filePath = $folderPath . "/" . $fileName;
 
-				$moved = false;
-				$uploaded_file = wp_handle_upload( $file );
-				if ( isset( $uploaded_file['file'] ) ) {
-					$wp_filesystem->move( $uploaded_file['file'], $filePath, true );
-					$moved = true;
-				}
-				// $moved = move_uploaded_file($file["tmp_name"], $filePath);
+				$moved = move_uploaded_file($file["tmp_name"], $filePath);
 
 				if($moved === false){
 					$errors[] = "Unable to move uploaded file: $filePath";
@@ -864,7 +858,7 @@ class UniteCreatorForm{
 					continue;
 				}
 
-				$chmoded = $wp_filesystem->chmod($filePath, 0644);
+				$chmoded = chmod($filePath, 0644);
 
 				if($chmoded === false){
 					$errors[] = "Unable to change file permissions: $filePath";
@@ -880,7 +874,8 @@ class UniteCreatorForm{
 
 		return $errors;
 	}
-
+	
+	
 	/**
 	 * send email
 	 */

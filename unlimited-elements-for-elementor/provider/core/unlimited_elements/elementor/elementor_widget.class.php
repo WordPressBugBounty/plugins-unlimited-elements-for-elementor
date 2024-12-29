@@ -2282,6 +2282,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 	    		case UniteCreatorDialogParam::PARAM_EDITOR:
 	    		case UniteCreatorDialogParam::PARAM_IMAGE:
 	    		case UniteCreatorDialogParam::PARAM_GALLERY:
+	    		case UniteCreatorDialogParam::PARAM_DATETIME:
 	    		break;
 	    		default:
 	    			continue(2);

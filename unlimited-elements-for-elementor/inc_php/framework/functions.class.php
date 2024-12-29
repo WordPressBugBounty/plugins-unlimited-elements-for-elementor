@@ -306,7 +306,7 @@ class UniteFunctionsUC{
 	 * Convert std class to array, with all sons
 	 */
 	public static function convertStdClassToArray($d){
-
+		
 		if (is_object($d)) {
 			$d = get_object_vars($d);
 		}
@@ -516,41 +516,6 @@ class UniteFunctionsUC{
 		return($arr);
 	}
 
-	/**
-	 *
-	 * encode array into json for client side
-	 */
-	public static function jsonEncodeForClientSide($arr){
-
-		if(empty($arr))
-			$arr = array();
-
-		$json = json_encode($arr);
-		$json = addslashes($json);
-
-		$json = "'".$json."'";
-
-		return($json);
-	}
-
-
-	/**
-	 * encode json for html data like data-key="json"
-	 */
-	public static function jsonEncodeForHtmlData($value, $key = ""){
-
-		$data = "";
-
-		if(empty($value) === false){
-			$data = json_encode($value);
-			$data = htmlspecialchars($data, ENT_QUOTES);
-		}
-
-		if(empty($key) === false)
-			$data = " data-$key=\"$data\"";
-
-		return $data;
-	}
 
 
 	/**
@@ -1390,229 +1355,11 @@ class UniteFunctionsUC{
 	}
 
 
-	/**
-	 * maybe json decode
-	 */
-	public static function maybeJsonDecode($str){
-
-		if(empty($str))
-			return($str);
-
-		if(is_string($str) == false)
-			return($str);
-
-		//try to json decode
-		$arrJson = self::jsonDecode($str);
-		if(!empty($arrJson) && is_array($arrJson))
-			return($arrJson);
-
-		return($str);
-	}
-
-	/**
-	 * maybe json decode
-	 */
-	public static function maybeCsvDecode($str){
-		
-		$str = trim($str);
-
-		if(empty($str))
-			return($str);
-
-		if(is_string($str) == false)
-			return($str);
-
-		//not allowed html tags
-
-		if($str != strip_tags($str))
-			return($str);
-
-		//try to csv decode
-
-		$arrLines = explode("\n", $str);
-
-		if(count($arrLines) < 2)
-			return($str);
-
-		$arrKeys = array();
-
-		$arrItems = array();
-
-		foreach($arrLines as $line){
-
-			$line = trim($line);
-
-			if(empty($line))
-				continue;
-
-			$arrLine = str_getcsv($line);
-
-			if(empty($arrLine))
-				continue;
-
-
-			//get the keys
-			if(empty($arrKeys)){
-				$arrKeys = $arrLine;
-
-				continue;
-			}
-
-			//get the item
-
-			if(count($arrLine) != count($arrKeys))
-				continue;
-
-			//create the item
-
-			$item = array();
-
-			foreach($arrKeys as $index=>$key){
-
-				$value = $arrLine[$index];
-
-				$key = trim($key);
-				$value = trim($value);
-
-				$item[$key] = $value;
-			}
-
-
-			$arrItems[] = $item;
-		}
-
-		if(empty($arrItems))
-			return($str);
-
-
-		return($arrItems);
-	}
-
-
+	
+    
     /**
-     * maybe xml decode
+     * parse xml string - convert to array
      */
-    public static function maybeXmlDecode($str){
-
-        if(empty($str))
-            return($str);
-
-        if(is_string($str) == false)
-            return($str);
-
-        //try to decode xml
-        $arr = self::xmlDecode($str);
-        if(!empty($arr) && is_array($arr))
-            return($arr);
-
-        return($str);
-    }
-
-	/**
-	 * maybe decode content
-	 */
-	public static function maybeDecodeTextContent($value){
-
-		if(empty($value))
-			return($value);
-
-		if(is_string($value) == false)
-			return($value);
-
-		$isEncoded = self::isTextEncoded($value);
-
-		if($isEncoded == false)
-			return($value);
-
-		$decoded = self::decodeTextContent($value);
-
-		return($decoded);
-	}
-
-
-	/**
-	 * decode string content
-	 */
-	public static function decodeTextContent($content){
-
-		$content = rawurldecode(base64_decode($content));
-
-		return($content);
-	}
-
-
-	/**
-	 * encode content
-	 */
-	public static function encodeContent($content){
-
-		if(is_array($content))
-			$content = json_encode($content);
-
-		$content = rawurlencode($content);
-
-		$content = base64_encode($content);
-
-		return($content);
-	}
-
-
-	/**
-	 * decode content given from js
-	 */
-	public static function decodeContent($content, $convertToArray = true){
-
-		if(empty($content))
-			return($content);
-
-		$content = rawurldecode(base64_decode($content));
-
-		if($convertToArray == true)
-			$arr = self::jsonDecode($content);
-		else
-			$arr = @json_decode($content);
-
-		return $arr;
-	}
-
-
-	/**
-	 * decode content given from js
-	 */
-	public static function jsonDecode($content, $outputArray = false){
-
-		if($outputArray == true && empty($content))
-			return(array());
-
-		$arr = @json_decode($content);
-		$arr = self::convertStdClassToArray($arr);
-
-		if($outputArray == true && empty($content))
-			return(array());
-
-		return $arr;
-	}
-
-    /**
-     * decode content given from xml
-     */
-    public static function xmlDecode($content, $outputArray = false){
-
-        if($outputArray == true && empty($content))
-            return(array());
-
-        $xml = @simplexml_load_string($content, "SimpleXMLElement", LIBXML_NOCDATA);
-        $arrXml = self::parseXML($xml);
-        $arr = json_decode(json_encode($arrXml), true);
-
-        $arr = self::convertStdClassToArray($arr);
-
-        if(empty($arr))
-            return(array());
-
-        return $arr;
-    }
-
     public static function parseXML($xml) {
         $array = [];
         // Process namespaces and children
@@ -1924,7 +1671,324 @@ class UniteFunctionsUC{
 		
     	return preg_replace('/([^:]+:\s*[^;]+);(?!\s*!important)/', '$1 !important;', $css);
 	}
+	
+	public static function z__________ENCODE_DECODE__________(){}
+	
+	/**
+	 * json encode with error checking encoding utf8 and fixing
+	 */
+	public static function jsonEncode($data){
+		
+	 // Attempt initial JSON encoding
+	    $json = json_encode($data);
+	
+	    if(!empty($json))
+	    	return($json);
+	    
+	    // Check for errors
+	    
+	    $lastError = json_last_error();
+	    
+	    if ($lastError === JSON_ERROR_UTF8) {
+	        $data = self::utf8EncodeRecursive($data);
+	        $json = json_encode($data);
+	        
+	        return($json);
+	    }
+	
+	    //another error:
+	    $message = json_last_error_msg();
+	    
+	    self::throwError("json encode error: ".$message);
+	
+	    return $json;		
+		
+	}
 
+	/**
+	 * Recursively converts strings in an array or object to UTF-8.
+	 *
+	 * @param mixed $data Data to be recursively encoded to UTF-8.
+	 * @return mixed Data with all strings encoded to UTF-8.
+	 */
+	public static function utf8EncodeRecursive($data){
+		
+		if (is_string($data)) {
+	        // Convert string to UTF-8
+	        return mb_convert_encoding($data, 'UTF-8', 'UTF-8');
+	    } elseif (is_array($data)) {
+	        // Recursively handle arrays
+	        return array_map(array("UniteFunctionsUC", 'utf8EncodeRecursive'), $data);
+	    } elseif (is_object($data)) {
+	        // Recursively handle objects
+	        foreach ($data as $key => $value) {
+	            $data->$key = self::utf8EncodeRecursive($value);
+	        }
+	        return $data;
+	    }
+	
+	    // Return non-string, non-array, non-object data as is
+	    return $data;
+	}
+	
+	
+	/**
+	 *
+	 * encode array into json for client side
+	 */
+	public static function jsonEncodeForClientSide($arr){
+
+		if(empty($arr))
+			$arr = array();
+
+		$json = json_encode($arr);
+		$json = addslashes($json);
+
+		$json = "'".$json."'";
+
+		return($json);
+	}
+
+
+	/**
+	 * encode json for html data like data-key="json"
+	 */
+	public static function jsonEncodeForHtmlData($value, $key = ""){
+
+		$data = "";
+
+		if(empty($value) === false){
+			$data = json_encode($value);
+			$data = htmlspecialchars($data, ENT_QUOTES);
+		}
+
+		if(empty($key) === false)
+			$data = " data-$key=\"$data\"";
+
+		return $data;
+	}
+	
+	/**
+	 * maybe json decode
+	 */
+	public static function maybeJsonDecode($str){
+
+		if(empty($str))
+			return($str);
+
+		if(is_string($str) == false)
+			return($str);
+
+		//try to json decode
+		$arrJson = self::jsonDecode($str);
+		if(!empty($arrJson) && is_array($arrJson))
+			return($arrJson);
+
+		return($str);
+	}
+
+	/**
+	 * maybe json decode
+	 */
+	public static function maybeCsvDecode($str){
+		
+		$str = trim($str);
+
+		if(empty($str))
+			return($str);
+
+		if(is_string($str) == false)
+			return($str);
+
+		//not allowed html tags
+
+		if($str != strip_tags($str))
+			return($str);
+
+		//try to csv decode
+
+		$arrLines = explode("\n", $str);
+
+		if(count($arrLines) < 2)
+			return($str);
+
+		$arrKeys = array();
+
+		$arrItems = array();
+
+		foreach($arrLines as $line){
+
+			$line = trim($line);
+
+			if(empty($line))
+				continue;
+
+			$arrLine = str_getcsv($line);
+
+			if(empty($arrLine))
+				continue;
+
+
+			//get the keys
+			if(empty($arrKeys)){
+				$arrKeys = $arrLine;
+
+				continue;
+			}
+
+			//get the item
+
+			if(count($arrLine) != count($arrKeys))
+				continue;
+
+			//create the item
+
+			$item = array();
+
+			foreach($arrKeys as $index=>$key){
+
+				$value = $arrLine[$index];
+
+				$key = trim($key);
+				$value = trim($value);
+
+				$item[$key] = $value;
+			}
+
+
+			$arrItems[] = $item;
+		}
+
+		if(empty($arrItems))
+			return($str);
+
+
+		return($arrItems);
+	}
+
+
+    /**
+     * maybe xml decode
+     */
+    public static function maybeXmlDecode($str){
+
+        if(empty($str))
+            return($str);
+
+        if(is_string($str) == false)
+            return($str);
+
+        //try to decode xml
+        $arr = self::xmlDecode($str);
+        if(!empty($arr) && is_array($arr))
+            return($arr);
+
+        return($str);
+    }
+
+	/**
+	 * maybe decode content
+	 */
+	public static function maybeDecodeTextContent($value){
+
+		if(empty($value))
+			return($value);
+
+		if(is_string($value) == false)
+			return($value);
+
+		$isEncoded = self::isTextEncoded($value);
+
+		if($isEncoded == false)
+			return($value);
+
+		$decoded = self::decodeTextContent($value);
+
+		return($decoded);
+	}
+
+
+	/**
+	 * decode string content
+	 */
+	public static function decodeTextContent($content){
+
+		$content = rawurldecode(base64_decode($content));
+
+		return($content);
+	}
+
+
+	/**
+	 * encode content
+	 */
+	public static function encodeContent($content){
+
+		if(is_array($content))
+			$content = json_encode($content);
+
+		$content = rawurlencode($content);
+
+		$content = base64_encode($content);
+
+		return($content);
+	}
+
+
+	/**
+	 * decode content given from js
+	 */
+	public static function decodeContent($content, $convertToArray = true){
+
+		if(empty($content))
+			return($content);
+
+		$content = rawurldecode(base64_decode($content));
+
+		if($convertToArray == true)
+			$arr = self::jsonDecode($content);
+		else
+			$arr = @json_decode($content);
+
+		return $arr;
+	}
+
+
+	/**
+	 * decode content given from js
+	 */
+	public static function jsonDecode($content, $outputArray = false){
+
+		if($outputArray == true && empty($content))
+			return(array());
+
+		$arr = @json_decode($content, true);
+		
+		if($outputArray == true && empty($content))
+			return(array());
+
+		return $arr;
+	}
+
+    /**
+     * decode content given from xml
+     */
+    public static function xmlDecode($content, $outputArray = false){
+
+        if($outputArray == true && empty($content))
+            return(array());
+
+        $xml = @simplexml_load_string($content, "SimpleXMLElement", LIBXML_NOCDATA);
+        $arrXml = self::parseXML($xml);
+        $arr = json_decode(json_encode($arrXml), true);
+		
+        if(empty($arr))
+            return(array());
+
+        return $arr;
+    }
+	
+	
 	public static function z__________URL__________(){}
 
 	/**

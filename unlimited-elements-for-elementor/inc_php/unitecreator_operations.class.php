@@ -255,7 +255,7 @@ class UCOperations extends UniteElementsBaseUC{
 	 * the image must be relative path to the platform base
 	 */
 	public function createThumbs($urlImage, $thumbSize = null){
-		global $wp_filesystem;
+				
 		if(empty($urlImage))
 			UniteFunctionsUC::throwError("empty image url");
 
@@ -269,8 +269,8 @@ class UCOperations extends UniteElementsBaseUC{
 		$pathThumbs = $info["path_thumbs"];
 
 		if(!is_dir($pathThumbs))
-			@$wp_filesystem->mkdir($pathThumbs);
-
+			@mkdir($pathThumbs);
+		
 		if(!is_dir($pathThumbs))
 			UniteFunctionsUC::throwError("Can't make thumb folder: {$pathThumbs}. Please check php and folder permissions");
 

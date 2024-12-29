@@ -938,6 +938,15 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+= 1.5.135 - 2024-12-29 =
+
+*Fix: fixed small php bug in date convert function
+*Fix: fixed wp_filesystem php bugs
+
+= 1.5.134 - 2024-12-27 =
+
+* Fix - fixed version text display
+* Change - Improved performance by dramatically reduce number of convertStdClassToArray function calls
 
 = 1.5.133 - 2024-12-25 =
 

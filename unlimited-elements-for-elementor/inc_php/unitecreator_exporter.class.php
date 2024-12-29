@@ -910,12 +910,10 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 		if(empty($contents))
 			UniteFunctionsUC::throwError("Empty import file {$filenameAddon} contents");
 
-		$arrImport = @json_decode($contents);
+		$arrImport = @json_decode($contents, true);
 
 		if(empty($arrImport))
 			UniteFunctionsUC::throwError("Wrong import file {$filenameAddon} content");
-
-		$arrImport = UniteFunctionsUC::convertStdClassToArray($arrImport);
 
 		if(is_array($arrImport) == false)
 			UniteFunctionsUC::throwError("Wrong addon import data, should be array");

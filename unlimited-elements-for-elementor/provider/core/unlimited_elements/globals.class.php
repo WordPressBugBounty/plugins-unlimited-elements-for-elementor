@@ -47,7 +47,6 @@ class GlobalsUnlimitedElements{
 	const PLUGIN_NAME = "unlimitedelements";
 	const VIEW_DASHBOARD = "dashboard";
 	const VIEW_ADDONS_ELEMENTOR = "addons_elementor";
-	const VIEW_LICENSE_ELEMENTOR = "licenseelementor";
 	const VIEW_SETTINGS_ELEMENTOR = "settingselementor";
 	const VIEW_TEMPLATES_ELEMENTOR = "templates_elementor";
 	const VIEW_SECTIONS_ELEMENTOR = "sections_elementor";
@@ -57,6 +56,7 @@ class GlobalsUnlimitedElements{
 	const VIEW_FORM_ENTRIES = "form_entries";
 	const VIEW_CHANGELOG = "changelog";
 	const VIEW_CHANGELOG_IMPORT = "changelog_import";
+	const VIEW_LICENSE_ELEMENTOR = "licenseelementor";
 
 	const LINK_BUY = "https://unlimited-elements.com/pricing/";
 

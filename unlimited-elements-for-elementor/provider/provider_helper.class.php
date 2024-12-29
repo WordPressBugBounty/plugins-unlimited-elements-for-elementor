@@ -865,15 +865,6 @@ class HelperProviderUC{
 		load_plugin_textdomain("unlimited-elements-for-elementor", false, GlobalsUC::$pathWPLanguages);
 		
 		UniteCreatorWooIntegrate::initActions();
-
-		// WP_Filesystem init
-		global $wp_filesystem;
-		if ( ! function_exists( 'WP_Filesystem' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-		if ( ! WP_Filesystem() ) {
-			wp_die( __( 'Could not initialize WP Filesystem.', 'textdomain' ) );
-		}
 				
 	}
 

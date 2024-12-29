@@ -1,4 +1,16 @@
 
+
+version 1.5.135:
+
+*Fix: fixed small php bug in date convert function
+*Fix: fixed wp_filesystem php bugs
+
+version 1.5.134:
+
+* Fix - fixed version text display
+* Change - Improved performance by dramatically reduce number of convertStdClassToArray function calls
+
+
 version 1.5.133:
 
 * Fix: fixed a small php bug that was avoid plugin activation

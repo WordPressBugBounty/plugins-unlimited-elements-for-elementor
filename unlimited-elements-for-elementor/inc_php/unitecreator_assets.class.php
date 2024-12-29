@@ -950,18 +950,17 @@ class UniteCreatorAssets{
 	 * create folder
 	 */
 	protected function createFolder($path, $folderName){
-		global $wp_filesystem;
+		
 		$folderName = trim($folderName);
 		
 		$pathCreate = $this->validateCreateNewFileFolder($path, $folderName, false);
 		
-		@$wp_filesystem->mkdir($pathCreate);
+		@mkdir($pathCreate);
 
 		if(is_dir($pathCreate) == false)
 			UniteFunctionsUC::throwError("Can't create folder <b>{$folderName}</b>, please check parent folder permissions");
 		
 	}
-	
 	
 	
 	/**
@@ -1127,7 +1126,7 @@ class UniteCreatorAssets{
 	 * handle upload files
 	 */
 	protected function handleUploadFile($uploadPath, $arrFile){
-		global $wp_filesystem;
+		
 		try{
 			
 			$this->validateStartPath();
@@ -1143,13 +1142,7 @@ class UniteCreatorAssets{
 			if(is_file($tempFilepath) == false)
 				UniteFunctionsUC::throwError("wrong upload filepath!");
 
-			$success = false;
-			$uploaded_file = wp_handle_upload( $arrFile );
-			if ( isset( $uploaded_file['file'] ) ) {
-				$wp_filesystem->move( $uploaded_file['file'], $destFilepath, true );
-				$success = true;
-			}
-			// $success = move_uploaded_file($tempFilepath, $destFilepath);
+			$success = move_uploaded_file($tempFilepath, $destFilepath);
 			
 			if($success == false)
 				UniteFunctionsUC::throwError("Upload Failed to: $destFilepath");
@@ -1165,7 +1158,7 @@ class UniteCreatorAssets{
 		
 		exit();
 	}
-		
+			
 	
 	/**
 	 * put file uploader

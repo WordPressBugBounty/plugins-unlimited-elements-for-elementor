@@ -29,19 +29,7 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 			$response = array_merge($response,$arrData);
 		}
 						
-		$json = json_encode($response);
-		
-		if($json == false){
-			
-			$message = json_last_error_msg();
-			
-			$response = array();
-			$response["success"] = false;
-			$response["message"] = "Json Encode error: ".$message;
-			
-			$json = json_encode($response);			
-		}
-			
+		$json = UniteFunctionsUC::jsonEncode($response);
 		
 		// clean the buffier, 
 		// but return the content if exists for showing the warnings

@@ -1678,7 +1678,8 @@ class UniteCreatorParamsProcessorWork{
 
 		if(empty($value) || is_array($value)){
 			
-			//$stamp = time();
+			$stamp = time();
+			
 			//$data[$name."_stamp"] = $stamp;
 			//$data[$name] = date($formatFullDate, $stamp);
 
@@ -1699,11 +1700,13 @@ class UniteCreatorParamsProcessorWork{
 
 		//numeric - date is stamp
 
-		if(is_numeric($value)){
-
+		if(is_numeric($value) && UniteFunctionsUC::detectDateFormat($value) == ""){
+			
+			$stamp = $value;
+			
 			$data[$name."_stamp"] = $value;
 			$data[$name] = date($formatFullDate, $stamp);
-
+	
 			if($isDebug == true){
 				dmp("get time2");
 				dmp($data);
@@ -1711,9 +1714,9 @@ class UniteCreatorParamsProcessorWork{
 
 			return($data);
 		}
-
+		
 		//date is string
-
+		
 		$stamp = UniteFunctionsUC::date2Timestamp($value);
 		
 		$data[$name."_stamp"] = $stamp;
