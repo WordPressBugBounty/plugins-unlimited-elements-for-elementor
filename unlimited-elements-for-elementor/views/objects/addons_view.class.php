@@ -158,6 +158,10 @@ class UniteCreatorAddonsView{
 			?>
 		</div>
 		
+		<div class="uc-addons-bottom">
+		
+		
+		</div>
 		<?php 
 					
 	}

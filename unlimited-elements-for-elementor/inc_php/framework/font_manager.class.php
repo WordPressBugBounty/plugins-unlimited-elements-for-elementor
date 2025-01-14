@@ -30,7 +30,7 @@ class UniteFontManagerUC{
 		$pathCssFile = GlobalsUC::$pathLibrary."font-awesome6/{$filename}";
 		
 		UniteFunctionsUC::validateFilepath($pathCssFile,"css file");
-		$content = file_get_contents($pathCssFile);
+		$content = UniteFunctionsUC::fileGetContents($pathCssFile);
 				
 		$arrLines = explode("\n", $content);
 		$arrIcons = array();
@@ -82,7 +82,7 @@ class UniteFontManagerUC{
 			$pathCssFile = GlobalsUC::$pathLibrary."font-awesome6/{$filename}";
 			
 		UniteFunctionsUC::validateFilepath($pathCssFile,"css file");
-		$content = file_get_contents($pathCssFile);
+		$content = UniteFunctionsUC::fileGetContents($pathCssFile);
 		
 		
 		$arrLines = explode("\n", $content);
@@ -211,7 +211,7 @@ class UniteFontManagerUC{
 		
 		
 		// Load page
-		$html = file_get_contents( 'http://fontawesome.io/icons/' );
+		$html = UniteFunctionsUC::fileGetContents( 'http://fontawesome.io/icons/' );
 		
 		// Validate page content
 		if ( strpos( $html, 'section id="web-application"' ) !== false ) {

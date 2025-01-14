@@ -226,7 +226,7 @@ class UniteCreatorAssets{
 	 * delete some files in extracted
 	 */
 	public function deleteFilesInExtracted($path){
-		
+
 		$arrDirs = UniteFunctionsUC::getDirList($path);
 				
 		$arrDelete = array();
@@ -254,7 +254,7 @@ class UniteCreatorAssets{
 			
 			UniteFunctionsUC::deleteDir($pathDir);
 		}
-				
+
 	}
 	
 	
@@ -262,34 +262,35 @@ class UniteCreatorAssets{
 	 * validate extracted files for unwanted files like php, and if not, delete the directory
 	 */
 	public function validateAllowedFilesInExtracted($path, $isDelete = true){
-		
-		if(is_dir($path) == false)
-			return(false);
-		
+
+		if (is_dir($path) === false) {
+			return false;
+		}
+	
 		$arrFiles = UniteFunctionsUC::getFileListTree($path);
-		
-		if(empty($arrFiles))
-			return(false);
-		
-		foreach($arrFiles as $pathFile){
-			
+	
+		if (empty($arrFiles)) {
+			return false;
+		}
+	
+		foreach ($arrFiles as $pathFile) {
 			$info = pathinfo($pathFile);
-			
 			$filename = UniteFunctionsUC::getVal($info, "basename");
-			
-			try{
-				
+	
+			try {
 				$this->validateAllowedFiletype($filename);
-				
-			}catch(Exception $e){
-								
-				if($isDelete == true)
+			} catch (Exception $e) {
+
+				if ($isDelete === true) {
 					UniteFunctionsUC::deleteDir($path, false);
-				
-				throw($e);
+				}
+	
+				throw new Exception(esc_html($e->getMessage()));
 			}
 		}
-		
+	
+		return true;
+
 	}
 	
 	
@@ -297,7 +298,7 @@ class UniteCreatorAssets{
 	 * check and delete php files from the zipped
 	 */
 	private function checkDeleteNotAllowedFiles($path){
-		
+
 		$arrFiles = UniteFunctionsUC::getFileListTree($path);
 		
 		if(empty($arrFiles))
@@ -334,7 +335,7 @@ class UniteCreatorAssets{
 		UniteFunctionsUC::deleteListOfFiles($arrFilesToDelete);
 		
 		UniteFunctionsUC::throwError("Found some not allowed files in the zip like: $fileExample , please check this file.");
-		
+
 	}
 	
 	
@@ -343,7 +344,7 @@ class UniteCreatorAssets{
 	 * validate that the file is allowed for edit by type
 	 */
 	private function validateFileAllowedForEdit($filename){
-		
+
 		$fileType = $this->getFileType($filename);
 		$ext = pathinfo($filename, PATHINFO_EXTENSION);
 		
@@ -361,13 +362,14 @@ class UniteCreatorAssets{
 				UniteFunctionsUC::throwError("File <b>$filename</b> type not allowed in to edit");
 			break;
 		}
-		
+
 	}
 	
 	/**
 	 * validate edit file data
 	 */
 	protected function validateEditFileData($path, $filename){
+
 		$path = $this->sanitizePath($path);
 		$this->validateFilename($filename);
 		$this->validateFileAllowedForEdit($filename);
@@ -378,6 +380,7 @@ class UniteCreatorAssets{
 			UniteFunctionsUC::throwError("The file: $filename not exists.");
 	
 		return($filepath);
+
 	}
 	
 	
@@ -387,7 +390,7 @@ class UniteCreatorAssets{
 	 * sanitize filename
 	 */
 	private function isFilenameValidForDelete($filename){
-	
+
 		if(strpos($filename, "..") !== false)
 			return(false);
 	
@@ -398,6 +401,7 @@ class UniteCreatorAssets{
 			return(false);
 	
 		return(true);
+
 	}
 	
 	
@@ -405,7 +409,7 @@ class UniteCreatorAssets{
 	 * validate new file creation
 	 */
 	private function validateCreateNewFileFolder($path, $filename, $isFile = true){
-		
+
 		$path = $this->sanitizePath($path);
 	
 		//validate if allowed
@@ -426,6 +430,7 @@ class UniteCreatorAssets{
 			UniteFunctionsUC::throwError("folder <b>$filename</b> already exists");
 	
 		return($filepath);
+
 	}
 	
 	
@@ -437,13 +442,14 @@ class UniteCreatorAssets{
 	 * get option by name
 	 */
 	private function getOption($name, $default = null){
-		
+
 		if(array_key_exists($name, $this->options) == false)
 			return($default);
 		
 		$option = $this->options[$name];
 		
 		return($option);
+
 	}
 	
 	
@@ -451,7 +457,7 @@ class UniteCreatorAssets{
 	 * get options for client
 	 */
 	protected function getArrOptionsForClient(){
-		
+
 		$arrOptionNames = array(
 				self::OPTION_SINGLE_ITEM_SELECT
 		);
@@ -461,6 +467,7 @@ class UniteCreatorAssets{
 			$arrOptions[$option] = $this->getOption($option);
 				
 		return($arrOptions);
+
 	}
 	
 	
@@ -468,7 +475,7 @@ class UniteCreatorAssets{
 	 * get some file mime type
 	 */
 	private function getFileType($filename){
-		
+
 		$ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 		
 		switch($ext){
@@ -534,7 +541,7 @@ class UniteCreatorAssets{
 				return(self::FILETYPE_DEFAULT);
 			break;
 		}
-		
+
 	}
 	
 	
@@ -542,7 +549,7 @@ class UniteCreatorAssets{
 	 * get assets active path
 	 */
 	private function getActivePath($inputPath = ""){
-		
+
 		if($inputPath){
 			$path = $inputPath;
 			if(is_dir($path) == false)
@@ -554,6 +561,7 @@ class UniteCreatorAssets{
 		$path = HelperUC::pathToRelative($path, false);
 		
 		return($path);
+
 	}
 	
 	
@@ -561,7 +569,9 @@ class UniteCreatorAssets{
 	 * get relative startpath
 	 */
 	private function getStartPathRelative(){
+
 		return HelperUC::pathToRelative($this->startPath, false);
+
 	}
 	
 	
@@ -569,11 +579,12 @@ class UniteCreatorAssets{
 	 * check if path is assets path
 	 */
 	private function isStartPath($path){
-		
+
 		if(realpath($path) == realpath($this->startPath))
 			return(true);
 		
 		return(false);
+
 	}
 
 	
@@ -581,7 +592,7 @@ class UniteCreatorAssets{
 	 * check if path is assets path
 	 */
 	private function isCustomStartPath($path){
-	
+
 		if(empty($this->customStartPath))
 			return(false);
 		
@@ -589,6 +600,7 @@ class UniteCreatorAssets{
 			return(true);
 	
 		return(false);
+
 	}
 	
 	
@@ -596,16 +608,18 @@ class UniteCreatorAssets{
 	 * convert path dir 8to url
 	 */
 	protected function getUrlDir($pathDir){
+
 		$urlDir = HelperUC::pathToRelativeUrl($pathDir);
 		$urlDir = rtrim($urlDir, "/")."/";	//make sure that there is always /
 		return($urlDir);
+
 	}
 	
 	/**
 	 * decide if need to put checkbox on file in htmldir
 	 */
 	private function isCheckboxOnFile($file, $isDir){
-		
+
 		if($file == "..")
 			return(false);
 		
@@ -625,6 +639,7 @@ class UniteCreatorAssets{
 			return(false);
 		
 		return(true);
+
 	}
 	
 	
@@ -634,7 +649,7 @@ class UniteCreatorAssets{
 	 * check if the file needs to show
 	 */
 	private function isFileToShow($filetype){
-						
+
 		$arrTypes = $this->getOption(self::OPTION_SHOW_ONLY_TYPES);
 		
 		if(empty($arrTypes))
@@ -644,6 +659,7 @@ class UniteCreatorAssets{
 			return(true);
 		
 		return(false);
+
 	}
 	
 	
@@ -651,7 +667,7 @@ class UniteCreatorAssets{
 	 * check if directory need to show
 	 */
 	private function isDirToShow($dir){
-		
+
 		$arrExcludeDirs = $this->getOption(self::OPTION_FILTER_FOLDER_NAMES);
 		if(empty($arrExcludeDirs))
 			return(true);
@@ -659,16 +675,15 @@ class UniteCreatorAssets{
 		if(array_search($dir, $arrExcludeDirs) !== false)
 			return(false);
 		
-		
 		return(true);
+
 	}
-	
 	
 	/**
 	 * get filelist class
 	 */
 	protected function getFilelistClass(){
-		
+
 		$isThumbs = $this->getOption(self::OPTION_THUMBS_VIEW);
 		if($isThumbs == true)
 			$extraClass = " uc-view-thumbs";
@@ -678,6 +693,7 @@ class UniteCreatorAssets{
 		$class = "uc-filelist".$extraClass;
 		
 		return($class);
+
 	}
 	
 	
@@ -685,11 +701,13 @@ class UniteCreatorAssets{
 	 * get empty list
 	 */
 	protected function getEmptyHtmlDirList(){
+
 		$class = $this->getFilelistClass();
 		
 		$html = "<div class=\"{$class}\" ></div>";
 	
 		return($html);
+
 	}
 	
 	
@@ -699,7 +717,7 @@ class UniteCreatorAssets{
 	 * path - relative path from assets folder
 	 */
 	protected function getHtmlDir($pathDir = null, $addWrapper = false){
-		
+
 		if(empty($pathDir))
 			$pathDir = $this->startPath;
 		
@@ -841,6 +859,7 @@ class UniteCreatorAssets{
 			$html .= "</div>";
 		
 		return($html);
+
 	}
 	
 	
@@ -950,17 +969,17 @@ class UniteCreatorAssets{
 	 * create folder
 	 */
 	protected function createFolder($path, $folderName){
-		
 		$folderName = trim($folderName);
 		
 		$pathCreate = $this->validateCreateNewFileFolder($path, $folderName, false);
 		
-		@mkdir($pathCreate);
+		UniteFunctionsUC::mkdir($pathCreate);
 
 		if(is_dir($pathCreate) == false)
 			UniteFunctionsUC::throwError("Can't create folder <b>{$folderName}</b>, please check parent folder permissions");
 		
 	}
+	
 	
 	
 	/**
@@ -998,7 +1017,7 @@ class UniteCreatorAssets{
 		
 		$filepathNew = $this->validateCreateNewFileFolder($path, $newFilename, $isFile);
 		
-		$success = @rename($filepathCurrent, $filepathNew);
+		$success = UniteFunctionsUC::move($filepathCurrent, $filepathNew);
 		
 		if($success == false)
 			UniteFunctionsUC::throwError("The file didn't renamed");
@@ -1013,7 +1032,7 @@ class UniteCreatorAssets{
 		
 		$filepath = $this->validateEditFileData($path, $filename);
 		
-		$content = file_get_contents($filepath);
+		$content = UniteFunctionsUC::fileGetContents($filepath);
 		
 		return($content);
 	}
@@ -1073,7 +1092,7 @@ class UniteCreatorAssets{
 				
 				switch($actionOnExists){
 					case "overwrite":
-						$success = @rename($filepathSource, $filepathTarget);
+						$success = UniteFunctionsUC::move($filepathSource, $filepathTarget);
 					break;
 					case "skip":
 						$success = true;
@@ -1084,7 +1103,7 @@ class UniteCreatorAssets{
 				}
 				
 			}else{		//if file not exists, just move it
-				$success = @rename($filepathSource, $filepathTarget);
+				$success = UniteFunctionsUC::move($filepathSource, $filepathTarget);
 			}
 			
 			if($success == false){
@@ -1126,7 +1145,6 @@ class UniteCreatorAssets{
 	 * handle upload files
 	 */
 	protected function handleUploadFile($uploadPath, $arrFile){
-		
 		try{
 			
 			$this->validateStartPath();
@@ -1137,15 +1155,26 @@ class UniteCreatorAssets{
 			
 			$tempFilepath = UniteFunctionsUC::getVal($arrFile, "tmp_name");
 	
-			$destFilepath = $uploadPath."/".$filename;
+			$destFilepath = $uploadPath . '/' . sanitize_file_name($filename);
 			
 			if(is_file($tempFilepath) == false)
 				UniteFunctionsUC::throwError("wrong upload filepath!");
 
-			$success = move_uploaded_file($tempFilepath, $destFilepath);
-			
+			/*
+			$uploaded_file = wp_handle_upload( $arrFile, array(
+				'test_form' => false,
+			) );
+			if ( isset( $uploaded_file['file'] ) ) {
+				UniteFunctionsUC::move( $uploaded_file['file'], $destFilepath, true );
+				$success = true;
+			}
+			*/
+
+			UniteFunctionsUC::moveUploadedFile($arrFile['tmp_name'], $destFilepath);
+			$success = UniteFunctionsUC::fileExists($destFilepath);
+
 			if($success == false)
-				UniteFunctionsUC::throwError("Upload Failed to: $destFilepath");
+				UniteFunctionsUC::throwError("Upload Failed to: $destFilepath\n" . json_encode($uploaded_file) . "\n" . json_encode($arrFile));
 	
 		}catch(Exception $e){
 			http_response_code(406);
@@ -1153,12 +1182,12 @@ class UniteCreatorAssets{
 			echo esc_html($e->getMessage());
 			
 			if(GlobalsUC::$SHOW_TRACE == true)
-				echo($e->getTraceAsString());
+				echo esc_attr($e->getTraceAsString());
 		}
 		
 		exit();
 	}
-			
+		
 	
 	/**
 	 * put file uploader
@@ -1188,18 +1217,18 @@ class UniteCreatorAssets{
 						</b>
 					</div>
 					
-					<form id="uc_form_dropzone" action="<?php echo esc_url(GlobalsUC::$url_ajax)?>" class="dropzone">
-						<input type="hidden" name="action" value="<?php echo esc_html(GlobalsUC::PLUGIN_NAME)?>_ajax_action">
+					<form id="uc_form_dropzone" action="<?php echo esc_url(GlobalsUC::$url_ajax); ?>" class="dropzone">
+						<input type="hidden" name="action" value="<?php echo esc_html(GlobalsUC::PLUGIN_NAME); ?>_ajax_action">
 						<input type="hidden" id="uc_input_upload_path" name="upload_path" value="">
 						<input type="hidden" id="uc_input_pathkey" name="pathkey" value="">
 						<input type="hidden" name="client_action" value="assets_upload_files">
 						
 						<?php if(!empty($addonID)):?>
-							<input type="hidden" name="addonID" value="<?php echo esc_attr($addonID)?>">
+							<input type="hidden" name="addonID" value="<?php echo esc_attr($addonID); ?>">
 						<?php endif?>
 						
 						<?php if(!empty($nonce)):?>
-						<input type="hidden" name="nonce" value="<?php echo esc_attr($nonce)?>">
+						<input type="hidden" name="nonce" value="<?php echo esc_attr($nonce); ?>">
 						<?php endif?>
 					</form>
 					<script type="text/javascript">
@@ -1276,6 +1305,7 @@ class UniteCreatorAssets{
 	 * put rename fiels dialog
 	 */
 	private function putDialogRenameFile(){
+
 		?>
 	
 		<div id="uc_dialog_rename_file" title="<?php esc_html_e("Rename File / Folder", "unlimited-elements-for-elementor")?>" style="display:none" class="unite-inputs uc-dialog-rename-file">
@@ -1292,7 +1322,8 @@ class UniteCreatorAssets{
 			?>
 	
 		</div>
-	<?php
+		<?php
+
 	}
 	
 	
@@ -1300,6 +1331,7 @@ class UniteCreatorAssets{
 	 * put editor dialog
 	 */
 	private function putDialogEditFile(){
+
 		?>
 		<div id="uc_dialog_edit_file" title="<?php esc_html_e("Edit File", "unlimited-elements-for-elementor")?>" style="display:none" class="unite-inputs uc-dialog-edit-file">
 			
@@ -1318,6 +1350,7 @@ class UniteCreatorAssets{
 			
 		</div>
 		<?php 
+
 	}
 	
 	
@@ -1325,7 +1358,7 @@ class UniteCreatorAssets{
 	 * put move files dialog
 	 */
 	private function putDialogMoveFiles(){
-		
+
 		$objAssets = new UniteCreatorAssetsWork();
 		$objAssets->initByKey("folder_browser", $this->objAddon);
 		$objAssets->setOption(UniteCreatorAssets::OPTION_ID, "uc_movefile_browser");
@@ -1367,7 +1400,7 @@ class UniteCreatorAssets{
 			
 		</div>
 		<?php
-		
+
 	}
 	
 	
@@ -1391,6 +1424,7 @@ class UniteCreatorAssets{
 	 * put actions panel
 	 */
 	private function putActionsPanel(){
+
 		?>
 				<div class="uc-assets-buttons-panel">
 					<a class="uc-button-upload-file uc-panel-button unite-button-secondary" data-action="upload" href="javascript:void(0)" ><?php esc_html_e("Upload", "unlimited-elements-for-elementor")?></a>
@@ -1414,6 +1448,7 @@ class UniteCreatorAssets{
 					 
 				</div>
 		<?php
+
 	}
 	
 	
@@ -1421,7 +1456,7 @@ class UniteCreatorAssets{
 	 * put activepath bar
 	 */
 	private function putActivePathBar($path){
-		
+
 		$activePath = $this->getActivePath($path);
 				
 		?>
@@ -1429,13 +1464,14 @@ class UniteCreatorAssets{
 				
 					<span class="uc-assets-activepath-inner">
 						<?php esc_html_e("Active Path", "unlimited-elements-for-elementor")?>:
-						 <span class="uc-pathname">../<?php echo esc_html($activePath)?></span>
+						 <span class="uc-pathname">../<?php echo esc_html($activePath); ?></span>
 					 </span>
 					 
 					 <span class="uc-preloader-refreshpath loader_round mleft_5" style="display:none"></span>
 				</div>
 		
-		<?php 
+		<?php
+
 	}
 	
 	
@@ -1444,7 +1480,7 @@ class UniteCreatorAssets{
 	 * put html assets
 	 */
 	public function putHTML($path = null, $wrapperOnly = false){
-		
+
 		try{
 		
 			$this->validateStartPath();
@@ -1481,7 +1517,9 @@ class UniteCreatorAssets{
 			
 				$htmlError = HelperUC::getHtmlErrorMessage($message,$trace, "Assets Manager Error: ");
 				?>
-				<div <?php echo UniteProviderFunctionsUC::escAddParam($id)?> data-pathkey="<?php echo esc_attr($this->pathKey)?>" class="uc-assets-wrapper" <?php echo UniteProviderFunctionsUC::escAddParam($wrapperStyle)?> data-isbrowser="<?php echo esc_attr($this->isBrowerMode)?>" data-path="<?php echo esc_attr($activePathData)?>" data-startpath="<?php echo esc_attr($startPathData)?>" data-options="<?php echo esc_attr($jsonOptions)?>">
+				<div 
+					<?php s_echo($id); ?> data-pathkey="<?php echo esc_attr($this->pathKey); ?>" class="uc-assets-wrapper" 
+					<?php s_echo($wrapperStyle); ?> data-isbrowser="<?php echo esc_attr($this->isBrowerMode); ?>" data-path="<?php echo esc_attr($activePathData); ?>" data-startpath="<?php echo esc_attr($startPathData); ?>" data-options="<?php echo esc_attr($jsonOptions)?>">
 				<div class='uc-assets-startup-error'>
 					<?php 
 					echo esc_html($htmlError);
@@ -1494,7 +1532,9 @@ class UniteCreatorAssets{
 			
 				
 			?>
-				<div <?php echo UniteProviderFunctionsUC::escAddParam($id)?>data-pathkey="<?php echo esc_attr($this->pathKey)?>" class="uc-assets-wrapper" <?php echo UniteProviderFunctionsUC::escAddParam($wrapperStyle)?> data-isbrowser="<?php echo esc_attr($this->isBrowerMode)?>" data-path="<?php echo esc_attr($activePathData)?>" data-startpath="<?php echo esc_attr($startPathData)?>" data-options="<?php echo esc_attr($jsonOptions)?>">
+				<div <?php 
+				s_echo($id);?>data-pathkey="<?php echo esc_attr($this->pathKey);?>" class="uc-assets-wrapper" <?php 
+				s_echo($wrapperStyle);?> data-isbrowser="<?php echo esc_attr($this->isBrowerMode);?>" data-path="<?php echo esc_attr($activePathData);?>" data-startpath="<?php echo esc_attr($startPathData); ?>" data-options="<?php echo esc_attr($jsonOptions);?>">
 					
 					<?php 
 					try{
@@ -1518,9 +1558,9 @@ class UniteCreatorAssets{
 					
 					<?php 
 					if($wrapperOnly == false)
-						echo UniteProviderFunctionsUC::escCombinedHtml($this->getHtmlDir($path, true));
+						s_echo($this->getHtmlDir($path, true));
 					else
-						echo UniteProviderFunctionsUC::escCombinedHtml($this->getEmptyHtmlDirList());
+						s_echo($this->getEmptyHtmlDirList());
 						
 					?>
 				
@@ -1554,6 +1594,7 @@ class UniteCreatorAssets{
 		</div>
 		
 		<?php 
+
 	}
 	
 }

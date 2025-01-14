@@ -122,7 +122,7 @@ class UCChangelogView extends WP_List_Table{
 	}
 
 	/**
-	 * Gets a list of columns.
+	 * Gets a list of columns. 
 	 *
 	 * @return array
 	 */
@@ -176,7 +176,7 @@ class UCChangelogView extends WP_List_Table{
 	 */
 	public function no_items(){
 
-		echo __("No changelogs found.", "unlimited-elements-for-elementor");
+		esc_attr_e("No changelogs found.", "unlimited-elements-for-elementor");
 	}
 
 	/**
@@ -378,7 +378,7 @@ class UCChangelogView extends WP_List_Table{
 
         <?php if(!$isChangelogImportDisabled): ?>
         <div class="alignright import-button" style="margin-left: 8px; display: none" >
-            <a class="button button-primary" href="<?php echo $urlViewImport; ?>"><?php echo __("Import Changelog", "unlimited-elements-for-elementor"); ?></a>
+            <a class="button button-primary" href="<?php echo esc_url($urlViewImport); ?>"><?php esc_attr_e("Import Changelog", "unlimited-elements-for-elementor"); ?></a>
         </div>
         <?php endif; ?>
 
@@ -478,6 +478,7 @@ class UCChangelogView extends WP_List_Table{
 			ORDER BY {$this->getOrderBy()}
 		";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$ids = $wpdb->get_col($sql);
 		$items = $this->service->findChangelog($ids);
 
@@ -549,6 +550,7 @@ class UCChangelogView extends WP_List_Table{
 			WHERE $where
 		";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$total = $wpdb->get_var($sql);
 
 		$sql = "
@@ -560,6 +562,7 @@ class UCChangelogView extends WP_List_Table{
 			OFFSET {$this->getOffset()}
 		";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$ids = $wpdb->get_col($sql);
 		$items = $this->service->findChangelog($ids);
 
@@ -587,6 +590,7 @@ class UCChangelogView extends WP_List_Table{
 			ORDER BY addon_id
 		";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_results($sql);
 		$items = array();
 
@@ -610,9 +614,11 @@ class UCChangelogView extends WP_List_Table{
 			SELECT plugin_version
 			FROM {$this->service->getTable()}
 			GROUP BY plugin_version
-			ORDER BY plugin_version DESC
+			ORDER BY id DESC
+			LIMIT 10
 		";
-
+		
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_results($sql);
 		$items = array();
 
@@ -808,15 +814,15 @@ class UCChangelogView extends WP_List_Table{
 
 		?>
 		<span class="uc-filter-select">
-			<label class="screen-reader-text" for="<?php esc_attr_e($id); ?>"><?php esc_html_e($label); ?></label>
-			<select id="<?php esc_attr_e($id); ?>" name="<?php esc_attr_e($name); ?>">
-				<option value=""><?php esc_html_e($allLabel); ?></option>
+			<label class="screen-reader-text" for="<?php echo esc_attr($id); ?>"><?php echo esc_html($label); ?></label>
+			<select id="<?php echo esc_attr($id); ?>" name="<?php echo esc_attr($name); ?>">
+				<option value=""><?php echo esc_html($allLabel); ?></option>
 				<?php foreach($options as $value => $label): ?>
 					<option
-						value="<?php esc_attr_e($value); ?>"
-						<?php echo $value === $selectedValue ? "selected" : ""; ?>
+						value="<?php echo esc_attr($value); ?>"
+						<?php echo ($value === $selectedValue ? "selected" : ""); ?>
 					>
-						<?php esc_html_e($label); ?>
+						<?php echo esc_html($label); ?>
 					</option>
 				<?php endforeach; ?>
 			</select>
@@ -867,17 +873,17 @@ class UCChangelogView extends WP_List_Table{
 					<div class="uc-inline-edit-form-error-content"></div>
 				</div>
 				<?php $this->displayHiddenFields(); ?>
-				<input type="hidden" name="action" value="<?php esc_attr_e(self::ACTION_EDIT); ?>" />
+				<input type="hidden" name="action" value="<?php echo esc_attr(self::ACTION_EDIT); ?>" />
 				<input type="hidden" name="id" />
-				<select name="<?php esc_attr_e(self::EDIT_FIELD_TYPE); ?>">
+				<select name="<?php echo esc_attr(self::EDIT_FIELD_TYPE); ?>">
 					<option value="" selected disabled>
 						<?php esc_html_e("Select type", "unlimited-elements-for-elementor"); ?>
 					</option>
 					<?php foreach($types as $value => $label): ?>
-						<option value="<?php esc_attr_e($value); ?>"><?php esc_html_e($label); ?></option>
+						<option value="<?php echo esc_attr($value); ?>"><?php echo esc_html($label); ?></option>
 					<?php endforeach; ?>
 				</select>
-				<textarea name="<?php esc_attr_e(self::EDIT_FIELD_TEXT); ?>"
+				<textarea name="<?php echo esc_attr(self::EDIT_FIELD_TEXT); ?>"
 					placeholder="<?php esc_attr_e("Enter text", "unlimited-elements-for-elementor"); ?>"></textarea>
 				<div class="uc-inline-edit-form-actions">
 					<button class="uc-inline-edit-form-submit unite-button-primary" type="submit">

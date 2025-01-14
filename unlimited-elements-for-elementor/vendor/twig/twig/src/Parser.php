@@ -242,6 +242,7 @@ class Parser
 
     public function embedTemplate(ModuleNode $template)
     {
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.rand_mt_rand
         $template->setIndex(mt_rand());
 
         $this->embeddedTemplates[] = $template;

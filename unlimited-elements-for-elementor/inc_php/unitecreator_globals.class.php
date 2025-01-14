@@ -192,7 +192,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		public static $colorPickerType = "spectrum";
 		public static $showQueryDebugByUrl = false;
 		public static $isInsidePlugin = false;	//set in provider_admin
-		public static $active_plugins_versions = [];
+		
 		
 		/**
 		 * init globals
@@ -236,8 +236,6 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 			if(defined("UC_TEST_FREE_VERSION"))
 				self::$isProVersion = false;
-				
-			
 
 			Global $mainFilepath;		//defined at plugin start
 			self::$pathPluginFile = $mainFilepath;
@@ -316,9 +314,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				GlobalsUC::$SHOW_TRACE_FRONT = true;
 				GlobalsUC::$SHOW_TRACE = true;
 			}
-			
+						
 		}
-		
 		
 		/**
 		 * init after plugins loaded

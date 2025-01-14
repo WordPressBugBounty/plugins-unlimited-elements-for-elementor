@@ -121,20 +121,20 @@ class UniteCreatorAdmin extends UniteBaseAdminClassUC{
 				HelperUC::addStyle("select2", "ue_select2_css","js/select2");
 
 				//include codemirror
-				HelperUC::addScript("codemirror.min", "codemirror_js","js/codemirror");
-				HelperUC::addScript("css", "codemirror_cssjs","js/codemirror/mode/css");
-				HelperUC::addScript("javascript", "codemirror_javascript","js/codemirror/mode/javascript");
-				HelperUC::addScript("xml", "codemirror_xml","js/codemirror/mode/xml");
-				HelperUC::addScript("htmlmixed", "codemirror_html","js/codemirror/mode/htmlmixed");
-				HelperUC::addScript("twig", "codemirror_twig","js/codemirror/mode/twig");
+				HelperUC::addScript("codemirror-custom.min", "codemirror_js","js/codemirror-custom");
+				HelperUC::addScript("css", "codemirror_cssjs","js/codemirror-custom/mode/css");
+				HelperUC::addScript("javascript", "codemirror_javascript","js/codemirror-custom/mode/javascript");
+				HelperUC::addScript("xml", "codemirror_xml","js/codemirror-custom/mode/xml");
+				HelperUC::addScript("htmlmixed", "codemirror_html","js/codemirror-custom/mode/htmlmixed");
+				HelperUC::addScript("twig", "codemirror_twig","js/codemirror-custom/mode/twig");
 
-				HelperUC::addScript("dialog", "codemirror_dialog","js/codemirror/addon");
-				HelperUC::addScript("searchcursor", "codemirror_search_cursor","js/codemirror/addon");
-				HelperUC::addScript("search", "codemirror_search","js/codemirror/addon");
-				HelperUC::addScript("multiplex", "codemirror_multiplex","js/codemirror/addon");
+				HelperUC::addScript("dialog", "codemirror_dialog","js/codemirror-custom/addon");
+				HelperUC::addScript("searchcursor", "codemirror_search_cursor","js/codemirror-custom/addon");
+				HelperUC::addScript("search", "codemirror_search","js/codemirror-custom/addon");
+				HelperUC::addScript("multiplex", "codemirror_multiplex","js/codemirror-custom/addon");
 
-				HelperUC::addStyle("codemirror", "codemirror_css","js/codemirror");
-				HelperUC::addStyle("dialog", "codemirror_dialog_css","js/codemirror/addon");
+				HelperUC::addStyle("codemirror-custom", "codemirror_css","js/codemirror-custom");
+				HelperUC::addStyle("dialog", "codemirror_dialog_css","js/codemirror-custom/addon");
 
 				HelperUC::addScript("unitecreator_includes", "unitecreator_includes");
 				HelperUC::addScript("unitecreator_params_dialog", "unitecreator_params_dialog");

@@ -237,28 +237,28 @@ class UniteCreatorElementorIntegrate{
 
 			self::logMemoryUsage("Before Register Widget: ".$name. ", counter: ".self::$counterWidgets);
 
-		    $code = "class {$className} extends UniteCreatorElementorWidget{}";
-		    eval($code);
+			//class_alias('UniteCreatorElementorWidget', $className);
+			 
+			 $code = "class {$className} extends UniteCreatorElementorWidget{}";
+			 eval($code);
+			 
+			try{
+				$widget = new $className();
+				$manager = \Elementor\Plugin::instance()->widgets_manager;
 
-		    try{
-
-			    $widget = new $className();
-
-			    $manager = \Elementor\Plugin::instance()->widgets_manager;
-			    
-			    if(method_exists($manager, "register"))
+				if(method_exists($manager, "register"))
 					$manager->register($widget);
-            	else
+				else
 					$manager->register_widget_type($widget);
 
+				self::logMemoryUsage("Register Widget: ".$name.", counter: ".self::$counterWidgets);
 
-	             self::logMemoryUsage("Register Widget: ".$name.", counter: ".self::$counterWidgets);
-
-		    }catch(Exception $e){
-
+			} catch(Exception $e){
+				//dmp($e->getMessage());
 				self::logMemoryUsage("Skip widget register (no memory): ".$name.", counter: ".self::$counterWidgets, true);
 
-		    }
+			}
+
 
 			self::$isWidgetsRegistered = true;
 
@@ -274,7 +274,7 @@ class UniteCreatorElementorIntegrate{
 
 		$code = "class {$className} extends UniteCreatorElementorWidget{}";
 	    eval($code);
-
+		//class_alias('UniteCreatorElementorWidget', $className);
 		$widget = new $className();
 
 		$manager = \Elementor\Plugin::instance()->widgets_manager;
@@ -670,12 +670,12 @@ class UniteCreatorElementorIntegrate{
 		if($location === "front" || $location === "body_front" || $location === "layout_front")
 			$addClass = " uc-bg-front";
 
-		$addData = "data-location=\"$location\"";
-
 		?>
-		<div class="unlimited-elements-background-overlay<?php echo $addClass?>" data-forid="<?php echo $elementID?>" <?php echo $addData?> style="display:none">
+		<div class="unlimited-elements-background-overlay<?php echo esc_attr($addClass)?>" data-forid="<?php echo esc_attr($elementID)?>" data-location="<?php echo esc_attr($location);?>" style="display:none">
 			<template>
-			<?php echo $html?>
+			<?php 
+			s_echo($html);
+			?>
 			</template>
 		</div>
 		
@@ -844,7 +844,7 @@ class UniteCreatorElementorIntegrate{
 		$objControls->start_controls_section(
 			'section_background_uc',
 			[
-				'label' => __( 'Unlimited Background', 'unlimited_elements' ),
+				'label' => __( 'Unlimited Background', 'unlimited-elements-for-elementor' ),
 				'tab' => "style",
 			]
 		);
@@ -881,7 +881,7 @@ class UniteCreatorElementorIntegrate{
 		$objControls->add_control(
 			'uc_background_location',
 			array(
-				'label' => esc_html__( 'Background Location', 'plugin-name' ),
+				'label' => esc_html__( 'Background Location', 'unlimited-elements-for-elementor' ),
 				'type' => \Elementor\Controls_Manager::SELECT,
 				'default' => 'back',
 				'options' => array(
@@ -1011,7 +1011,7 @@ class UniteCreatorElementorIntegrate{
 	*/
 	private function putDialogImportLayoutHtml(){
 
-			$dialogTitle = __("Import Unlimited Elements Layout to Elementor",UNLIMITED_ADDONS_TEXTDOMAIN);
+			$dialogTitle = __("Import Unlimited Elements Layout to Elementor","unlimited-elements-for-elementor");
 
 
 			?>
@@ -1020,7 +1020,7 @@ class UniteCreatorElementorIntegrate{
 			<div class="unite-dialog-top"></div>
 
 			<div class="unite-inputs-label">
-				<?php esc_html_e("Select vc layout export file (zip)", UNLIMITED_ADDONS_TEXTDOMAIN)?>:
+				<?php esc_html_e("Select vc layout export file (zip)", "unlimited-elements-for-elementor")?>:
 			</div>
 
 			<div class="unite-inputs-sap-small"></div>
@@ -1034,7 +1034,7 @@ class UniteCreatorElementorIntegrate{
 
 			<div class="unite-inputs-label" >
 				<label for="dialog_import_layouts_file_overwrite">
-					<?php esc_html_e("Overwrite Addons", UNLIMITED_ADDONS_TEXTDOMAIN)?>:
+					<?php esc_html_e("Overwrite Addons", "unlimited-elements-for-elementor")?>:
 				</label>
 				<input type="checkbox" id="dialog_import_layouts_file_overwrite"></input>
 			</div>
@@ -1044,9 +1044,9 @@ class UniteCreatorElementorIntegrate{
 
 			<?php
 				$prefix = "uc_dialog_import_layouts";
-				$buttonTitle = __("Import VC Layout", UNLIMITED_ADDONS_TEXTDOMAIN);
-				$loaderTitle = __("Uploading layout file...", UNLIMITED_ADDONS_TEXTDOMAIN);
-				$successTitle = __("Layout Imported Successfully", UNLIMITED_ADDONS_TEXTDOMAIN);
+				$buttonTitle = __("Import VC Layout", "unlimited-elements-for-elementor");
+				$loaderTitle = __("Uploading layout file...", "unlimited-elements-for-elementor");
+				$successTitle = __("Layout Imported Successfully", "unlimited-elements-for-elementor");
 				HelperHtmlUC::putDialogActions($prefix, $buttonTitle, $loaderTitle, $successTitle);
 			?>
 
@@ -1086,7 +1086,6 @@ class UniteCreatorElementorIntegrate{
     		font-size: 18px;
 		}
 
-
 		</style>
 
 		<div style="display:none">
@@ -1094,8 +1093,8 @@ class UniteCreatorElementorIntegrate{
 			<a id="uc_button_import_layout" href="javascript:void(0)" class="page-title-action"><?php esc_html_e("Import Template With Images", "unlimited-elements-for-elementor")?></a>
 
 			<div id="uc_import_layout_area" style="display:none">
-				<div id="uc_import_layout_area_title"><?php _e( 'Choose an Elementor template .zip file, that you exported using "export with images" button'); ?></div>
-				<form id="uc_form_import_template" method="post" action="<?php echo admin_url( 'admin-ajax.php' ); ?>" enctype="multipart/form-data">
+				<div id="uc_import_layout_area_title"><?php esc_attr_e( 'Choose an Elementor template .zip file, that you exported using "export with images" button',"unlimited-elements-for-elementor"); ?></div>
+				<form id="uc_form_import_template" method="post" action="<?php echo esc_url(admin_url( 'admin-ajax.php' )); ?>" enctype="multipart/form-data">
 					<input type="hidden" name="action" value="unitecreator_elementor_import_template">
 					<input type="hidden" name="nonce" value="<?php echo esc_attr($nonce) ?>">
 					<fieldset>

@@ -185,7 +185,8 @@ class UniteCreatorManagerInline extends UniteCreatorManager{
 		
 		?>
 			<div title="<?php esc_html_e("Edit Item","unlimited-elements-for-elementor")?>" class="uc-dialog-edit-item" style="display:none">
-				<div class="uc-item-config-settings" autofocus="true" <?php echo UniteProviderFunctionsUC::escAddParam($addHtml);?>>
+				<div class="uc-item-config-settings" autofocus="true" <?php 
+				s_echo($addHtml);?>>
 					
 					<?php if($isLoadByAjax == false): 
 						

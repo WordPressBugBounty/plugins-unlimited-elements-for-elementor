@@ -29,7 +29,8 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 			$response = array_merge($response,$arrData);
 		}
 						
-		$json = UniteFunctionsUC::jsonEncode($response);
+		$json = json_encode($response);
+		
 		
 		// clean the buffier, 
 		// but return the content if exists for showing the warnings
@@ -38,8 +39,7 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 			
 			$content = ob_get_contents();
 			ob_end_clean();
-			
-			echo $content;
+			s_echo($content);
 		}
 		
 		$isJsonOutput = UniteFunctionsUC::getGetVar("json","",UniteFunctionsUC::SANITIZE_KEY);
@@ -48,8 +48,7 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 		if($isJsonOutput == true)
 			header('Content-Type: application/json');
 		
-			
-		echo UniteProviderFunctionsUC::escCombinedHtml($json);
+		s_echo($json);
 		exit();
 	}
 	
@@ -61,8 +60,8 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 				
 		if(gettype($arrData) == "string")
 			$arrData = array("data"=>$arrData);
-		
-		self::ajaxResponse(true,"changelog returned",$arrData);
+	
+		self::ajaxResponse(true,"",$arrData);
 	}
 	
 	/**

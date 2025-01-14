@@ -27,7 +27,7 @@ class UCEmptyTemplate{
 			
 			//escape html for the error message
 			
-			esc_html_e($message, "unlimited-elements-for-elementor");
+			echo esc_html($message);
 		}
 				
 		dmp("no output");		
@@ -150,7 +150,7 @@ class UCEmptyTemplate{
 		
 		//$this->renderRegularBody();
 		
-		echo $content;
+		s_echo($content);
 		
 		$this->renderFooter();
 		
@@ -368,8 +368,8 @@ class UCEmptyTemplate{
 		$this->renderHeaderPart();
 		
 		//check debug
-				
-		echo $content;
+		
+		s_echo($content);
 		
 		$this->renderFooter();
 				
@@ -494,7 +494,7 @@ class UCEmptyTemplate{
 		if($isDebug == true)
 			echo "<div class='uc-debug-templates-wrapper'>";
 		
-		echo $content;
+		s_echo($content);
 		
 		if($isDebug == true)
 			echo "</div>";
@@ -515,7 +515,7 @@ class UCEmptyTemplate{
 			$success = wp_cache_set( $cacheKey, $content, '', GlobalsUnlimitedElements::FRAME_CACHE_EXPIRE_SECONDS );
 		}
 		
-		echo $content;
+		s_echo($content);
 	}
 	
 	

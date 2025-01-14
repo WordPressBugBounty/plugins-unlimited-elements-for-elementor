@@ -705,7 +705,7 @@ class UniteCreatorCategoriesWork extends UniteElementsBaseUC{
 	 */
 	private function getCatHTML($cat, $class = ""){
 		
-		$isWebCatalogMode = false;
+		$isWebCatalogMode = false;    
 		if(!empty($this->lastAddonType))
 			$isWebCatalogMode = $this->lastAddonType->isWebCatalogMode;
 		
@@ -714,12 +714,17 @@ class UniteCreatorCategoriesWork extends UniteElementsBaseUC{
 		$isweb = UniteFunctionsUC::getVal($cat, "isweb");
 		
 		$title = $cat["title"];
-		$numAddons = UniteFunctionsUC::getVal($cat, "num_addons", 0);
+		$numAddons = UniteFunctionsUC::getVal($cat, "num_addons", 0); 
 				
 		$showTitle = $title;
 	
 		if(!empty($numAddons))
-			$showTitle .= " ($numAddons)";
+			$showTitle .= " ($numAddons)"; 
+
+		$verFlags = HelperUC::getActivePluginVersions();
+		if($verFlags[GlobalsUC::VERSION_GUTENBERG] && !$verFlags[GlobalsUC::VERSION_ELEMENTOR]) { 
+			$showTitle = str_replace('Widgets', 'Blocks', $showTitle);
+		}
 		
 		$dataTitle = htmlspecialchars($title);
 		

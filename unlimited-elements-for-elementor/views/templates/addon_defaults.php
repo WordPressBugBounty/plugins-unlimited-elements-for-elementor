@@ -40,8 +40,10 @@ if(!empty($objAddonType->addonView_urlBack))
 			<span id="uc_addondefaults_loader_save" class="loader-text" style="display:none"><?php esc_html_e("saving...", "unlimited-elements-for-elementor")?></span>
 		</div>
 
-		<a id="uc_button_preview" href="javascript:void(0)" class="unite-button-secondary" <?php echo UniteProviderFunctionsUC::escAddParam($isPreviewMode?$styleHide:$styleShow)?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>
-		<a id="uc_button_close_preview" href="javascript:void(0)" class="unite-button-secondary" <?php echo UniteProviderFunctionsUC::escAddParam($isPreviewMode?$styleShow:$styleHide)?>><?php esc_html_e("Hide Preview", "unlimited-elements-for-elementor")?></a>
+		<a id="uc_button_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 
+				s_echo( $isPreviewMode?$styleHide:$styleShow ); ?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>
+		<a id="uc_button_close_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 
+				s_echo( $isPreviewMode?$styleShow:$styleHide ); ?>><?php esc_html_e("Hide Preview", "unlimited-elements-for-elementor")?></a>
 		<span class="hor_sap10"></span>
 
 		<a id="uc_button_preview_tab" href="javascript:void(0)" class="unite-button-secondary uc-button-cat-sap"><?php esc_html_e("Preview New Tab", "unlimited-elements-for-elementor")?></a>

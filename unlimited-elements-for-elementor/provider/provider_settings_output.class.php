@@ -28,14 +28,12 @@ class UniteSettingsOutputUC extends UniteSettingsOutputUCWork{
 		if(!empty($class))
 			$editorParams['editor_class'] = $class;
 
-		$addHtml = $this->getDefaultAddHtml($setting);
-
 		$class = $this->getInputClassAttr($setting);
 
 		$value = UniteFunctionsUC::getVal($setting, "value");
 
 		?>
-		<div class="unite-editor-setting-wrapper unite-editor-wp" <?php echo UniteProviderFunctionsUC::escAddParam($addHtml)?>>
+		<div class="unite-editor-setting-wrapper unite-editor-wp" <?php $this->getDefaultAddHtml($setting); ?>>
 		<?php
 			wp_editor($value, $settingsID, $editorParams);
 		?>
@@ -71,24 +69,22 @@ class UniteSettingsOutputUC extends UniteSettingsOutputUCWork{
 				$selectedPostTitle = $post->post_title;
 			}
 		}
-
 		$class = $this->getInputClassAttr($setting, "", "unite-setting-post-picker");
-		$addHtml = $this->getDefaultAddHtml($setting);
-
 		?>
 		<div
-			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
+			id="<?php echo esc_attr($id); ?>"
 			class="unite-settings-postpicker-wrapper unite-setting-input-object unite-settings-exclude"
 			data-settingtype="post"
-			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
-			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
+			data-name="<?php echo esc_attr($name); ?>"
+			<?php $this->getDefaultAddHtml($setting); ?>
 		>
 			<select
-				<?php echo UniteProviderFunctionsUC::escAddParam($class); ?>
-				data-placeholder="<?php esc_attr_e($placeholder, "unlimited-elements-for-elementor"); ?>"
-				data-selected-post-id="<?php esc_attr_e($selectedPostId, "unlimited-elements-for-elementor"); ?>"
-				data-selected-post-title="<?php esc_attr_e($selectedPostTitle, "unlimited-elements-for-elementor"); ?>"
-				data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
+				<?php  
+				s_echo($class); ?>
+				data-placeholder="<?php echo esc_attr($placeholder); ?>"
+				data-selected-post-id="<?php echo esc_attr($selectedPostId); ?>"
+				data-selected-post-title="<?php echo esc_attr($selectedPostTitle); ?>"
+				data-name="<?php echo esc_attr($name); ?>"
 			></select>
 		</div>
 		<?php

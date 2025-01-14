@@ -48,7 +48,8 @@ class UniteCreatorSettingsView{
 		?>
 			<div class="uc-button-action-wrapper">
 			
-				<a id="<?php echo esc_attr($prefix)?>_button_save_settings" data-prefix="<?php echo esc_attr($prefix)?>" <?php echo UniteProviderFunctionsUC::escAddParam($addParams)?> class="unite-button-primary uc-button-save-settings" href="javascript:void(0)"><?php echo esc_html($buttonText)?></a>
+				<a id="<?php echo esc_attr($prefix)?>_button_save_settings" data-prefix="<?php echo esc_attr($prefix)?>" <?php 
+				s_echo( $addParams ); ?> class="unite-button-primary uc-button-save-settings" href="javascript:void(0)"><?php echo esc_html($buttonText)?></a>
 				
 				<div style="padding-top:6px;">
 					

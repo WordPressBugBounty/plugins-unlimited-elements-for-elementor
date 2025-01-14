@@ -105,7 +105,7 @@ abstract class IntegrationTestCase extends TestCase
                 continue;
             }
 
-            $test = file_get_contents($file->getRealpath());
+            $test = UniteFunctionsUC::fileGetContents($file->getRealpath());
 
             if (preg_match('/--TEST--\s*(.*?)\s*(?:--CONDITION--\s*(.*))?\s*(?:--DEPRECATION--\s*(.*?))?\s*((?:--TEMPLATE(?:\(.*?\))?--(?:.*?))+)\s*(?:--DATA--\s*(.*))?\s*--EXCEPTION--\s*(.*)/sx', $test, $match)) {
                 $message = $match[1];
@@ -186,6 +186,7 @@ abstract class IntegrationTestCase extends TestCase
             // avoid using the same PHP class name for different cases
             $p = new \ReflectionProperty($twig, 'templateClassPrefix');
             $p->setAccessible(true);
+            // phpcs:ignore WordPress.WP.AlternativeFunctions.rand_mt_rand
             $p->setValue($twig, '__TwigTemplate_'.hash(\PHP_VERSION_ID < 80100 ? 'sha256' : 'xxh128', uniqid(mt_rand(), true), false).'_');
 
             $deprecations = [];
@@ -224,7 +225,7 @@ abstract class IntegrationTestCase extends TestCase
                 if (false !== $exception) {
                     $this->assertSame(trim($exception), trim(sprintf('%s: %s', \get_class($e), $e->getMessage())));
 
-                    return;
+                    return; 
                 }
 
                 $e = new Error(sprintf('%s: %s', \get_class($e), $e->getMessage()), -1, null, $e);
@@ -244,8 +245,8 @@ abstract class IntegrationTestCase extends TestCase
                 printf("Compiled templates that failed on case %d:\n", $i + 1);
 
                 foreach (array_keys($templates) as $name) {
-                    echo "Template: $name\n";
-                    echo $twig->compile($twig->parse($twig->tokenize($twig->getLoader()->getSourceContext($name))));
+                    s_echo( "Template: $name\n" );
+                    s_echo( $twig->compile($twig->parse($twig->tokenize($twig->getLoader()->getSourceContext($name)))));
                 }
             }
             $this->assertEquals($expected, $output, $message.' (in '.$file.')');

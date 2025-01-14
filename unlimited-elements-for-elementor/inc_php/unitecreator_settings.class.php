@@ -817,11 +817,11 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
             	
             	$fields = $objRss->getRssFields($name);
                 
-                UniteCreatorAPIIntegrations::getInstance()->addSettingsFields($this, $fields, $name, $condition);
+                HelperProviderUC::addSettingsFields($this, $fields, $name, $condition);
             break;
             case "repeater":
             	
-            	HelperProviderUC::addRepeaterSettings($this, $name,"",true);
+            	HelperProviderUC::addRepeaterSettings($this, $name,"",true, true);
             	
             break;
 			case "base_widget":	//operate base widget addon object

@@ -31,7 +31,7 @@ class UnlimitedElementsDynamicTag_TimeStamp extends Tag {
 		
 		$stamp = time();
 		
-		echo $stamp;
+		echo esc_attr($stamp);
 	}
 	
 }

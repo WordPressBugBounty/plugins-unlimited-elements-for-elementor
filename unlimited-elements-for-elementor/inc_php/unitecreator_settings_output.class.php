@@ -159,7 +159,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		if(empty($label))
 			$label = esc_html__("Click Me", "unlimited-elements-for-elementor");
 
-		$label = UniteFunctionsUC::sanitizeAttr($label);
+		$label = UniteFunctionsUC::sanitizeAttr($label); 
 
 		$action = UniteFunctionsUC::getVal($setting, "action", "no_action");
 		$action = UniteFunctionsUC::sanitizeAttr($action);
@@ -178,7 +178,8 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 			class="unite-setting-input-object uc-grid-panel-button-wrapper">
 
 			<a id="<?php echo esc_attr($id) ?>_button"
-				data-action="<?php echo esc_attr($action) ?>" <?php echo UniteProviderFunctionsUC::escAddParam($addHtml) ?>
+				data-action="<?php echo esc_attr($action) ?>" <?php 
+				s_echo($addHtml) ?>
 				href="javascript:void(0)"
 				class="uc-grid-panel-button <?php echo esc_attr($class) ?>"><?php echo esc_html($label) ?></a>
 
@@ -401,20 +402,22 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 			if($isValid == false)
 				$email = "";
 			
+			// translators: %s is a string
+			$textConnected = sprintf(__("Connected to: <b>%s</b>", "unlimited-elements-for-elementor"), $email);
+			
 			?>
 			<div class="uc-google-connect-message">
 				<?php 
-				// translators: %s is a string
-				echo sprintf(__("Connected to: <b>%s</b>", "unlimited-elements-for-elementor"), esc_html($email)); 
+				echo wp_kses($textConnected,HelperUC::getKsesAllowedHTML()); 
 				?>
 			</div>
-			<a class="button" href="<?php echo UEGoogleAPIHelper::getRevokeUrl(); ?>">
+			<a class="button" href="<?php echo esc_url(UEGoogleAPIHelper::getRevokeUrl()); ?>">
 				<?php esc_html_e("Disconnect from Google Sheets", "unlimited-elements-for-elementor"); ?>
 			</a>
 			<?php
 		}else{
 			?>
-			<a class="button" href="<?php echo UEGoogleAPIHelper::getAuthUrl(); ?>">
+			<a class="button" href="<?php echo esc_url(UEGoogleAPIHelper::getAuthUrl()); ?>">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" style="margin-bottom: -0.2em">
 					<path fill="#19b870" d="m21 6-6-6H5a2 2 0 0 0-2 2v20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6z" />
 					<path fill="#80D8B0" d="M15 0v4a2 2 0 0 0 2 2h4l-6-6z" />
@@ -430,7 +433,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 			<div class="uc-google-connect-error">
 				<?php 
 				// translators: %s is a string
-				echo sprintf(__("Error: %s", "unlimited-elements-for-elementor"), esc_html($error)); //Security Update 1 
+				echo esc_html(sprintf(__("Error: %s", "unlimited-elements-for-elementor"), $error)); //Security Update 1 
 				?>
 			</div>
 			<?php
@@ -450,7 +453,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 
 		if(empty($key) === false){
 			?>
-			<a class="button" href="<?php echo $weatherService->getApiKeyTestUrl(); ?>" target="_blank">
+			<a class="button" href="<?php echo esc_url($weatherService->getApiKeyTestUrl()); ?>" target="_blank">
 				<?php esc_html_e("Check API", "unlimited-elements-for-elementor"); ?>
 			</a>
 			<?php
@@ -466,7 +469,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		<div id="uc_widget_svg_holder" class="uc-wiget-svg-holder" style="display:none"></div>
 
 		<span class="description">
-				<?php _e("For the preview svg icon put preview_icon.svg file in the assets folder", "unlimited-elements-for-elementor") ?>
+				<?php esc_attr_e("For the preview svg icon put preview_icon.svg file in the assets folder", "unlimited-elements-for-elementor") ?>
 			</span>
 
 		<?php
@@ -536,12 +539,8 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 
 		$class = $this->getInputClassAttr($setting, "", "unite-setting-mp3-input unite-input-image");
 
-		$addHtml = $this->getDefaultAddHtml($setting);
-
 		//add source param
 		$source = UniteFunctionsUC::getVal($setting, "source");
-		if(!empty($source))
-			$addHtml .= " data-source='{$source}'";
 
 		$buttonAddClass = "";
 		$errorStyle = "style='display:none'";
@@ -554,11 +553,19 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		<div class="unite-setting-mp3">
 			<input type="text"
 				id="<?php echo esc_attr($setting["id"]) ?>"
-				name="<?php echo esc_attr($setting["name"]) ?>" <?php echo UniteProviderFunctionsUC::escAddParam($class) ?>
-				value="<?php echo esc_attr($value) ?>" <?php echo UniteProviderFunctionsUC::escAddParam($addHtml) ?> />
+				name="<?php echo esc_attr($setting["name"]) ?>" <?php 
+				s_echo($class) ?>
+				value="<?php echo esc_attr($value) ?>" 
+				<?php 
+				$this->getDefaultAddHtml($setting);
+				if(!empty($source)) {
+					echo ' data-source="' . esc_attr($source) . '"';
+				}
+				?> />
 			<a href="javascript:void(0)"
 				class="unite-button-secondary unite-button-choose <?php echo esc_attr($buttonAddClass) ?>"><?php esc_html_e("Choose", "unlimited-elements-for-elementor") ?></a>
-			<div class='unite-setting-mp3-error unite-setting-error' <?php echo UniteProviderFunctionsUC::escAddParam($errorStyle) ?>><?php esc_html_e("Please select assets path", "unlimited-elements-for-elementor") ?></div>
+			<div class='unite-setting-mp3-error unite-setting-error' <?php 
+				s_echo($errorStyle) ?>><?php esc_html_e("Please select assets path", "unlimited-elements-for-elementor") ?></div>
 		</div>
 		<?php
 	}
@@ -606,21 +613,19 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		if(count($items) !== 2)
 			UniteFunctionsUC::throwError("Switcher requires 2 items.");
 
-		$addHtml = $this->getDefaultAddHtml($setting);
-
 		$uncheckValue = reset($items); // first item
 		$checkValue = end($items); // second item
 
 		?>
 		<div
-			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>"
+			id="<?php echo esc_attr($id); ?>"
 			class="unite-setting-switcher unite-setting-input-object"
 			data-settingtype="switcher"
-			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
-			data-value="<?php esc_attr_e($value, "unlimited-elements-for-elementor"); ?>"
-			data-checkedvalue="<?php esc_attr_e($checkValue, "unlimited-elements-for-elementor"); ?>"
-			data-uncheckedvalue="<?php esc_attr_e($uncheckValue, "unlimited-elements-for-elementor"); ?>"
-			<?php echo $addHtml; ?>
+			data-name="<?php echo esc_attr($name); ?>"
+			data-value="<?php echo esc_attr($value); ?>"
+			data-checkedvalue="<?php echo esc_attr($checkValue); ?>"
+			data-uncheckedvalue="<?php echo esc_attr($uncheckValue); ?>"
+			<?php $this->getDefaultAddHtml($setting); ?>
 		>
 			<div class="unite-setting-switcher-toggle"></div>
 		</div>
@@ -654,14 +659,12 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		$setting["default_value"] = $defaultValue;
 		$setting["value"] = $value;
 
-		$addHtml = $this->getDefaultAddHtml($setting);
-
 		?>
 		<div
 			class="unite-dimentions unite-setting-input-object unite-settings-exclude"
 			data-settingtype="dimentions"
-			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
-			<?php echo UniteProviderFunctionsUC::escAddParam($addHtml); ?>
+			data-name="<?php echo esc_attr($name); ?>"
+			<?php $this->getDefaultAddHtml($setting); ?>
 		>
 
 			<?php foreach($dimentions as $dimentionValue => $dimentionTitle): ?>
@@ -677,17 +680,17 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 				<div class="unite-dimentions-field">
 					<input
 						class="unite-dimentions-field-input"
-						id="<?php esc_attr_e($fieldId, "unlimited-elements-for-elementor"); ?>"
+						id="<?php echo esc_attr($fieldId); ?>"
 						type="number"
-						name="<?php esc_attr_e($fieldName, "unlimited-elements-for-elementor"); ?>"
-						value="<?php esc_attr_e($fieldValue, "unlimited-elements-for-elementor"); ?>"
-						data-key="<?php esc_attr_e($dimentionValue, "unlimited-elements-for-elementor"); ?>"
+						name="<?php echo esc_attr($fieldName); ?>"
+						value="<?php echo esc_attr($fieldValue); ?>"
+						data-key="<?php echo esc_attr($dimentionValue); ?>"
 					/>
 					<label
 						class="unite-dimentions-field-label"
-						for="<?php esc_attr_e($fieldId, "unlimited-elements-for-elementor"); ?>"
+						for="<?php echo esc_attr($fieldId); ?>"
 					>
-						<?php esc_html_e($dimentionTitle, "unlimited-elements-for-elementor"); ?>
+						<?php echo esc_html($dimentionTitle); ?>
 					</label>
 				</div>
 
@@ -708,10 +711,10 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 			<?php endif; ?>
 
 			<div
-				class="unite-dimentions-link unite-setting-button uc-tip <?php echo $isLinked === true ? "unite-active" : ""; ?>"
-				data-key="<?php esc_attr_e($fieldName, "unlimited-elements-for-elementor"); ?>"
-				data-title-link="<?php esc_attr_e(__("Link Values", "unlimited-elements-for-elementor")); ?>"
-				data-title-unlink="<?php esc_attr_e(__("Unlink Values", "unlimited-elements-for-elementor")); ?>"
+				class="unite-dimentions-link unite-setting-button uc-tip <?php if($isLinked) { echo "unite-active"; } ?>"
+				data-key="<?php echo esc_attr($fieldName); ?>"
+				data-title-link="<?php esc_attr_e("Link Values", "unlimited-elements-for-elementor"); ?>"
+				data-title-unlink="<?php esc_attr_e("Unlink Values", "unlimited-elements-for-elementor"); ?>"
 			>
 				<svg class="unite-dimentions-icon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">
 					<path d="m3.5 8.5 5-5M5 3l1.672-1.672a2.829 2.829 0 0 1 4 4L9 7M3 5 1.328 6.672a2.829 2.829 0 0 0 4 4L7 9" />
@@ -1169,7 +1172,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 
 		$html .= "</div>";
 
-		echo UniteProviderFunctionsUC::escCombinedHtml($html);
+		s_echo($html);
 	}
 
 	private function a_______DRAW_ITEMS_PANEL_______(){

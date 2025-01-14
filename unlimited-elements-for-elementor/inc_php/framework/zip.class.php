@@ -132,7 +132,6 @@ class UniteZipUC{
 	 * check if dir exists, if not, create it recursively
 	 */
 	private function checkCreateDir($filepath){
-
 		$dir = dirname($filepath);
 
 		if(is_dir($dir) == false)
@@ -142,27 +141,24 @@ class UniteZipUC{
 
 		//this dir is not exists, and all parent dirs exists
 
-		@mkdir($dir);
+		UniteFunctionsUC::mkdir($dir);
 		if(is_dir($dir) == false)
 			UniteFunctionsUC::throwError("Can't create directory: {$dir} maybe zip file is brocken");
 	}
-	
+
 	/**
 	 * write some file
 	 */
 	private function writeFile($str, $filepath){
-
 		//create folder if not exists
 		$this->checkCreateDir($filepath);
 
-		$fp = fopen($filepath, "w+");
-		fwrite($fp, $str);
-		fclose($fp);
+		UniteFunctionsUC::filePutContents($filepath, $str);
 
-		if(file_exists($filepath) == false)
+		if(UniteFunctionsUC::fileExists($filepath) == false)
 			UniteFunctionsUC::throwError("can't write file: $filepath");
 	}
-	
+
 	/**
 	 * extract using zip archive
 	 */
@@ -223,7 +219,7 @@ class UniteZipUC{
 		if(is_file($path) == false)
 			UniteFunctionsUC::throwError("can't add to zip file: $path");
 
-		$content = file_get_contents($path);
+		$content = UniteFunctionsUC::fileGetContents($path);
 		$time = filemtime($path);
 
 		$file = array();
@@ -415,7 +411,7 @@ class UniteZipUC{
 		if(!extension_loaded('zlib'))
 			UniteFunctionsUC::throwError('Zlib not supported, please enable in php.ini');
 
-		$this->_data = file_get_contents($src);
+		$this->_data = UniteFunctionsUC::fileGetContents($src);
 		if(!$this->_data)
 			UniteFunctionsUC::throwError('Get ZIP Data failed');
 

@@ -29,7 +29,7 @@ try{
 	}catch(Exception $e){
 		$message = $e->getMessage();
 		$trace = $e->getTraceAsString();
-		echo "Error: <b>".$message."</b>";
+		s_echo( "Error: <b>".$message."</b>");
 		
 		if(GlobalsUC::$SHOW_TRACE == true)
 			dmp($trace);

@@ -109,7 +109,7 @@ class UniteCreatorViewsChooser{
 			<li>
 				<a href="<?php echo esc_url($url)?>">
 					<i class="fa fa-<?php echo esc_attr($icon)?>"></i>
-					<?php esc_html($title)?>
+					<?php echo esc_html($title)?>
 				</a>
 			</li>
 			<?php

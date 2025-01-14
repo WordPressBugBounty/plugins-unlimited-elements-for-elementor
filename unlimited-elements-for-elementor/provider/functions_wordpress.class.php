@@ -98,7 +98,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				UniteFunctionsUC::throwError("Empty table name!!!");
 			
 			$sql = "show tables like '$tableName'";
-
+			
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$table = $wpdb->get_var($sql);
 
 			if($table == $tableName)
@@ -2769,6 +2770,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		
 		UniteFunctionsUC::validateIDsList($strIDs,"post ids");
 		
+		$strIDs = trim($strIDs);
+		
 		if(empty($strIDs))
 			return (array());
 		
@@ -3039,6 +3042,26 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		wp_delete_post($postID, true);
 	}
 
+	
+	/**
+	 *  delete duplicate posts from the array
+	 */
+	public static function deleteDuplicatePostsFromArray($arrPosts){
+		
+		$uniquePosts = array();
+
+		foreach ($arrPosts as $post) {
+			if (!isset($uniquePosts[$post->ID])) {
+				$uniquePosts[$post->ID] = $post;
+			}
+		}
+		
+		$arrPosts = array_values($uniquePosts);
+
+		return($arrPosts);
+	}
+	
+	
 	/**
 	 * cache attachment images query calls. one call instead of many
 	 * input - post array.
@@ -3699,6 +3722,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			$numPosts = count_user_posts($userID);
 		
 		$userData = $objUser->data;
+
 		
 		$userData = UniteFunctionsUC::convertStdClassToArray($userData);
 
@@ -4540,9 +4564,17 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 	 *
 	 * register widget (must be class)
 	 */
+	/*
 	public static function registerWidget($widgetName){
 
 		add_action('widgets_init', create_function('', 'return register_widget("' . $widgetName . '");'));
+	}
+	*/
+
+	public static function registerWidget($widgetName) {
+		add_action('widgets_init', function () use ($widgetName) {
+			return register_widget($widgetName);
+		});
 	}
 
 	/**
@@ -4557,24 +4589,24 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		else
 			get_admin_page_title();
 
-		$title = esc_html(strip_tags($title));
+		$title = esc_html(wp_strip_all_tags($title));
 
 		if(is_network_admin()){
 			/* translators: Network admin screen title. 1: Network name */
-			$admin_title = sprintf(__('Network Admin: %s'), esc_html(get_network()->site_name));
+			$admin_title = sprintf(__('Network Admin: %s',"unlimited-elements-for-elementor"), esc_html(get_network()->site_name));
 		}elseif(is_user_admin()){
 			/* translators: User dashboard screen title. 1: Network name */
-			$admin_title = sprintf(__('User Dashboard: %s'), esc_html(get_network()->site_name));
+			$admin_title = sprintf(__('User Dashboard: %s',"unlimited-elements-for-elementor"), esc_html(get_network()->site_name));
 		}else{
 			$admin_title = get_bloginfo('name');
 		}
 
 		if($admin_title == $title){
 			/* translators: Admin screen title. 1: Admin screen name */
-			$admin_title = sprintf(__('%1$s &#8212; WordPress'), $title);
+			$admin_title = sprintf(__('%1$s &#8212; WordPress',"unlimited-elements-for-elementor"), $title);
 		}else{
 			/* translators: Admin screen title. 1: Admin screen name, 2: Network or site name */
-			$admin_title = sprintf(__('%1$s &lsaquo; %2$s &#8212; WordPress'), $title, $admin_title);
+			$admin_title = sprintf(__('%1$s &lsaquo; %2$s &#8212; WordPress',"unlimited-elements-for-elementor"), $title, $admin_title);
 		}
 
 		return ($admin_title);
@@ -4746,4 +4778,3 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 //init the static vars
 UniteFunctionsWPUC::initStaticVars();
-

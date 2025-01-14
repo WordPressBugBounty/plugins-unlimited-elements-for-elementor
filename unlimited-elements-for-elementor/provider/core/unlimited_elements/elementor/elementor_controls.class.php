@@ -208,7 +208,7 @@ class UniteCreatorElementorControls{
 				array(
 					'label' => __( 'Item Title', 'unlimited-elements-for-elementor' ),
 					'type' => Controls_Manager::TEXT,
-					'default' => __( '', 'unlimited-elements-for-elementor' ),
+					'default' => '',
 					'label_block'=>true,
 					'separator'=>'before',
 					'dynamic'=>array('active'=>true),
@@ -223,7 +223,7 @@ class UniteCreatorElementorControls{
 				array(
 					'label' => __( 'Item Description', 'unlimited-elements-for-elementor' ),
 					'type' => Controls_Manager::TEXTAREA,
-					'default' => __( '', 'unlimited-elements-for-elementor' ),
+					'default' => '',
 					'label_block'=>true,
 					'dynamic'=>array('active'=>true),
 					'recursive'=>true

@@ -96,14 +96,14 @@ class UniteCreatorAPIIntegrations{
 	private static $instance = null;
 
 	private $params = array();
-
+	
 	/**
 	 * create a new instance
 	 *
 	 * @return void
 	 */
-	private function __construct(){
-
+	public function __construct(){
+		
 		$this->init();
 	}
 
@@ -144,20 +144,22 @@ class UniteCreatorAPIIntegrations{
 
 		return $types;
 	}
-
+	
+	
+	
 	/**
 	 * get the api data
 	 *
 	 * @return array
 	 */
 	public function getData($type, $params){
-
+		
 		// add api keys
 		$params[self::SETTINGS_OPEN_WEATHER_API_KEY] = HelperProviderCoreUC_EL::getGeneralSetting(self::SETTINGS_OPEN_WEATHER_API_KEY);
 		$params[self::SETTINGS_EXCHANGE_RATE_API_KEY] = HelperProviderCoreUC_EL::getGeneralSetting(self::SETTINGS_EXCHANGE_RATE_API_KEY);
 
 		$this->params = $this->remapLegacyParams($params);
-
+		
 		// get data
 		$data = array();
 
@@ -257,64 +259,6 @@ class UniteCreatorAPIIntegrations{
 		return $fields;
 	}
 
-	/**
-	 * add settings fields
-	 *
-	 * @return void
-	 */
-	public function addSettingsFields($settingsManager, $fields, $name, $condition = null){
-
-		foreach($fields as $field){
-			
-			$params = array();
-			$params["origtype"] = $field["type"];
-			$params["description"] = UniteFunctionsUC::getVal($field, "desc");
-			$params["label_block"] = UniteFunctionsUC::getVal($field, "label_block", false);
-			
-			if(isset($field["placeholder"])) {
-                $params["placeholder"] = $field["placeholder"];
-            }
-
-			if(!empty($condition))
-				$params["elementor_condition"] = $condition;
-
-            if (isset($field['conditions'])) {
-                foreach($field['conditions'] as $condition_key => $field_condition){
-                    $params["elementor_condition"][$name . "_" . $condition_key] = $field_condition;
-                }
-            }
-				
-			$paramName = $name . "_" . $field["id"];
-			$paramDefault = isset($field["default"]) ? $field["default"] : "";
-			
-			switch($field["type"]){
-				case UniteCreatorDialogParam::PARAM_STATIC_TEXT:
-					$settingsManager->addStaticText($field["text"], $paramName, $params);
-				break;
-				case UniteCreatorDialogParam::PARAM_TEXTAREA:
-					$params["add_dynamic"] = true;
-					$settingsManager->addTextArea($paramName, $paramDefault, $field["text"], $params);
-				break;
-				case UniteCreatorDialogParam::PARAM_TEXTFIELD:
-					
-					$params["add_dynamic"] = true;
-					
-					$settingsManager->addTextBox($paramName, $paramDefault, $field["text"], $params);
-				break;
-				case UniteCreatorDialogParam::PARAM_DROPDOWN:
-					$params["add_dynamic"] = true;
-					$settingsManager->addSelect($paramName, array_flip($field["options"]), $field["text"], $paramDefault, $params);
-				break;
-                case UniteCreatorDialogParam::PARAM_RADIOBOOLEAN:
-                    $settingsManager->addRadioBoolean($paramName, $field["text"], $paramDefault, "Yes", "No", $params);
-                break;
-				default:
-					UniteFunctionsUC::throwError(__FUNCTION__ . " Error: Field type \"{$field["type"]}\" is not implemented");
-			}
-		}
-
-		return $settingsManager;
-	}
 
 	/**
 	 * add service settings fields
@@ -336,14 +280,14 @@ class UniteCreatorAPIIntegrations{
 		$settingsManager->addHiddenInput($name . "_api_type", $type, "API Type", $params);
 
 		// add the fields
-		$this->addSettingsFields($settingsManager, $fields, $name, $condition);
+		HelperProviderUC::addSettingsFields($settingsManager, $fields, $name, $condition);
 	}
-
+		
 	/**
 	 * init the api integrations
 	 */
 	private function init(){
-
+		
 		$this->includeServices();
 	}
 
@@ -363,7 +307,7 @@ class UniteCreatorAPIIntegrations{
 		if(GlobalsUnlimitedElements::$enableWeatherAPI === true)
 			$services->includeOpenWeatherAPI();
 	}
-
+	
 	/**
 	 * remap legacy params
 	 */
@@ -413,8 +357,11 @@ class UniteCreatorAPIIntegrations{
 	/**
 	 * get the param value
 	 */
-	private function getParam($key, $fallback = null){
-
+	private function getParam($key, $fallback = null, $name = null){
+		
+		if(!empty($name))
+			$key = $name."_".$key;
+		
 		$value = empty($this->params[$key]) ? $fallback : $this->params[$key];
 
 		return $value;
@@ -423,10 +370,10 @@ class UniteCreatorAPIIntegrations{
 	/**
 	 * get the param value, otherwise throw an exception
 	 */
-	private function getRequiredParam($key, $label = null){
-
-		$value = $this->getParam($key);
-
+	private function getRequiredParam($key, $label = null, $name = null){
+				
+		$value = $this->getParam($key, null, $name);
+		
 		if(empty($value) === false)
 			return $value;
 
@@ -440,9 +387,9 @@ class UniteCreatorAPIIntegrations{
 	/**
 	 * get the cache time param
 	 */
-	private function getCacheTimeParam($key, $default = 10){
+	private function getCacheTimeParam($key, $default = 10, $name = null){
 
-		$time = $this->getParam($key, $default);
+		$time = $this->getParam($key, $default, $name);
 		$time = intval($time);
 		$time = max($time, 1); // minimum is 1 minute
 		$time *= 60; // convert to seconds
@@ -543,8 +490,8 @@ class UniteCreatorAPIIntegrations{
 				"id" => self::CURRENCY_EXCHANGE_FIELD_PRECISION,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Rate Precision", "unlimited-elements-for-elementor"),
-				// translators: %1$d is a number, %2$d is a number
-				"desc" => sprintf(__("Optional. You can specify the number of decimals for the rate: from %d to %d. The default value is %d.", "unlimited-elements-for-elementor"), self::CURRENCY_EXCHANGE_MIN_PRECISION, self::CURRENCY_EXCHANGE_MAX_PRECISION, self::CURRENCY_EXCHANGE_DEFAULT_PRECISION),
+				// translators: %1$d is a number, %2$d is a number, %3$d is a number
+				"desc" => sprintf(__("Optional. You can specify the number of decimals for the rate: from %1\$d to %2\$d. The default value is %3\$d.", "unlimited-elements-for-elementor"), self::CURRENCY_EXCHANGE_MIN_PRECISION, self::CURRENCY_EXCHANGE_MAX_PRECISION, self::CURRENCY_EXCHANGE_DEFAULT_PRECISION),
 			),
 			array(
 				"id" => self::CURRENCY_EXCHANGE_FIELD_INCLUDE_CURRENCIES,
@@ -664,42 +611,6 @@ class UniteCreatorAPIIntegrations{
 		return $fields;
 	}
 
-	/**
-	 * get google sheets settings fields
-	 */
-	private function getGoogleSheetsSettingsFields(){
-
-		$fields = array();
-
-		$fields = $this->addGoogleEmptyCredentialsField($fields, self::GOOGLE_SHEETS_FIELD_EMPTY_CREDENTIALS);
-
-		$fields = array_merge($fields, array(
-			array(
-				"id" => self::GOOGLE_SHEETS_FIELD_ID,
-				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
-				"text" => __("Spreadsheet ID", "unlimited-elements-for-elementor"),
-				// translators: %s is a string
-				"desc" => sprintf(__("You can find the spreadsheet ID in a Google Sheets URL: %s", "unlimited-elements-for-elementor"), "https://docs.google.com/spreadsheets/d/<b>[YOUR_SPREADSHEET_ID]</b>/edit#gid=0"),
-			),
-			array(
-				"id" => self::GOOGLE_SHEETS_FIELD_SHEET_ID,
-				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
-				"text" => __("Sheet ID", "unlimited-elements-for-elementor"),
-				// translators: %s is page url
-				"desc" => sprintf(__("Optional. You can find the sheet ID in a Google Sheets URL: %s", "unlimited-elements-for-elementor"), "https://docs.google.com/spreadsheets/d/aBC-123_xYz/edit#gid=<b>[YOUR_SHEET_ID]</b>"),
-			),
-			array(
-				"id" => self::GOOGLE_SHEETS_FIELD_CACHE_TIME,
-				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
-				"text" => __("Cache Time", "unlimited-elements-for-elementor"),
-				// translators: %d is a number
-				"desc" => sprintf(__("Optional. You can specify the cache time of results in minutes. The default value is %d minutes.", "unlimited-elements-for-elementor"), self::GOOGLE_SHEETS_DEFAULT_CACHE_TIME),
-				"default" => self::GOOGLE_SHEETS_DEFAULT_CACHE_TIME,
-			),
-		));
-
-		return $fields;
-	}
 
 	/**
 	 * get youtube playlist settings fields
@@ -719,7 +630,7 @@ class UniteCreatorAPIIntegrations{
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Playlist ID", "unlimited-elements-for-elementor"),
 				// translators: %1$s is page url, %2$s is page url
-				"desc" => sprintf(__("You can find the playlist ID in a YouTube URL: <br />— %s<br />— %s", "unlimited-elements-for-elementor"), "https://youtube.com/playlist?list=<b>[YOUR_PLAYLIST_ID]</b>", "https://youtube.com/watch?v=aBC-123xYz&list=<b>[YOUR_PLAYLIST_ID]</b>"),
+				"desc" => sprintf(__("You can find the playlist ID in a YouTube URL: <br />— %1\$s<br />— %2\$s", "unlimited-elements-for-elementor"), "https://youtube.com/playlist?list=<b>[YOUR_PLAYLIST_ID]</b>", "https://youtube.com/watch?v=aBC-123xYz&list=<b>[YOUR_PLAYLIST_ID]</b>"),
 			),
 			array(
 				"id" => self::YOUTUBE_PLAYLIST_FIELD_ORDER,
@@ -940,8 +851,8 @@ class UniteCreatorAPIIntegrations{
 		}
 
 		$range = array(
-			"start" => $startTime ? date("c", $startTime) : null,
-			"end" => $endTime ? date("c", $endTime) : null,
+			"start" => $startTime ? s_date("c", $startTime) : null,
+			"end" => $endTime ? s_date("c", $endTime) : null,
 		);
 
 		return $range;
@@ -983,20 +894,66 @@ class UniteCreatorAPIIntegrations{
 		return $data;
 	}
 
+	private function _________GOOGLE_SHEETS_________(){}
+	
+	/**
+	 * get google sheets settings fields
+	 */
+	public function getGoogleSheetsSettingsFields(){
+
+		$fields = array();
+
+		$fields = $this->addGoogleEmptyCredentialsField($fields, self::GOOGLE_SHEETS_FIELD_EMPTY_CREDENTIALS);
+		
+		$fields = array_merge($fields, array(
+			array(
+				"id" => self::GOOGLE_SHEETS_FIELD_ID,
+				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
+				"text" => __("Spreadsheet ID", "unlimited-elements-for-elementor"),
+				// translators: %s is a string
+				"desc" => sprintf(__("You can find the spreadsheet ID in a Google Sheets URL: %s", "unlimited-elements-for-elementor"), "https://docs.google.com/spreadsheets/d/<b>[YOUR_SPREADSHEET_ID]</b>/edit#gid=0"),
+			),
+			array(
+				"id" => self::GOOGLE_SHEETS_FIELD_SHEET_ID,
+				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
+				"text" => __("Sheet ID", "unlimited-elements-for-elementor"),
+				// translators: %s is page url
+				"desc" => sprintf(__("Optional. You can find the sheet ID in a Google Sheets URL: %s", "unlimited-elements-for-elementor"), "https://docs.google.com/spreadsheets/d/aBC-123_xYz/edit#gid=<b>[YOUR_SHEET_ID]</b>"),
+			),
+			array(
+				"id" => self::GOOGLE_SHEETS_FIELD_CACHE_TIME,
+				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
+				"text" => __("Cache Time", "unlimited-elements-for-elementor"),
+				// translators: %d is a number
+				"desc" => sprintf(__("Optional. You can specify the cache time of results in minutes. The default value is %d minutes.", "unlimited-elements-for-elementor"), self::GOOGLE_SHEETS_DEFAULT_CACHE_TIME),
+				"default" => self::GOOGLE_SHEETS_DEFAULT_CACHE_TIME,
+			),
+		));
+
+		return $fields;
+	}
+	
+	
 	/**
 	 * get google sheets data
 	 */
-	private function getGoogleSheetsData(){
-
+	public function getGoogleSheetsData($params = null, $name = null){
+		
+		if(!empty($params))
+			$this->params = $params;
+		
 		$data = array();
-
+		
 		$this->validateGoogleCredentials();
+				
+		$spreadsheetId = $this->getRequiredParam(self::GOOGLE_SHEETS_FIELD_ID, "Spreadsheet ID", $name);
+		$spreadsheetId = $this->getSpreadsheetIdByUrl($spreadsheetId);
 
-		$spreadsheetId = $this->getRequiredParam(self::GOOGLE_SHEETS_FIELD_ID, "Spreadsheet ID");
-		$sheetId = $this->getParam(self::GOOGLE_SHEETS_FIELD_SHEET_ID, 0);
+		$sheetId = $this->getParam(self::GOOGLE_SHEETS_FIELD_SHEET_ID, 0, $name);
+		$sheetId = $this->getSheetIdByUrl($sheetId);
 		$sheetId = intval($sheetId);
-		$cacheTime = $this->getCacheTimeParam(self::GOOGLE_SHEETS_FIELD_CACHE_TIME, self::GOOGLE_SHEETS_DEFAULT_CACHE_TIME);
-
+		$cacheTime = $this->getCacheTimeParam(self::GOOGLE_SHEETS_FIELD_CACHE_TIME, self::GOOGLE_SHEETS_DEFAULT_CACHE_TIME,$name);
+	
 		$sheetsService = new UEGoogleAPISheetsService();
 		$sheetsService->setCacheTime($cacheTime);
 
@@ -1034,6 +991,36 @@ class UniteCreatorAPIIntegrations{
 		}
 
 		return $data;
+	}
+
+	
+	/**
+	 * get spreadsheetId by url
+	 */
+	private function getSpreadsheetIdByUrl($spreadsheetId) {
+		$pattern = '~spreadsheets/d/([^/]+)~';
+
+		if (preg_match($pattern, $spreadsheetId, $matches)) {
+			$spreadsheetId = $matches[1];
+			return $spreadsheetId;
+		}
+
+		return $spreadsheetId;
+	}
+
+
+	/**
+	 * get sheetId by url
+	 */
+	private function getSheetIdByUrl($sheetId) {
+		$pattern = '/#gid=([^&]+)/';
+
+		if (preg_match($pattern, $sheetId, $matches)) {
+			$sheetId = $matches[1];
+			return $sheetId;
+		}
+
+		return $sheetId;
 	}
 
 	private function _________WEATHER_________(){}
@@ -1347,7 +1334,8 @@ class UniteCreatorAPIIntegrations{
 
 			switch($direction){
 				case self::ORDER_DIRECTION_RANDOM:
-					$results = array(rand(-1, 1), rand(-1, 1));
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.rand_mt_rand
+					$results = array(mt_rand(-1, 1), mt_rand(-1, 1));
 				break;
 				case self::ORDER_DIRECTION_DESC:
 					$results = array(1, -1);
@@ -1403,7 +1391,7 @@ class UniteCreatorAPIIntegrations{
 	 * add google empty credentials field
 	 */
 	private function addGoogleEmptyCredentialsField($fields, $id){
-
+		
 		$hasCredentials = $this->hasGoogleCredentials();
 
 		if($hasCredentials === false){

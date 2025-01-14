@@ -101,11 +101,11 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 		<select class="unite-responsive-picker">
 			<?php foreach($devices as $type => $device): ?>
 				<option
-					value="<?php esc_attr_e($type, "unlimited-elements-for-elementor"); ?>"
-					data-content="<?php esc_attr_e('<div class="unite-responsive-picker-item uc-tip" title="' . esc_attr($device["title"]) . '" data-tipsy-gravity="w">' . $device["icon"] . '</div>', "unlimited-elements-for-elementor"); ?>"
-					<?php echo $type === $selectedType ? "selected" : ""; ?>
+					value="<?php echo esc_attr($type); ?>"
+					data-content="<?php echo esc_attr('<div class="unite-responsive-picker-item uc-tip" title="' . esc_attr($device["title"]) . '" data-tipsy-gravity="w">' . $device["icon"] . '</div>'); ?>"
+					<?php if($type === $selectedType) { echo "selected"; } ?>
 				>
-					<?php esc_html_e($device["title"], "unlimited-elements-for-elementor"); ?>
+					<?php echo esc_html($device["title"]); ?>
 				</option>
 			<?php endforeach; ?>
 		</select>
@@ -156,18 +156,21 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 
 		?>
 		<li
-			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor"); ?>_row"
-			<?php echo UniteProviderFunctionsUC::escAddParam($rowClass); ?>
-			<?php echo UniteProviderFunctionsUC::escAddParam($addAttr); ?>
-			data-name="<?php esc_attr_e($name, "unlimited-elements-for-elementor"); ?>"
-			data-type="<?php esc_attr_e($type, "unlimited-elements-for-elementor"); ?>"
+			id="<?php echo esc_attr($id); ?>_row"
+			<?php 
+				s_echo($rowClass); ?>
+			<?php 
+				s_echo($addAttr); ?>
+			data-name="<?php echo esc_attr($name); ?>"
+			data-type="<?php echo esc_attr($type); ?>"
 		>
 
 			<div class="unite-setting-field">
 
 				<?php if($toDrawText === true): ?>
 					<div class="unite-setting-text-wrapper">
-						<div id="<?php echo esc_attr($id); ?>_text" class='unite-setting-text' <?php echo UniteProviderFunctionsUC::escAddParam($attribsText); ?>>
+						<div id="<?php echo esc_attr($id); ?>_text" class='unite-setting-text' <?php 
+				s_echo($attribsText); ?>>
 							<?php echo esc_html($text); ?>
 						</div>
 						<?php if($isResponsive === true): ?>
@@ -177,7 +180,8 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 				<?php endif ?>
 
 				<?php if(!empty($addHtmlBefore)): ?>
-					<div class="unite-setting-addhtmlbefore"><?php echo UniteProviderFunctionsUC::escAddParam($addHtmlBefore); ?></div>
+					<div class="unite-setting-addhtmlbefore"><?php 
+				s_echo($addHtmlBefore); ?></div>
 				<?php endif; ?>
 
 				<div class="unite-setting-input">
@@ -188,7 +192,9 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 
 			<?php if(!empty($description)): ?>
 				<div class="unite-setting-helper">
-					<?php echo $description; ?>
+					<?php 
+					s_echo($description); 
+					?>
 				</div>
 			<?php endif; ?>
 
@@ -215,16 +221,17 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 		$rowClass = $this->drawSettingRow_getRowClass($setting);
 
 		?>
-		<li id="<?php esc_attr_e($id, "unlimited-elements-for-elementor") ?>_row" <?php echo UniteProviderFunctionsUC::escAddParam($rowClass); ?>>
+		<li id="<?php echo esc_attr($id) ?>_row" <?php 
+				s_echo($rowClass); ?>>
 
 			<?php if(empty($label) === false): ?>
 				<span class="unite-settings-text-label">
-					<?php esc_html_e($label, "unlimited-elements-for-elementor") ?>
+					<?php echo esc_html($label) ?>
 				</span>
 			<?php endif ?>
 
-			<span class="unite-settings-static-text<?php esc_attr_e($classAdd, "unlimited-elements-for-elementor"); ?>">
-				<?php esc_html_e($text, "unlimited-elements-for-elementor"); ?>
+			<span class="unite-settings-static-text<?php echo esc_attr($classAdd); ?>">
+				<?php echo esc_html($text); ?>
 			</span>
 
 		</li>
@@ -266,19 +273,19 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 
 		?>
 		<div
-			id="<?php esc_attr_e($id, "unlimited-elements-for-elementor") ?>"
-			class="<?php esc_attr_e($class, "unlimited-elements-for-elementor"); ?>"
-			data-tab="<?php esc_attr_e($tab, "unlimited-elements-for-elementor"); ?>"
+			id="<?php echo esc_attr($id) ?>"
+			class="<?php echo esc_attr($class); ?>"
+			data-tab="<?php echo esc_attr($tab); ?>"
 		>
 
 			<?php if($this->showSapTitle === true): ?>
 				<div class="unite-postbox-title">
 
 					<?php if(empty($classIcon) === false): ?>
-						<i class="unite-postbox-icon <?php esc_attr_e($classIcon, "unlimited-elements-for-elementor"); ?>"></i>
+						<i class="unite-postbox-icon <?php echo esc_attr($classIcon); ?>"></i>
 					<?php endif; ?>
 
-					<span><?php esc_html_e($text, "unlimited-elements-for-elementor"); ?></span>
+					<span><?php echo esc_html($text); ?></span>
 
 					<?php if($this->isAccordion === true): ?>
 						<div class="unite-postbox-arrow"></div>
@@ -312,8 +319,9 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 		$rowClass = $this->drawSettingRow_getRowClass($setting);
 
 		?>
-		<li id="<?php esc_attr_e($id, "unlimited-elements-for-elementor") ?>_row" <?php echo UniteProviderFunctionsUC::escAddParam($rowClass) ?>>
-			<hr id="<?php esc_attr_e($id, "unlimited-elements-for-elementor") ?>">
+		<li id="<?php echo esc_attr($id) ?>_row" <?php 
+				s_echo($rowClass) ?>>
+			<hr id="<?php echo esc_attr($id) ?>">
 		</li>
 		<?php
 	}

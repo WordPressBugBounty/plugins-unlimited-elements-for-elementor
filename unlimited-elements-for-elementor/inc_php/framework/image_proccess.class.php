@@ -148,9 +148,9 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				$ext = "jpeg";
 			
 			$numExpires = 31536000;	//one year
-			$strExpires = @date('D, d M Y H:i:s',time()+$numExpires);
+			$strExpires = @s_date('D, d M Y H:i:s',time()+$numExpires);
 			
-			$contents = file_get_contents($filepath);
+			$contents = UniteFunctionsUC::fileGetContents($filepath);
 			$filesize = strlen($contents);
 			/*header("Last-Modified: $strModified GMT");*/
 			header("Expires: $strExpires GMT");
@@ -158,7 +158,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			header("Content-Type: image/$ext");
 			header("Content-Length: $filesize");
 			
-			echo UniteProviderFunctionsUC::escCombinedHtml($contents);
+			s_echo($contents);
 			exit();
 		}
 		

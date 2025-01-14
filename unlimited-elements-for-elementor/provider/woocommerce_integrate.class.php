@@ -1605,8 +1605,7 @@ public function getCartNumProductsHtml(){
 				$html = HelperHtmlUC::getErrorMessageHtml($message,"",true);
 			break;
 		}
-		
-		echo $html;
+		s_echo($html);
 	}
 	
 	

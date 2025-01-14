@@ -12,11 +12,15 @@ class UniteCreatorAjaxSeach{
 	public static $arrCurrentParams;
 	public static $customSearchEnabled = false;
 	public static $enableThirdPartyHooks = false;
-	
-	private $searchMetaKey = "";
+
+    private $searchInPostFields = false;
+	private $searchInMeta = false;
+	private $searchMetaSku = false;
 	private $searchInTerms = false;
 	private $strTerms = false;
-	
+	private $searchPostFields = array();
+	private $searchMetaKey = "";
+
 	
 	/**
 	 * on posts response
@@ -41,221 +45,298 @@ class UniteCreatorAjaxSeach{
 		
 		$addCount = $maxItems - $numPosts;
 		
+		//search by post fields
+		if($this->searchInPostFields == true){
+									
+			$arrPosts = $this->getPostsByFields($arrPosts, $args);
+						
+		}
+
 		//search in meta
-		
-		if(!empty($this->searchMetaKey)){
-			$arrPosts = $this->getPostsFromMetaQuery($arrPosts, $args, $addCount);
-		
+		if($this->searchInMeta == true){
+			$arrPosts = $this->getPostsByMeta($arrPosts, $args, $addCount);
 			$addCount = $maxItems - count($arrPosts);
 		}
 		
-		if($this->searchInTerms == true && $addCount > 0)
+		//search in taxonomy
+		if($this->searchInTerms == true && $addCount > 0){
+			
 			$arrPosts = $this->getPostsByTerms($arrPosts, $args, $addCount);
-		
-		
+		}
+
+		if (GlobalsProviderUC::$showPostsQueryDebug == true ) {
+			
+			//print total posts
+			
+			$totalPosts = count($arrPosts);
+			
+			dmp("<strong>Total Posts: {$totalPosts} </strong>");
+			
+		}
+
 		return($arrPosts);
 	}
-	
+
+
+	/**
+	 * get posts by title or content or excerpt
+	 */
+	private function getPostsByFields($arrPosts, $args) {
+
+		if (in_array('all', $this->searchPostFields))
+			return ($arrPosts);
+
+		if(empty($this->searchPostFields))
+			return($arrPosts);
+		
+		
+		$db         = HelperUC::getDB();
+		$tablePosts = UniteProviderFunctionsUC::$tablePosts;
+		$postType   = UniteFunctionsUC::getVal($args, "post_type");
+		$limit      = UniteFunctionsUC::getVal($args, "posts_per_page");
+		$postFields = $this->searchPostFields;
+		
+		$search     = $db->escape($args["s"]);
+		$arrPosts   = array();
+
+		$sqlWhere   = array();
+		$sqlAnd     = "";
+		$sqlLike    = "";
+
+		// if postType contains array of post types or one post type
+		if (is_array($postType)) {
+			$sqlAnd = "'" . implode("','", $postType) . "'";
+			$sqlAnd = "post_type IN ({$sqlAnd})";
+		} else {
+			$sqlAnd = "post_type = '{$postType}'";
+		}
+
+		//prepare the where
+		
+		foreach ($postFields as $field) 
+		    $sqlWhere[] = "{$field} LIKE '%{$search}%'";
+    
+		$sqlLike = implode(' OR ', $sqlWhere);
+    	
+		$sql = "
+		    SELECT *
+		      FROM {$tablePosts}
+		     WHERE ({$sqlLike})
+		       AND {$sqlAnd}
+		       AND post_status = 'publish'
+		     LIMIT {$limit}
+		";
+ 
+		try{
+			$arrPostsByFields = @$db->fetchSql($sql, false, 'OBJECT');
+		}catch(Exception $e){
+			
+			dmp("Wrong sql: ".$sql);
+			
+			throw($e);
+		}
+
+		//debug output
+		if (GlobalsProviderUC::$showPostsQueryDebug == true) {
+			
+			dmp("<strong>Search By Post Fields</strong> - ".implode(', ', $postFields));
+			dmp("Query:");
+			dmp($sql);
+			dmp("Found Posts: " . count($arrPostsByFields));
+			
+		}
+
+		$arrPosts = array_merge($arrPosts, $arrPostsByFields);
+
+		return($arrPosts);
+	}
+
+	/**
+	 * get posts from meta query
+	 */
+	private function getPostsByMeta($arrPosts, $args, $maxPosts){
+
+		$search = $args["s"];
+		unset($args["s"]);
+		
+		if($this->searchMetaSku == true){
+			$metaKeySku = "_sku";
+			$this->searchMetaKey = ($this->searchMetaKey) ? $this->searchMetaKey.','.$metaKeySku : $metaKeySku;
+		}
+		
+		if(empty($this->searchMetaKey))
+			return($arrPosts);
+
+		$searchMetaKeys = explode(",", $this->searchMetaKey);
+		$arrMetaQuery = array("relation" => "OR");
+
+		foreach ($searchMetaKeys as $metaKey) {
+			$metaKey = trim($metaKey);
+			$arrMetaQuery[] = array(
+				'key'     => $metaKey,
+				'value'   => $search,
+				'compare' => "LIKE"
+			);
+		}
+
+		$arrExistingMeta = UniteFunctionsUC::getVal($args, "meta_query", array());
+		$args["meta_query"] = array_merge($arrExistingMeta, $arrMetaQuery);
+
+		$query = new WP_Query();
+		$query->query($args);
+		$arrPostsByMeta = $query->posts;
+
+		//debug output
+		if(GlobalsProviderUC::$showPostsQueryDebug == true){
+			
+			dmp("<strong>Search By Meta Fields</strong>");
+			dmp("Query:");
+			dmp($args);
+			dmp("Found Posts: ".count($arrPostsByMeta));
+			
+		}
+
+		$arrPosts = array_merge($arrPosts, $arrPostsByMeta);
+
+		return($arrPosts);
+	}
+
+
 	/**
 	 * search posts by terms
 	 */
 	private function getPostsByTerms($arrPosts, $args, $maxPosts){
-		
+
 		if($this->searchInTerms == false)
 			return($arrPosts);
-		
+
 		$search = $args["s"];
-			
+
 		unset($args["s"]);
-		
+
 		$postType = UniteFunctionsUC::getVal($args, "post_type");
-		
+
 		if(empty($postType))
 			return($arrPosts);
-		
+
 		$arrTax = UniteFunctionsWPUC::getPostTypeTaxomonies($postType);
-		
+
+
+
 		if(empty($arrTax))
 			return($arrPosts);
-			
+
 		$arrAllTaxNames = array_keys($arrTax);
-				
+
 		$arrTaxNames = UniteFunctionsUC::csvToArray($this->strTerms);
-		
+
 		if(!empty($arrTaxNames))
 			$arrTaxNames = array_intersect($arrAllTaxNames, $arrTaxNames);
 		else
 			$arrTaxNames = $arrAllTaxNames;
-			
+
+
 		if(empty($arrTaxNames)){
-		
-			if(GlobalsProviderUC::$showPostsQueryDebug == true)
-				dmp("taxonomies not found: {$this->strTerms}. please use some of those: ".print_r($arrAllTaxNames,true));
-			
+
+			if(GlobalsProviderUC::$showPostsQueryDebug == true) {
+				
+				dmp("<strong>Search By Terms</strong> ");
+				dmp("Taxonomies not found: {$this->strTerms}. please use some of those: ");
+				dmp($arrAllTaxNames);
+				
+			}
+
 			return($arrPosts);
 		}
-		
-		
+
+
 		$arrTermsSearch = array();
 		$arrTermsSearch["taxonomy"] = $arrTaxNames;
 		$arrTermsSearch["search"] = $search;
 		$arrTermsSearch["hide_empty"] = true;
 		$arrTermsSearch["number"] = 50;
 		//$arrTermsSearch["fields"] = "id=>name";
-		
+
 		$termsQuery = new WP_Term_Query();
 		$arrTermsFound = $termsQuery->query($arrTermsSearch);
 
+
 		if(empty($arrTermsFound)){
-		
 			if(GlobalsProviderUC::$showPostsQueryDebug == true){
 				dmp("no terms found by: <b>$search</b>. Terms Query:");
-				
 				dmp($arrTermsSearch);
 			}
-			
+
 			return($arrPosts);
 		}
-		
 		
 		$arrTaxQuery = UniteFunctionsWPUC::getTaxQueryFromTerms($arrTermsFound);
-		
 		$args = UniteFunctionsWPUC::mergeArgsTaxQuery($args,$arrTaxQuery);
-				
+
 		$query = new WP_Query();
 		$query->query($args);
-		
-		$arrNewPosts = $query->posts;
-		
+		$arrPostsByTerms = $query->posts;
+
 		//debug output
 		if(GlobalsProviderUC::$showPostsQueryDebug == true){
-			
-			dmp("Run Search By Terms Query: ");
-			
+			dmp("<strong>Search By Terms</strong>");
+			dmp("Query:");
 			$strTerms = UniteFunctionsWPUC::getTermsTitlesString($arrTermsFound, true);
-			
-			dmp("Found Terms: ".count($arrTermsFound));
-			
 			dmp($strTerms);
-			
 			dmp($args);
+			dmp("Found Terms: ".count($arrTermsFound));
+			dmp("Found Posts: ".count($arrPostsByTerms));
 			
-			dmp("Found Posts: ".count($arrNewPosts));
 		}
-		
-		
-		if(empty($arrNewPosts))
-			return($arrPosts);
-		
-		$arrPosts = array_merge($arrNewPosts, $arrPosts);
 
-		//remove duplicates if there are posts with the same ID in the array after merging two arrays "$arrNewPosts" and "$arrPosts"
+
+		if(empty($arrPostsByTerms))
+			return($arrPosts);
+
+		$arrPosts = array_merge($arrPosts, $arrPostsByTerms);
+
+		//remove duplicates if there are posts with the same ID in the array after merging two arrays "$arrPostsByTerms" and "$arrPosts"
 		if (!empty($arrPosts))
-			$arrPosts = $this->deletePostsDuplicate($arrPosts);
-
-
-		return($arrPosts);
-	}
-
-
-	/**
-	 *  delete posts duplicate
-	 */
-
-	private function deletePostsDuplicate($arrPosts){
-		// Initialize an empty array to store unique posts.
-		$uniquePosts = [];
-
-		// Loop through each post and add it to the result if its 'ID' is not already added.
-		foreach ($arrPosts as $post) {
-			if (!isset($uniquePosts[$post->ID])) {
-				$uniquePosts[$post->ID] = $post;
-			}
-		}
-		// Re-index the array to have sequential numeric keys.
-		$arrPosts = array_values($uniquePosts);
+			$arrPosts = UniteFunctionsWPUC::deleteDuplicatePostsFromArray($arrPosts);
+		
 
 		return($arrPosts);
 	}
 
-	
-	/**
-	 * get posts from meta query
-	 */
-	private function getPostsFromMetaQuery($arrPosts, $args, $maxPosts){
-		
-		if(empty($this->searchMetaKey))
-			return($arrPosts);
-		
-		$search = $args["s"];
-			
-		unset($args["s"]);
-					
-		$arrMetaItem = array(
-		        'key'     => $this->searchMetaKey,
-		        'value'   => $search,
-		        'compare' => "LIKE"
-		);
-		
-		$arrMetaQuery = array("relation"=>"OR",$arrMetaItem);
-		
-		$arrExistingMeta = UniteFunctionsUC::getVal($args, "meta_query",array());
-					
-		$args["meta_query"] = array_merge($arrExistingMeta, $arrMetaQuery);
-		
-		$query = new WP_Query();
-		$query->query($args);
-		
-		$arrNewPosts = $query->posts;
-		
-		//debug output
-		if(GlobalsProviderUC::$showPostsQueryDebug == true){
-			
-			dmp("Run Search By Meta Query: ");
-			dmp($args);
-			
-			dmp("Found Posts: ".count($arrNewPosts));
-		}
-		
-		$arrPosts = array_merge($arrPosts, $arrNewPosts);
-		
-		return($arrPosts);
-	}
-	
-	
+
 	/**
 	 * supress third party filters except of this class ones
 	 */
 	public static function supressThirdPartyFilters(){
-		
-		
+
+
 		//on the enable hooks setting - don't supress hooks
-		
+
 		if(self::$enableThirdPartyHooks === true)
 			return(false);
-				
+
 		global $wp_filter;
-		
+
 		if(self::$customSearchEnabled == false){
-			
+
 			$wp_filter = array();
 			return(false);
 		}
 
 		$arrKeys = array("uc_filter_posts_list");
-		
+
 		$newFilters = array();
-		
+
 		foreach($arrKeys as $key){
-			
+
 			$filter = UniteFunctionsUC::getVal($wp_filter, $key);
-			
+
 			if(!empty($filter))
 				$newFilters[$key] = $filter;
 		}
-		
+
 		$wp_filter = $newFilters;
-		
+
 	}
 	
 	
@@ -267,7 +348,7 @@ class UniteCreatorAjaxSeach{
 		$arrParams = $addon->getProcessedMainParamsValues(UniteCreatorParamsProcessor::PROCESS_TYPE_CONFIG);
 		
 		self::$arrCurrentParams = $arrParams;
-				
+		
 		//enable hooks
 
 		$enableHooks = UniteFunctionsUC::getVal($arrParams, "enable_third_party_hooks");
@@ -275,38 +356,54 @@ class UniteCreatorAjaxSeach{
 		
 		if($enableHooks == true)
 			self::$enableThirdPartyHooks = true;
-		
-			
-		//--- meta
-		
+
+		$applyModifyFilter = false;
+
+		//search by meta fields
 		$searchInMeta = UniteFunctionsUC::getVal($arrParams, "search_in_meta");
 		$searchInMeta = UniteFunctionsUC::strToBool($searchInMeta);
-		
 		$searchMetaKey = UniteFunctionsUC::getVal($arrParams, "searchin_meta_name");
-				
-		$applyModifyFilter = false;
-		if($searchInMeta == true && !empty($searchMetaKey)){
-		
+		if($searchInMeta == true){
 			$applyModifyFilter = true;
-			
 			self::$customSearchEnabled = true;
+			$this->searchInMeta = true;
 			$this->searchMetaKey = $searchMetaKey;
 		}
+
+		//search by meta field SKU
+		$searchMetaSku = UniteFunctionsUC::getVal($arrParams, "search_by_sku");
+		$searchMetaSku = UniteFunctionsUC::strToBool($searchMetaSku);
+		if($searchMetaSku == true){
+			self::$customSearchEnabled = true;
+			$this->searchInMeta = true;
+			$this->searchMetaSku = $searchMetaSku;
+		}
 	
-		//--- terms
-		
+		//search by terms
 		$searchInTerms = UniteFunctionsUC::getVal($arrParams, "search_in_terms");
 		$searchInTerms = UniteFunctionsUC::strToBool($searchInTerms);
-		
 		if($searchInTerms == true){
-			
 			$applyModifyFilter = true;
 			self::$customSearchEnabled = true;
 			$this->searchInTerms = true;
 			$this->strTerms = UniteFunctionsUC::getVal($arrParams, "search_in_taxonomy");
-			
 		}
 		
+		//search by post fields
+		$arrSearchPostFields = UniteFunctionsUC::getVal($arrParams, "search_by");
+		
+		if(!empty($arrSearchPostFields) && in_array("all", $arrSearchPostFields) == false){
+			
+			//set skip main post query
+			GlobalsProviderUC::$skipRunPostQueryOnce = true;
+			
+			$applyModifyFilter = true;
+			
+			self::$customSearchEnabled = true;
+			$this->searchInPostFields = true;
+			$this->searchPostFields = $arrSearchPostFields;
+		}
+				
 		if($applyModifyFilter == true)
 			UniteProviderFunctionsUC::addFilter("uc_filter_posts_list", array($this,"onPostsResponse"),10,3);
 		

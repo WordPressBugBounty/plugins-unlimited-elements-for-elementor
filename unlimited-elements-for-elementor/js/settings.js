@@ -1708,6 +1708,9 @@ function UniteSettingsUC(){
 
 		objHeader.text(title.replace("%d", count));
 
+		if(!Array.isArray(values)) {
+			values = JSON.parse(values);
+		}
 		var html = values
 			.slice(0, 7) // max 7 images
 			.map(function (image) {

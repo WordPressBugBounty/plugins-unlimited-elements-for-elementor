@@ -227,12 +227,12 @@ abstract class UCAdminNoticeAbstract{
 		$startTime = $this->getStartTime();
 
 		if($currentTime < $startTime)
-			return "Notice <b>{$id}</b> hidden - scheduled (will be visible on " . date($dateFormat, $startTime) . ")";
+			return "Notice <b>{$id}</b> hidden - scheduled (will be visible on " . s_date($dateFormat, $startTime) . ")";
 			
 		$finishTime = $this->getFinishTime();
 
 		if($currentTime <= $finishTime)
-			return "Notice <b>{$id}</b> visible (will be hidden on ". date($dateFormat, $finishTime). ")";
+			return "Notice <b>{$id}</b> visible (will be hidden on ". s_date($dateFormat, $finishTime). ")";
 
 		return "Notice <b>{$id}</b> hidden - permanently";
 	}

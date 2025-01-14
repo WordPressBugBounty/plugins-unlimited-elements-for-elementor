@@ -104,7 +104,7 @@ function UniteCreatorAdmin(){
 
 		//get js settings
 		var dataJSSettings = g_settingsJS.getSettingsValues();
-
+		
 		data = jQuery.extend(data, dataJSSettings);
 
 		var generalSettingsData = g_generalSettings.getSettingsValues();
@@ -574,7 +574,7 @@ function UniteCreatorAdmin(){
 		//---- items tab -----
 
 		//g_settingsItem.setValues({"enable_items":true});
-
+		
 		var itemsParamType = param["items_param_type"];
 
 		var itemsParam = jQuery.extend({}, param);
@@ -824,7 +824,7 @@ function UniteCreatorAdmin(){
 
 		//add items related functions
 		if(hasItems == true){
-			var paramPutItems = {type:"uc_function", name:"put_items()",raw_insert_text:"{{put_items()}} {# - you can use parameters: \"shuffle\", \"one_random\", \"one_first\" like put_items(\"shuffle\")  #}"};
+			var paramPutItems = {type:"uc_function", name:"put_items()",raw_insert_text:"{{put_items()}} {# - you can use parameters: \"shuffle\", \"one_random\", \"one_first\" like put_items(\"shuffle\")  #} \n {# - also you can use {% set items = get_items() %} with those parameters - #}\n"};
 			var paramPutItems2 = {type:"uc_function", name:"put_items2()"};
 			var paramNumItems = {type:"text", name:"uc_num_items"};
 
@@ -2027,9 +2027,9 @@ function UniteCreatorAdmin(){
 	function initItemsTab(){
 
 		g_objItemSettingsWrapper = jQuery("#uc_tab_itemattr").children(".unite_settings_wrapper");
-
+		
 		g_settingsItem.init(g_objItemSettingsWrapper);
-
+		
 	}
 
 	/**
@@ -2111,7 +2111,8 @@ function UniteCreatorAdmin(){
 	 * edit addon view
 	 */
 	this.initEditAddonView = function(){
-
+		
+				
 		g_objWrapper = jQuery("#uc_tab_contents");
 
 		var objConfig = jQuery("#uc_edit_item_config");
@@ -2152,7 +2153,7 @@ function UniteCreatorAdmin(){
 		g_objButtonsPanel = jQuery("#uc_buttons_panel");
 
 		initStickyButtonsPanel();
-
+		
 		initItemsTab();
 
 		initJSTab();

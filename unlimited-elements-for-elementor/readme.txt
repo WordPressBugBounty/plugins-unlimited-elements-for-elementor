@@ -3,7 +3,7 @@ Contributors: unitecms, valiano, iritmega, amitkeren, axmusic, freemius
 Donate link: http://unlimited-elements.com/
 Tags: elementor, elementor addons, elementor templates, elementor widgets, widgets�for�elementor
 Requires at least: 3.5
-Tested up to: 6.5.3
+Tested up to: 6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Stable tag: 1.0
@@ -50,7 +50,7 @@ Browse our extensive collection of free widgets or upgrade to our pro version fo
 
 - <a href="https://unlimited-elements.com/dynamic-post-popup-widget-for-elementor/"><strong>Dynamic Popup Builder</strong></a>  Dynamically create a popup to add a quick view of the post without leaving the page. Use an Elementor single post template to create the layout of the dynamic popup.
 
-- <a href="https://unlimited-elements.com/form-builder/"><strong>Elementor Form Builder</strong></a>  Build advanced forms effortlessly using the drag-and-drop form builder. Whether itвЂ™s a simple or complex form, our straightforward form widgets make it quick and easy to create forms, improving your workflow.
+- <a href="https://unlimited-elements.com/form-builder/"><strong>Elementor Form Builder</strong></a>  Build advanced forms effortlessly using the drag-and-drop form builder. Whether its a simple or complex form, our straightforward form widgets make it quick and easy to create forms, improving your workflow.
 
 - <a href="https://unlimited-elements.com/calculators/"><strong>Calculator Builder</strong></a>  Easily design professional calculators for any type of industry. Whether you need a loan calculator, mortgage calculator or business calculator, our powerful and intuitive drag and drop builder makes it easy to create complex calculators with ease.
 
@@ -235,7 +235,7 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 14. [Price Range Filter (Pro)](https://unlimited-elements.com/price-range-filter-widget-for-elementor/) 
 
-15. [Colors Swatches Filter (Pro)](https://unlimited-elements.com/color-swatches-filter-widget-for-elementor/) 
+15. [Colors Swatches�Filter (Pro)](https://unlimited-elements.com/color-swatches-filter-widget-for-elementor/) 
 
 16. [Off Canvas Filters (Pro)](https://unlimited-elements.com/off-canvas-filters-widget-for-elementor/) 
 
@@ -893,7 +893,7 @@ Absolutely! The plugin will work with any theme where Elementor works.
 
 = What if I update to the Premium version after using the Free version? =
 
-Your existing elements/content will work with the premium version. So you wonГўв‚¬в„ўt lose your any of your hard work.
+Your existing elements/content will work with the premium version. So you won't lose your any of your hard work.
 
 = Can I get a refund? =
 
@@ -938,6 +938,63 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+= 1.5.136 - 2025-01-14 =
+
+Plugin Changes: 
+
+* Fix: fixed a small php bug in getPostTerms twig template function
+* Feature: added ajax search by functionality
+* Fix: performance: ajax search don't run extra db query without ajax run
+* Fix: added some ajax search and woo ajax search functionality. 
+* Fix: better pagination detection in case of 2 widgets in a group
+* Fix: fixed post modified date
+* Fix: fixed time stamp detection function
+* Feature: added json / csv to repeater field
+
+Widgets Changes: 
+
+* Feature: Dynamic Post Popup (Pro) - Close Button element is now focusable, allowing users to interact with it using the keyboard (e.g., via the Tab key), enhancing accessibility and usability.
+* Feature: Radio Button Field (Pro) - Added support for HTML tags in the Item Title element, allowing users to include formatted text, links, or other HTML-based content within the Item Title.
+* Feature: Audio Player (Pro) - Introduced a new source option for the audio file called First Post From List. This feature allows users to dynamically pull the audio file from the first post in a selected list.
+* Feature: Content Tabs (Free) - Added Content Layout Type option - This new feature enables users to customize the order of elements within the content section of the widget, providing greater flexibility in arranging the layout to suit specific design requirements.
+* Feature: Content Tabs (Free) - Improved Title and Button Spacing options - These options now support all margin directions, not just Margin Top, allowing for more precise control over spacing between elements.
+* Feature: Team Member Carousel (Pro) - Added Typography option for Button Element - This new feature allows users to customize the typography of the button text, including font family, size, weight, style, and other related settings.
+* Feature: Square to Circle Social Icons (Free) - Gap between icons added.
+* Feature: Icon Box (Free) - Added Box Min Height option - This new option allows setting a minimum height for the box, ensuring consistent layout and design across different content variations.
+* Feature: Protected Content (Pro) - Added an option to protect the entire page.
+* Feature: Protected Content (Pro) - Added functionality to submit the password by pressing the Enter key.
+* Feature: Simple Popup (Free) - Close Button element is now focusable, allowing users to interact with it using the keyboard (e.g., via the Tab key), enhancing accessibility and usability.
+* Feature: Overlay Button (Free) - Added a new Overlay Border Radius option, which allows users to customize the border radius of the overlay element within the widget.
+* Feature: Protected Content (Pro) - Added a new Template Position option, allowing users to specify the precise placement of templates within the widget.
+* Feature: Stacking Cards (Pro) - Added an option to select the source of the item, allowing users to choose between Text Editor, Elementor Template, or content from a Section ID on the same page.
+* Feature: Woo AJAX Search (Pro) - Added option to search by sku
+* Feature: Woo AJAX Search (Pro) - Added option to search by custom post fields like post title or excerpt
+* Feature: AJAX Search (Pro) - Added option to search by custom post fields like post title or excerpt
+* Fix: Woo Product Carousel (Pro) - Fixed issue where HTML attributes of the &quot;Add to Cart&quot; button were not being displayed correctly, ensuring proper functionality and adherence to expected behavior.
+* Fix: Image Tooltip (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Notification (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Simple Popup (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Video Play Button (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Card Carousel (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Post Grid (Pro) - Resolved an issue where links were not functioning correctly in certain cases.
+* Fix: Woo Product Carousel (Pro) - Fixed an issue where the Regular Price of products was incorrectly displayed as the Sale Price on the front end.
+* Fix: Square to Circle Social Icons (Free) - Default icon color changed.
+* Fix: Woo Product Slider (Pro) - Fixed an issue where the Regular Price of products was incorrectly displayed as the Sale Price on the front end.
+* Fix: Transparent Split Hero (Free) - Fixed vulnerability where JavaScript code could be inserted into the image src option, potentially leading to XSS attacks.
+* Fix: Woo Product List (Free) - Fixed an issue where the Regular Price of products was incorrectly displayed as the Sale Price on the front end.
+* Fix: Woo Product List (Free) - Optimized the HTML code structure for widget, reducing unnecessary elements and improving overall efficiency.
+* Fix: Review Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Testimonial Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Product Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Woo Product Grid (Pro) - Fixed an issue where the Regular Price of products was incorrectly displayed as the Sale Price on the front end.
+* Fix: Overlay Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Coverflow Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Mega Slider (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Smoke Background Effect (Pro) - Fixed issue where widgets were not functioning correctly in cases where scripts on the website were placed in the header.
+* Fix: Woo Category Carousel (Pro) - Fixed issue where, with &quot;Open Link in New Tab&quot; set to &quot;Yes,&quot; the link from the title still did not open in a new page.
+* Fix: Unlimited Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+
+
 = 1.5.135 - 2024-12-29 =
 
 *Fix: fixed small php bug in date convert function
@@ -948,42 +1005,5 @@ The choice depends on your design preferences. If you want complete control, go 
 * Fix - fixed version text display
 * Change - Improved performance by dramatically reduce number of convertStdClassToArray function calls
 
-= 1.5.133 - 2024-12-25 =
-
-* Fix: fixed a small php bug that was avoid plugin activation
-
-= 1.5.132 - 2024-12-22 =
-
-Plugin Changes:
-
-* Feature: added rss single settings
-* Feature: added simple repeater setting
-* Fix: fixed some small php bug in form submissions php file
-* Fix: small php error in calendar API
-* Fix: bug fix: fixed some pagination php bug
-
-
-Widgets Changes:
-
-* Feature: AJAX Search (Pro) - Added &quot;With Type&quot; option that allows setting a custom width for the Results element.
-* Feature: Scroll Sequence (Pro) - Made the &quot;Field of View&quot; option responsive, allowing users to customize the setting for different devices and screen sizes, enhancing flexibility and user experience
-* Feature: Post Ticker (Free) - Added &quot;Enable Post Link In Title&quot; option, allowing users to make the post title clickable and link it to the post.
-* Feature: Border Link Hover Effects (Pro) - Added Padding option to Link elements, allowing users to adjust the space between the border and the text for better customization.
-* Feature: Custom Cursor (Pro) - Created log: Added support for Elementor Popups, enabling seamless integration and functionality within popup designs.
-* Feature: Before After (Pro) - Added support for Elementor Swiper Carousel, enabling seamless integration and enhanced functionality for creating advanced and customizable carousel sliders within Elementor.
-* Feature: Overlay Carousel (Pro) - Added Slide Transition option, allowing users to customize the transition effects between slides for a smoother and more visually appealing experience.
-* Feature: Date Field (Pro) - Added Min Date option, allowing users to set a minimum selectable date for improved date input control and validation.
-* Feature: WordPress Menu (Free) - Added the &quot;Close on Body Click&quot; option, allowing users to configure the widget to automatically close when clicking anywhere outside of it, enhancing usability and ensuring a smoother interaction experience.
-* Feature: Content Carousel (Pro) - Added the &quot;Button Hover Style&quot; option, providing users with the ability to customize the hover effect for buttons, allowing for greater design flexibility and improved visual interactivity.
-* Change: Timer Countdown Banner (Pro) - Enhanced the banner functionality by introducing options for inline or fixed positioning, a close button with cookie support, a &quot;Show After Scroll&quot; feature to display the banner only after the user scrolls, and the ability to add a graphic element for improved customization.
-* Fix: Team Member Carousel (Pro) - Fixed issue where the Button was not working when Source was set to Items.
-* Fix: Woo Mini Cart (Pro) - Fixed issue where incrementing the product quantity in the Mini Cart widget was not working correctly in some cases.
-* Fix: Stacking Cards (Pro) - Fixed issue where the Button Hover Style option was not working correctly, ensuring proper functionality and expected styling behavior.
-* Fix: Creative Button Hovers (Free) - Transferred CSS styles from an external file to the general widgets CSS file. This improvement helps prevent overriding issues with other widgets and ensures better compatibility and styling consistency.
-* Fix: Unlimited Google Maps (Pro) - Fixed issue where the Map widget did not display the location pin when the &quot;Show Info Window&quot; option was disabled.
-* Fix: Toggle Dropdown (Pro) - Fixed an issue where icons were not displaying correctly.
-* Fix: Content Carousel (Pro) - Fixed an issue where the &quot;Button Hover Animation&quot; option was not functioning correctly, ensuring smooth and consistent hover animations for buttons.
-* Fix: Author List (Pro) - Fixed an issue where HTML tags were incorrectly displayed as visible text in text elements, ensuring proper rendering and a cleaner user interface.
-* Fix: Step Process (Pro) - Added the &quot;alt&quot; attribute to images, improving accessibility and enhancing SEO compliance.
 
 [See changelog for all versions.](https://unlimited-elements.com/change-log/)

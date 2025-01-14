@@ -431,7 +431,7 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 
 		$newFilepath = $moveFolder . $filename;
 
-		$success = rename($this->filepathAddonZip, $newFilepath);
+		$success = UniteFunctionsUC::move($this->filepathAddonZip, $newFilepath);
 
 		if($success === false)
 			UniteFunctionsUC::throwError("Can't move export zip:$filename to the export folder");
@@ -855,7 +855,7 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 			if(is_file($filepathTemplate) == false)
 				UniteFunctionsUC::throwError("Template {$filenameTemplate} not found!");
 
-			$templateContent = file_get_contents($filepathTemplate);
+			$templateContent = UniteFunctionsUC::fileGetContents($filepathTemplate);
 			$arrTemplates[$templateName] = $templateContent;
 		}
 
@@ -875,7 +875,7 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 		if(file_exists($filepathTestData) == false)
 			return ($addonData);
 
-		$arrContent = file_get_contents($filepathTestData);
+		$arrContent = UniteFunctionsUC::fileGetContents($filepathTestData);
 		if(empty($arrContent))
 			return ($addonData);
 
@@ -905,7 +905,7 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 		if(is_file($filepathData) == false)
 			UniteFunctionsUC::throwError("Addon import file: $filenameAddon don't found");
 
-		$contents = file_get_contents($filepathData);
+		$contents = UniteFunctionsUC::fileGetContents($filepathData);
 
 		if(empty($contents))
 			UniteFunctionsUC::throwError("Empty import file {$filenameAddon} contents");
@@ -1203,7 +1203,7 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 		if(file_exists($filepath) == false)
 			return (null);
 
-		$contents = file_get_contents($filepath);
+		$contents = UniteFunctionsUC::fileGetContents($filepath);
 		$arrData = UniteFunctionsUC::jsonDecode($contents);
 
 		if(empty($arrData))

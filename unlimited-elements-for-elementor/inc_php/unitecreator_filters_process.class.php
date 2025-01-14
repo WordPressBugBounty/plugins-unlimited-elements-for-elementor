@@ -589,7 +589,7 @@ class UniteCreatorFiltersProcess{
 
 		$numItems = UniteFunctionsUC::getVal($request, "uccount");
 		$numItems = (int)$numItems;
-
+		
 		if(!empty($numItems))
 			$arrOutput["num_items"] = $numItems;
 
@@ -738,7 +738,7 @@ class UniteCreatorFiltersProcess{
 		if(!empty($titleStart))
 			self::$filters["titlestart"] = $titleStart;
 		
-
+		
 		return(self::$filters);
 	}
 
@@ -893,9 +893,11 @@ class UniteCreatorFiltersProcess{
 	 * process request filters
 	 */
 	public function processRequestFilters($args, $isFilterable, $isMainQuery = false){
+		
+		$this->setShowDebug();
 				
 		//allow all ajax, forbid under request and not filterable.
-
+		
 		if($isFilterable == false)
 			return($args);
 
@@ -1222,7 +1224,24 @@ class UniteCreatorFiltersProcess{
 	
 	return($arrPostLetters);
 }
-	
+
+	/**
+	 * return priceRangeMaxValue from Grid
+	 */
+	public function syncPriceRangeMaxValueWithGrid($arrFilters){
+		
+		/*if(self::$isUnderAjax == false)
+			return(array());
+		
+		$request = $this->getLastGridRequest();
+		$request = $this->modifySyncPostsRequest($request);
+		$prefix = UniteProviderFunctionsUC::$tablePrefix;*/
+
+		
+		return 1000;
+	}
+
+
 	private function _______AJAX__________(){}
 		
 	/**
@@ -1257,13 +1276,12 @@ class UniteCreatorFiltersProcess{
 		$postListName = UniteFunctionsUC::getVal($paramPostList, "name");
 
 		//check for ajax search
-		$options = $addon->getOptions();
-		$special = UniteFunctionsUC::getVal($options, "special");
+		$isAjaxSearch = $addon->isAjaxSearch();
 		
-		if($special === "ajax_search")
+		if($isAjaxSearch == true)
 			return($postListName);
-
-
+		
+		
 		$isAjaxReady = UniteFunctionsUC::getVal($arrSettingsValues, $postListName."_isajax");
 		$isAjaxReady = UniteFunctionsUC::strToBool($isAjaxReady);
 
@@ -1352,6 +1370,7 @@ class UniteCreatorFiltersProcess{
 			$arrSettingsValues = UniteFunctionsUC::getVal($arrElement, "settings");
 		else
 			$arrSettingsValues = self::$objGutenberg->getSettingsFromBlock($arrElement);
+
 		
 		//init addon
 
@@ -1445,8 +1464,7 @@ class UniteCreatorFiltersProcess{
 			
 			$htmlDebug = $objOutput->getHtmlDebug();
 			
-			
-			echo $htmlDebug;
+			s_echo($htmlDebug);
 			dmp("End Here");
 			exit();
 		}
@@ -1641,9 +1659,6 @@ class UniteCreatorFiltersProcess{
 		GlobalsProviderUC::$isUnderAjax = true;
 		
 		self::$isModeReplace = $isModeReplace;
-
-		//if($isModeFiltersInit == true)
-			//GlobalsProviderUC::$skipRunPostQueryOnce = true;
 		
 		if(self::$isGutenberg == false)
 			
@@ -1836,7 +1851,7 @@ class UniteCreatorFiltersProcess{
 	 * ajax search
 	 */
 	private function putAjaxSearchData(){
-
+		
 		self::$isUnderAjaxSearch = true;
 
 		$responseCode = http_response_code();
@@ -1860,7 +1875,6 @@ class UniteCreatorFiltersProcess{
 		//for outside filters - check that under ajax
 
 		$arrHtmlWidget = $this->getContentWidgetHtml($arrContent, $elementID);
-
 
 		GlobalsProviderUC::$isUnderAjaxSearch = false;
 
@@ -2879,27 +2893,27 @@ class UniteCreatorFiltersProcess{
 	 * set if show debug or not
 	 */
 	private function setShowDebug(){
-
+		
+		//already set
+		
+		if(self::$showDebug == true)
+			return(false);
+		
 		if(self::DEBUG_FILTER == true){
 			self::$showDebug = true;
 			return(false);
 		}
-
+		
 		//set debug only for logged in users
-
-		$isDebug = UniteFunctionsUC::getGetVar("ucfiltersdebug","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
-		$isDebug = UniteFunctionsUC::strToBool($isDebug);
+		
+		$isDebug = HelperUC::hasPermissionsFromQuery("ucfiltersdebug");
 
 		if($isDebug == true){
-
-			$hasPermissions = UniteFunctionsWPUC::isCurrentUserHasPermissions();
-
-			if($hasPermissions == true){
-				self::$showEchoDebug = true;
-				self::$showDebug = true;
-
-				dmp("SHOW DEBUG, logged in user");
-			}
+			
+			self::$showEchoDebug = true;
+			self::$showDebug = true;
+			
+			dmp("SHOW DEBUG, logged in user");
 
 		}
 
@@ -2940,11 +2954,11 @@ s	 */
 		$this->runSomeCrossPluginProtections();
 
 		$this->setShowDebug();
-
+		
 		$this->checkSetErrorsReporting();
 
 		self::$isUnderAjax = true;
-
+				
 		try{
 
 			switch($frontAjaxAction){
@@ -3005,7 +3019,7 @@ s	 */
 	 * init wordpress front filters
 	 */
 	public function initWPFrontFilters(){
-
+		
 		if(is_admin() == true)
 			return(false);
 

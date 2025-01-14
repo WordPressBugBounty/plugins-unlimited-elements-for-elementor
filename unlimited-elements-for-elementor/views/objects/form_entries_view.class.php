@@ -180,7 +180,7 @@ class UCFormEntriesView extends WP_List_Table{
 	 */
 	public function no_items(){
 
-		echo __("No entries found.", "unlimited-elements-for-elementor");
+		esc_attr_e("No entries found.", "unlimited-elements-for-elementor");
 	}
 
 	/**
@@ -426,7 +426,7 @@ class UCFormEntriesView extends WP_List_Table{
 				<?php foreach($forms as $value => $label): ?>
 					<option
 						value="<?php echo esc_attr($value); ?>"
-						<?php echo $value === $selectedForm ? "selected" : ""; ?>
+						<?php echo ($value === $selectedForm ? "selected" : ""); ?>
 					>
 						<?php echo esc_html($label); ?>
 					</option>
@@ -441,7 +441,7 @@ class UCFormEntriesView extends WP_List_Table{
 				<?php foreach($posts as $value => $label): ?>
 					<option
 						value="<?php echo esc_attr($value); ?>"
-						<?php echo $value === $selectedPost ? "selected" : ""; ?>
+						<?php echo ($value === $selectedPost ? "selected" : ""); ?>
 					>
 						<?php echo esc_html($label); ?>
 					</option>
@@ -456,7 +456,7 @@ class UCFormEntriesView extends WP_List_Table{
 				<?php foreach($dates as $value => $label): ?>
 					<option
 						value="<?php echo esc_attr($value); ?>"
-						<?php echo $value === $selectedDate ? "selected" : ""; ?>
+						<?php echo ($value === $selectedDate ? "selected" : ""); ?>
 					>
 						<?php echo esc_html($label); ?>
 					</option>
@@ -560,8 +560,9 @@ class UCFormEntriesView extends WP_List_Table{
 			ORDER BY {$this->getOrderBy()}
 		";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$ids = $wpdb->get_col($sql);
-		$entries = $this->service->findEntry($ids);
+		$entries = $this->service->findEntry($ids); 
 
 		$entryHeaders = array(
 			"id" => __("Entry ID", "unlimited-elements-for-elementor"),
@@ -614,7 +615,7 @@ class UCFormEntriesView extends WP_List_Table{
 			FROM $table
 			WHERE $where
 		";
-
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$total = $wpdb->get_var($sql);
 
 		$sql = "
@@ -626,6 +627,7 @@ class UCFormEntriesView extends WP_List_Table{
 			OFFSET {$this->getOffset()}
 		";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$ids = $wpdb->get_col($sql);
 		$items = $this->service->findEntry($ids);
 
@@ -653,6 +655,7 @@ class UCFormEntriesView extends WP_List_Table{
 			ORDER BY form_name
 		";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_results($sql);
 		$items = array();
 
@@ -678,7 +681,7 @@ class UCFormEntriesView extends WP_List_Table{
 			GROUP BY post_title
 			ORDER BY post_title
 		";
-
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_results($sql);
 		$items = array();
 
@@ -731,10 +734,10 @@ class UCFormEntriesView extends WP_List_Table{
 				$startTime = strtotime("-29 days", $startTime);
 			break;
 		}
-
+ 
 		$range = array(
-			"start" => date("Y-m-d H:i:s", $startTime),
-			"end" => date("Y-m-d H:i:s", $endTime),
+			"start" => s_date("Y-m-d H:i:s", $startTime),
+			"end" => s_date("Y-m-d H:i:s", $endTime),
 		);
 
 		return $range;
@@ -849,6 +852,7 @@ class UCFormEntriesView extends WP_List_Table{
 			WHERE {$this->getWhere($filters)}
 		";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_row($sql);
 		$counts = array();
 

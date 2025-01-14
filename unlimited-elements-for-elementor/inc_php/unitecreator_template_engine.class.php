@@ -180,9 +180,9 @@ class UniteCreatorTemplateEngineWork{
 		$htmlItem = do_shortcode($htmlItem);
 
 		if(!empty($sap) && $index !== 0)
-			echo UniteProviderFunctionsUC::escCombinedHtml($sap);
+			s_echo($sap);
 
-		echo UniteProviderFunctionsUC::escCombinedHtml($htmlItem);
+		s_echo($htmlItem);
 
 		if($newLine)
 			echo "\n";
@@ -248,13 +248,23 @@ class UniteCreatorTemplateEngineWork{
 			
 		}
 	}
-
-
+	
 	/**
-	 * put items. input can be saporator or number of item, or null
+	 * modify items
 	 */
-	public function putItems($input = null, $templateName = "item"){
-
+	private function modifyItems($arrItems, $input = null, $templateName = "item"){
+		
+		$output = array();
+		$output["arrItems"] = $arrItems;
+		$output["sap"] = null;
+		$output["numItem"] = null;
+		
+		if(empty($arrItems))
+			return($output);
+		
+		if(is_array($arrItems) == false)
+			return($output);
+		
 		$sap = null;
 		$numItem = null;
 		$isGetFirst = false;
@@ -268,18 +278,25 @@ class UniteCreatorTemplateEngineWork{
 		if(is_string($input)){
 			switch($input){
 				case "shuffle": // shuffle items
-					shuffle($this->arrItems);
+					shuffle($arrItems);
 
-					foreach($this->arrItems as $key => $item){
-						$this->arrItems[$key][$templateName]["item_index"] = ($key + 1);
+					foreach($arrItems as $key => $item){
+						$arrItems[$key][$templateName]["item_index"] = ($key + 1);
 					}
 				break;
 				case "one_random":    //get one random item
-					shuffle($this->arrItems);
+					shuffle($arrItems);
 					$isGetFirst = true;
 				break;
 				case "one_first":
 					$isGetFirst = true;
+				break;
+				case "clean":
+					
+					unset($arrItems[$key][$templateName]["item_repeater_class"]);
+					unset($arrItems[$key][$templateName]["item_index"]);
+					unset($arrItems[$key][$templateName]["item_id"]);
+					
 				break;
 				default:
 					$sap = $input;
@@ -288,9 +305,28 @@ class UniteCreatorTemplateEngineWork{
 		}
 
 		// get first item
-		if($isGetFirst === true && !empty($this->arrItems) && count($this->arrItems) > 1)
-			$this->arrItems = array($this->arrItems[0]);
+		if($isGetFirst === true && !empty($arrItems) && count($arrItems) > 1)
+			$arrItems = array($arrItems[0]);
+		
+		$output = array();
+		$output["sap"] = $sap;
+		$output["numItem"] = $numItem;
+		$output["arrItems"] = $arrItems;
+		
+		return($output);
+	}
 
+	/**
+	 * put items. input can be saporator or number of item, or null
+	 */
+	public function putItems($input = null, $templateName = "item"){
+
+		$output = $this->modifyItems($this->arrItems, $input, $templateName);
+		
+		$sap = $output["sap"];
+		$numItem = $output["numItem"];
+		$this->arrItems = $output["arrItems"];
+		
 		$this->putItemsWork($templateName, $sap, $numItem);
 	}
 
@@ -299,19 +335,20 @@ class UniteCreatorTemplateEngineWork{
 	 * get the items for iteration
 	 */
 	public function getItems($type = null){
-
+		
 		$arrItems = array();
-		foreach($this->arrItems as $item){
-			$item = $item["item"];
-			if($type == "clean"){
-				unset($item["item_repeater_class"]);
-				unset($item["item_index"]);
-				unset($item["item_id"]);
-			}
-
+		
+		$output = $this->modifyItems($this->arrItems, $type);
+		$arrItemsWork = $output["arrItems"];
+		
+		foreach($arrItemsWork as $item){
+			
+			$item =  UniteFunctionsUC::getVal($item, "item");
+			
 			$arrItems[] = $item;
 		}
-
+		
+		
 		return($arrItems);
 	}
 
@@ -326,7 +363,7 @@ class UniteCreatorTemplateEngineWork{
 		//json encode
 		$jsonItems = UniteFunctionsUC::jsonEncodeForClientSide($arrItems);
 
-		echo $jsonItems;
+		s_echo($jsonItems);
 	}
 
 	/**
@@ -344,7 +381,7 @@ class UniteCreatorTemplateEngineWork{
 
 		$jsonAttr = UniteFunctionsUC::jsonEncodeForClientSide($arrAttr);
 
-		echo $jsonAttr;
+		s_echo($jsonAttr);
 	}
 
 
@@ -410,7 +447,7 @@ class UniteCreatorTemplateEngineWork{
 
 		$htmlSchema = '<script type="application/ld+json">'.$jsonItems.'</script>';
 
-		echo $htmlSchema;
+		s_echo($htmlSchema);
 
 		//echo htmlspecialchars($htmlSchema);	//debug
 
@@ -493,7 +530,7 @@ class UniteCreatorTemplateEngineWork{
 		if(empty($css))
 			return(false);
 
-		echo UniteProviderFunctionsUC::escAddParam($css);
+		s_echo($css);
 	}
 
 
@@ -611,7 +648,7 @@ class UniteCreatorTemplateEngineWork{
 		//try to strip tags
 		if(is_numeric($dateStamp) == false){
 			$hasTags = true;
-			$stamp = strip_tags($dateStamp);
+			$stamp = wp_strip_all_tags($dateStamp);
 			$stamp = trim($stamp);
 		}
 
@@ -661,7 +698,7 @@ class UniteCreatorTemplateEngineWork{
 		if(empty($value))
 			$value = $default;
 
-		echo UniteProviderFunctionsUC::escCombinedHtml($value);
+		s_echo($value);
 	}
 
 
@@ -674,7 +711,7 @@ class UniteCreatorTemplateEngineWork{
 
 		$strUTC = gmdate('Y/m/d H:i:s', $stamp);
 
-		echo UniteProviderFunctionsUC::escCombinedHtml($strUTC);
+		echo esc_attr($strUTC);
 	}
 
 
@@ -739,7 +776,9 @@ class UniteCreatorTemplateEngineWork{
 	 * print some variable
 	 */
 	public function printVar($var){
-
+		
+		$var = UniteFunctionsUC::modifyDataArrayForShow($var);
+		
 		dmp($var);
 	}
 
@@ -903,7 +942,7 @@ class UniteCreatorTemplateEngineWork{
 	 * get post data
 	 */
 	public function getPostData($postID, $getCustomFields = false, $getCategory = false){
-
+				
 		if(empty($postID))
 			return(null);
 
@@ -930,7 +969,7 @@ class UniteCreatorTemplateEngineWork{
 
 		$encoded = json_encode($var);
 
-		echo $encoded;
+		s_echo($encoded);
 	}
 
 	/**
@@ -941,7 +980,7 @@ class UniteCreatorTemplateEngineWork{
 		$strJson = json_encode($var);
 		$strJson = htmlspecialchars($strJson);
 
-		echo $strJson;
+		s_echo($strJson);
 	}
 
 
@@ -1196,7 +1235,7 @@ class UniteCreatorTemplateEngineWork{
 			case "put_date_range":
 
 				$dateRange = HelperUC::$operations->getDateRangeString($arg1, $arg2, $arg3);
-				echo $dateRange;
+				s_echo($dateRange);
 
 			break;
 			case "get_general_setting":
@@ -1252,8 +1291,7 @@ class UniteCreatorTemplateEngineWork{
 			case "put_unite_gallery_item":
 				
 				$htmlItem = UniteCreatorUniteGallery::getUniteGalleryHtmlItem($arg1);
-
-				echo $htmlItem;
+				s_echo($htmlItem);
 
 			break;
 			case "set":		//set and remember
@@ -1386,8 +1424,7 @@ class UniteCreatorTemplateEngineWork{
 				$this->returnSavedPost();
 
 				$content = HelperProviderCoreUC_EL::getPostContent($arg1, $arg2);
-
-				echo $content;
+				s_echo($content);
 			break;
 			case "get_num_comments":
 
@@ -1503,14 +1540,14 @@ class UniteCreatorTemplateEngineWork{
 			case "render":		//render twig template
 
 				$html = $this->getRenderedHtml($arg1, GlobalsProviderUC::$isUnderItem);
-				echo $html;
+				s_echo($html);
 
 			break;
 			case "put_post_link":	//by id
 
 				if(!empty($arg1)){
 					$link = get_permalink($arg1);
-					echo $link;
+					s_echo($link);
 				}
 
 			break;
@@ -1534,7 +1571,7 @@ class UniteCreatorTemplateEngineWork{
 				if(empty($obj))
 					return(false);
 
-				echo $obj->labels->singular_name;
+				s_echo($obj->labels->singular_name);
 
 			break;
 			case "put_post_terms_string":
@@ -1544,7 +1581,7 @@ class UniteCreatorTemplateEngineWork{
 
 				$strTermsNames = UniteFunctionsWPUC::getPostTermsTitlesString($arg1, true);
 
-				echo $strTermsNames;
+				s_echo($strTermsNames);
 			break;
 			case "get_sort_filter_data":
 
@@ -1561,7 +1598,7 @@ class UniteCreatorTemplateEngineWork{
 				if(is_wp_error($url)){
 					dmp($url);
 				}
-				else echo $url;
+				else echo esc_url($url);
 			break;
 			case "put_woo_cart_html":
 
@@ -1587,7 +1624,7 @@ class UniteCreatorTemplateEngineWork{
 
 				$jsonData = UniteFunctionsUC::jsonEncodeForClientSide($arrData);
 
-				echo $jsonData;
+				s_echo($jsonData);
 			break;
 			case "validate_submit_button":
 
@@ -1639,6 +1676,33 @@ class UniteCreatorTemplateEngineWork{
 				$arrData = $objFilters->syncAlphabetWithGrid($arg1);
 				
 				return($arrData);
+			break;
+			case "get_rss_keys":
+				
+                $objRSS = new UniteCreatorRSS();
+
+                $arrData = $objRSS->getRssFeedKeys($this->addon, $this->arrParams);
+
+            return($arrData);
+			break;
+			case "get_url_from_string":
+				
+				$url = UniteFunctionsUC::getFirstUrlFromText($arg1);
+				
+				return($url);
+			break;
+			case "get_attachment_url":	//from attachmet id
+				
+				$url = wp_get_attachment_url($arg1);
+				
+				return($url);
+			break;
+			case "get_max_price_value":
+
+				$objFilters = new UniteCreatorFiltersProcess();
+				$priceRangeMaxValue = $objFilters->syncPriceRangeMaxValueWithGrid($arg1);
+
+				return($priceRangeMaxValue);
 			break;
 			default:
 

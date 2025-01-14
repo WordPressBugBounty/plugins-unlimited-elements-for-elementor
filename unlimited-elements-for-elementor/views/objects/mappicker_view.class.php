@@ -36,7 +36,7 @@ class UniteCreatorMappickerView{
 	/**
 	 * get API key, default or private
 	 */
-	private function getAPIKey(){
+	private function getAPIKey(){ 
 
 		if(!empty($this->apiKey))
 			return($this->apiKey);
@@ -50,7 +50,8 @@ class UniteCreatorMappickerView{
 	 */
 	private function initScripts(){
 
-		$rand = rand(10,999999);
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.rand_mt_rand
+		$rand = mt_rand(10,999999);
 
 		$this->urlScript = GlobalsUC::$urlPlugin."js/unitecreator_map_picker.js?rand=".$rand;
 
@@ -199,7 +200,8 @@ class UniteCreatorMappickerView{
 				<div class="uc-mappicker-overlay-trans"></div>
 				<div class="uc-mappicker-overlay-black"></div>
 				<div class="uc-mappicker-overlay-text">
-					<?php esc_html_e("For edit the map, please enter your google map API Key in", "unlimited-elements-for-elementor")?> <?php echo UniteProviderFunctionsUC::escAddParam($linkGeneralSettings)?>.
+					<?php esc_html_e("For edit the map, please enter your google map API Key in", "unlimited-elements-for-elementor")?> <?php 
+				s_echo( $linkGeneralSettings )?>.
 					<br>
 					<br>
 					You can create your API key in <a href="https://developers.google.com/maps/documentation/javascript/" target="_blank">google map developes page</a>
@@ -216,7 +218,8 @@ class UniteCreatorMappickerView{
 
 					<div class="unite-right-panel">
 
-						<div id="uc_mappicker_mapwrapper" <?php echo UniteProviderFunctionsUC::escAddParam($addHtml)?> class="uc-mappicker-wrapper">
+						<div id="uc_mappicker_mapwrapper" <?php 
+				s_echo( $addHtml )?> class="uc-mappicker-wrapper">
 							<div id="uc_mappicker_map" ></div>
 						</div>
 					</div>
@@ -237,9 +240,11 @@ class UniteCreatorMappickerView{
 
 		$apiKey = $this->getAPIKey();
 
+		// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
+		echo '<script type="text/javascript" src="' . esc_url($this->urlScript) .'"></script>';
+		// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
+		echo '<script id="uc_mappicker_script" src="' . esc_url($urlGoogleScript) .'"></script>';
 		?>
-			<script type="text/javascript" src="<?php echo esc_attr($this->urlScript)?>"></script>
-			<script id="uc_mappicker_script" src="<?php echo esc_attr($urlGoogleScript)?>"></script>
 
 			<script>
 				var g_objMapPicker;
@@ -250,7 +255,7 @@ class UniteCreatorMappickerView{
 				});
 
 
-				/**
+				/** 
 				* global function for get data
 				*/
 				document.getIframeData = function(){
@@ -461,7 +466,7 @@ class UniteCreatorMappickerView{
 
 		//set size
 		$width = $this->getSetting("width");
-		$height = $this->getSetting("height");
+		$height = $this->getSetting("height"); 
 
 		$width = UniteFunctionsUC::normalizeSize($width);
 		$height = UniteFunctionsUC::normalizeSize($height);
@@ -508,40 +513,50 @@ class UniteCreatorMappickerView{
 		?>
 
 		<style type="text/css">
-			<?php echo UniteProviderFunctionsUC::escCombinedHtml($css)?>
+			<?php 
+			s_echo( $css );
+			?>
 		</style>
 		<div id="<?php echo esc_attr($mapID)?>"></div>
 
 		<script type="text/javascript">
-			function <?php echo UniteProviderFunctionsUC::escCombinedHtml($functionName)?>(){
+			function <?php echo esc_attr($functionName); ?>(){
 
 				g_ucGoogleMapLoaded = true;
 
-				var strOptions = '<?php echo UniteProviderFunctionsUC::escCombinedHtml($jsonOptions)?>';
+				var strOptions = '<?php 
+					s_echo( $jsonOptions );
+					?>';
 				var mapOptions = JSON.parse(strOptions);
 				mapOptions.center.lat = Number(mapOptions.center.lat);
 				mapOptions.center.lng = Number(mapOptions.center.lng);
 				mapOptions.zoom = Number(mapOptions.zoom);
 
 				<?php if($style):?>
-				var strStyles = '<?php echo UniteProviderFunctionsUC::escAddParam($style)?>';
+				var strStyles = '<?php 
+				s_echo( $style )?>';
 				mapOptions.styles = JSON.parse(strStyles);
 				<?php endif?>
 
 				<?php if($mapTypeID):?>
-				mapOptions.mapTypeId = "<?php echo UniteProviderFunctionsUC::escAddParam($mapTypeID)?>";
+				mapOptions.mapTypeId = "<?php 
+				s_echo( $mapTypeID );?>";
 				<?php endif?>
 
-				var map = new google.maps.Map(document.getElementById("<?php echo UniteProviderFunctionsUC::escAddParam($mapID)?>"), mapOptions);
+				var map = new google.maps.Map(document.getElementById("<?php 
+				s_echo( $mapID );?>"), mapOptions);
 
 				<?php if($putMarker):?>
 				marker = new google.maps.Marker({
 					position:{
-						lat: <?php echo UniteProviderFunctionsUC::escAddParam($markerLat)?>,
-						lng: <?php echo UniteProviderFunctionsUC::escAddParam($markerLng)?>
+						lat: <?php 
+				s_echo( $markerLat ); ?>,
+						lng: <?php 
+				s_echo( $markerLng );?>
 					},
 					map:map
-				<?php if($markerIcon):?>,icon:"<?php echo UniteProviderFunctionsUC::escAddParam($markerIcon)?>"<?php endif?>
+				<?php if($markerIcon):?>,icon:"<?php 
+				s_echo( $markerIcon ); ?>"<?php endif?>
 				});
 				<?php endif?>
 			}
@@ -553,19 +568,24 @@ class UniteCreatorMappickerView{
 				g_ucGoogleMapLoaded = false;
 
 				var tag = document.createElement('script');
-				tag.src = "<?php echo UniteProviderFunctionsUC::escAddParam($url)?>";
+				tag.src = "<?php 
+				s_echo( $url ); ?>";
 				var firstScriptTag = document.getElementsByTagName('script')[0];
 				firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 				g_ucGoogleMapLoading = true;
 
 			}else{	//just run function
 				if(typeof g_ucGoogleMapLoaded != "undefined" && g_ucGoogleMapLoaded == true)
-					<?php echo UniteProviderFunctionsUC::escAddParam($functionName)?>();
+					<?php 
+				s_echo( $functionName ); ?>();
 				else
-					g_interval_<?php echo UniteProviderFunctionsUC::escAddParam($mapID)?> = setInterval(function(){
+					g_interval_<?php 
+				s_echo( $mapID ); ?> = setInterval(function(){
 						if(typeof g_ucGoogleMapLoaded != "undefined" && g_ucGoogleMapLoaded == true){
-							clearInterval(g_interval_<?php echo UniteProviderFunctionsUC::escAddParam($mapID)?>);
-							<?php echo UniteProviderFunctionsUC::escAddParam($functionName)?>();
+							clearInterval(g_interval_<?php 
+				s_echo( $mapID ); ?>);
+							<?php 
+				s_echo( $functionName ); ?>();
 						}
 					},200);
 

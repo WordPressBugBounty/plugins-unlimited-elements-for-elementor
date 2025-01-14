@@ -1705,7 +1705,7 @@ class UniteCreatorParamsProcessorWork{
 			$stamp = $value;
 			
 			$data[$name."_stamp"] = $value;
-			$data[$name] = date($formatFullDate, $stamp);
+			$data[$name] = s_date($formatFullDate, $stamp);
 	
 			if($isDebug == true){
 				dmp("get time2");
@@ -1730,6 +1730,7 @@ class UniteCreatorParamsProcessorWork{
 		return($data);
 	}
 
+	
 
 	/**
 	 * put hover animation style if needed

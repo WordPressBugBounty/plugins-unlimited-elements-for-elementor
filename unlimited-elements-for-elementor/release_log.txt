@@ -1,15 +1,27 @@
 
 
+version 1.5.136:
+
+* Fix: fixed a small php bug in getPostTerms twig template function
+* Feature: added ajax search by functionality
+* Fix: performance: ajax search don't run extra db query without ajax run
+* Fix: added some ajax search and woo ajax search functionality. 
+* Fix: better pagination detection in case of 2 widgets in a group
+* Fix: fixed post modified date
+* Fix: fixed time stamp detection function
+* Feature: added json / csv to repeater field
+
+
 version 1.5.135:
 
 *Fix: fixed small php bug in date convert function
 *Fix: fixed wp_filesystem php bugs
 
+
 version 1.5.134:
 
 * Fix - fixed version text display
 * Change - Improved performance by dramatically reduce number of convertStdClassToArray function calls
-
 
 version 1.5.133:
 

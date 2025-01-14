@@ -56,12 +56,14 @@ class UEHttpResponse{
 	 * @return mixed
 	 * @throws UEHttpResponseException
 	 */
-	public function json(){
+	public function json(){ 
 
 		$data = json_decode($this->body(), true);
 
-		if($data === null)
+		if($data === null) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw new UEHttpResponseException("Unable to parse the JSON body.", $this);
+		}
 
 		return $data;
 	}

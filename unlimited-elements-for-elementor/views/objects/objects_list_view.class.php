@@ -124,7 +124,8 @@ class UniteCreatorObjectsListView extends UniteElementsBaseUC{
 		$strOptions = UniteFunctionsUC::jsonEncodeForHtmlData($options);
 		
 		?>
-			<div id="uc_table_objects_wrapper" data-options="<?php echo UniteProviderFunctionsUC::escAddParam($strOptions)?>">
+			<div id="uc_table_objects_wrapper" data-options="<?php 
+				s_echo( $strOptions ) ?>">
 			
 				<?php if(empty($this->arrObjects)): ?>
 				<div>
@@ -178,7 +179,7 @@ class UniteCreatorObjectsListView extends UniteElementsBaseUC{
 							<?php endif?>
 							
 							<td>
-								<a href='<?php echo esc_attr($editLink)?>' class="unite-button-primary float_left mleft_15"><?php echo esc_html__("Edit", "unlimited-elements-for-elementor")." ".$this->txtSingleName ?></a>
+								<a href='<?php echo esc_attr($editLink)?>' class="unite-button-primary float_left mleft_15"><?php echo esc_html__("Edit", "unlimited-elements-for-elementor")." ".esc_attr($this->txtSingleName); ?></a>
 								
 								<a href='javascript:void(0)' data-action="delete" data-id="<?php echo esc_attr($id)?>" class="uc-button-action unite-button-secondary float_left mleft_15"><?php esc_html_e("Delete","unlimited-elements-for-elementor"); ?></a>
 								<span class="loader_text uc-loader-delete" style="display:none"><?php esc_html_e("Deleting", "unlimited-elements-for-elementor")?></span>

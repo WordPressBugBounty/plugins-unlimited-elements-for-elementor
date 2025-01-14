@@ -208,6 +208,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			$js .= self::TAB2.'var g_uctext = {'.self::BR;
 			$js .= self::TAB3.$jsArrayText.self::BR;
 			$js .= self::TAB2.'};'.self::BR;
+
 			
 			return($js);
 		}
@@ -228,7 +229,9 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			return($html);
 		}
 
-		
+
+
+
 		/**
 		 * get version text
 		 */
@@ -239,7 +242,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			if(file_exists($filepath) == false)
 				UniteFunctionsUC::throwError("file: $filepath not exists");
 			
-			$content = file_get_contents($filepath);
+			$content = UniteFunctionsUC::fileGetContents($filepath);
 			$content = trim($content);
 			
 			//$content = substr($content, 0, 10000);
@@ -380,7 +383,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		 * get css include
 		 */
 		public static function getHtmlCssInclude($url){
-
+			// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
 			$html = "<link rel=\"stylesheet\" type=\"text/css\" href=\"{$url}\">";
 
 			return($html);
@@ -391,7 +394,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		 * get css include
 		 */
 		public static function getHtmlJsInclude($url){
-
+			// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
 			$html = "<script type=\"text/javascript\" src=\"{$url}\"></script>";
 
 			return($html);
@@ -475,8 +478,25 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		}
 
 		protected function z_________PUTTERS_______(){}
-
-
+		
+		/**
+		 * put debug box
+		 */
+		public static function putHtmlDataDebugBox($data){
+			
+			echo "<div style='background-color:#E5F7E1;font-size:12px;padding:5px;'>";
+			dmp($data);
+			echo "</div>";
+		}
+		
+		/**
+		 * put debug wrapper div start
+		 */
+		public static function getQueryDebugWrapperStyles(){
+			
+			return("background: lightgrey; padding: 10px; margin-bottom: 10px; font-size: 12px;");
+		}
+		
 		/**
 		 * put all browser dialogs of all addon types
 		 */
@@ -536,13 +556,14 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			?>
 			<script type="text/javascript" id="unlimited_elements_admin_globals">
 
-				<?php echo self::getGlobalJsOutput();?>
+				<?php 
+				s_echo(self::getGlobalJsOutput());
+				?>
 
 			</script>
 
 			<?php
-
-				echo self::getGlobalDebugDivs();
+				s_echo(self::getGlobalDebugDivs());
 
 				if(method_exists("UniteProviderFunctionsUC", "putMasterHTML"))
 					UniteProviderFunctionsUC::putMasterHTML()
@@ -619,8 +640,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				}
 
 				echo ", ";
-
-				echo UniteProviderFunctionsUC::escCombinedHtml($title);
+				s_echo($title);
 			}
 
 		}
@@ -675,7 +695,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		public static function outputErrorMessage($message){
 
 			echo "<div style='color:darkred;margin:20px;'>";
-			echo $message;
+			echo esc_attr($message);
 			echo "</div>";
 		}
 
@@ -700,8 +720,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				$trace = $e->getTraceAsString();
 
 			$html = self::getErrorMessageHtml($message, $trace);
-
-			echo UniteProviderFunctionsUC::escCombinedHtml($html);
+			s_echo($html);
 		}
 
 		/**
@@ -860,8 +879,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 				$html .= "\n<div class='unite-admin-notice'>{$notice}</div>\n";
 			}
-
-			echo UniteProviderFunctionsUC::escCombinedHtml($html);
+			s_echo($html);
 
 			//clear admin notices
 
@@ -882,8 +900,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 					var objHeader = jQuery(".unite_header_wrapper");
 					if(objHeader){
 						<?php foreach($arrNotices as $notice):
-							$notice = htmlspecialchars($notice);
-							echo "objHeader.append(\"<div class=\'unite-admin-notice\'>{$notice}</div>\");";
+							echo "objHeader.append(\"<div class=\'unite-admin-notice\'>" . esc_html($notice) . "</div>\");";
 						endforeach;
 						?>
 					}
@@ -1091,10 +1108,10 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 				<div class="unite-inputs-sap"></div>
 
-				<label for="<?php echo $checkboxID?>" class="unite-inputs-label-inline-free">
+				<label for="<?php echo esc_attr($checkboxID)?>" class="unite-inputs-label-inline-free">
 						<?php esc_html_e("Enable Condition", "unlimited-elements-for-elementor")?>:
 				</label>
-				<input id="<?php echo $checkboxID?>" type="checkbox" name="enable_condition" class="uc-control" data-controlled-selector=".uc-dialog-conditions-content">
+				<input id="<?php echo esc_attr($checkboxID)?>" type="checkbox" name="enable_condition" class="uc-control" data-controlled-selector=".uc-dialog-conditions-content">
 
 				<div class="uc-dialog-conditions-content">
 
@@ -1102,13 +1119,13 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 					<div class="uc-dialog-conditions-empty">
 
-						<?php _e("No parent attribute (dropdown, checkbox or radio) exists in this category")?>
+						<?php esc_attr_e("No parent attribute (dropdown, checkbox or radio) exists in this category", "unlimited-elements-for-elementor")?>
 					</div>
 
 					<div class="uc-dialog-conditions-inputs">
 
 						<label class="unite-inputs-label">
-							<?php _e("Show When", "unlimited-elements-for-elementor")?>:
+							<?php esc_attr_e("Show When", "unlimited-elements-for-elementor")?>:
 						</label>
 
 						<table class="uc-table-dialog-conditions">
@@ -1118,15 +1135,15 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 								</td>
 								<td>
 									<select class="uc-dialog-condition-operator" name="condition_operator">
-										<option value="equal"><?php _e("Equal","unlimited-elements-for-elementor")?></option>
-										<option value="not_equal"><?php _e("Not Equal","unlimited-elements-for-elementor")?></option>
+										<option value="equal"><?php esc_attr_e("Equal","unlimited-elements-for-elementor")?></option>
+										<option value="not_equal"><?php esc_attr_e("Not Equal","unlimited-elements-for-elementor")?></option>
 									</select>
 								</td>
 								<td>
 									<div class="uc-dialog-condition-value-wrapper">
 										<select class="uc-dialog-condition-value" name="condition_value" multiple></select>
 
-										<a href="javascript:void(0)" class="uc-dialog-link-addcondition" title="<?php _e("Add Condition", "unlimited-elements-for-elementor") ?>">+</a>
+										<a href="javascript:void(0)" class="uc-dialog-link-addcondition" title="<?php esc_attr_e("Add Condition", "unlimited-elements-for-elementor") ?>">+</a>
 									</div>
 								</td>
 							</tr>
@@ -1136,8 +1153,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 								</td>
 								<td>
 									<select class="uc-dialog-condition-operator" name="condition_operator2">
-										<option value="equal"><?php _e("Equal","unlimited-elements-for-elementor")?></option>
-										<option value="not_equal"><?php _e("Not Equal","unlimited-elements-for-elementor")?></option>
+										<option value="equal"><?php esc_attr_e("Equal","unlimited-elements-for-elementor")?></option>
+										<option value="not_equal"><?php esc_attr_e("Not Equal","unlimited-elements-for-elementor")?></option>
 									</select>
 								</td>
 								<td>
@@ -1162,11 +1179,11 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 
 			if($arg2 == "unitegallery"){
-				echo "{$arg1}.data(\"unitegallery-api\",api);\n";
+				echo esc_attr($arg1) . ".data(\"unitegallery-api\",api);\n";
 				$arg2 = null;
 			}
 
-			$strOptions = "[$arg1";
+			$strOptions = "[" . esc_attr($arg1);
 
 			//maybe put something here
 
@@ -1174,11 +1191,11 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 			?>
 			<?php if(!empty($arg2)):?>
-			<?php echo $arg1?>.data("uc-remote-options", <?php echo $arg2?>);
+			<?php echo esc_attr($arg1)?>.data("uc-remote-options", <?php s_echo($arg2)?>);
 			<?php endif?>
 
-			<?php echo $arg1?>.trigger("uc-object-ready");
-			jQuery(document).trigger("uc-remote-parent-init", <?php echo $strOptions?>);
+			<?php echo esc_attr($arg1)?>.trigger("uc-object-ready");
+			jQuery(document).trigger("uc-remote-parent-init", <?php s_echo($strOptions)?>);
 			<?php
 
 		}
@@ -1208,7 +1225,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 			$strCSS.= "{display:none}";
 
-			echo "\n".$strCSS;
+			s_echo("\n".$strCSS);
 		}
 
 		/**
@@ -1235,7 +1252,9 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 			<div class="uc-phpino" style="overflow-x:scroll;width:100%;">
 
-			<?php echo $content;?>
+			<?php 
+			s_echo($content);
+			?>
 
 			</div>
 <?php
@@ -1284,7 +1303,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 			?>
 jQuery(document).ready(function(){
-function <?php echo $widgetID?>_start(){
+function <?php echo esc_attr($widgetID)?>_start(){
 			<?php
 
 		}
@@ -1295,9 +1314,9 @@ function <?php echo $widgetID?>_start(){
 		public static function putDocReadyEndJS($widgetID){
 
 			?>
-}if(jQuery("#<?php echo $widgetID?>").length) <?php echo $widgetID?>_start();
+}if(jQuery("#<?php echo esc_attr($widgetID)?>").length) <?php echo esc_attr($widgetID)?>_start();
 	jQuery( document ).on( 'elementor/popup/show', (event, id, objPopup) => {
-	if(objPopup.$element.has(jQuery("#<?php echo $widgetID?>")).length) <?php echo $widgetID?>_start();});
+	if(objPopup.$element.has(jQuery("#<?php echo esc_attr($widgetID)?>")).length) <?php echo esc_attr($widgetID)?>_start();});
 });
 
 			<?php

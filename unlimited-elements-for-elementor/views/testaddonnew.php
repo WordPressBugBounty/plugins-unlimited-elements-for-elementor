@@ -37,7 +37,7 @@ class UniteCreatorTestAddonNewView{
 
 		?>
 
-		<h1><?php esc_html_e("Widget Preview", "unlimited-elements-for-elementor"); ?> - <?php esc_html_e($addonTitle, "unlimited-elements-for-elementor"); ?></h1>
+		<h1><?php esc_html_e("Widget Preview", "unlimited-elements-for-elementor"); ?> - <?php echo esc_html($addonTitle); ?></h1>
 
 		<div class="uc-preview-addon-actions">
 			<div class="uc-preview-addon-actions-primary">
@@ -53,7 +53,7 @@ class UniteCreatorTestAddonNewView{
 				<button
 					id="uc_testaddon_button_restore"
 					class="unite-button-secondary"
-					<?php echo $isTestData1 === false ? 'style="display:none"' : ""; ?>
+					<?php echo ($isTestData1 === false ? 'style="display:none"' : ""); ?>
 					data-text-default="<?php esc_attr_e("Restore", "unlimited-elements-for-elementor"); ?>"
 					data-text-loading="<?php esc_attr_e("Restoring...", "unlimited-elements-for-elementor"); ?>"
 				>
@@ -62,7 +62,7 @@ class UniteCreatorTestAddonNewView{
 				<button
 					id="uc_testaddon_button_delete"
 					class="unite-button-secondary"
-					<?php echo $isTestData1 === false ? 'style="display:none"' : ""; ?>
+					<?php echo ($isTestData1 === false ? 'style="display:none"' : ""); ?>
 					data-text-default="<?php esc_attr_e("Delete", "unlimited-elements-for-elementor"); ?>"
 					data-text-loading="<?php esc_attr_e("Deleting...", "unlimited-elements-for-elementor"); ?>"
 				>

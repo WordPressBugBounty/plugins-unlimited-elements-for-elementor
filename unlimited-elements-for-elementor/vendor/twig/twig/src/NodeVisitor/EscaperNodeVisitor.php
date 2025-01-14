@@ -115,7 +115,7 @@ final class EscaperNodeVisitor implements NodeVisitorInterface
             $expr3 = $this->escapeInlinePrintNode(new InlinePrint($expr3, $expr3->getTemplateLine()), $env, $type);
         }
 
-        return new ConditionalExpression($expression->getNode('expr1'), $expr2, $expr3, $expression->getTemplateLine());
+        return new ConditionalExpression($expression->getNode('expr1'), $expr2, $expr3, $expression->getTemplateLine()); 
     }
 
     private function escapeInlinePrintNode(InlinePrint $node, Environment $env, string $type): Node

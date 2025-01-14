@@ -37,7 +37,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 					
 		?>
 		
-			<a id="<?php echo esc_attr($sapID)?>_tablink" data-name="<?php echo esc_attr($sapName)?>" data-contentid="<?php echo esc_attr($sapID)?>" class="<?php echo esc_attr($class)?>" href="javascript:void(0)" onfocus="this.blur()" <?php echo $style?>> <?php echo esc_html($text)?></a>
+			<a id="<?php echo esc_attr($sapID)?>_tablink" data-name="<?php echo esc_attr($sapName)?>" data-contentid="<?php echo esc_attr($sapID)?>" class="<?php echo esc_attr($class)?>" href="javascript:void(0)" onfocus="this.blur()" <?php 
+				s_echo( $style ); ?>> <?php echo esc_html($text)?></a>
 			
 		<?php endforeach?>
 		
@@ -69,7 +70,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				
 			?>
 			
-			<div id="<?php echo esc_attr($sapID)?>" class="uc-tab-content" <?php echo UniteProviderFunctionsUC::escAddParam($style)?> >
+			<div id="<?php echo esc_attr($sapID)?>" class="uc-tab-content" <?php 
+				s_echo( $style ); ?> >
 				<?php
 				
 				$objOutput->drawSettings($sapKey);
@@ -97,7 +99,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 	jQuery(document).ready(function(){
 		
 		var objAdmin = new UniteCreatorAdmin_GeneralSettings();
-		objAdmin.initView("<?php echo UniteProviderFunctionsUC::escAddParam($this->saveAction)?>");
+		objAdmin.initView("<?php 
+				s_echo( $this->saveAction ); ?>");
 		
 	});
 

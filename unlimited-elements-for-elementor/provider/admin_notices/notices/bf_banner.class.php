@@ -112,7 +112,7 @@ class UCAdminNoticeBFBanner extends UCAdminNoticeAbstract{
 	/**
 	 * get inside html
 	 */
-	private function getInsideHTML(){
+	private function getInsideHTML(){ 
 		
 		$urlLogoWhite = GlobalsUC::$urlPluginImages."logo-unlimited-white-image.png";
 		
@@ -125,7 +125,7 @@ class UCAdminNoticeBFBanner extends UCAdminNoticeAbstract{
 		$htmlHeaderImage = "<img class=\"uc-bf-banner__header\" height='86' src=\"{$urlHeaderImage}\"> ";
 		
 		$htmlCounter = '
-			<img class="uc-bf-banner__counter" src="http://i.countdownmail.com/2mgwko.gif" style="display:inline-block!important;width:100%!important;max-width:272px!important;" border="0" alt="countdownmail.com"/>
+			<img class="uc-bf-banner__counter" src="' . esc_url(GlobalsUC::$urlPluginImages . '2mgwko.gif') . '" style="display:inline-block!important;width:100%!important;max-width:272px!important;" border="0" alt="countdownmail.com"/>
 		';
 		
 		$htmlText = "<div class='uc-bf-banner__text'>Give Your Elementor <br> Website <span>Superpowers</span></div>";

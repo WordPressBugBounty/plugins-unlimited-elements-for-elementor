@@ -63,7 +63,7 @@ class Control_UC_CustomCode extends Base_Data_Control {
 		
 		?>
 		<div class="elementor-control-field">
-				<div id="<?php echo $control_uid; ?>" data-setting="{{ data.name }}" {{data.addparams}} data-codetype="{{data.codetype}}" class="uc-custom-code" style="display:none" ></div>
+				<div id="<?php echo esc_attr($control_uid); ?>" data-setting="{{ data.name }}" {{data.addparams}} data-codetype="{{data.codetype}}" class="uc-custom-code" style="display:none" ></div>
 		</div>
 		<?php
 	}

@@ -36,17 +36,20 @@ class GlobalsUnlimitedElements{
 
 	public static $enableInstagramErrorMessage = false;
   	
-	public static $enableLimitProFunctionality = false;	//enable limit pro options in elementor
+	public static $enableLimitProFunctionality = true;	//enable limit pro options in elementor
 	
 	public static $enableEditProOptions = false;	 //set to enable edit pro options
 	
 	//public static $insideNotificationText = "🖤 Black Friday Sale! <br> Don’t Miss Out on the <br> BIGGEST SALE of the Year! 🎉<br> <a style='text-decoration:underline;' href='https://unlimited-elements.com/pricing/' target='_blank'>Get Deal Now!</a> ";
-	public static $insideNotificationText = "Unlock Access To All PRO Widgets and Features.  <a href='https://unlimited-elements.com/pricing/' target='_blank'>Upgrade Now</a> ";
+	public static $insideNotificationText = "Unlock Access To All Pro Widgets and Features.  <a href='https://unlimited-elements.com/pricing/' target='_blank'>Upgrade Now</a> ";
 	public static $insideNotificationUrl = "https://unlimited-elements.com/pricing/";
+	
+	public static $insideNotificationModal = false;
 
 	const PLUGIN_NAME = "unlimitedelements";
 	const VIEW_DASHBOARD = "dashboard";
 	const VIEW_ADDONS_ELEMENTOR = "addons_elementor";
+	const VIEW_LICENSE_ELEMENTOR = "licenseelementor";
 	const VIEW_SETTINGS_ELEMENTOR = "settingselementor";
 	const VIEW_TEMPLATES_ELEMENTOR = "templates_elementor";
 	const VIEW_SECTIONS_ELEMENTOR = "sections_elementor";
@@ -56,7 +59,6 @@ class GlobalsUnlimitedElements{
 	const VIEW_FORM_ENTRIES = "form_entries";
 	const VIEW_CHANGELOG = "changelog";
 	const VIEW_CHANGELOG_IMPORT = "changelog_import";
-	const VIEW_LICENSE_ELEMENTOR = "licenseelementor";
 
 	const LINK_BUY = "https://unlimited-elements.com/pricing/";
 
@@ -180,6 +182,7 @@ class GlobalsUnlimitedElements{
 
 		self::$urlPluginGutenberg = self::$urlPlugin."gutenberg/";
 		
+		
 		if(self::$isGutenbergOnly == true){
 			
 			self::$pluginTitleCurrent = self::PLUGIN_TITLE_GUTENBERG;
@@ -212,7 +215,7 @@ class GlobalsUnlimitedElements{
 //			new UCAdminNoticeRating(),
 		
 		UCAdminNotices::init($arrBanners);
-		
+
 	}
 
 	

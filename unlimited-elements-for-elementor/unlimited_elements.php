@@ -4,19 +4,30 @@
 * Plugin URI: http://unlimited-elements.com
 * Description: Elementor all-in-one addons pack with the best widgets for Elementor, offering 100+ free widgets, templates, and tools to create stunning websites!
 * Author: Unlimited Elements
-* Version: 1.5.135
+* Version: 1.5.136
 * Author URI: http://unlimited-elements.com
 * Text Domain: unlimited-elements-for-elementor
 * Domain Path: /languages
 *  
-* Tested up to: 6.7
-* Elementor tested up to: 3.25.7
-* Elementor Pro tested up to: 3.25.3
+* Tested up to: 6.7.1
+* Elementor tested up to: 3.26.4
+* Elementor Pro tested up to: 3.26.3
+*
+* License: GPLv2 or later
+* License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 if(!defined("UNLIMITED_ELEMENTS_INC"))
 	define("UNLIMITED_ELEMENTS_INC", true);
-	
+
+if(!defined("UE_ENABLE_ELEMENTOR_SUPPORT"))
+	define("UE_ENABLE_ELEMENTOR_SUPPORT", true);
+else{
+	if(!defined("UC_BOTH_VERSIONS_ACTIVE"))
+		define("UC_BOTH_VERSIONS_ACTIVE", true);
+} 
+
+/*** Freemius ***/	
 if ( ! function_exists( 'uefe_fs' ) ) {
     // Create a helper function for easy SDK access.
     function uefe_fs() {
@@ -56,6 +67,7 @@ if ( ! function_exists( 'uefe_fs' ) ) {
     do_action( 'uefe_fs_loaded' );
     
 }	
+/*** End Freemius ***/	
 	
 $mainFilepath = __FILE__;
 $currentFolder = dirname($mainFilepath);
@@ -77,14 +89,6 @@ try{
 		
 	}
     
-	//check for double include
-	if(property_exists('GlobalsUC', 'active_plugins_versions')){
-		
-	    if(in_array('unlimited-elements-for-elementor', GlobalsUC::$active_plugins_versions))
-		    define("UC_BOTH_VERSIONS_ACTIVE", true);
-	    else
-	        GlobalsUC::$active_plugins_versions[] = 'unlimited-elements-for-elementor';
-	}
 
 	
 }catch(Exception $e){

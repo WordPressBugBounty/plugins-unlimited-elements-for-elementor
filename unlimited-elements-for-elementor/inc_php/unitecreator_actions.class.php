@@ -99,7 +99,7 @@ class UniteCreatorActions{
 		$addonType = $addons->getAddonTypeFromData($data);
 
 		$data = UniteProviderFunctionsUC::normalizeAjaxInputData($data);
-	
+
 		try{
 
 			//protection - it's intended to logged in users only with the capabilities defined in the plugin
@@ -144,11 +144,6 @@ class UniteCreatorActions{
 
 					$manager = UniteCreatorManager::getObjManagerByAddonType($addonType, $data);
 					$response = $manager->getCatAddonsHtmlFromData($data);
-					
-					$verFlags = HelperUC::getActivePluginVersions();
-					if($verFlags[GlobalsUC::VERSION_GUTENBERG] && !$verFlags[GlobalsUC::VERSION_ELEMENTOR]) { 
-						$response = str_replace('Widgets', 'Blocks', $response);
-					}
 
 					HelperUC::ajaxResponseData($response);
 				break;
@@ -459,8 +454,20 @@ class UniteCreatorActions{
 				case "get_version_text":
 
 					$content = HelperHtmlUC::getVersionText();
-					
+
 					HelperUC::ajaxResponseData(array("text" => $content));
+				break;
+				case "update_plugin":
+
+					HelperProviderUC::verifyAdminPermission();
+
+					if(method_exists("UniteProviderFunctionsUC", "updatePlugin"))
+						UniteProviderFunctionsUC::updatePlugin();
+					else{
+						echo "Functionality Don't Exists";
+						exit;
+					}
+
 				break;
 				case "update_general_settings":
 

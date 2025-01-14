@@ -123,7 +123,7 @@ class FilesystemLoader implements LoaderInterface
             return new Source('', $name, '');
         }
 
-        return new Source(file_get_contents($path), $name, $path);
+        return new Source(UniteFunctionsUC::fileGetContents($path), $name, $path);
     }
 
     public function getCacheKey(string $name): string

@@ -651,7 +651,7 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 		$urlRedirect = HelperUC::getViewUrl_Default();
 
 		dmp("addons installed, redirecting...");
-		echo "<script>location.href='$urlRedirect'</script>";
+		s_echo( "<script>location.href='$urlRedirect'</script>");
 		exit();
 	}
 
@@ -677,11 +677,11 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 	 */
 	public function plugin_action_links($links){
 
-		$settings_link = sprintf('<a href="%s">%s</a>', admin_url('admin.php?page=' . Settings::PAGE_ID), __('Settings', 'elementor'));
+		$settings_link = sprintf('<a href="%s">%s</a>', admin_url('admin.php?page=' . Settings::PAGE_ID), __('Settings', "unlimited-elements-for-elementor"));
 
 		array_unshift($links, $settings_link);
 
-		$links['go_pro'] = sprintf('<a href="%s" target="_blank" class="elementor-plugins-gopro">%s</a>', Utils::get_pro_link('https://elementor.com/pro/?utm_source=wp-plugins&utm_campaign=gopro&utm_medium=wp-dash'), __('Go Pro', 'elementor'));
+		$links['go_pro'] = sprintf('<a href="%s" target="_blank" class="elementor-plugins-gopro">%s</a>', Utils::get_pro_link('https://elementor.com/pro/?utm_source=wp-plugins&utm_campaign=gopro&utm_medium=wp-dash'), __('Go Pro', "unlimited-elements-for-elementor"));
 
 		return $links;
 	}
@@ -774,7 +774,7 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 			print_head_scripts();
 
 			if(!empty($htmlCustomCssStyles))
-				echo "\n" . $htmlCustomCssStyles;
+				s_echo("\n" . $htmlCustomCssStyles); 
 
 			$view = self::$view;
 
@@ -783,9 +783,11 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 		</head>
 
 		<body class="uc-blank-preview uc-view-<?php echo esc_attr($view) ?>">
-		<?php echo UniteProviderFunctionsUC::escCombinedHtml($htmlBody) ?>
 		<?php
-		echo UniteProviderFunctionsUC::escCombinedHtml($htmlJSScripts);
+		s_echo($htmlBody);
+		?>
+		<?php
+		s_echo($htmlJSScripts);
 
 		if($superClear == true)
 			print_footer_scripts();

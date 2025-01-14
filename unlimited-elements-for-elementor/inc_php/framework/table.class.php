@@ -322,7 +322,7 @@ class UniteTableUC extends HtmlOutputBaseUC{
 		$html .= self::TAB2."<form method='get' name='unite-table-actions' action='{$url}'>".self::BR2;		
 		$html .= $this->getHtmlHiddenBaseInputs();
 		
-		echo UniteProviderFunctionsUC::escCombinedHtml($html);
+		s_echo($html);
 	
 		$this->isInsideTopActions = true;
 	
@@ -340,7 +340,7 @@ class UniteTableUC extends HtmlOutputBaseUC{
 	
 		$this->isInsideTopActions = false;
 	
-		echo UniteProviderFunctionsUC::escCombinedHtml($html);
+		s_echo($html);
 	}
 	
 	/**
@@ -410,7 +410,7 @@ class UniteTableUC extends HtmlOutputBaseUC{
 		
 		$html .= $this->getHtmlFormSelect($htmlSelect, $htmlGetFields);
 		
-		echo UniteProviderFunctionsUC::escCombinedHtml($html);
+		s_echo($html);
 	}
 	
 	
@@ -513,7 +513,7 @@ class UniteTableUC extends HtmlOutputBaseUC{
 	
 		$html = $this->getPaginationHtml();
 	
-		echo UniteProviderFunctionsUC::escCombinedHtml($html);
+		s_echo($html);
 	}
 	
 	/**
@@ -527,7 +527,7 @@ class UniteTableUC extends HtmlOutputBaseUC{
 		
 		$html = $this->getHTMLInpageSelect();
 		
-		echo UniteProviderFunctionsUC::escCombinedHtml($html);
+		s_echo($html);
 	}
 
 	/**
@@ -588,8 +588,7 @@ class UniteTableUC extends HtmlOutputBaseUC{
 		if(!empty($searchValue))
 			$html .= "	<a href=\"{$url}\" class=\"unite-button-secondary\">".$clearText."</a>";
 		
-	
-		echo UniteProviderFunctionsUC::escCombinedHtml($html);
+		s_echo($html);
 	}
 	
 	
@@ -633,7 +632,7 @@ class UniteTableUC extends HtmlOutputBaseUC{
 		
 		$html = "<a href='$link'>$linkText</a>";
 		
-		echo UniteProviderFunctionsUC::escCombinedHtml($html);
+		s_echo($html); 
 	}
 	
 }

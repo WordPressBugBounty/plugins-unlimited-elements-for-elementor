@@ -166,8 +166,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				$view = esc_html($view);
 				$message = $e->getMessage();
 				$message = esc_html($message);
-				
-				echo "<div id='uc_view_error_message'> <br><br>View ($view) Error: <b>".$message."</b>";
+
+				s_echo("<div id='uc_view_error_message'> <br><br>View ($view) Error: <b>".$message."</b>");
 				
 				if(GlobalsUC::$SHOW_TRACE == true)
 					dmp($e->getTraceAsString());
@@ -194,7 +194,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			try{
 				require self::$path_plugin."settings/$settingsFile.php";
 			}catch (Exception $e){
-				echo "<br><br>Settings ($settingsFile) Error: <b>".$e->getMessage()."</b>";
+				s_echo("<br><br>Settings ($settingsFile) Error: <b>".$e->getMessage()."</b>");
 				dmp($e->getTraceAsString());
 			}
 		}

@@ -84,7 +84,7 @@ if($showBFBanner == true){
 				<div class="ue-content-desc">
 					<?php echo esc_html__("Subscribe to our YouTube channel and never miss out on exciting content, useful tutorials, and important updates! Hit the \"Subscribe\" button now to join our growing community of viewers.", "unlimited-elements-for-elementor"); ?>
 				</div>
-				<a class="ue-content-btn ue-flex-center" href="<?php echo GlobalsUC::URL_YOUTUBE; ?>" target="_blank">
+				<a class="ue-content-btn ue-flex-center" href="<?php echo esc_url(GlobalsUC::URL_YOUTUBE); ?>" target="_blank">
 					<?php echo esc_html__("Subscribe", "unlimited-elements-for-elementor"); ?>
 				</a>
 			</div>
@@ -102,7 +102,7 @@ if($showBFBanner == true){
 				<div class="ue-content-desc">
 					<?php echo esc_html__("Stay updated on the latest news, connect with like-minded individuals, and access exclusive content! Click the \"Join Group\" button below and be a part of our supportive community.", "unlimited-elements-for-elementor"); ?>
 				</div>
-				<a class="ue-content-btn ue-flex-center" href="<?php echo GlobalsUC::URL_FACEBOOK; ?>" target="_blank">
+				<a class="ue-content-btn ue-flex-center" href="<?php echo esc_url(GlobalsUC::URL_FACEBOOK); ?>" target="_blank">
 					<?php echo esc_html__("Join Group", "unlimited-elements-for-elementor"); ?>
 				</a>
 			</div>
@@ -123,15 +123,15 @@ if($showBFBanner == true){
 						<?php echo esc_html__("3 important videos to get you started with Unlimited Elements.", "unlimited-elements-for-elementor"); ?>
 					</div>
 				</div>
-				<a class="ue-content-btn ue-flex-center ue-tmore-btn-1" target="_blank" href="<?php echo $urlVideoTutorials; ?>">
+				<a class="ue-content-btn ue-flex-center ue-tmore-btn-1" target="_blank" href="<?php echo esc_url($urlVideoTutorials); ?>">
 					<?php echo esc_html__("View More", "unlimited-elements-for-elementor"); ?>
 				</a>
 			</div>
 			<div class="ue-video-wrapper">
 				<?php foreach($videoItems as $item): ?>
-					<a class="ue-video-item" href="<?php echo $item["url"]; ?>" target="_blank" data-fancybox="gallery">
+					<a class="ue-video-item" href="<?php echo esc_url($item["url"]); ?>" target="_blank" data-fancybox="gallery">
 						<div class="ue-video ue-flex-center">
-							<img class="ue-video-bg" src="<?php echo $item["image"]; ?>?ver=<?php echo $version?>" alt="<?php echo esc_attr($item["title"]); ?>" />
+							<img class="ue-video-bg" src="<?php echo esc_url($item["image"]); ?>?ver=<?php echo esc_attr($version)?>" alt="<?php echo esc_attr($item["title"]); ?>" />
 							<div class="ue-video-play-btn"></div>
 						</div>
 						<h3 class="ue-video-title"><?php echo esc_html($item["title"]); ?></h3>
@@ -156,12 +156,12 @@ if($showBFBanner == true){
 				<div class="ue-content-desc">
 					<?php echo esc_html__("Let us know. Your ratings and reviews contribute to making our WordPress plugin even better. Help us out with a 5 star review on the WP plugin repository.", "unlimited-elements-for-elementor"); ?>
 				</div>
-				<a class="ue-content-btn ue-flex-center" href="<?php echo GlobalsUC::URL_RATE; ?>" target="_blank">
+				<a class="ue-content-btn ue-flex-center" href="<?php echo esc_url(GlobalsUC::URL_RATE); ?>" target="_blank">
 					<?php echo esc_html__("Rate Us", "unlimited-elements-for-elementor"); ?>
 				</a>
 			</div>
 			<div class="ue-inner-section-right ue-flex-center">
-				<img class="ue-illustration" src="<?php echo $imagesUrl . "rate.svg"; ?>" alt="" />
+				<img class="ue-illustration" src="<?php echo esc_url($imagesUrl) . "rate.svg"; ?>" alt="" />
 			</div>
 		</div>
 
@@ -178,12 +178,12 @@ if($showBFBanner == true){
 				<div class="ue-content-desc">
 					<?php echo esc_html__("Looking for answers or helpful resources about our WordPress plugin? Check out our comprehensive Knowledge Base, where you'll find step-by-step guides, troubleshooting tips, and useful information to make the most of our plugin's features.", "unlimited-elements-for-elementor"); ?>
 				</div>
-				<a class="ue-content-btn ue-flex-center" href="<?php echo GlobalsUC::URL_DOCS; ?>" target="_blank">
+				<a class="ue-content-btn ue-flex-center" href="<?php echo esc_url(GlobalsUC::URL_DOCS); ?>" target="_blank">
 					<?php echo esc_html__("Documentation", "unlimited-elements-for-elementor"); ?>
 				</a>
 			</div>
 			<div class="ue-inner-section-right ue-flex-center">
-				<img class="ue-illustration" src="<?php echo $imagesUrl . "documentation.svg"; ?>" alt="" />
+				<img class="ue-illustration" src="<?php echo esc_url($imagesUrl) . "documentation.svg"; ?>" alt="" />
 			</div>
 		</div>
 
@@ -206,12 +206,12 @@ if($showBFBanner == true){
 						<li class="ue-feature"><?php echo esc_html__("Easy Chat for Any Question", "unlimited-elements-for-elementor"); ?></li>
 						<li class="ue-feature"><?php echo esc_html__("Animated Backgrounds & Premium Templates", "unlimited-elements-for-elementor"); ?></li>
 					</ul>
-					<a class="ue-content-btn ue-flex-center ue-pro-cta-btn" href="<?php echo GlobalsUC::URL_BUY; ?>" target="_blank">
+					<a class="ue-content-btn ue-flex-center ue-pro-cta-btn" href="<?php echo esc_url(GlobalsUC::URL_BUY); ?>" target="_blank">
 						<?php echo esc_html__("Get Unlimited Elements Premium", "unlimited-elements-for-elementor"); ?>
 					</a>
 				</div>
 				<div class="ue-inner-section-right ue-flex-center">
-					<img class="ue-illustration" src="<?php echo $imagesUrl . "upgrade.svg"; ?>" alt="" />
+					<img class="ue-illustration" src="<?php echo esc_url($imagesUrl) . "upgrade.svg"; ?>" alt="" />
 				</div>
 			</div>
 		<?php endif; ?>
@@ -225,8 +225,8 @@ if($showBFBanner == true){
 		
 			<?php if($showBFBanner == true):?>
 			<div class="ue-content-card ue-dashboard-banner">
-				<a class="ue-dashboard-banner__link" href="<?php echo GlobalsUC::URL_BUY?>">
-					<img class="ue-dashboard-banner__image" src="<?php echo $urlBannerImage?>" target="_blank">
+				<a class="ue-dashboard-banner__link" href="<?php echo esc_url(GlobalsUC::URL_BUY)?>">
+					<img class="ue-dashboard-banner__image" src="<?php echo esc_url($urlBannerImage);?>" target="_blank">
 				</a>
 			</div>
 			<?php endif?>
@@ -242,7 +242,7 @@ if($showBFBanner == true){
 					</div>
 					<div class="ue-content-title ue-cta-title">Get Unlimited Elements Pro</div>
 					<div class="ue-cta-desc">Unlock access to all our premium widgets and features.</div>
-					<a href="<?php echo GlobalsUC::URL_BUY?>"
+					<a href="<?php echo esc_url(GlobalsUC::URL_BUY)?>"
 						target="_blank"
 						class="ue-content-btn ue-flex-center ue-pro-cta-btn">Get Unlimited Elements Pro</a>
 					<ul class="ue-cta-features-list">
@@ -255,7 +255,7 @@ if($showBFBanner == true){
 						<li class="ue-cta-feature"><?php echo esc_html__("Multi-Source Widgets", "unlimited-elements-for-elementor"); ?></li>
 						<li class="ue-cta-feature"><?php echo esc_html__("Calculators", "unlimited-elements-for-elementor"); ?></li>
 					</ul>
-					<a class="ue-cta-link" href="<?php echo GlobalsUC::URL_FEATURES; ?>" target="_blank">
+					<a class="ue-cta-link" href="<?php echo esc_url(GlobalsUC::URL_FEATURES); ?>" target="_blank">
 						<?php echo esc_html__("View All", "unlimited-elements-for-elementor"); ?>
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
 							<path d="M10.782 7.333 7.206 3.757l.943-.943L13.335 8l-5.186 5.185-.943-.943 3.576-3.575H2.668V7.333h8.114Z" />
@@ -278,13 +278,13 @@ if($showBFBanner == true){
 				<div class="ue-post-wrapper">
 
 					<?php foreach($blogItems as $item): ?>
-						<a class="ue-post" href="<?php echo $item["link"]; ?>" target="_blank">
-							<img class="ue-post-img" src="<?php echo $item["image"]; ?>?ver=<?php echo $version?>" alt="<?php echo esc_attr($item["title"]); ?>" />
+						<a class="ue-post" href="<?php echo esc_url($item["link"]); ?>" target="_blank">
+							<img class="ue-post-img" src="<?php echo esc_url($item["image"]); ?>?ver=<?php echo esc_attr($version)?>" alt="<?php echo esc_attr($item["title"]); ?>" />
 							<h3 class="ue-post-title"><?php echo esc_html($item["title"]); ?></h3>
 						</a>
 					<?php endforeach; ?>
 				</div>
-				<a class="ue-post-view-more ue-content-btn ue-flex-center" href="<?php echo GlobalsUC::URL_BLOG; ?>" target="_blank">
+				<a class="ue-post-view-more ue-content-btn ue-flex-center" href="<?php echo esc_url(GlobalsUC::URL_BLOG); ?>" target="_blank">
 					<?php echo esc_html__("View More", "unlimited-elements-for-elementor"); ?>
 				</a>
 			</div>
@@ -302,7 +302,7 @@ if($showBFBanner == true){
 				<div class="ue-content-desc">
 					<?php echo esc_html__("Copy and paste fully designed sections from the Unlimited Elements website directly to your website.", "unlimited-elements-for-elementor"); ?>
 				</div>
-				<a class="ue-content-btn ue-flex-center" href="<?php echo GlobalsUC::URL_DOUBLY; ?>" target="_blank">
+				<a class="ue-content-btn ue-flex-center" href="<?php echo esc_url(GlobalsUC::URL_DOUBLY); ?>" target="_blank">
 					<?php echo esc_html__("See How it Works", "unlimited-elements-for-elementor"); ?>
 				</a>
 			</div>

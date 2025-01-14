@@ -81,23 +81,27 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				}
 				
 				?>
-				<tr <?php echo UniteProviderFunctionsUC::escAddParam($rowClass)?> valign="top">
+				<tr <?php 
+				s_echo($rowClass)?> valign="top">
 				
 				<?php if(empty($addSettingText)):?>
 					
-					<th <?php echo UniteProviderFunctionsUC::escAddParam($textStyle)?> scope="row" <?php echo UniteProviderFunctionsUC::escAddParam($textWidth) ?>>
+					<th <?php s_echo($textStyle)?> scope="row" <?php s_echo($textWidth) ?>>
 						<?php if($this->showDescAsTips == true): ?>
-					    	<span class='setting_text' title="<?php echo esc_attr($description)?>"><?php echo $text?></span>
+					    	<span class='setting_text' title="<?php echo esc_attr($description)?>"><?php echo esc_attr($text)?></span>
 					    <?php else:?>
-					    	<?php echo $text?>
+					    	<?php s_echo($text);?>
 					    <?php endif?>
 					</th>
 					
 				<?php endif?>
 				
-				<td <?php echo UniteProviderFunctionsUC::escAddParam($cellStyle)?> <?php echo UniteProviderFunctionsUC::escAddParam($tdSettingAdd)?>>
+				<td <?php 
+				s_echo($cellStyle)?> <?php 
+				s_echo($tdSettingAdd)?>>
 					
-					<span id="<?php echo UniteProviderFunctionsUC::escAddParam($setting["id_row"])?>">
+					<span id="<?php 
+				s_echo($setting["id_row"])?>">
 						
 						<?php if(!empty($addSettingText)):?>
 						<span class='setting_onecell_text'><?php echo esc_html($text)?></span>
@@ -125,21 +129,27 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				<?php
 			?>
 			<?php else:	?>
-				<tr id="<?php echo esc_attr($setting["id_row"])?>"  <?php echo UniteProviderFunctionsUC::escAddParam($rowClass)?> valign="top">
+				<tr id="<?php echo esc_attr($setting["id_row"])?>"  <?php 
+				s_echo($rowClass)?> valign="top">
 					
 					<?php if($drawTh == true):?>
 					
-					<th <?php echo UniteProviderFunctionsUC::escAddParam($textStyle)?> scope="row" <?php echo UniteProviderFunctionsUC::escAddParam($textWidth) ?>>
+					<th <?php 
+				s_echo($textStyle)?> scope="row" <?php 
+				s_echo($textWidth) ?>>
 						<?php if($this->showDescAsTips == true): ?>
-					    	<span class='setting_text' title="<?php echo esc_attr($description)?>"><?php echo $text?></span>
+					    	<span class='setting_text' title="<?php echo esc_attr($description)?>"><?php echo esc_attr($text);?></span>
 					    <?php else:?>
-					    	<?php echo $text?>
+					    	<?php 
+								s_echo($text);?>
 					    <?php endif?>
 					</th>
 					
 					<?php endif?>
 					
-					<td <?php echo UniteProviderFunctionsUC::escAddParam($cellStyle)?> <?php echo UniteProviderFunctionsUC::escAddParam($tdHtmlAdd)?>>
+					<td <?php 
+				s_echo($cellStyle)?> <?php 
+				s_echo($tdHtmlAdd)?>>
 						<?php 
 							$this->drawInputs($setting);
 							$this->drawInputAdditions($setting);
@@ -177,7 +187,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			?>
 			<tr id="<?php echo esc_attr($setting["id_row"])?>">
 				<td colspan="4" align="left" style="text-align:left;">
-					 <hr <?php echo UniteProviderFunctionsUC::escAddParam($class); ?> /> 
+					 <hr <?php 
+				s_echo($class); ?> /> 
 				</td>
 			</tr>
 			<?php 
@@ -215,14 +226,18 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				$classAdd = " ".$classAdd;
 			
 			?>
-				<tr id="<?php echo esc_attr($setting["id_row"])?>" <?php echo UniteProviderFunctionsUC::escAddParam($rowClass)?>  valign="top">
+				<tr id="<?php echo esc_attr($setting["id_row"])?>" <?php 
+				s_echo($rowClass)?>  valign="top">
 					<?php if(!empty($label)):?>
 					<th>
-						<?php echo $label?>
+						<?php echo esc_attr($label)?>
 					</th>
 					<?php endif?>
-					<td <?php echo UniteProviderFunctionsUC::escAddParam($tdHtmlAdd)?> <?php echo UniteProviderFunctionsUC::escAddParam($cellStyle)?>>
-						<span class="unite-settings-static-text<?php echo esc_attr($classAdd)?>"><?php echo $setting["text"]?></span>
+					<td <?php 
+				s_echo($tdHtmlAdd)?> <?php 
+				s_echo($cellStyle)?>>
+						<span class="unite-settings-static-text<?php echo esc_attr($classAdd)?>"><?php 
+						s_echo($setting["text"]); ?></span>
 					</td>
 				</tr>
 			<?php 

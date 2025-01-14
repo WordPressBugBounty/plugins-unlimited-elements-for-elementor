@@ -59,7 +59,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				<div class="unite-clear"></div>
 				
 				<div class="video_example">
-				<?php esc_html_e("example","unlimited-elements-for-elementor")?>:  <?php echo GlobalsUC::YOUTUBE_EXAMPLE_ID?>
+				<?php esc_html_e("example","unlimited-elements-for-elementor")?>:  <?php echo esc_attr(GlobalsUC::YOUTUBE_EXAMPLE_ID)?>
 				</div>
 				
 			</div>
@@ -82,7 +82,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				<div class="unite-clear"></div>
 				
 				<div class="video_example">
-					<?php esc_html_e("example","unlimited-elements-for-elementor")?>:  <?php echo GlobalsUC::VIMEO_EXAMPLE_ID?>
+					<?php esc_html_e("example","unlimited-elements-for-elementor")?>:  <?php echo esc_attr(GlobalsUC::VIMEO_EXAMPLE_ID)?>
 				</div>
 				
 			</div>
@@ -132,7 +132,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				<div class="unite-clear"></div>
 				
 				<div class="video_example">
-				<?php esc_html_e("example","unlimited-elements-for-elementor")?>:  <?php echo GlobalsUC::WISTIA_EXAMPLE_ID?>
+				<?php esc_html_e("example","unlimited-elements-for-elementor")?>:  <?php echo esc_attr(GlobalsUC::WISTIA_EXAMPLE_ID)?>
 				</div>
 				
 			</div>

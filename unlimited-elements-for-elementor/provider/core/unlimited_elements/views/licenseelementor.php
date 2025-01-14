@@ -186,8 +186,10 @@ class UnlimitedElementsLicenceView extends UniteCreatorActivationView{
 		}
 		?>
 		
-		<h2 class="<?php echo $class?>">
-			<?php echo $message?>
+		<h2 class="<?php echo esc_attr($class)?>">
+			<?php 
+			s_echo($message);
+			?>
 		</h2>
 		<?php 
 		
@@ -223,7 +225,7 @@ class UnlimitedElementsLicenceView extends UniteCreatorActivationView{
 		
 		<span class="activate-license unlimited_elements_for_elementor">
              
-	         <a href="javascript:void(0)" class="unite-button-primary"><?php _e("Change License", "unlimited-elements-for-elementor")?></a>
+	         <a href="javascript:void(0)" class="unite-button-primary"><?php esc_html_e("Change License", "unlimited-elements-for-elementor")?></a>
 		</span>             
              <br>
              <br>

@@ -113,7 +113,6 @@ class UniteProviderFunctionsUC{
 	 * set assets path
 	*/
 	public static function setAssetsPath($dirAssets = null, $returnValues = false){
-
 		if(empty($dirAssets))
 			$dirAssets = "ac_assets";
 
@@ -143,7 +142,7 @@ class UniteProviderFunctionsUC{
 		//make base path
 		$pathAssets = $pathBase.$dirAssets."/";
 		if(is_dir($pathAssets) == false)
-			@mkdir($pathAssets);
+		UniteFunctionsUC::mkdir($pathAssets);
 
 		if(is_dir($pathAssets) == false)
 			UniteFunctionsUC::throwError("Can't create folder: {$pathAssets}");
@@ -171,7 +170,8 @@ class UniteProviderFunctionsUC{
 		}
 
 	}
-	
+
+
 
 	/**
 	 * is admin function
@@ -294,9 +294,9 @@ class UniteProviderFunctionsUC{
 			self::$arrScripts[$handle] = $script;
 		else{
 			if($isModule == true)
-				echo "<script type='module' id='{$handle}'>{$script}</script>";
+				s_echo( "<script type='module' id='{$handle}'>{$script}</script>" );
 			else
-				echo "<script type='text/javascript' id='{$handle}'>{$script}</script>";
+				s_echo( "<script type='text/javascript' id='{$handle}'>{$script}</script>" );
 
 		}
 	}
@@ -310,7 +310,7 @@ class UniteProviderFunctionsUC{
 		if($hardCoded == false)
 			self::$arrStyles[] = $style;
 		else
-			echo "<style type='text/css'>{$style}</style>";
+			s_echo( "<style type='text/css'>{$style}</style>");
 
 	}
 
@@ -404,22 +404,6 @@ class UniteProviderFunctionsUC{
 		}
 
 		return($var);
-	}
-
-	/**
-	 * escape add html
-	 */
-	public static function escAddParam($html){
-
-		return($html);
-	}
-
-	/**
-	 * escape add html
-	 */
-	public static function escCombinedHtml($html){
-
-		return($html);
 	}
 
 	/**
@@ -524,7 +508,7 @@ class UniteProviderFunctionsUC{
 	 */
 	public static function putFooterTextLine(){
 		?>
-			&copy; <?php esc_html_e("All rights reserved","unlimited-elements-for-elementor")?>, <a href="https://unlimited-elements.com" target="_blank"><?php echo GlobalsUnlimitedElements::$pluginTitleCurrent ?></a>. &nbsp;&nbsp;
+			&copy; <?php esc_html_e("All rights reserved","unlimited-elements-for-elementor")?>, <a href="https://unlimited-elements.com" target="_blank"><?php echo esc_attr(GlobalsUnlimitedElements::$pluginTitleCurrent) ?></a>. &nbsp;&nbsp;
 		<?php
 	}
 
@@ -800,9 +784,7 @@ class UniteProviderFunctionsUC{
 
 	}
 
-
-
-
+	
 	public static function a________ACTIONS_FILTERS_______(){}
 
 
@@ -863,7 +845,6 @@ class UniteProviderFunctionsUC{
 
 		call_user_func_array("do_action", $args);
 	}
-
 
 
 }

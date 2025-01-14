@@ -113,7 +113,9 @@ class UCFormEntryService{
 			ORDER BY id ASC
 		";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$sql = $wpdb->prepare($sql, $ids);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_results($sql, ARRAY_A);
 		$fields = array();
 
@@ -135,7 +137,9 @@ class UCFormEntryService{
 			ORDER BY FIELD(id, $idPlaceholders)
 		";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$sql = $wpdb->prepare($sql, array_merge($ids, $ids));
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_results($sql, ARRAY_A);
 		$entries = array();
 

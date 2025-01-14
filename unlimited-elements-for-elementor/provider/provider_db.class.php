@@ -46,19 +46,19 @@ class UniteProviderDBUC{
 	
 	
 	/**
-	 * do sql query, return success
+	 * do sql query, return success 
 	 */
-	public function query($query){
+	public function query($query){ 
 		
 		$this->wpdb->suppress_errors(false);
-		
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$success = $this->wpdb->query($query);
 		return($success);
 	}
 	
 	
 	/**
-	 * get affected rows after operation
+	 * get affected rows after operation 
 	 */
 	public function getAffectedRows(){
 		return $this->wpdb->num_rows;
@@ -67,11 +67,11 @@ class UniteProviderDBUC{
 	/**
 	 * fetch objects from some sql
 	 */
-	public function fetchSql($query, $supressErrors = false){
+	public function fetchSql($query, $supressErrors = false, $typeResult = ARRAY_A){
 		
 		$this->wpdb->suppress_errors($supressErrors);
-		
-		$rows = $this->wpdb->get_results($query, ARRAY_A);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$rows = $this->wpdb->get_results($query, $typeResult);
 		
 		return($rows);
 	}

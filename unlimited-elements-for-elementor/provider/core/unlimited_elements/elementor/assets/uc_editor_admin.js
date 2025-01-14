@@ -769,7 +769,10 @@ function UniteCreatorElementorEditorAdmin(){
 		postSelectOnLoad();
 		
 		if(g_ucEnableLimitProFunctionality == true)
-			protectControls()
+			protectControls();
+
+
+		freeVersionCTAControlPopup();
 		
 		g_objBody.trigger("uc_settings_panel_change");
 		
@@ -821,6 +824,24 @@ function UniteCreatorElementorEditorAdmin(){
 			
 		});
 		
+	}
+
+	/**
+	 * open popup by click version cta notification on elementor control for free version
+	 */
+	function freeVersionCTAControlPopup(){
+
+		jQuery('.uc-cta-version-notification a').on('click', function(event) {
+			event.preventDefault();
+			jQuery('#uc-cta-version-modal-overlay').show();
+			jQuery('#uc-cta-version-modal-window').show();
+		});
+
+		jQuery('#uc-cta-version-modal-close, #uc-cta-version-modal-overlay').on('click', function() {
+			jQuery('#uc-cta-version-modal-overlay').hide();
+			jQuery('#uc-cta-version-modal-window').hide();
+		});
+
 	}
 	
 	function a________LOAD_INCLUDES_________(){}

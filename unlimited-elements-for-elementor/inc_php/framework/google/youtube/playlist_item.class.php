@@ -59,7 +59,7 @@ class UEGoogleAPIPlaylistItem extends UEGoogleAPIModel{
 
 		$date = $this->getSnippetValue("publishedAt");
 		$time = strtotime($date);
-		$date = date($format, $time);
+		$date = s_date($format, $time);
 
 		return $date;
 	}
@@ -103,7 +103,7 @@ class UEGoogleAPIPlaylistItem extends UEGoogleAPIModel{
 
 		$date = $this->getDetailsValue("videoPublishedAt");
 		$time = strtotime($date);
-		$date = date($format, $time);
+		$date = s_date($format, $time);
 
 		return $date;
 	}

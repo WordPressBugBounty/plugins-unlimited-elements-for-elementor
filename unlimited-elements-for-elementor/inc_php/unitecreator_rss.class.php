@@ -56,7 +56,7 @@ class UniteCreatorRSS{
             array(
                 "type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
                 "id" => "rss_date_format",
-                "conditions" => array("rss_show_date_formated"=>"true"),
+                "conditions" => array("rss_show_date_formatted"=>"true"),
                 "text" => "",
                 "desc" => __("Specify the <a target='_blank' href='https://www.php.net/manual/en/datetime.format.php'>date format</a>, default is 'd/m/Y, H:i'", "unlimited-elements-for-elementor"),
                 "placeholder" => "d/m/Y, H:i",
@@ -131,7 +131,7 @@ class UniteCreatorRSS{
 				}
 
 				if(!empty($arrData)) {
-					(bool) $showDateFormated = UniteFunctionsUC::getVal($arrValues, $name."_rss_show_date_formated");
+					(bool) $showDateFormated = UniteFunctionsUC::getVal($arrValues, $name."_rss_show_date_formatted");
 					$dateFormat = null;
 					if ($showDateFormated) {
 						$dateFormat = UniteFunctionsUC::getVal($arrValues, $name."_rss_date_format");
@@ -234,7 +234,8 @@ class UniteCreatorRSS{
 	}
 
 	private function createNiceKeys($arrRss, $dateFormat, $prefix = '') {
-		$niceArr = [];
+		
+		$niceArr = array();
 
 		foreach ($arrRss as $key => $value) {
 			// Replace colons with underscores and append to prefix
@@ -257,7 +258,7 @@ class UniteCreatorRSS{
 						$date_time = UniteFunctionsUC::date2Timestamp($value);
 
 						if (!empty($date_time))
-							$niceArr['publish_date_formated'] = date($dateFormat, $date_time);
+							$niceArr['publish_date_formatted'] = date($dateFormat, $date_time);
 					}
 				}
 			}
@@ -315,6 +316,89 @@ class UniteCreatorRSS{
 
 		return false;
 	}
-	
-	
+
+    /* Filter widget params to get only a specific sublist by catid */
+    public function filterByTypeAndCatId($array, $type, $catIdValue) {
+        $result = array();
+
+        foreach ($array as $key => $subArray) {
+            if ($subArray['type'] != $type) {
+                continue;
+            }
+
+            if ($subArray['__attr_catid__'] != $catIdValue) {
+                continue;
+            }
+
+            $result[] = $subArray;
+        }
+
+        return $result;
+    }
+
+    /* Get all rss widget keys, if any key is empty use default key for it */
+    public function getRssFeedKeys($addon, $data)
+    {
+        $param = $addon->getParams();
+
+        $keys = array();
+
+        $rssFeedArr = UniteFunctionsUC::getVal($data, "rss_feed");
+        if (empty($rssFeedArr)) {
+            return;
+        }
+
+        $firstRssElement = UniteFunctionsUC::getArrFirstValue($rssFeedArr);
+        if (empty($firstRssElement)) {
+            return;
+        }
+
+        $catValue = $addon->getParamByName("auto_detect_keys");
+        if (empty($catValue)) {
+            return;
+        }
+
+        $rssKeyArr = $this->filterByTypeAndCatId($param, UniteCreatorDialogParam::PARAM_TEXTFIELD, $catValue['__attr_catid__']);
+
+        $isShowDebug = UniteFunctionsUC::getVal($data, "show_debug");
+        $isShowDebug = UniteFunctionsUC::strToBool($isShowDebug);
+
+        if ($isShowDebug) {
+            dmp('--- Values for Item Keys ---');
+        }
+        
+        
+        
+        foreach ($rssKeyArr as $rssKeyValue) {
+            $keyValue = UniteFunctionsUC::getVal($data, $rssKeyValue['name']);
+
+            if (empty($keyValue)) {
+                $keys[$rssKeyValue['name']] = $rssKeyValue['default_value'];
+            } else {
+                $keys[$rssKeyValue['name']] = $keyValue;
+            }
+
+            if ($isShowDebug) {
+                // show publish_date_formatted instead of publish_date if show formatted == true
+                if($keys[$rssKeyValue['name']] == 'publish_date' && array_key_exists('publish_date_formatted', $firstRssElement)) {
+                    dmp($rssKeyValue['title'] . ': "publish_date_formatted"');
+                } else if (array_key_exists($keys[$rssKeyValue['name']], $firstRssElement)) {
+                    dmp($rssKeyValue['title'] . ': "' . $keys[$rssKeyValue['name']] . '"');
+                } else {
+                    dmp($rssKeyValue['title'] . ': "' . $keys[$rssKeyValue['name']] . '" not found, please select another one');
+                }
+            }
+        }
+		
+        
+        if ($isShowDebug) {
+            dmp('--- first RSS item structure ---');
+            
+            $firstRssElement = UniteFunctionsUC::modifyDataArrayForShow($firstRssElement);
+            
+            HelperHtmlUC::putHtmlDataDebugBox($firstRssElement);
+        }
+
+        return $keys;
+    }
 }

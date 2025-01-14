@@ -202,11 +202,7 @@ class UniteCreatorManager{
 				<div class="cat_list_wrapper">			 
 					<ul id="list_cats" class="list_cats">
 						<?php 
-						$verFlags = HelperUC::getActivePluginVersions();
-						if($verFlags[GlobalsUC::VERSION_GUTENBERG] && !$verFlags[GlobalsUC::VERSION_ELEMENTOR]) { 
-							$htmlCatList = str_replace('Widgets', 'Blocks', $htmlCatList);
-						}
-						echo UniteProviderFunctionsUC::escCombinedHtml($htmlCatList);
+						s_echo($htmlCatList);
 						?>
 					</ul>					
 				</div>
@@ -337,7 +333,8 @@ class UniteCreatorManager{
 				}
 			?>
 			<li>
-				<a href="javascript:void(0)" data-operation="<?php echo esc_attr($operation)?>" <?php echo UniteProviderFunctionsUC::escAddParam($class)?>><?php echo esc_html($text)?></a>
+				<a href="javascript:void(0)" data-operation="<?php echo esc_attr($operation)?>" <?php 
+				s_echo($class)?>><?php echo esc_html($text)?></a>
 			</li>
 			<?php endforeach?>
 			</ul>
@@ -460,7 +457,9 @@ class UniteCreatorManager{
 									</div>
 									
 									<div id="no_items_text" class="no_items_text" style="display:none;">
-										<?php echo UniteProviderFunctionsUC::escCombinedHtml($this->getNoItemsText())?>
+										<?php 
+										s_echo($this->getNoItemsText());
+										?>
 									</div>
 									
 									<?php $this->putListWrapperContent()?>
@@ -516,7 +515,9 @@ class UniteCreatorManager{
 									<?php esc_html_e("Move To", "unlimited-elements-for-elementor")?>
 									
 									<select id="select_item_category" disabled="disabled">
-										<?php echo UniteProviderFunctionsUC::escCombinedHtml($htmlCatSelect) ?>
+										<?php 
+										s_echo($htmlCatSelect); 
+										?>
 									</select>				
 									 
 									 <a id="button_items_operation" class="unite-button-secondary button-disabled" href="javascript:void(0)">GO</a>
@@ -554,13 +555,13 @@ class UniteCreatorManager{
 						</div>
 						
 						<?php if($this->putDialogDebug == true):?>
-						<a href="javascript:void(0)" class="manager-button-debug-dialog" title="<?php _e("Show Debug Data","unlimited-elements-for-elementor")?>">
+						<a href="javascript:void(0)" class="manager-button-debug-dialog" title="<?php esc_attr_e("Show Debug Data","unlimited-elements-for-elementor")?>">
 							<i class="fas fa-question"></i>
 						</a>
 						<?php endif?>
 						
 						<?php if($this->putUpdateCatalogButton == true):?>
-						<a href="javascript:void(0)" class="manager-button-update-catalog" title="<?php _e("Update Catalog","unlimited-elements-for-elementor")?>">
+						<a href="javascript:void(0)" class="manager-button-update-catalog" title="<?php esc_attr_e("Update Catalog","unlimited-elements-for-elementor")?>">
 							<i class="fas fa-sync"></i>
 						</a>
 						<?php endif?>
@@ -779,7 +780,9 @@ class UniteCreatorManager{
 			
 		?>
 		
-		<div id="uc_managerw" class="uc-manager-outer <?php echo esc_attr($managerClass)?>" data-managername="<?php echo esc_attr($this->managerName)?>" data-type="<?php echo esc_attr($this->type)?>" <?php echo UniteProviderFunctionsUC::escAddParam($htmlPassData)?> <?php echo UniteProviderFunctionsUC::escAddParam($this->managerAddHtml)?>>
+		<div id="uc_managerw" class="uc-manager-outer <?php echo esc_attr($managerClass)?>" data-managername="<?php echo esc_attr($this->managerName)?>" data-type="<?php echo esc_attr($this->type)?>" <?php 
+				s_echo($htmlPassData)?> <?php 
+				s_echo($this->managerAddHtml)?>>
 			
 			<?php if($this->hasHeaderLine == true)
 							$this->putHtmlHeaderLine();

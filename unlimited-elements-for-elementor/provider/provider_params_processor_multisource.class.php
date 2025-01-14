@@ -204,7 +204,7 @@ class UniteCreatetorParamsProcessorMultisource{
 	 * get repeater data
 	 */
 	private function getData_repeater(){
-				
+		
 		$arrRepeaterItems = HelperProviderUC::getRepeaterItems($this->arrValues, $this->name, $this->showDebugData, $this->showDebugMeta);
 
 		return($arrRepeaterItems);
@@ -216,96 +216,12 @@ class UniteCreatetorParamsProcessorMultisource{
 	 */
 	private function getData_jsonCsv(){
 
-		$showDebug = $this->showDebugData;
 
-		if($showDebug == true){
+		if($this->showDebugData == true){
 			dmp("---- the debug is ON, please turn it off before release --- ");
 		}
 
-		$contentLocation = UniteFunctionsUC::getVal($this->arrValues, $this->name."_json_csv_location");
-
-		if($contentLocation == "url"){
-
-			$url = UniteFunctionsUC::getVal($this->arrValues, $this->name."_json_csv_url");
-
-			if(empty($url)){
-
-				if($showDebug)
-					dmp("no url found for json csv");
-
-				return(null);
-			}
-
-			$dynamicFieldValue = HelperUC::$operations->getUrlContents($url, $showDebug);
-			
-		}else{
-			$dynamicFieldValue = UniteFunctionsUC::getVal($this->arrValues, $this->name."_json_csv_dynamic_field");
-		}
-
-		if(empty($dynamicFieldValue)){
-
-			if($showDebug)
-				dmp("no data given in the dynamic field");
-
-			return(null);
-		}
-
-		//try json
-
-		$arrData = UniteFunctionsUC::maybeJsonDecode($dynamicFieldValue);
-		
-		//debug JSON
-
-		if($showDebug == true && is_array($arrData)){
-
-			dmp("JSON data found ");
-			//dmp($arrData);
-			
-			dmp("------------------------------");
-		}
-
-		//if not, try csv
-		if(is_array($arrData) == false){
-			$arrData = UniteFunctionsUC::maybeCsvDecode($arrData);
-
-			//debug CSV
-	
-			if($showDebug == true && is_array($arrData)){
-	
-				dmp("CSV data found ");
-				dmp("------------------------------");
-				
-				//dmp($arrData);
-			}
-			
-		}
-
-
-		if(is_array($arrData) == false){
-
-			if($showDebug == true){
-				dmp("No CSV or JSON data found. The input is: ");
-				echo "<div style='background-color:lightgray'>";
-				dmp(htmlspecialchars($dynamicFieldValue));
-				echo "</div>";
-				dmp("------------------------------");
-			}
-
-			return(null);
-		}
-
-
-
-		//trim by main key
-				
-		$dataMainKey = UniteFunctionsUC::getVal($this->arrValues, $this->name."_json_csv_mainkey");
-		
-		if(!empty($dataMainKey))
-			$arrData = UniteFunctionsUC::getArrayValueByPath($arrData, $dataMainKey);
-		
-		if($showDebug == true && is_array($arrData) && !empty($dataMainKey)){
-			dmp("get the array data from the key: {$dataMainKey}");
-		}
+		$arrData = HelperProviderUC::getRepeaterItems_json($this->arrValues, $this->name, $this->showDebugData);
 		
 		return($arrData);
 	}
@@ -540,7 +456,7 @@ class UniteCreatetorParamsProcessorMultisource{
 
 		$css = "border:1px solid gray;background-color:lightgray;padding:10px;";
 
-		echo "<div style='{$css}'>";
+		s_echo("<div style='{$css}'>");
 			dmp($json);
 		echo "</div>";
 
@@ -553,7 +469,7 @@ class UniteCreatetorParamsProcessorMultisource{
 
 		$css = "border:1px solid gray;background-color:lightgray;padding:10px;;margin-top:20px;margin-bottom:20px;";
 
-		echo "<div style='{$css}'>";
+		s_echo("<div style='{$css}'>");
 			dmp($csv);
 		echo "</div>";
 
@@ -1069,7 +985,7 @@ class UniteCreatetorParamsProcessorMultisource{
 	 * output debug data box
 	 */
 	private function outputDebugDataBox($text){
-
+		
 		echo "<div style='background-color:#E5F7E1;font-size:12px;padding:5px;'>";
 		dmp($text);
 		echo "</div>";
@@ -1229,6 +1145,9 @@ class UniteCreatetorParamsProcessorMultisource{
 
 			if(isset($dataItem["dynamic_popup_link_attributes"]) === true)
 				$item["dynamic_popup_link_attributes"] = $dataItem["dynamic_popup_link_attributes"];
+			
+			if(isset($dataItem["dynamic_popup_div_attributes"]) === true)
+				$item["dynamic_popup_div_attributes"] = $dataItem["dynamic_popup_div_attributes"];
 
 			$item["item_source"] = $itemsSource;
 

@@ -266,14 +266,15 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 		$this->textPluralLower = strtolower($plural);
 
 		//set text
-		$this->arrText["confirm_remove_addons"] = esc_html__("Are you sure you want to delete those {$pluralLower}?", "unlimited-elements-for-elementor");
+		// translators: %s is the addon type name
+		$this->arrText["confirm_remove_addons"] = sprintf(esc_html__("Are you sure you want to delete those %s?", "unlimited-elements-for-elementor"), $pluralLower);
 
 		$objLayouts = new UniteCreatorLayouts();
 
 		$this->arrOptions["is_layout"] = $this->isLayouts;
 		$this->arrOptions["url_screenshot_template"] = $objLayouts->getUrlTakeScreenshot();
 
-		$this->textAddAddon = esc_html__("Add ", "unlimited-elements-for-elementor").$single;
+		$this->textAddAddon = esc_html__("Add ", "unlimited-elements-for-elementor") . $single;
 
 		//set default filter
 		if($this->objAddonType->allowManagerWebCatalog == true)
@@ -1067,7 +1068,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 
 			<h2>Url API: </h2>
 
-			<?php echo GlobalsUC::URL_API?>
+			<?php echo esc_url(GlobalsUC::URL_API)?>
 		</div>
 
 		<?php
@@ -1086,11 +1087,9 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 		$dialogTitle = $importText;
 
 		//overwrite checkbox
-		$checkboxOverwriteAddParams = "checked=\"checked\"";
 		$textOverwrite = esc_html__("Overwrite Existing ", "unlimited-elements-for-elementor").$this->textPlural;
 		if($this->isLayouts == true){
 			$textOverwrite = esc_html__("Overwrite Widgets", "unlimited-elements-for-elementor");
-			$checkboxOverwriteAddParams = "";
 		}
 
 		$nonce = "";
@@ -1139,7 +1138,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 						<div class="unite-inputs-label">
 							<label for="dialog_import_check_overwrite">
 
-								<input type="checkbox" <?php echo $checkboxOverwriteAddParams?>  id="dialog_import_check_overwrite"></input>
+								<input type="checkbox" <?php echo ($this->isLayouts ? '' : 'checked="checked"');?>  id="dialog_import_check_overwrite"></input>
 
 								<?php echo esc_html($textOverwrite) ?>
 
@@ -1334,7 +1333,13 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 					endif;
 				?>
 
-				<div class="unite-dialog-description-wrapper" <?php echo $styleDesc?>>
+				<div class="unite-dialog-description-wrapper" 
+					<?php 
+					if($this->enableDescriptionField == false) {
+						?> style='display:none' <?php
+					}
+					?>
+					>
 
 					<div class="unite-inputs-sap"></div>
 
@@ -1366,11 +1371,9 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 
 		$textPreviw = "Preview ".$this->textSingle;
 
-		$textPreviw = htmlspecialchars($textPreviw);
-
 		?>
 
-		<div id="uc_dialog_item_preview" title="<?php echo $textPreviw?>" style="display:none;">
+		<div id="uc_dialog_item_preview" title="<?php echo esc_attr($textPreviw)?>" style="display:none;">
 
 			<iframe src="" width="100%" height="100%"  style="overflow-x: hidden;overflow-y:auto;">
 
@@ -1387,10 +1390,9 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 	private function putPreviewTemplateDialog(){
 
 		//set warning text
-		$maxExecutionTime = @ini_get("max_execution_time");
+		$maxExecutionTime = (int)@ini_get("max_execution_time");
 
 		$warningText = "";
-		$maxExecutionTime = (int)$maxExecutionTime;
 
 		if($maxExecutionTime > 0 && $maxExecutionTime <= 30){
 			@ini_set("max_execution_time", 300);
@@ -1399,23 +1401,20 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 			$maxTime = (int)$maxTime;
 
 			if($maxTime <= 30)
-				$warningText = __("Notice: Your php setting: max_execution_time is <b>$maxExecutionTime</b> seconds. It is not efficient enough for importing the template. Please increase this value in php.ini. If you don't know how to change it please contact your hosting provider.");
+				// translators: %d is a number
+				$warningText = sprintf(__("Notice: Your php setting: max_execution_time is <b>%d</b> seconds. It is not efficient enough for importing the template. Please increase this value in php.ini. If you don't know how to change it please contact your hosting provider.", "unlimited-elements-for-elementor"), $maxExecutionTime);
 		}
 
 		$dialogTitle = __("Preview Template", "unlimited-elements-for-elementor");
-		$confirmImportAgainMessage = __("This import will overwrite the existing imported template. Continue?");
+		$confirmImportAgainMessage = __("This import will overwrite the existing imported template. Continue?","unlimited-elements-for-elementor");
 		$confirmImportAgainMessage = htmlspecialchars($confirmImportAgainMessage);
 
 		$urlImageBase = GlobalsUC::$urlPluginImages;
 
 		$isRTL = GlobalsUC::$isAdminRTL;
 
-		$addClass = "";
-		if($isRTL == true)
-			$addClass = " uc-rtl";
-
 		?>
-		<div id="uc_dialog_preview_template" class="uc-dialog-preview-template unite-inputs<?php echo $addClass?>" title="<?php echo esc_attr($dialogTitle)?>" style="display:none;">
+		<div id="uc_dialog_preview_template" class="uc-dialog-preview-template unite-inputs<?php echo ($isRTL ? ' uc-rtl' : '')?>" title="<?php echo esc_attr($dialogTitle)?>" style="display:none;">
 
 				<div class="uc-dialog-preview-template__preview">
 					<img src="" class="uc-dialog-preview-template__image">
@@ -1425,12 +1424,12 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 
 					<div class="uc-dialog-preview-template__buttons-panel">
 
-						<a id="uc_dialog_import_template_button_prev" href="javascript:void(0)" class="uc-dialog-preview-template__button-top uc-button-disabled" title="<?php _e("To Previous Template", "unlimited-elements-for-elementor")?>">
-							<img src="<?php echo $urlImageBase?>icon-gray-prev.svg">
-						</a><a id="uc_dialog_import_template_button_next" href="javascript:void(0)" class="uc-dialog-preview-template__button-top" title="<?php _e("To Next Template", "unlimited-elements-for-elementor")?>">
-							<img src="<?php echo $urlImageBase?>icon-gray-next.svg">
-						</a><a id="uc_dialog_import_template_button_close" href="javascript:void(0)" class="uc-dialog-preview-template__button-top" title="<?php _e("Back To Catalog", "unlimited-elements-for-elementor")?>">
-							<img src="<?php echo $urlImageBase?>icon-gray-close.svg">
+						<a id="uc_dialog_import_template_button_prev" href="javascript:void(0)" class="uc-dialog-preview-template__button-top uc-button-disabled" title="<?php esc_attr_e("To Previous Template", "unlimited-elements-for-elementor")?>">
+							<img src="<?php echo esc_url($urlImageBase)?>icon-gray-prev.svg">
+						</a><a id="uc_dialog_import_template_button_next" href="javascript:void(0)" class="uc-dialog-preview-template__button-top" title="<?php esc_attr_e("To Next Template", "unlimited-elements-for-elementor")?>">
+							<img src="<?php echo esc_url($urlImageBase)?>icon-gray-next.svg">
+						</a><a id="uc_dialog_import_template_button_close" href="javascript:void(0)" class="uc-dialog-preview-template__button-top" title="<?php esc_attr_e("Back To Catalog", "unlimited-elements-for-elementor")?>">
+							<img src="<?php echo esc_url($urlImageBase)?>icon-gray-close.svg">
 						</a>
 
 					</div>
@@ -1439,17 +1438,17 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 
 					<div class="uc-dialog-preview-template__right-operations">
 
-						<h2><?php _e("Import Template","unlimited-elements-for-elementor")?></h2>
+						<h2><?php esc_attr_e("Import Template","unlimited-elements-for-elementor")?></h2>
 
 						<p>
-							<?php _e("To get started click the \"Import Template\" button.","unlimited-elements-for-elementor")?>
-							<?php _e("After import is completed the template will show under Elementor Saved Templates list for future use.","unlimited-elements-for-elementor")?>
+							<?php esc_attr_e("To get started click the \"Import Template\" button.","unlimited-elements-for-elementor")?>
+							<?php esc_attr_e("After import is completed the template will show under Elementor Saved Templates list for future use.","unlimited-elements-for-elementor")?>
 						</p>
 
 						<br>
 
-						<a href="javascript:void(0)" class="unite-button-primary uc-dialog-preview-template__button-import uc-show-when-new uc-hide-when-loading uc-hide-when-just-imported"><?php _e("Import Template","unlimited-elements-for-elementor")?></a>
-						<a href="javascript:void(0)" class="unite-button-primary uc-dialog-preview-template__button-import-again uc-show-when-imported uc-hide-when-loading uc-hide-when-just-imported" data-message-confirm="<?php echo $confirmImportAgainMessage?>" ><?php _e("Import Template Again","unlimited-elements-for-elementor")?></a>
+						<a href="javascript:void(0)" class="unite-button-primary uc-dialog-preview-template__button-import uc-show-when-new uc-hide-when-loading uc-hide-when-just-imported"><?php esc_attr_e("Import Template","unlimited-elements-for-elementor")?></a>
+						<a href="javascript:void(0)" class="unite-button-primary uc-dialog-preview-template__button-import-again uc-show-when-imported uc-hide-when-loading uc-hide-when-just-imported" data-message-confirm="<?php echo esc_attr($confirmImportAgainMessage)?>" ><?php esc_attr_e("Import Template Again","unlimited-elements-for-elementor")?></a>
 
 						<div id="uc_dialog_import_template_loader" class="uc-dialog-preview-template__loader" style="display:none">
 							<span class="template-dialog-loader">
@@ -1472,24 +1471,24 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 						<div id="uc_dialog_import_template_imported_message" class="uc-dialog-preview-template__imported-message" style="display:none">
 
 							<div class="uc-dialog-preview-template__imported-message-text">
-								<span class="uc-show-when-new"><?php _e("Template Imported Successfully","unlimited-elements-for-elementor")?>.</span>
-								<span class="uc-show-when-imported"><?php _e("Template Already Imported","unlimited-elements-for-elementor")?>.</span>
+								<span class="uc-show-when-new"><?php esc_attr_e("Template Imported Successfully","unlimited-elements-for-elementor")?>.</span>
+								<span class="uc-show-when-imported"><?php esc_attr_e("Template Already Imported","unlimited-elements-for-elementor")?>.</span>
 							</div>
 
 							<div class="uc-dialog-preview-template__action-buttons-wrapper">
-								<a href="#" class="unite-button-secondary uc-dialog-preview-template__imported-message-link1" target="_blank" data-text-bottom="<?php _e("View Page", "unlimited-elements-for-elementor")?>" data-text-top="<?php _e("View Template", "unlimited-elements-for-elementor")?>"><?php _e("View Template", "unlimited-elements-for-elementor")?></a>
-								<a href="#" class="unite-button-secondary uc-dialog-preview-template__imported-message-link2" target="_blank"><?php _e("Edit With Elementor","unlimited-elements-for-elementor")?></a>
+								<a href="#" class="unite-button-secondary uc-dialog-preview-template__imported-message-link1" target="_blank" data-text-bottom="<?php esc_attr_e("View Page", "unlimited-elements-for-elementor")?>" data-text-top="<?php esc_attr_e("View Template", "unlimited-elements-for-elementor")?>"><?php esc_attr_e("View Template", "unlimited-elements-for-elementor")?></a>
+								<a href="#" class="unite-button-secondary uc-dialog-preview-template__imported-message-link2" target="_blank"><?php esc_attr_e("Edit With Elementor","unlimited-elements-for-elementor")?></a>
 							</div>
 						</div>
 
 						<div class="uc-dialog-preview-template__create-page-wrapper">
 
-							<h2><?php _e("Create Page From Template","unlimited-elements-for-elementor")?></h2>
+							<h2><?php esc_attr_e("Create Page From Template","unlimited-elements-for-elementor")?></h2>
 
 							<div class="uc-dialog-preview-template__import-page-wrapper">
 
-								<input type="text" placeholder="<?php _e("Enter Page Name", "unlimited-elements-for-elementor")?>" class="uc-dialog-preview-template__page-name">
-								<a href="javascript:void(0)" class="unite-button-secondary uc-dialog-preview-template__button-create-page uc-disable-when-loading"><?php _e("Create Page","unlimited-elements-for-elementor")?></a>
+								<input type="text" placeholder="<?php esc_attr_e("Enter Page Name", "unlimited-elements-for-elementor")?>" class="uc-dialog-preview-template__page-name">
+								<a href="javascript:void(0)" class="unite-button-secondary uc-dialog-preview-template__button-create-page uc-disable-when-loading"><?php esc_attr_e("Create Page","unlimited-elements-for-elementor")?></a>
 
 							</div>
 
@@ -1517,25 +1516,27 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 
 					<div class="uc-dialog-preview-template__right-message-pro">
 
-						<?php _e("This template is available only for the PRO version users of Unlimited Elements plugin.","unlimited-elements-for-elementor")?>
+						<?php esc_attr_e("This template is available only for the PRO version users of Unlimited Elements plugin.","unlimited-elements-for-elementor")?>
 
 						<br><br>
 
-						<?php _e("You can purchase a pro version here","unlimited-elements-for-elementor")?>:
+						<?php esc_attr_e("You can purchase a pro version here","unlimited-elements-for-elementor")?>:
 
 						<br><br>
 
-						<a href="<?php echo GlobalsUC::URL_BUY?>" class="unite-button-primary" target="_blank">Buy Unlimited Elements PRO</a>
+						<a href="<?php echo esc_url(GlobalsUC::URL_BUY)?>" class="unite-button-primary" target="_blank">Buy Unlimited Elements PRO</a>
 
 					</div>
 
 					<?php if(!empty($warningText)):?>
 					<div class="uc-dialog-preview-template__right-warning-message">
-						<?php echo $warningText?>
+						<?php 
+						s_echo($warningText);
+						?>
 					</div>
-					<?php endif?>
+					<?php endif?> 
 
-				</div>		<!-- right -->
+				</div>		<!-- right --> 
 
 		</div>
 		<?php
@@ -1925,15 +1926,13 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 
 		$filterCatalog = $this->filterCatalogState;
 
-		$addParams = "";
-		if($filterCatalog == self::FILTER_CATALOG_INSTALLED)
-			$addParams = " checked='checked'";
-
 		?>
 			<div class="uc-filter-set-wrapper uc-filter-set-checkbox">
 				<label>
-					<input id="uc_filter_catalog_installed" type="checkbox" data-state_active="<?php echo self::FILTER_CATALOG_INSTALLED?>" data-state_notactive="<?php echo self::FILTER_CATALOG_MIXED?>" <?php echo $addParams?>>
-					<?php _e("Show Only Installed", "unlimited-elements-for-elementor")?>
+					<input id="uc_filter_catalog_installed" type="checkbox" data-state_active="<?php 
+						echo esc_attr(self::FILTER_CATALOG_INSTALLED);
+						?>" data-state_notactive="<?php echo esc_attr(self::FILTER_CATALOG_MIXED);?>" <?php echo ( $filterCatalog == self::FILTER_CATALOG_INSTALLED ? ' checked="checked"' : '' ); ?>>
+					<?php esc_attr_e("Show Only Installed", "unlimited-elements-for-elementor")?>
 				</label>
 			</div>
 
@@ -1950,11 +1949,11 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 		?>
 			<div class="uc-filters-set-search">
 
-				<input id="uc_manager_addons_input_search" class="uc-filter-search-input" type="text" placeholder="<?php echo $textPlaceholder?>">
+				<input id="uc_manager_addons_input_search" class="uc-filter-search-input" type="text" placeholder="<?php echo esc_attr($textPlaceholder)?>">
 
-				<i id="uc_manager_addons_icon_search" class="fa fa-search uc-icon-search" title="<?php _e("Search Widget","unlimited-elements-for-elementor")?>"></i>
+				<i id="uc_manager_addons_icon_search" class="fa fa-search uc-icon-search" title="<?php esc_attr_e("Search Widget","unlimited-elements-for-elementor")?>"></i>
 
-				<a id="uc_manager_addons_clear_search" href="javascript:void(0)" onfocus="this.blur()" class="uc-filter-button-clear" title="<?php _e("Clear Search","unlimited-elements-for-elementor")?>" style="display:none" >
+				<a id="uc_manager_addons_clear_search" href="javascript:void(0)" onfocus="this.blur()" class="uc-filter-button-clear" title="<?php esc_attr_e("Clear Search","unlimited-elements-for-elementor")?>" style="display:none" >
 					<i class="fa fa-times uc-icon-clear"></i>
 				</a>
 			</div>
@@ -1973,11 +1972,11 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 		$filter = $this->filterActive;
 		if(empty($filter))
 			$filter = "all";
-
-		//show only if installed
+		/*
 		$style = "style='display:none'";
 		if($this->filterCatalogState == "installed")
 			$style = "";
+		*/
 
 		$arrFilter = array();
 		$arrFilter["all"] = __("Show all states", "unlimited-elements-for-elementor");
@@ -1987,9 +1986,20 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 		$htmlSelect = HelperHtmlUC::getHTMLSelect($arrFilter, $filter, "id='uc_manager_filter_active' class='uc-select-filter-active'", true);
 
 		?>
-		<div class="uc-filter-set-wrapper uc-filter-set-active" <?php echo $style?>>
+		<div class="uc-filter-set-wrapper uc-filter-set-active" 
+				<?php 
+				//show only if installed
+				if($this->filterCatalogState != "installed") {
+					?>
+					style='display:none'
+					<?php
+				}
+				?>
+			>
 
-			<?php echo $htmlSelect ?>
+			<?php 
+			s_echo($htmlSelect); 
+			?>
 
 		</div>
 		<?php
@@ -2043,12 +2053,16 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 
 			<?php if(!empty($this->headerLineText)):?>
 			<div class="uc-manager-header-text">
-				<?php echo $this->headerLineText?>
+				<?php 
+				s_echo($this->headerLineText);
+				?>
 			</div>
 			<?php endif?>
 
 			<div class="uc-manager-header-filters">
-				<?php $this->putHeaderLineFilters()?>
+				<?php 
+				$this->putHeaderLineFilters();
+				?>
 			</div>
 
 			<div class="unite-clear"></div>
@@ -2070,9 +2084,9 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 		?>
 		 	<div id="uc_manager_group" class="uc-manager-group">
 
-		 		<a href="javascript:void(0)" class="uc-manager-group-back"><?php _e("Back To Category","unlimited-elements-for-elementor")?></a>
+		 		<a href="javascript:void(0)" class="uc-manager-group-back"><?php esc_attr_e("Back To Category","unlimited-elements-for-elementor")?></a>
 
-		 		<div class="uc-manager-group-text"><?php _e("Template Kit","unlimited-elements-for-elementor")?></div>
+		 		<div class="uc-manager-group-text"><?php esc_attr_e("Template Kit","unlimited-elements-for-elementor")?></div>
 
 		 	</div>
 
@@ -2092,10 +2106,10 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 		?>
 		<div class="item_operations_wrapper uc-bottom-copypanel" style="display:none">
 
-			 <?php _e("Copied", "unlimited-elements-for-elementor")?>: <span class="uc-copypanel-addon"></span>
+			 <?php esc_attr_e("Copied", "unlimited-elements-for-elementor")?>: <span class="uc-copypanel-addon"></span>
 
-			 <a class="unite-button-secondary button-disabled uc-button-copypanel-move" href="javascript:void(0)"><?php _e("Move Here","unlimited-elements-for-elementor")?></a>
-			 <a class="unite-button-secondary uc-button-copypanel-cancel" href="javascript:void(0)"><?php _e("Cancel")?></a>
+			 <a class="unite-button-secondary button-disabled uc-button-copypanel-move" href="javascript:void(0)"><?php esc_attr_e("Move Here","unlimited-elements-for-elementor")?></a>
+			 <a class="unite-button-secondary uc-button-copypanel-cancel" href="javascript:void(0)"><?php esc_attr_e("Cancel","unlimited-elements-for-elementor")?></a>
 		 </div>
 
 		<?php
@@ -2471,7 +2485,8 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 			return(false);
 
 		$htmlAddons = $this->getCatAddonsHtml(null);
-
+		
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $htmlAddons;
 	}
 

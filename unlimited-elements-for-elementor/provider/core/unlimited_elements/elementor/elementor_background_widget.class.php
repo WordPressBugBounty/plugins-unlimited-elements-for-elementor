@@ -69,7 +69,7 @@ class UniteCreatorElementorBackgroundWidget extends UniteCreatorElementorWidget 
 		$this->objControls->add_control(
 					$name,
 					array(
-						'label' => __( 'No settings for this background', 'unlimited_elements' ),
+						'label' => __( 'No settings for this background', 'unlimited-elements-for-elementor' ),
 						'type' => \Elementor\Controls_Manager::HEADING,
 						'condition'=>$condition
 					)

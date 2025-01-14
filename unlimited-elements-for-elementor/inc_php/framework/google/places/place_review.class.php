@@ -53,7 +53,7 @@ class UEGoogleAPIPlaceReview extends UEGoogleAPIModel{
 	public function getDate($format){
 
 		$time = $this->getTime();
-		$date = date($format, $time);
+		$date = s_date($format, $time);
 
 		return $date;
 	}

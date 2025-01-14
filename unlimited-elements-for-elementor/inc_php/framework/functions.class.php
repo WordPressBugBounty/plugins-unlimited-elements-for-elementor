@@ -27,7 +27,7 @@ class UniteFunctionsUC{
 		if($code === null)
 			$code = 0;
 		
-		throw new Exception($message, $code);
+		throw new Exception(esc_attr($message), (int)$code);
 	}
 
 	/**
@@ -306,7 +306,7 @@ class UniteFunctionsUC{
 	 * Convert std class to array, with all sons
 	 */
 	public static function convertStdClassToArray($d){
-		
+
 		if (is_object($d)) {
 			$d = get_object_vars($d);
 		}
@@ -327,7 +327,8 @@ class UniteFunctionsUC{
 	 */
 	public static function getRandomArrayItem($arr){
 		$numItems = count($arr);
-		$rand = rand(0, $numItems-1);
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.rand_mt_rand
+		$rand = mt_rand(0, $numItems-1);
 		$item = $arr[$rand];
 		return($item);
 	}
@@ -798,11 +799,13 @@ class UniteFunctionsUC{
 	
 	    $truncateSize = 200; // Truncate size for strings
 	    $arrDataNew = array();
-	
+		
+	    $invisibleSign = "\u{200B}";
+		
 	    foreach ($arrData as $key => $value) {
 	        // Sanitize the key
 	        $key = htmlspecialchars($key);
-	        $key = " $key"; // Add space before key
+	        $key = $invisibleSign."$key"; // Add space before key
 	
 	        // If the value is a string and exceeds truncate size
 	        if (is_string($value) && strlen($value) > $truncateSize) {
@@ -877,28 +880,20 @@ class UniteFunctionsUC{
 			return("");
 
 		$csv = "";
-
-			$f = fopen('php://memory', 'r+');
-
-			$arrKeys = null;
-
-			foreach ($data as $item) {
-
-				//put keys
-				if(empty($arrKeys)){
-
-					$arrKeys = array_keys($item);
-
-					fputcsv($f, $arrKeys, $delimiter, $enclosure, $escape_char);
-				}
-
-					fputcsv($f, $item, $delimiter, $enclosure, $escape_char);
+		
+		$arrKeys = null;
+		
+		foreach ($data as $item) {
+			if (empty($arrKeys)) {
+				$arrKeys = array_keys($item);
+	
+				$csv .= implode($delimiter, $arrKeys) . PHP_EOL;
 			}
-			rewind($f);
+			$csv .= implode($delimiter, $item) . PHP_EOL;
+		}
 
-			$csv = stream_get_contents($f);
 
-			return $csv;
+		return $csv;
 	}
 
 	/**
@@ -941,6 +936,48 @@ class UniteFunctionsUC{
 		
 		return($arr);
 	}
+	
+	/**
+	 * check that all items in array are empty
+	 */
+	public static function isAllArrayItemsEmpty($arr){
+		
+		if(empty($arr))
+			return(true);
+		
+		if(is_array($arr) == false)
+			return(true);
+			
+	    foreach ($arr as $value) {
+	        if (!empty($value))
+	            return false; 
+	    }
+	    
+	    return true; 
+	}	
+	
+	/**
+	 * detect array main key. 
+	 * is the item, that is a parent of array of items themselfs.
+	 * like table->0 arr,1 arr ,2 arr etc.
+	 */
+	public static function detectArrayMainKey($inputArray) {
+		
+	    if (!is_array($inputArray) || empty($inputArray))
+	        return null;
+		
+	    $isList = array_keys($inputArray) === range(0, count($inputArray) - 1);
+	    if ($isList)
+	        return null;
+	
+	    $mainKey = array_key_first($inputArray);
+		
+	    if (isset($inputArray[$mainKey]) && is_array($inputArray[$mainKey])) {
+	        return $mainKey;
+	    }
+	    
+	    return null;
+	}	
 	
 	public static function z_____________STRINGS_____________(){}
 	
@@ -1038,7 +1075,8 @@ class UniteFunctionsUC{
 		$randomString = '';
 
 		for ($i = 0; $i < $length; $i++) {
-			$randomString .= $characters[rand(0, strlen($characters) - 1)];
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.rand_mt_rand
+			$randomString .= $characters[mt_rand(0, strlen($characters) - 1)];
 		}
 
 		return $randomString;
@@ -1075,7 +1113,7 @@ class UniteFunctionsUC{
 			$str = rtrim(substr($str, 0, $length));
 		
 		
-		$strNoTags = strip_tags($str);
+		$strNoTags = wp_strip_all_tags($str);
 		
 		$len = mb_strlen($str,$charset) - mb_strlen($strNoTags,$charset);
 		
@@ -1097,7 +1135,7 @@ class UniteFunctionsUC{
 					
 		$originalValue = $value;
 				
-		$value = strip_tags($value,"<br><em><b><strong>");
+		$value = wp_strip_all_tags($value,"<br><em><b><strong>");
 		
 		$stringLen = mb_strlen($value, $charset);
 		
@@ -1593,17 +1631,17 @@ class UniteFunctionsUC{
 						$str = mb_strcut($html, $position, $tagPosition - $position);
 
 						if ($printedLength + mb_strlen($str) > $maxLength){
-								print(mb_strcut($str, 0, $maxLength - $printedLength));
-								$printedLength = $maxLength;
-								break;
+							s_echo(mb_strcut($str, 0, $maxLength - $printedLength));
+							$printedLength = $maxLength;
+							break;
 						}
 
-						print($str);
+						s_echo($str);
 						$printedLength += mb_strlen($str);
 
 						if ($tag[0] == '&'){
 								// Handle the entity.
-								print($tag);
+								s_echo($tag);
 								$printedLength++;
 						}
 						else{
@@ -1614,16 +1652,15 @@ class UniteFunctionsUC{
 
 										$openingTag = array_pop($tags);
 										assert($openingTag == $tagName); // check that tags are properly nested.
-
-										print($tag);
+										s_echo($tag);
 								}
 								else if ($tag[mb_strlen($tag) - 2] == '/'){
 										// Self-closing tag.
-										print($tag);
+										s_echo($tag);
 								}
 								else{
 										// Opening tag.
-										print($tag);
+										s_echo($tag);
 										$tags[] = $tagName;
 								}
 						}
@@ -1633,12 +1670,13 @@ class UniteFunctionsUC{
 				}
 
 				// Print any remaining text.
-				if ($printedLength < $maxLength && $position < mb_strlen($html))
-						print(mb_strcut($html, $position, $maxLength - $printedLength));
+				if ($printedLength < $maxLength && $position < mb_strlen($html)) {
+					s_echo(mb_strcut($html, $position, $maxLength - $printedLength));
+				}
 
 				// Close any open tags.
 				while (!empty($tags))
-						 printf('</%s>', array_pop($tags));
+						 printf('</%s>', esc_attr(array_pop($tags)));
 
 
 				$bufferOuput = ob_get_contents();
@@ -1671,6 +1709,19 @@ class UniteFunctionsUC{
 		
     	return preg_replace('/([^:]+:\s*[^;]+);(?!\s*!important)/', '$1 !important;', $css);
 	}
+	
+	/**
+	 * get first url from inside a string string
+	 */
+	public static function getFirstUrlFromText($text){
+		
+	        $pattern = '/https?:\/\/[^\s]+/i';
+	        
+	        if (preg_match($pattern, $text, $matches))
+	            return $matches[0];
+	        
+	        return "";
+	    }	
 	
 	public static function z__________ENCODE_DECODE__________(){}
 	
@@ -1802,7 +1853,7 @@ class UniteFunctionsUC{
 
 		//not allowed html tags
 
-		if($str != strip_tags($str))
+		if($str != wp_strip_all_tags($str))
 			return($str);
 
 		//try to csv decode
@@ -2153,7 +2204,7 @@ class UniteFunctionsUC{
 	 */
 	public static function validateFilepath($filepath,$errorPrefix=null){
 
-		if(file_exists($filepath) == true && is_file($filepath) == true)
+		if(file_exists($filepath) == true && self::isFile($filepath) == true)
 			return(false);
 
 		if($errorPrefix == null)
@@ -2171,7 +2222,7 @@ class UniteFunctionsUC{
 	 * validate that some directory exists, if not - throw error
 	 */
 	public static function validateDir($pathDir, $errorPrefix=null){
-		if(is_dir($pathDir) == true)
+		if(self::isDir($pathDir) == true)
 			return(false);
 
 		if($errorPrefix == null)
@@ -2187,20 +2238,20 @@ class UniteFunctionsUC{
 		if($validateExists == true){
 			//if the file/directory doesn't exists - throw an error.
 			if(file_exists($path) == false)
-				throw new Exception("$name doesn't exists");
+				throw new Exception(esc_attr($name) . "doesn't exists");
 		}
 		else{
 			//if the file not exists - don't check. it will be created.
 			if(file_exists($path) == false) return(false);
 		}
 
-		if(is_writable($path) == false){
-			chmod($path,0755);		//try to change the permissions
-			if(is_writable($path) == false){
+		if(self::isWritable($path) == false){
+			self::chmod($path,0755);		//try to change the permissions
+			if(self::isWritable($path) == false){
 				$strType = "Folder";
-				if(is_file($path)) $strType = "File";
+				if(self::isFile($path)) $strType = "File";
 				$message = "$strType $name is doesn't have a write permissions. Those folders/files must have a write permissions in order that this application will work properly: $strList";
-				throw new Exception($message);
+				throw new Exception(esc_attr($message));
 			}
 		}
 	}
@@ -2239,7 +2290,7 @@ class UniteFunctionsUC{
 	 */
 	public static function validateNoTags($val, $fieldName=""){
 
-		if($val == strip_tags($val))
+		if($val == wp_strip_all_tags($val))
 			return(true);
 
 		if(empty($fieldName))
@@ -2394,7 +2445,8 @@ class UniteFunctionsUC{
 		if($isValid == true)
 			return(false);
 
-		self::throwError(__("The $fieldName is not valid", "unlimited-elements-for-elementor"));
+		// translators: %s is the field name
+		self::throwError(sprintf(__("The %s is not valid", "unlimited-elements-for-elementor"), $fieldName));
 
 	}
 
@@ -2484,19 +2536,19 @@ class UniteFunctionsUC{
 	 * @param $dir
 	 */
 	public static function checkCreateDir($dir){
-		if(!is_dir($dir))
-			mkdir($dir);
+		if(!self::isDir($dir))
+			self::mkdir($dir);
 	}
 
 
 	/**
 	 * make directory and validate that it's exists
 	 */
-	public static function mkdirValidate($path, $dirName){
-
-		if(is_dir($path) == false){
-			@mkdir($path);
-			if(!is_dir($path))
+	public static function mkdirValidate($path, $dirName = ""){
+		
+		if(self::isDir($path) == false){
+			self::mkdir($path);
+			if(!self::isDir($path))
 				UniteFunctionsUC::throwError("$dirName path: {$path} could not be created. Please check your permissions");
 		}
 
@@ -2563,14 +2615,14 @@ class UniteFunctionsUC{
 		
 		//prepend text
 		
-		$existingContent = file_get_contents($pathLog);
+		$existingContent = self::fileGetContents($pathLog);
 
 		//cut from the end
 		
 		if(strlen($existingContent > $maxSize))
 			$existingContent = substr($existingContent, $maxSize);
 		
-		file_put_contents($pathLog, $text . $existingContent);		
+		self::filePutContents($pathLog, $text . $existingContent);		
 		
 	}
 	
@@ -2584,13 +2636,11 @@ class UniteFunctionsUC{
 		if(is_array($str))
 			UniteFunctionsUC::throwError("write file should accept only string in file: ". $filepath);
 
-		$fp = fopen($filepath,"w+");
 
-		if($fp === false)
+		$res = self::filePutContents($filepath, $str);
+		
+		if($res === false)
 			UniteFunctionsUC::throwError("File $filepath could not been created. Check folder permissions");
-
-		fwrite($fp,$str);
-		fclose($fp);
 	}
 
 
@@ -2604,7 +2654,7 @@ class UniteFunctionsUC{
 		foreach($dir as $file){
 			if($file == "." || $file == "..") continue;
 			$filepath = $path . "/" . $file;
-			if(is_file($filepath)) $arrFiles[] = $file;
+			if(self::isFile($filepath)) $arrFiles[] = $file;
 		}
 		return($arrFiles);
 	}
@@ -2617,7 +2667,7 @@ class UniteFunctionsUC{
 		if(empty($path))
 			return(0);
 
-		if(is_dir($path) == false)
+		if(self::isDir($path) == false)
 			return(0);
 
 		$arrFiles = self::getFileListTree($path);
@@ -2629,7 +2679,7 @@ class UniteFunctionsUC{
 
 		foreach($arrFiles as $pathFile){
 
-			if(is_file($pathFile) == false)
+			if(self::isFile($pathFile) == false)
 				continue;
 
 			$fileSize = filesize($pathFile);
@@ -2648,7 +2698,7 @@ class UniteFunctionsUC{
 		if(empty($arrFiles))
 			$arrFiles = array();
 
-		if(is_dir($path) == false)
+		if(self::isDir($path) == false)
 			return($arrFiles);
 
 		$path = self::addPathEndingSlash($path);
@@ -2660,7 +2710,7 @@ class UniteFunctionsUC{
 
 			$filepath = $path.$file;
 
-			$isDir = is_dir($filepath);
+			$isDir = self::isDir($filepath);
 
 			if($isDir == true){
 
@@ -2709,7 +2759,7 @@ class UniteFunctionsUC{
 
 			$dirpath = $path . "/" . $dir;
 
-			if(is_dir($dirpath))
+			if(self::isDir($dirpath))
 				$arrFiles[] = $dir;
 		}
 
@@ -2731,26 +2781,28 @@ class UniteFunctionsUC{
 	 *
 	 * save to filesystem the error
 	 */
-	public static function writeDebugError(Exception $e,$filepath = "debug.txt"){
+	public static function writeDebugError(Exception $e,$filepath = "debug.txt"){ 
 		$message = $e->getMessage();
 		$trace = $e->getTraceAsString();
-
-		$output = $message."\n";
+		
+		$output = self::fileGetContents($filepath);
+		$output .= $message."\n";
 		$output .= $trace."\n";
 
-		$fp = fopen($filepath,"a+");
-		fwrite($fp,$output);
-		fclose($fp);
+		self::filePutContents($filepath, $output);
 	}
 
 
 	//------------------------------------------------------------
 	//save some file to the filesystem with some text
 	public static function addToFile($str,$filepath){
-		$fp = fopen($filepath,"a+");
-		fwrite($fp,"---------------------\n");
-		fwrite($fp,$str."\n");
-		fclose($fp);
+
+		$output = self::fileGetContents($filepath);
+
+		$output .= "---------------------\n" . $str . "\n";
+
+		self::filePutContents($filepath, $output);
+
 	}
 
 	/**
@@ -2777,7 +2829,7 @@ class UniteFunctionsUC{
 			if(file_exists($filepath) == false)
 				continue;
 
-			if(is_dir($filepath))
+			if(self::isDir($filepath))
 				self::deleteDir($filepath);
 			else
 				unlink($filepath);
@@ -2814,7 +2866,7 @@ class UniteFunctionsUC{
 			return($arrNotDeleted);
 
 		// delete file
-		if(is_file($path)){
+		if(self::isFile($path)){
 
 			//check by time
 			if(!empty($olderSec)){
@@ -2864,7 +2916,7 @@ class UniteFunctionsUC{
 			}
 
 
-			$deleted = @rmdir($path);
+			$deleted = self::rmdir($path);
 			if(!$deleted)
 				$arrNotDeleted[] = $path;
 		}
@@ -2879,10 +2931,12 @@ class UniteFunctionsUC{
 	 */
 	public static function copyDir($src, $dst) {
 		$dir = opendir($src);
-		@mkdir($dst);
+		
+		self::mkdirValidate($dst);
+		
 		while(false !== ( $file = readdir($dir)) ) {
 			if (( $file != '.' ) && ( $file != '..' )) {
-				if ( is_dir($src . '/' . $file) ) {
+				if ( self::isDir($src . '/' . $file) ) {
 					self::copyDir($src . '/' . $file,$dst . '/' . $file);
 				}
 				else {
@@ -2982,7 +3036,7 @@ class UniteFunctionsUC{
 
 		$path = self::pathToUnix($path);
 
-		if(is_dir($path) && $addEndingSlash == true)
+		if(self::isDir($path) && $addEndingSlash == true)
 			$path .= "/";
 
 		return($path);
@@ -3192,7 +3246,7 @@ class UniteFunctionsUC{
 	//---------------------------------------------------------------------------------------------------
 	// convert timestamp to time string
 	public static function timestamp2Time($stamp){
-		$strTime = date("H:i",$stamp);
+		$strTime = s_date("H:i",$stamp);
 		return($strTime);
 	}
 	
@@ -3205,9 +3259,9 @@ class UniteFunctionsUC{
 		$dateString = "d M Y, H:i";
 		
 		if(empty($stamp))
-			$strDateTime = date($dateString);
+			$strDateTime = s_date($dateString);
 		else
-			$strDateTime = date("d M Y, H:i",$stamp);
+			$strDateTime = s_date("d M Y, H:i",$stamp);
 		
 		return($strDateTime);
 	}
@@ -3219,7 +3273,7 @@ class UniteFunctionsUC{
 		if(empty($stamp))
 			return("");
 
-		$strDate = date("d M Y",$stamp);	//27 Jun 2009
+		$strDate = s_date("d M Y",$stamp);	//27 Jun 2009
 		return($strDate);
 	}
 	
@@ -3284,19 +3338,23 @@ class UniteFunctionsUC{
 	
 	/**
 	 * check if some variable is time stamp
+	 * TODO - 20241205 - should be not time stamp 
 	 */
 	public static function isTimeStamp($number) {
-		
-	    if (!is_numeric($number) || intval($number) != $number)
+
+	  // Ensure the number is numeric and an integer
+	    if (!is_numeric($number) || intval($number) != $number) {
 	        return false;
+	    }
 	
-	    // Check if the number has exactly 10 digits
-	    if (strlen((string)$number) != 10)
-	    	return(false);
-	
- 		$date = date('Y-m-d H:i:s', $number);
- 		
-    	return (strtotime($date) === (int)$number);	    	
+	    // Validate the timestamp range (Unix epoch seconds range)
+	    $minTimestamp = 0; // January 1, 1970
+	    $maxTimestamp = 2147483647; // January 19, 2038, for 32-bit systems
+	    if ($number < $minTimestamp || $number > $maxTimestamp) {
+	        return false;
+	    }
+		
+	    return true;		
 	}
 	
 	public static function z___________OTHERS__________(){}
@@ -3347,7 +3405,7 @@ class UniteFunctionsUC{
 
 		if(empty($obj)){
 
-			$xmlString = file_get_contents($filepath);
+			$xmlString = self::fileGetContents($filepath);
 
 			if(empty($xmlString))
 				UniteFunctionsUC::throwError("xml load: No content found in: ".$filepath);
@@ -3549,7 +3607,7 @@ class UniteFunctionsUC{
 	 */
 	public function downloadImage($filepath, $filename, $mimeType = ""){
 
-		$contents = file_get_contents($filepath);
+		$contents = self::fileGetContents($filepath);
 		$filesize = strlen($contents);
 
 		if($mimeType == ""){
@@ -3562,7 +3620,7 @@ class UniteFunctionsUC{
 		header("Content-Length: $filesize");
 		header("Content-Type: $mimeType");
 
-		echo UniteProviderFunctionsUC::escCombinedHtml($contents);
+		s_echo($contents);
 		exit;
 	}
 
@@ -3577,7 +3635,7 @@ class UniteFunctionsUC{
 		header("Content-Length: $filesize");
 		header("Content-Type: text/plain");
 
-		echo UniteProviderFunctionsUC::escCombinedHtml($text);
+		s_echo($text);
 		exit;
 	}
 
@@ -3593,7 +3651,7 @@ class UniteFunctionsUC{
 		header("Content-Length: $filesize");
 		header("Content-Type: application/json");
 
-		echo UniteProviderFunctionsUC::escCombinedHtml($text);
+		s_echo($text);
 		exit;
 	}
 
@@ -3607,23 +3665,16 @@ class UniteFunctionsUC{
 		header("Content-Type: application/octet-stream");
 		header("Content-Type: text/csv");
 
-		$handler = fopen("php://output", "w");
-
-		// add BOM to fix UTF-8 in Excel
-		fputs($handler, chr(0xEF) . chr(0xBB) . chr(0xBF));
-		fputcsv($handler, $headers);
-
-		foreach($rows as $row){
+		s_echo(chr(0xEF) . chr(0xBB) . chr(0xBF));
+		s_echo(implode(',', $headers) . "\n");
+		foreach ($rows as $row) {
 			$fields = array();
-
-			foreach($headers as $key => $header){
+			foreach ($headers as $key => $header) {
 				$fields[] = self::getVal($row, $key);
 			}
-
-			fputcsv($handler, $fields);
+			s_echo(implode(',', $fields) . "\n");
 		}
 
-		fclose($handler);
 		exit;
 	}
 
@@ -3644,7 +3695,7 @@ class UniteFunctionsUC{
 		header('Cache-Control: must-revalidate');
 		header('Pragma: public');
 		header('Content-Length: ' . filesize($filepath));
-		readfile($filepath);
+		s_echo(self::fileGetContents($filepath));
 		exit();
 	}
 
@@ -3686,9 +3737,10 @@ class UniteFunctionsUC{
 			return("false");
 	}
 
-
-	//------------------------------------------------------------
-	// get black value from rgb value
+ 
+	/**
+	 * get black value from rgb value
+	 */
 	public static function yiq($r,$g,$b){
 		return (($r*0.299)+($g*0.587)+($b*0.114));
 	}
@@ -3817,7 +3869,108 @@ class UniteFunctionsUC{
 		if(isset($_SERVER["REMOTE_ADDR"]))
 			return($_SERVER["REMOTE_ADDR"]);
 		
-		return("127.0.0.1");
+		return("127.0.0.1");  
 	}
+
+	public static function z___________FILE_SYSTEM_CORE__________(){}
+	
+	
+/*** File System functions ***/
+
+	/**
+	 * move_uploaded_file
+	*/
+	public static function moveUploadedFile($source, $destination) {
+		return move_uploaded_file($source, $destination);
+	}
+
+	/**
+	 * rename 
+	*/
+	public static function move($source, $destination) {
+		return rename($source, $destination);
+	}
+
+	/**
+	 * file_get_contents
+	*/
+	public static function fileGetContents($file) {
+		
+		return file_get_contents($file);
+	}
+
+	/**
+	 * file_put_contents
+	*/
+	public static function filePutContents($file, $content) {
+		return file_put_contents($file, $content);
+	}
+
+	/**
+	 * is_file
+	*/
+	public static function isFile($file) {
+		return is_file($file);
+	}
+
+	/**
+	 * is_dir
+	*/
+	public static function isDir($dir) {
+		return is_dir($dir);
+	}
+
+	/**
+	 * file_exists
+	*/
+	public static function fileExists($path) {
+		return file_exists($path);
+	}
+
+	/**
+	 * is_writable
+	*/
+	public static function isWritable($path) {
+		return is_writable($path);
+	}
+
+	/**
+	 * chmod
+	*/
+	public static function chmod($file, $permissions) {
+		return chmod($file, $permissions);
+	}
+
+	/**
+	 * chown
+	*/
+	public static function chown($file, $owner) {
+		return chown($file, $owner);
+	}
+
+	/**
+	 * mkdir
+	*/
+	public static function mkdir($dir) {
+				
+		return mkdir($dir);
+	}
+
+	/**
+	 * readfile
+	*/
+	public static function wp_filesystem_readfile($file) {
+		return readfile($file);
+	}
+
+	/**
+	 * rmdir
+	*/
+	public static function rmdir($dir) {
+		return rmdir($dir); 
+	}
+	
+	/*** End File System functions ***/
+	
 
 }

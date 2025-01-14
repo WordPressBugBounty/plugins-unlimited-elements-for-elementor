@@ -415,7 +415,7 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 					
 					if($isModule == true)
 						$htmlType = "module";
-
+					// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript	
 					$html .= self::TAB2."<script type='{$htmlType}' src='{$url}'></script>".self::BR;
 					break;
 				case "css":
@@ -424,11 +424,13 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 					$isDelayedScript = apply_filters("unlimited_element_is_style_delayed", $cssID);
 
 					if($isDelayedScript === true){
+						// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
 						$styleHtml = "<link id='{$cssID}' data-debloat-delay='' data-href='{$url}' type='text/css' rel='stylesheet' media='all' >";
 
 						$html .= self::TAB2.$styleHtml.self::BR;
 					}
 					else
+						// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
 						$html .= self::TAB2."<link id='{$cssID}' href='{$url}' type='text/css' rel='stylesheet' >".self::BR;
 
 					break;
@@ -1358,6 +1360,7 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 
 		//get head html
 		$htmlHead .= self::TAB2."<title>{$title}</title>".self::BR;
+		// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
 		$htmlHead .= self::TAB2."<link rel='stylesheet' href='{$urlPreviewCss}' type='text/css'>".self::BR;
 		$htmlHead .= $htmlInlcudesCss;
 
@@ -1403,16 +1406,13 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 	public function putPreviewHtml(){
 
 		$output = $this->getPreviewHtml();
-
-		echo UniteProviderFunctionsUC::escCombinedHtml($output["head"]);
+		s_echo($output["head"]);
 
 		//$this->putPreviewHtml_headerAdd();
-
-		echo UniteProviderFunctionsUC::escCombinedHtml($output["after_head"]);
+		s_echo($output["after_head"]);
 
 		$this->putPreviewHtml_footerAdd();
-
-		echo UniteProviderFunctionsUC::escCombinedHtml($output["end"]);
+		s_echo($output["end"]);
 	}
 
 	private function a________DYNAMIC___________(){}

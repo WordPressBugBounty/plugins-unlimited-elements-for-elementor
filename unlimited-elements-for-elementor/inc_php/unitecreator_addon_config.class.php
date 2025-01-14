@@ -58,7 +58,7 @@ class UniteCreatorAddonConfig extends HtmlOutputBaseUC{
 		
 		$html .= 	self::TAB2."</div>".self::BR;
 		
-		return($html);
+		return($html); 
 	}
 	
 	
@@ -72,7 +72,7 @@ class UniteCreatorAddonConfig extends HtmlOutputBaseUC{
 		$html .= 	self::TAB3."<div class='uc-addon-config-settings unite-settings'>".self::BR;
 		
 		if($putMode == true){
-			echo UniteProviderFunctionsUC::escCombinedHtml($html);
+			s_echo($html);
 			$html = "";
 		}
 		
@@ -99,7 +99,7 @@ class UniteCreatorAddonConfig extends HtmlOutputBaseUC{
 		
 		
 		if($putMode == true)
-			echo UniteProviderFunctionsUC::escCombinedHtml($html);
+			s_echo($html);
 		else		
 			return($html);
 	}
@@ -181,7 +181,7 @@ class UniteCreatorAddonConfig extends HtmlOutputBaseUC{
 				
 		//put settings
 		if($putMode == true){
-			echo UniteProviderFunctionsUC::escCombinedHtml($html);
+			s_echo($html);
 			$html = "";
 			$this->getHtmlSettings(true);
 		}else{
@@ -199,7 +199,7 @@ class UniteCreatorAddonConfig extends HtmlOutputBaseUC{
 		$html .= self::TAB."</div>".self::BR;	//main wrapper
 		
 		if($putMode == true)
-			echo UniteProviderFunctionsUC::escCombinedHtml($html);
+			s_echo($html);
 		else
 			return($html);
 	}

@@ -231,6 +231,7 @@ class UEHttpRequest{
 			));
 
 			if(is_wp_error($wpResponse) === true)
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 				throw new UEHttpRequestException($wpResponse->get_error_message(), $this);
 
 			$requestResponse = array(
@@ -248,6 +249,7 @@ class UEHttpRequest{
 				$validResponse = call_user_func($this->validateResponse, $response);
 
 				if($validResponse === false)
+					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 					throw new UEHttpResponseException("Response validation failed.", $response);
 			}
 

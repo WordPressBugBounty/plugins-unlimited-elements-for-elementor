@@ -118,26 +118,28 @@ class HelperInstaUC{
 
 		if($expireDays < 0){
 			$expireDays *= -1;
-			$html = "<span class='unite-color-red'>".__("The token has expired ","unlimited-elements-for-elementor").$expireDays.__(" ago","unlimited-elements-for-elementor")."</span>";
-		}else{
-
-			$html = __("The token will expire in ","unlimited-elements-for-elementor").$expireDays .__(" days. Don't worry, it should auto renew.","unlimited-elements-for-elementor");
+			?>
+			<span class='unite-color-red'>
+				"<?php 
+				esc_attr_e("The token has expired ","unlimited-elements-for-elementor");
+				echo esc_attr($expireDays);
+				esc_attr_e(" ago","unlimited-elements-for-elementor");
+				?>"
+			</span>
+			<?php
+		} else {
+			esc_attr_e("The token will expire in ","unlimited-elements-for-elementor");
+			echo esc_attr($expireDays);
+			esc_attr_e(" days. Don't worry, it should auto renew.","unlimited-elements-for-elementor");
 		}
 
 		//add renew link
-
-		$htmlLink = null;
-
-		if($expireDays < 60){
+		if($expireDays < 60) {
 			$linkRenew = HelperUC::getUrlAjax("renew_instagram_access_token");
-			$htmlLink = HelperHtmlUC::getHtmlLink($linkRenew, "renew access token");
+			?>
+			<a href="<?php echo esc_url($linkRenew);?>"><?php esc_attr_e("renew access token","unlimited-elements-for-elementor")?></a>
+			<?php
 		}
-
-		if(!empty($htmlLink))
-			$html .= " ".$htmlLink;
-
-
-		return($html);
 	}
 
 	/**
@@ -158,8 +160,6 @@ class HelperInstaUC{
  
 		$buttonText = __("Connect With Instagram", "unlimited-elements-for-elementor");
 
-		$htmlButton = HelperHtmlUC::getHtmlLink($urlConnect, "", "", "uc-button-connect-instagram");
-
 		//put access data as well
 		$data = self::getInstagramSavedAccessData();
 		$accessToken = UniteFunctionsUC::getVal($data, "access_token");
@@ -170,8 +170,6 @@ class HelperInstaUC{
 		if(!empty($accessToken)){
 
 			$username = UniteFunctionsUC::getVal($data, "username");
-			
-			$expiresHTML = self::getHTMLExpires($expiresAt);
 
 			$urlTestView = HelperUC::getViewUrl("instagram-test");
 			$linkTest = HelperHtmlUC::getHtmlLink($urlTestView, "Test Instagram Data");
@@ -185,18 +183,20 @@ class HelperInstaUC{
 			
 			?>
 			<div id="uc_instagram_reconnect_message" class="instagram-reconnect-message">
-				<?php echo $text?>
-				<a id="uc_button_delete_insta_data" href="javascript:void(0)" class="unite-button-secondary"> <?php _e("Clear Access Data","unlimited-elements-for-elementor")?></a>
-
+				<?php echo esc_attr($text)?>
+				<a id="uc_button_delete_insta_data" href="javascript:void(0)" class="unite-button-secondary"> 
+					<?php esc_attr_e("Clear Access Data","unlimited-elements-for-elementor")?>
+				</a>
 				<br>
-				&nbsp;<?php echo $linkTest?>
-
+				&nbsp;<a href="<?php echo esc_url($urlTestView);?>"><?php esc_attr_e('Test Instagram Data',"unlimited-elements-for-elementor")?></a>
 			</div>
 			<div id="uc_instagram_connect_button_wrapper" class="uc-instagram-connect-button-wrapper" style="display:none">
-				<?php echo $htmlButton?>
+				<a href="<?php echo esc_url($urlConnect); ?>" class="uc-button-connect-instagram"></a>
 			</div>
 			<br>
-			<div class="uc-instagram-message-expire"><?php echo $expiresHTML?></div>
+			<div class="uc-instagram-message-expire">
+				<?php self::getHTMLExpires($expiresAt);?>
+			</div>
 			<?php
 		}else{
 
@@ -215,7 +215,9 @@ class HelperInstaUC{
 				<?php
 			}
 
-			echo $htmlButton;
+			?>
+			<a href="<?php echo esc_url($urlConnect); ?>" class="uc-button-connect-instagram"></a>
+			<?php
 
 		}
 		?>
@@ -450,7 +452,7 @@ class HelperInstaUC{
 		if(is_numeric($stamp) == false)
 			return("");
 
-		$dateText = date("d F Y, H:i", $stamp);
+		$dateText = s_date("d F Y, H:i", $stamp);
 
 		return($dateText);
 	}

@@ -25,12 +25,14 @@ while(strlen($strData) < $size){
 	$strData .= " this is text ";
 }
 
-echo(strlen($strData)."<br><br>");
+echo esc_attr(strlen($strData));
 
-?>
+?><br><br>
 <div style="height:300px;overflow:auto;border:1px solid black;padding:5px;">
 
-<?php echo UniteProviderFunctionsUC::escCombinedHtml($strData);?>
+<?php 
+s_echo( $strData );
+?>
 
 </div>
 

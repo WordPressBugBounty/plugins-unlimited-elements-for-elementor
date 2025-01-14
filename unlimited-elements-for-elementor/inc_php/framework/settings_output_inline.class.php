@@ -50,16 +50,19 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			
 			?>
 				
-				<div id="<?php echo esc_attr($setting["id_row"])?>" <?php echo UniteProviderFunctionsUC::escAddParam($rowClass)?>>
+				<div id="<?php echo esc_attr($setting["id_row"])?>" <?php 
+					s_echo($rowClass)?>>
 					
-					<div class="unite-setting-text" <?php echo UniteProviderFunctionsUC::escAddParam($textStyle)?> >
+					<div class="unite-setting-text" <?php 
+						s_echo($textStyle)?> >
 						<?php if($this->showDescAsTips == true): ?>
-					    	<span class='setting_text' title="<?php echo esc_attr($description)?>"><?php echo $text?></span>
+					    	<span class='setting_text' title="<?php echo esc_attr($description)?>"><?php echo esc_attr($text)?></span>
 					    <?php else:?>
-					    	<?php echo $text?>
+					    	<?php echo esc_attr($text)?>
 					    <?php endif?>
 					</div>
-					<div class="unite-setting-content" <?php echo UniteProviderFunctionsUC::escAddParam($cellStyle)?>>
+					<div class="unite-setting-content" <?php 
+						s_echo($cellStyle)?>>
 						<?php 
 							$this->drawInputs($setting);
 							$this->drawInputAdditions($setting);

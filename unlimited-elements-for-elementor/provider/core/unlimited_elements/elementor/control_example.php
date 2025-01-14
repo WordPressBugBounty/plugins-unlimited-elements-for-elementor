@@ -23,13 +23,13 @@ class ElementorWidgetTest extends Widget_Base {
     	
          $this->start_controls_section(
                 'section_content', array(
-                'label' => __('Content', 'hello-world'),
+                'label' => __('Content', 'unlimited-elements-for-elementor'),
                     )
           );
           
           $this->add_control(
                 'title', array(
-                'label' => __('Title', 'hello-world'),
+                'label' => __('Title', 'unlimited-elements-for-elementor'),
                 'type' => Controls_Manager::TEXT,
                 )
            );

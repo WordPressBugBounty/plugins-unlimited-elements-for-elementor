@@ -831,7 +831,7 @@ class UniteCreatorLayoutsExporterWork extends UniteCreatorExporterBase{
 	 */
 	private function importTxtFile($filepath, $layoutID = null){
 		
-		$content = file_get_contents($filepath);
+		$content = UniteFunctionsUC::fileGetContents($filepath);
 		
 		if(empty($content))
 			UniteFunctionsUC::throwError("layout file content don't found");
@@ -898,7 +898,7 @@ class UniteCreatorLayoutsExporterWork extends UniteCreatorExporterBase{
 		$filepathLayout = $this->pathImportLayout."layout.txt";
 		UniteFunctionsUC::validateFilepath($filepathLayout,"layout.txt");
 		
-		$content = file_get_contents($filepathLayout);
+		$content = UniteFunctionsUC::fileGetContents($filepathLayout);
 		
 		$this->importLayoutByContent($content, $layoutID);
 		

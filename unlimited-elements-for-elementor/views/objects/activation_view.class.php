@@ -128,7 +128,9 @@ class UniteCreatorActivationView extends UniteElementsBaseUC{
 	                        </div>
 
 	                        <div class="bottom-text">
-	                        	<?php echo $this->textDontHave?>
+	                        	<?php 
+								s_echo( $this->textDontHave );
+								?>
 	                        	<br>
 	                        	<a href="<?php echo esc_url($this->urlPricing)?>" target="_blank" class="blue-text"><?php echo esc_html($this->textLinkToBuy)?></a>
 	                        </div>
@@ -145,7 +147,9 @@ class UniteCreatorActivationView extends UniteElementsBaseUC{
 
 							<?php if(!empty($this->textSwitchTo)):?>
 	                        <div class="bottom-text">
-	                        	<?php echo $this->textSwitchTo?><br>
+	                        	<?php 
+								s_echo( $this->textSwitchTo );
+								?><br>
 	                        </div>
 	                        <?php endif?>
 

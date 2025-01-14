@@ -33,12 +33,13 @@ class UniteCreatorAddonsElementorView extends UniteCreatorAddonsView{
 		if(GlobalsUnlimitedElements::$enableElementorSupport == false)
 			UniteFunctionsUC::throwError("Elementor templates view not available.");
 		
+			
 		$this->addonType = GlobalsUnlimitedElements::ADDONSTYPE_ELEMENTOR_TEMPLATE;
 		$this->product = GlobalsUnlimitedElements::PLUGIN_NAME;
 		$this->pluginTitle = GlobalsUnlimitedElements::$pluginTitleCurrent;
 		$this->headerTextInner = __("Elementor Templates", "unlimited-elements-for-elementor");
 
-		
+
 		parent::__construct();
 	}
 

@@ -190,7 +190,9 @@ class UnlimitedAddonsMigraterUC{
 				<h3>Plugin Startup Error</h3>
 				<br><br>
 				
-				<?php echo $ucStandAloneErrorMessage?>
+				<?php 
+				s_echo( $ucStandAloneErrorMessage);
+				?>
 				
 			</div>
 			

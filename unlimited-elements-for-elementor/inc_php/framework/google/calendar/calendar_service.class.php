@@ -9,24 +9,52 @@ class UEGoogleAPICalendarService extends UEGoogleAPIClient{
 	/**
 	 * convert times
 	 */
-	private function convertItemTimes($arrTime,$targetTimezone){
+	private function convertItemTimes($arrTime, $targetTimezone){
 		
 		if(empty($arrTime))
-			return($arrTime);
-			
-		$time = UniteFunctionsUC::getVal($arrTime, "dateTime");
-		
-		$sourceTimezone = UniteFunctionsUC::getVal($arrTime, "timeZone");
-		
-		if($sourceTimezone == $targetTimezone)
 			return($arrTime);
 		
 		if(class_exists("DateTimeZone") == false)
 			return($arrTime);
+			
+		$time = UniteFunctionsUC::getVal($arrTime, "dateTime");
+		
+		if(empty($time))
+			return($arrTime);
+		
+		$sourceTimezone = UniteFunctionsUC::getVal($arrTime, "timeZone");
+		
+		if(empty($sourceTimezone))
+			return($arrTime);
+		
+		if($sourceTimezone == $targetTimezone)
+			return($arrTime);
+				
+		try{
+			
+			$objSourceTimezone = new DateTimeZone($sourceTimezone);
+		
+		}catch(Exception $e){
+					
+			$message = $e->getMessage();
+			
+			dmp("Init source timezone error ($sourceTimezone): ".$message);
+			dmp("target timezone: $targetTimezone");
+			dmp($arrTime);
+		}
+		
 		
 		try{
-			$objSourceTimezone = new DateTimeZone($sourceTimezone);
 			$objTargetTimezone = new DateTimeZone($targetTimezone);
+		}catch(Exception $e){
+					
+			$message = $e->getMessage();
+			
+			dmp("Init target timezone error ($targetTimezone): ".$message);
+			dmp("source timezone: $targetTimezone");
+		}
+		
+		try{
 			
 			$objDate = new DateTime($time, $objSourceTimezone);
 			

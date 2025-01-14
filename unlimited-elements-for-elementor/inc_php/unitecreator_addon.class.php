@@ -1052,7 +1052,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 		if(empty($iconPath) === true)
 			return null;
 
-		$iconContents = file_get_contents($iconPath);
+		$iconContents = UniteFunctionsUC::fileGetContents($iconPath);
 
 		return $iconContents;
 	}
@@ -1933,6 +1933,19 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 		return(false);
 	}
 
+	
+	/**
+	 * return if the addon is ajax search
+	 */
+	public function isAjaxSearch(){
+		
+		$options = $this->getOptions();
+		$special = UniteFunctionsUC::getVal($options, "special");
+		
+		$isAjaxSearch = ($special === "ajax_search");
+		
+		return $isAjaxSearch;
+	}
 	
 	private function a_______GET__INCLUDES_____(){
 	}

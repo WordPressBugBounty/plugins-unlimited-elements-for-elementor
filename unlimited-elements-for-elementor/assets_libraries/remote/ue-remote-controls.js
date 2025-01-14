@@ -1994,7 +1994,7 @@ function UERemoteWidgets(){
 	 * display some error on widget interface
 	 */
 	function displayTextOnWidget(objWidget, message, type){
-
+		
 		var isDebug = (type == "debug");
 
 		var className = "uc-remote-error";

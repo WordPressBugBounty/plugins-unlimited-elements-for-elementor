@@ -113,7 +113,7 @@ class UEGoogleAPICalendarEvent extends UEGoogleAPIModel{
 
 		$date = $date ?: $dateTime;
 		$time = strtotime($date);
-		$date = date($format, $time);
+		$date = s_date($format, $time);
 		
 		
 		return $date;

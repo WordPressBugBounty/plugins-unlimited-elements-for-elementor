@@ -53,35 +53,35 @@ if($verFlags[GlobalsUC::VERSION_ELEMENTOR] && $verFlags[GlobalsUC::VERSION_GUTEN
 	$plugin_ver_name = 'for Elementor';
 	$logoImage = GlobalsUC::$urlPluginImages . 'logo_unlimited' . ($isProVersion ? '-pro' : '') . '-elementor-new.svg';
 } else {
-	$plugin_ver_name = 'for Gutenberg';
+	$plugin_ver_name = 'for Gutenberg'; 
 	$logoImage = GlobalsUC::$urlPluginImages . 'logo_unlimited' . ($isProVersion ? '-pro' : '') . '-gutenberg-new.svg';
 }
 ?>
 
-<div class="ue-root ue-header <?php echo $headAddClass ?>">
+<div class="ue-root ue-header <?php echo esc_attr($headAddClass) ?>">
 	
 	<?php if($isBFMode == true):?>
 	<div class="ue-header__inner">
 	<?php endif?>
 	
-	<a href="<?php echo $logoUrl; ?>" title="<?php echo $logoTitle; ?>" class="ue-header__logo">
-		<img class="ue-header-logo" src="<?php echo $logoImage; ?>" alt="" />
+	<a href="<?php echo esc_url($logoUrl); ?>" title="<?php echo esc_attr($logoTitle); ?>" class="ue-header__logo">
+		<img class="ue-header-logo" src="<?php echo esc_url($logoImage); ?>" alt="" />
 	</a>
 
 	<?php if($isBFMode == true):
 		//Black Friday Inner Elements
 	?>
 	
-		<img class="uc-bf-banner__header" src="<?php echo $urlHeaderImage?>">
+		<img class="uc-bf-banner__header" src="<?php echo esc_url($urlHeaderImage)?>">
 		
-		<img class="uc-bf-banner__counter" src="http://i.countdownmail.com/2mgwko.gif" style="display:inline-block!important;width:100%!important;max-width:272px!important;" border="0" alt="countdownmail.com"/>
+		<img class="uc-bf-banner__counter" src="<?php echo esc_url('http://i.countdownmail.com/2mgwko.gif')?>" style="display:inline-block!important;width:100%!important;max-width:272px!important;" border="0" alt="countdownmail.com"/>
 			
 	<?php endif?>
 
 		
 	<div class="ue-header-buttons">
 		<a class="ue-btn ue-flex-center ue-view-demo-btn"
-			href="<?php echo GlobalsUC::URL_WIDGETS; ?>"
+			href="<?php echo esc_url(GlobalsUC::URL_WIDGETS); ?>"
 			target="_blank">
 			<?php echo esc_html__("View Demos", "unlimited-elements-for-elementor"); ?>
 			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
@@ -89,11 +89,12 @@ if($verFlags[GlobalsUC::VERSION_ELEMENTOR] && $verFlags[GlobalsUC::VERSION_GUTEN
 			</svg>
 		</a>
 		<?php if($isProVersion === false): ?>
-			<a class="ue-btn ue-flex-center ue-go-pro-btn" href="<?php echo GlobalsUC::URL_BUY; ?>" target="_blank">
+			<a class="ue-btn ue-flex-center ue-go-pro-btn" href="<?php echo esc_url(GlobalsUC::URL_BUY); ?>" target="_blank">
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
 					<path d="M19.048 5.952a.944.944 0 0 0-1.042-.133l-3.923 1.953-3.275-5.44a.946.946 0 0 0-1.62 0L5.913 7.775 1.992 5.822a.946.946 0 0 0-1.32 1.14l2.89 8.856a.624.624 0 0 0 .913.344C4.495 16.151 6.492 15 9.998 15s5.504 1.15 5.522 1.161a.625.625 0 0 0 .915-.343l2.89-8.853a.942.942 0 0 0-.277-1.013Zm-5.312 6.298a.625.625 0 0 1-.725.507 17.828 17.828 0 0 0-6.032 0 .624.624 0 0 1-.621-.974.625.625 0 0 1 .403-.258 19.09 19.09 0 0 1 6.468 0 .623.623 0 0 1 .51.725h-.003Z" />
 				</svg>
-				<?php echo $buyButtonText?>
+				<?php 
+				s_echo( $buyButtonText ); ?>
 			</a>
 		<?php endif; ?>
 	</div>

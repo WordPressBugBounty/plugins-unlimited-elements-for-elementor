@@ -51,18 +51,22 @@ class UCFormEntryView{
 	 */
 	private function getEntry($id){
 
-		global $wpdb;
+		global $wpdb; 
 
+		$table = $this->service->getTable();
 		$sql = "
 			SELECT *
-			FROM {$this->service->getTable()}
+			FROM {$table}
 			WHERE id = %d
 			LIMIT 1
 		";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$sql = $wpdb->prepare($sql, array($id));
+		
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$entry = $wpdb->get_row($sql, ARRAY_A);
-
+		
 		if(empty($entry) === true)
 			UniteFunctionsUC::throwError("Entry with ID {$id} not found.");
 
@@ -72,7 +76,9 @@ class UCFormEntryView{
 			WHERE entry_id = %d
 		";
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$sql = $wpdb->prepare($sql, array($id));
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$entry["fields"] = $wpdb->get_results($sql, ARRAY_A);
 
 		return $entry;
@@ -134,7 +140,7 @@ class UCFormEntryView{
 												switch($field["type"]){
 													case UniteCreatorForm::TYPE_FILES:
 														$form = new UniteCreatorForm();
-														echo $form->getFilesFieldLinksHtml($field["value"], "<br />", true);
+														s_echo( $form->getFilesFieldLinksHtml($field["value"], "<br />", true) );
 													break;
 
 													default:
@@ -205,13 +211,16 @@ class UCFormEntryView{
 	}
 
 	/**
-	 * Display the footer.
+	 * Display the footer. 
 	 *
 	 * @return void
 	 */
 	private function displayFooter(){
 
-		$url = wp_get_referer() ?: "?page={$_REQUEST["page"]}";
+		$page = (isset($_REQUEST['page']) ? sanitize_text_field($_REQUEST['page']) : '');
+
+		$url = wp_get_referer() ?: "?page=" . $page;
+
 
 		?>
 		<div>

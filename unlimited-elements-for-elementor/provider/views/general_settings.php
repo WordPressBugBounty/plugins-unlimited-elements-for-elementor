@@ -35,7 +35,7 @@ class UniteCreatorViewGeneralSettingsProvider extends UniteCreatorViewGeneralSet
 			If you put the Unlimited Elements as part of your theme and want
 			the addons to auto install on plugin activation or theme switch, <br>
 			please create folder <b>"<?php GlobalsUC::DIR_THEME_ADDONS?>"</b> inside your theme and put the addons import zips there. <br>
-			example: <b>wp-content/themes/yourtheme/<?php echo GlobalsUC::DIR_THEME_ADDONS?></b>
+			example: <b>wp-content/themes/yourtheme/<?php echo esc_attr(GlobalsUC::DIR_THEME_ADDONS)?></b>
 			
 			<br><br>
 			If you want to put them to another path please copy this code to your theme <b>functions.php</b> file:

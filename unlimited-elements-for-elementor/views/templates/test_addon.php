@@ -34,22 +34,25 @@ if(!empty($objAddonType->addonView_urlBack))
 ?>
 
 <div id="uc_testaddon_wrapper" class="uc-testaddon-wrapper">
-
+ 
 <?php if($this->showToolbar):?>
 
 <div class="uc-testaddon-panel">
 
-		<a href="<?php echo esc_url($urlEditAddon)?>" class="unite-button-secondary" ><?php echo $textEditThis?></a>
-		<a class="unite-button-secondary uc-button-cat-sap" href="<?php echo esc_url($urlBack)?>"><?php esc_html_e($textBackTo, "unlimited-elements-for-elementor");?></a>
+		<a href="<?php echo esc_url($urlEditAddon)?>" class="unite-button-secondary" ><?php echo esc_attr($textEditThis)?></a>
+		<a class="unite-button-secondary uc-button-cat-sap" href="<?php echo esc_url($urlBack)?>"><?php echo esc_html($textBackTo);?></a>
 
-		<a id="uc_button_preview" href="javascript:void(0)" class="unite-button-secondary" <?php echo UniteProviderFunctionsUC::escAddParam($isPreviewMode?$styleHide:$styleShow)?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>
-		<a id="uc_button_close_preview" href="javascript:void(0)" class="unite-button-secondary" <?php echo UniteProviderFunctionsUC::escAddParam($isPreviewMode?$styleShow:$styleHide)?>><?php esc_html_e("Hide Preview", "unlimited-elements-for-elementor")?></a>
+		<a id="uc_button_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 
+				s_echo( $isPreviewMode?$styleHide:$styleShow ); ?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>
+		<a id="uc_button_close_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 
+				s_echo( $isPreviewMode?$styleShow:$styleHide ); ?>><?php esc_html_e("Hide Preview", "unlimited-elements-for-elementor")?></a>
 
 		<a id="uc_button_preview_tab" href="javascript:void(0)" class="unite-button-secondary uc-button-cat-sap"><?php esc_html_e("Preview New Tab", "unlimited-elements-for-elementor")?></a>
 
 		<a id="uc_button_testaddon_new" href="<?php echo esc_url($urlTestAddonNew); ?>" class="unite-button-secondary uc-button-cat-sap"><?php esc_html_e("Test Widget New", "unlimited-elements-for-elementor")?></a>
 
-		<span id="uc_testaddon_slot1" class="uc-testaddon-slot" <?php echo UniteProviderFunctionsUC::escAddParam($slot1AddHtml)?>>
+		<span id="uc_testaddon_slot1" class="uc-testaddon-slot" <?php 
+				s_echo( $slot1AddHtml ); ?>>
 			<a id="uc_testaddon_button_restore" href="javascript:void(0)" class="unite-button-secondary"><?php esc_html_e("Restore Data", "unlimited-elements-for-elementor")?></a>
 			<span id="uc_testaddon_loader_restore" class="loader-text" style="display:none"><?php esc_html_e("loading...", "unlimited-elements-for-elementor")?></span>
 			<a id="uc_testaddon_button_delete" href="javascript:void(0)" class="unite-button-secondary"><?php esc_html_e("Delete Data", "unlimited-elements-for-elementor")?></a>

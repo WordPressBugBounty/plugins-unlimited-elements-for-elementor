@@ -1,8 +1,8 @@
 <div class="ue-root ue-menu">
 	<?php if(GlobalsUnlimitedElements::$enableDashboard === true): ?>
 		<a
-			class="ue-menu-item <?php echo $view === GlobalsUnlimitedElements::VIEW_DASHBOARD ? "ue-active" : ""; ?>"
-			href="<?php echo HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_DASHBOARD); ?>"
+			class="ue-menu-item <?php echo ($view === GlobalsUnlimitedElements::VIEW_DASHBOARD ? "ue-active" : ""); ?>"
+			href="<?php echo esc_url(HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_DASHBOARD)); ?>"
 		>
 			<?php echo esc_html__("Home", "unlimited-elements-for-elementor"); ?>
 			<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
@@ -11,8 +11,8 @@
 		</a>
 	<?php endif ?>
 	<a
-		class="ue-menu-item <?php echo $view === GlobalsUnlimitedElements::VIEW_ADDONS_ELEMENTOR ? "ue-active" : ""; ?>"
-		href="<?php echo HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_ADDONS_ELEMENTOR); ?>"
+		class="ue-menu-item <?php echo ($view === GlobalsUnlimitedElements::VIEW_ADDONS_ELEMENTOR ? "ue-active" : ""); ?>"
+		href="<?php echo esc_url(HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_ADDONS_ELEMENTOR)); ?>"
 	>
 		<?php if(GlobalsUnlimitedElements::$isGutenbergOnly):?>
 			<?php echo esc_html__("Blocks", "unlimited-elements-for-elementor"); ?>
@@ -26,8 +26,8 @@
 	</a>
 	<?php if(HelperProviderUC::isBackgroundsEnabled() === true): ?>
 		<a
-			class="ue-menu-item <?php echo $view === GlobalsUnlimitedElements::VIEW_BACKGROUNDS ? "ue-active" : ""; ?>"
-			href="<?php echo HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_BACKGROUNDS); ?>"
+			class="ue-menu-item <?php echo ($view === GlobalsUnlimitedElements::VIEW_BACKGROUNDS ? "ue-active" : ""); ?>"
+			href="<?php echo esc_url(HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_BACKGROUNDS)); ?>"
 		>
 			<?php echo esc_html__("Backgrounds", "unlimited-elements-for-elementor"); ?>
 			<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
@@ -38,8 +38,8 @@
 	
 	<?php if(GlobalsUnlimitedElements::$enableElementorSupport == true):?>
 	<a
-		class="ue-menu-item <?php echo $view === GlobalsUnlimitedElements::VIEW_TEMPLATES_ELEMENTOR ? "ue-active" : ""; ?>"
-		href="<?php echo HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_TEMPLATES_ELEMENTOR); ?>"
+		class="ue-menu-item <?php echo ($view === GlobalsUnlimitedElements::VIEW_TEMPLATES_ELEMENTOR ? "ue-active" : ""); ?>"
+		href="<?php echo esc_url(HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_TEMPLATES_ELEMENTOR)); ?>"
 	>
 	
 		<?php echo esc_html__("Templates", "unlimited-elements-for-elementor"); ?>
@@ -52,8 +52,8 @@
 	
 	<?php if(HelperProviderUC::isFormEntriesEnabled() === true): ?>
 		<a
-			class="ue-menu-item <?php echo $view === GlobalsUnlimitedElements::VIEW_FORM_ENTRIES ? "ue-active" : ""; ?>"
-			href="<?php echo HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_FORM_ENTRIES); ?>"
+			class="ue-menu-item <?php echo ($view === GlobalsUnlimitedElements::VIEW_FORM_ENTRIES ? "ue-active" : ""); ?>"
+			href="<?php echo esc_url(HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_FORM_ENTRIES)); ?>"
 		>
 			<?php echo esc_html__("Form Entries", "unlimited-elements-for-elementor"); ?>
 			<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
@@ -62,8 +62,8 @@
 		</a>
 	<?php endif; ?>
 	<a
-		class="ue-menu-item <?php echo $view === GlobalsUnlimitedElements::VIEW_SETTINGS_ELEMENTOR ? "ue-active" : ""; ?>"
-		href="<?php echo HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_SETTINGS_ELEMENTOR); ?>"
+		class="ue-menu-item <?php echo ($view === GlobalsUnlimitedElements::VIEW_SETTINGS_ELEMENTOR ? "ue-active" : ""); ?>"
+		href="<?php echo esc_url(HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_SETTINGS_ELEMENTOR)); ?>"
 	>
 		<?php echo esc_html__("Settings", "unlimited-elements-for-elementor"); ?>
 		<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
@@ -72,7 +72,7 @@
 	</a>
 	<a
 		class="ue-menu-item"
-		href="<?php echo GlobalsUnlimitedElements::$urlAccount; ?>"
+		href="<?php echo esc_url(GlobalsUnlimitedElements::$urlAccount); ?>"
 	>
 		<?php echo esc_html__("Account", "unlimited-elements-for-elementor"); ?>
 		<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
@@ -81,7 +81,7 @@
 	</a>
 	<a
 		class="ue-menu-item"
-		href="<?php echo GlobalsUC::URL_SUPPORT; ?>"
+		href="<?php echo esc_url(GlobalsUC::URL_SUPPORT); ?>"
 		target="_blank"
 	>
 		<?php echo esc_html__("Support", "unlimited-elements-for-elementor"); ?>

@@ -64,7 +64,9 @@ switch($view){
 				require_once(GlobalsUC::$pathTemplates . "menu.php");
 		?>
 
-		<?php echo UniteProviderFunctionsUC::escCombinedHtml($htmlView); ?>
+		<?php 
+		s_echo( $htmlView ); 
+		?>
 		<?php
 
 		$filenameProviderView = GlobalsUC::$pathProviderViews . $view . ".php";
@@ -90,7 +92,9 @@ if(file_exists($filepathProviderMasterView))
 
 	<?php HelperHtmlUC::putFooterAdminNotices() ?>
 
-	<div id="uc_dialog_version" title="<?php esc_html_e("Version Release Log. Current Version: ".UNLIMITED_ELEMENTS_VERSION." ", "unlimited-elements-for-elementor")?>" style="display:none;">
+	<div id="uc_dialog_version" title="<?php 
+	echo esc_html(__("Version Release Log. Current Version: ", "unlimited-elements-for-elementor") . ' ' . UNLIMITED_ELEMENTS_VERSION);
+	?>" style="display:none;">
 		<div class="unite-dialog-inside">
 			<div id="uc_dialog_version_content" class="unite-dialog-version-content">
 				<div id="uc_dialog_loader" class="loader_text"><?php esc_html_e("Loading...", "unlimited-elements-for-elementor")?></div>
@@ -98,7 +102,7 @@ if(file_exists($filepathProviderMasterView))
 		</div>
 	</div>
 
-	<div class="unite-clear"></div>
+	<div class="unite-clear"></div> 
 
 	<div class="unite-plugin-version-line unite-admin <?php echo esc_attr($bottomLineClass)?>">
 		<?php UniteProviderFunctionsUC::putFooterTextLine() ?>

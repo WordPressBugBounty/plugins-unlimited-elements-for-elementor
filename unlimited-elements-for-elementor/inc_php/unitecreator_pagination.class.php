@@ -721,10 +721,10 @@ class UniteCreatorElementorPagination{
 			$options["next_text"] = $nextText;
 
 		if(empty($nextText))
-			$options["next_text"] = _x( 'Next', 'next set of posts' );
+			$options["next_text"] = _x( 'Next', 'next set of posts', "unlimited-elements-for-elementor" );
 
 		if(empty($prevText))
-			$options["prev_text"] = _x( 'Previous', 'previous set of posts' );
+			$options["prev_text"] = _x( 'Previous', 'previous set of posts', "unlimited-elements-for-elementor" );
 
 		//disable the text, leave only icon
 		if($isShowText == false){
@@ -883,7 +883,7 @@ class UniteCreatorElementorPagination{
 		
 		$pagination = $this->addHtmlArguments($pagination, $addArgs);
 		
-		echo $pagination;
+		s_echo($pagination);
 	}
 
 	/**

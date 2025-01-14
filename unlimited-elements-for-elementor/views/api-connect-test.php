@@ -10,4 +10,6 @@ echo "The code run here is: file_get_contents(\"https://api.unlimited-elements.c
 
 $response = file_get_contents("https://api.unlimited-elements.com");
 
-echo "<pre>".htmlspecialchars($response)."</pre>";
+$response = htmlspecialchars($response);
+
+echo "<pre>".$response."</pre>";

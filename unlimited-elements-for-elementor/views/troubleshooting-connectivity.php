@@ -52,7 +52,7 @@ private function checkZipFile(){
 private function checkCatalogRequest(){
 
 		dmp("requesting catalog check");
-
+		
 		$response = UEHttp::make()->post(GlobalsUC::URL_API, array(
 			"action" => "check_catalog",
 			"catalog_date" => "1563618449",
@@ -62,7 +62,7 @@ private function checkCatalogRequest(){
 		));
 		
 		$data = $response->body();
-
+	
 		if(empty($data))
 			UniteFunctionsUC::throwError("Empty server response");
 
@@ -84,19 +84,19 @@ private function checkCatalogRequest(){
 /**
  * various
  */
-private function checkVariousOptions(){
+private function checkVariousOptions(){ 
 
 	$urlAPI = GlobalsUC::URL_API;
 	
 	dmp("checking get contents from the api: $urlAPI");
  	
-	$response = file_get_contents($urlAPI);
-		
+	$response = UniteFunctionsUC::fileGetContents($urlAPI);
+	
 	$len = strlen($response);
 	
 	if($len == 0)
 		UniteFunctionsUC::throwError("No response from API. Recieved string size: 0");
-	
+				
 	if($len > 1000){
 		
 		dmp("Response has wrong size: $len");
@@ -196,7 +196,7 @@ private function checkingCatalogData(){
 		
 try{
 	
-		ini_set("display_errors","0");
+		ini_set("display_errors",1);
 		
 		$this->checkVariousOptions();
 	
@@ -215,7 +215,9 @@ try{
 }catch(Exception $e){
 
 		$urlPHPFile = GlobalsUC::$urlPlugin."views/api-connect-test.php";
-	 
+	 	
+		$serverIP = $_SERVER["SERVER_ADDR"];
+				
 		?>
 		
 		<div style="font-size:18px;line-height:35px;">
@@ -223,12 +225,11 @@ try{
 			<hr>
 		
 		<?php 
-			
-			echo $e->getMessage();
+			s_echo( $e->getMessage() );
 		?>
 			<hr>
 			
-			The request to the catalog url has failed. <br>
+			The request to the catalog url has failed. <br> Requesting from website ip: <?php echo esc_html($serverIP) ?> <br>
 			
 			Please contact your hosting provider and request to open firewall access to this address: 
 			
@@ -240,7 +241,7 @@ try{
 			
 			Also, you can test the very simple plain PHP file with the connectiviry test:
 					
-			<a href="<?php echo $urlPHPFile ?>">api-connect-test.php</a>
+			<a href="<?php echo esc_url($urlPHPFile); ?>">api-connect-test.php</a>
 			
 			<br>
 			

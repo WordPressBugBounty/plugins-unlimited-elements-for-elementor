@@ -81,7 +81,7 @@ final class OptimizerNodeVisitor implements NodeVisitorInterface
 
         $node = $this->optimizePrintNode($node, $env);
 
-        return $node;
+        return $node; 
     }
 
     /**

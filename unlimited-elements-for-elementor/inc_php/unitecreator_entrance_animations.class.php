@@ -387,18 +387,18 @@ class UniteCreatorEntranceAnimations{
 
 		?>
 
-@keyframes <?php echo $id?>__item-animation {
+@keyframes <?php echo esc_attr($id)?>__item-animation {
   0% {
-            <?php echo $from?>
+            <?php echo esc_attr($from)?>
 
         	<?php if(!empty($blurNum)):?>
-        	filter: blur(<?php echo $blurNum?>px);
+        	filter: blur(<?php echo esc_attr($blurNum)?>px);
 			<?php endif?>
 
     	    opacity: 0;
   }
   100% {
-            <?php echo $to?>
+            <?php echo esc_attr($to)?>
 
         	<?php if(!empty($blurNum)):?>
             filter: blur(0px);
@@ -409,17 +409,17 @@ class UniteCreatorEntranceAnimations{
 }
 
 
-#<?php echo $id?> .<?php echo $classItem?>{
+#<?php echo esc_attr($id)?> .<?php echo esc_attr($classItem)?>{
 	opacity:0;
 }
 
 
-#<?php echo $id?> .uc-entrance-animate {
+#<?php echo esc_attr($id)?> .uc-entrance-animate {
   opacity:1;
 }
 
-#<?php echo $id?> .uc-entrance-animate {
-	animation: <?php echo $id?>__item-animation <?php echo $duration?>s cubic-bezier(0.470, 0.000, 0.745, 0.715) both;
+#<?php echo esc_attr($id)?> .uc-entrance-animate {
+	animation: <?php echo esc_attr($id)?>__item-animation <?php echo esc_attr($duration)?>s cubic-bezier(0.470, 0.000, 0.745, 0.715) both;
 }
 
 			<?php
@@ -561,7 +561,7 @@ jQuery(document).ready(function(){
 
   function initUEEntranceAnimation(){
 
-	  var objElement = jQuery("#<?php echo $id?>");
+	  var objElement = jQuery("#<?php echo esc_attr($id)?>");
 
 	  if(objElement.length == 0)
 	  	 return(false);
@@ -570,17 +570,17 @@ jQuery(document).ready(function(){
 	      return(false);
 	   }
 
-	    ueCheckEntranceAnimation(objElement, <?php echo $animationStep?>,"<?php echo $classItem?>", "<?php echo $order?>");
+	    ueCheckEntranceAnimation(objElement, <?php echo esc_attr($animationStep)?>,"<?php echo esc_attr($classItem)?>", "<?php echo esc_attr($order)?>");
 
 	    jQuery(window).on("scroll", function(){
-	    	ueCheckEntranceAnimation(objElement, <?php echo $animationStep?>, "<?php echo $classItem?>", "<?php echo $order?>")
+	    	ueCheckEntranceAnimation(objElement, <?php echo esc_attr($animationStep)?>, "<?php echo esc_attr($classItem)?>", "<?php echo esc_attr($order)?>")
 	    });
 
 	    objElement.on("uc_ajax_refreshed", function(){
 
 	        objElement.removeData("ue_entrance_animation_started");
 
-	    	ueCheckEntranceAnimation(objElement, <?php echo $animationStep?>, "<?php echo $classItem?>", "<?php echo $order?>")
+	    	ueCheckEntranceAnimation(objElement, <?php echo esc_attr($animationStep)?>, "<?php echo esc_attr($classItem)?>", "<?php echo esc_attr($order)?>")
 	    });
 
 	return(true);

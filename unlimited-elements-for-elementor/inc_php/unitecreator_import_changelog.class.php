@@ -32,7 +32,7 @@ class UniteCreatorImportExportChangelog{
                 ON changelog.addon_id = addons.id
         ";
 
-
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$items = $wpdb->get_results($query);
 
 		$arrayItems = array();
@@ -48,7 +48,7 @@ class UniteCreatorImportExportChangelog{
 			UniteFunctionsUC::downloadJson($filename, $content);
 
 		if($typeExport == 'export-json')
-			echo $content;
+			s_echo($content);
 		
 	}
 
@@ -84,7 +84,7 @@ class UniteCreatorImportExportChangelog{
 			return(false);
 		}
 
-		$jsonData = file_get_contents($_FILES['json_file']['tmp_name']);
+		$jsonData = UniteFunctionsUC::fileGetContents($_FILES['json_file']['tmp_name']);
 
 		$decodedData = json_decode($jsonData, true);
 
@@ -114,7 +114,7 @@ class UniteCreatorImportExportChangelog{
 
 		$isChangelogImportDisabled = HelperProviderUC::isAddonChangelogImportDisabled();
 		if($isChangelogImportDisabled){
-			echo __( "The import operation disabled in the general settings.", "unlimited-elements-for-elementor" );
+			echo esc_attr(__( "The import operation disabled in the general settings.", "unlimited-elements-for-elementor" ));
 			exit;
 		}
 

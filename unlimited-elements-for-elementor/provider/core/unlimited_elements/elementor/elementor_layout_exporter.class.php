@@ -172,7 +172,7 @@ class UniteCreatorLayoutsExporterElementor extends UniteCreatorLayoutsExporter{
 		
 		UniteFunctionsUC::validateFilepath($filepathLayout,"layout_data.json");
 				
-		$content = file_get_contents($filepathLayout);
+		$content = UniteFunctionsUC::fileGetContents($filepathLayout);
 		
 		$this->importElementorLayoutByContent($content, $layoutID);
 			
@@ -283,7 +283,7 @@ class UniteCreatorLayoutsExporterElementor extends UniteCreatorLayoutsExporter{
 		
 		$this->importedLayoutJsonFile = $this->getElementorImportedJsonFile();
 		
-		$jsonContent = file_get_contents($this->importedLayoutJsonFile);
+		$jsonContent = UniteFunctionsUC::fileGetContents($this->importedLayoutJsonFile);
 		
 		$this->importedLayoutContent = UniteFunctionsUC::jsonDecode($jsonContent);
 		
@@ -811,7 +811,7 @@ class UniteCreatorLayoutsExporterElementor extends UniteCreatorLayoutsExporter{
 		$post = get_post($template_id);
 		
 		if(empty($post)){
-			$date = Date("Y-m-d");
+			$date = s_date("Y-m-d");
 			$name = "elementor-{$template_id}-{$date}";
 			return($name);
 		}
@@ -880,7 +880,7 @@ class UniteCreatorLayoutsExporterElementor extends UniteCreatorLayoutsExporter{
 		
 				
 		return [
-			'name' => 'elementor-' . $templateID . '-' . date( 'Y-m-d' ) . '.json',
+			'name' => 'elementor-' . $templateID . '-' . s_date( 'Y-m-d' ) . '.json',
 			'content' => wp_json_encode( $export_data ),
 		];
 	}

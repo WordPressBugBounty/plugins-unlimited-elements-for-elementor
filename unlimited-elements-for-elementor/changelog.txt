@@ -1,5 +1,62 @@
 
 
+= 1.5.136 - 2025-01-14 =
+
+Plugin Changes: 
+
+* Fix: fixed a small php bug in getPostTerms twig template function
+* Feature: added ajax search by functionality
+* Fix: performance: ajax search don't run extra db query without ajax run
+* Fix: added some ajax search and woo ajax search functionality. 
+* Fix: better pagination detection in case of 2 widgets in a group
+* Fix: fixed post modified date
+* Fix: fixed time stamp detection function
+* Feature: added json / csv to repeater field
+
+Widgets Changes: 
+
+* Feature: Dynamic Post Popup (Pro) - Close Button element is now focusable, allowing users to interact with it using the keyboard (e.g., via the Tab key), enhancing accessibility and usability.
+* Feature: Radio Button Field (Pro) - Added support for HTML tags in the Item Title element, allowing users to include formatted text, links, or other HTML-based content within the Item Title.
+* Feature: Audio Player (Pro) - Introduced a new source option for the audio file called First Post From List. This feature allows users to dynamically pull the audio file from the first post in a selected list.
+* Feature: Content Tabs (Free) - Added Content Layout Type option - This new feature enables users to customize the order of elements within the content section of the widget, providing greater flexibility in arranging the layout to suit specific design requirements.
+* Feature: Content Tabs (Free) - Improved Title and Button Spacing options - These options now support all margin directions, not just Margin Top, allowing for more precise control over spacing between elements.
+* Feature: Team Member Carousel (Pro) - Added Typography option for Button Element - This new feature allows users to customize the typography of the button text, including font family, size, weight, style, and other related settings.
+* Feature: Square to Circle Social Icons (Free) - Gap between icons added.
+* Feature: Icon Box (Free) - Added Box Min Height option - This new option allows setting a minimum height for the box, ensuring consistent layout and design across different content variations.
+* Feature: Protected Content (Pro) - Added an option to protect the entire page.
+* Feature: Protected Content (Pro) - Added functionality to submit the password by pressing the Enter key.
+* Feature: Simple Popup (Free) - Close Button element is now focusable, allowing users to interact with it using the keyboard (e.g., via the Tab key), enhancing accessibility and usability.
+* Feature: Overlay Button (Free) - Added a new Overlay Border Radius option, which allows users to customize the border radius of the overlay element within the widget.
+* Feature: Protected Content (Pro) - Added a new Template Position option, allowing users to specify the precise placement of templates within the widget.
+* Feature: Stacking Cards (Pro) - Added an option to select the source of the item, allowing users to choose between Text Editor, Elementor Template, or content from a Section ID on the same page.
+* Feature: Woo AJAX Search (Pro) - Added option to search by sku
+* Feature: Woo AJAX Search (Pro) - Added option to search by custom post fields like post title or excerpt
+* Feature: AJAX Search (Pro) - Added option to search by custom post fields like post title or excerpt
+* Fix: Woo Product Carousel (Pro) - Fixed issue where HTML attributes of the &quot;Add to Cart&quot; button were not being displayed correctly, ensuring proper functionality and adherence to expected behavior.
+* Fix: Image Tooltip (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Notification (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Simple Popup (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Video Play Button (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Card Carousel (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Post Grid (Pro) - Resolved an issue where links were not functioning correctly in certain cases.
+* Fix: Woo Product Carousel (Pro) - Fixed an issue where the Regular Price of products was incorrectly displayed as the Sale Price on the front end.
+* Fix: Square to Circle Social Icons (Free) - Default icon color changed.
+* Fix: Woo Product Slider (Pro) - Fixed an issue where the Regular Price of products was incorrectly displayed as the Sale Price on the front end.
+* Fix: Transparent Split Hero (Free) - Fixed vulnerability where JavaScript code could be inserted into the image src option, potentially leading to XSS attacks.
+* Fix: Woo Product List (Free) - Fixed an issue where the Regular Price of products was incorrectly displayed as the Sale Price on the front end.
+* Fix: Woo Product List (Free) - Optimized the HTML code structure for widget, reducing unnecessary elements and improving overall efficiency.
+* Fix: Review Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Testimonial Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Product Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Woo Product Grid (Pro) - Fixed an issue where the Regular Price of products was incorrectly displayed as the Sale Price on the front end.
+* Fix: Overlay Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Coverflow Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Mega Slider (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Smoke Background Effect (Pro) - Fixed issue where widgets were not functioning correctly in cases where scripts on the website were placed in the header.
+* Fix: Woo Category Carousel (Pro) - Fixed issue where, with &quot;Open Link in New Tab&quot; set to &quot;Yes,&quot; the link from the title still did not open in a new page.
+* Fix: Unlimited Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+
+
 = 1.5.135 - 2024-12-29 =
 
 *Fix: fixed small php bug in date convert function

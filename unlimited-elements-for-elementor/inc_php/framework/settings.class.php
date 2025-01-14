@@ -1033,7 +1033,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				throw new Exception("Every setting should have a name!");
 
 			if(isset($this->arrIndex[$name]))
-				throw new Exception("Duplicate setting name:" . $name);
+				throw new Exception("Duplicate setting name:" . esc_html($name));
 
 			switch($type){
 				case self::TYPE_RADIO:
@@ -1226,6 +1226,13 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				return (in_array($parentValue, $value) === true);
 			else {
 				$value = strtolower($value);
+
+				if( ($value === true || $value === 1) && is_string($parentValue))
+					$value = "true";
+				
+				if( ($parentValue === true || $parentValue === 1) && is_string($value))
+					$parentValue = "true";
+				
 				return ($parentValue === $value);
 			}
 
@@ -1235,7 +1242,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		/**
 		 * get control action
 		 */
-		private function getControlAction($parentName, $arrControl){
+		private function getControlAction($parentName, $arrControl, $showDebug = false){
 			
 			$value = UniteFunctionsUC::getVal($arrControl, "value");
 			$type = UniteFunctionsUC::getVal($arrControl, "type");
@@ -1244,20 +1251,37 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 				return(null);
 				
 			$parentValue = $this->getSettingValue($parentName);
+
+			if($showDebug == true){
+				dmp("compare type: $type");
+				dmp("compare value: $value");
+				dmp("parent value: $parentValue");
+					
+				$isEqual = $this->isControlValuesEqual($parentValue, $value);
+				
+				dmp("is equal: $isEqual");
+			}
+			
 			
 			switch($type){
 				case self::CONTROL_TYPE_ENABLE:
+										
 					if($this->isControlValuesEqual($parentValue, $value) == false)
 						return("disable");
+						
 					break;
 				case self::CONTROL_TYPE_DISABLE:
 					if($this->isControlValuesEqual($parentValue, $value) == true)
 						return("disable");
 					break;
 				case self::CONTROL_TYPE_SHOW:
-					if($this->isControlValuesEqual($parentValue, $value) == false)
+					
+					$isEqual = $this->isControlValuesEqual($parentValue, $value);
+					
+					if($isEqual == false)
 						return("hide");
-					break;
+				
+				break;
 				case self::CONTROL_TYPE_HIDE:
 					if($this->isControlValuesEqual($parentValue, $value) == true)
 						return("hide");
@@ -1330,7 +1354,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 						
 					}
 					
-					$action = $this->getControlAction($parentName, $arrControl);
+					$action = $this->getControlAction($parentName, $arrControl, $debug);
 					
 					if($debug == true){
 						dmp("action");
@@ -1909,12 +1933,12 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 					if(!empty($link))
 						$value = $link;
 
-					$value = strip_tags($value);
+					$value = wp_strip_all_tags($value);
 
 				break;
 				case self::DATATYPE_PLAINTEXT:
 
-					$value = strip_tags($value);
+					$value = wp_strip_all_tags($value);
 
 				break;
 				case self::DATATYPE_NUMBER:

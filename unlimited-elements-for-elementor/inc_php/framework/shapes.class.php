@@ -279,8 +279,7 @@ class UniteShapeManagerUC extends HtmlOutputBaseUC{
 			$css = "";
 			foreach($arrShapes as $name=>$urlShape)
 				$css .= ".unite-shapecontent-{$name}{background-image:url({$urlShape})}".self::BR2;
-			
-			echo UniteProviderFunctionsUC::escCombinedHtml($css);
+			s_echo($css);
 		}
 		
 		

@@ -163,9 +163,9 @@ GlobalsUC::$arrClientSideText = array(
 		"empty_text"=>esc_html__("Empty Text","unlimited-elements-for-elementor"),
 		"display_condition"=>esc_html__("Display Condition","unlimited-elements-for-elementor"),
 
-		"prohibition_setting_attribute_deletion"=>__("This setting contains Pro options, and can't be deleted.","unlimited-elements-for-elementor"),
-		"prohibition_setting_attribute_duplication"=>__("This setting contains Pro options, and can't be duplicated.","unlimited-elements-for-elementor"),
-		"prohibition_section_attribute_copied"=>__("This section contains Pro options, and can't be copied.","unlimited-elements-for-elementor")
+		"prohibition_setting_attribute_deletion"=>esc_html__("This setting contains Pro options, and can't be deleted.","unlimited-elements-for-elementor"),
+		"prohibition_setting_attribute_duplication"=>esc_html__("This setting contains Pro options, and can't be duplicated.","unlimited-elements-for-elementor"),
+		"prohibition_section_attribute_copied"=>esc_html__("This section contains Pro options, and can't be copied.","unlimited-elements-for-elementor")
 );
 
 $filepathProviderClientText = GlobalsUC::$pathProvider."provider_client_text.php";

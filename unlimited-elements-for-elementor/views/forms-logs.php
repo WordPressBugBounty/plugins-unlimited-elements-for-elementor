@@ -52,7 +52,7 @@ class UCFormsDebugLogView extends WP_List_Table{
 	 */
 	public function no_items(){
 
-		echo __("No logs found.", "unlimited-elements-for-elementor");
+		esc_attr_e("No logs found.", "unlimited-elements-for-elementor");
 	}
 
 	/**

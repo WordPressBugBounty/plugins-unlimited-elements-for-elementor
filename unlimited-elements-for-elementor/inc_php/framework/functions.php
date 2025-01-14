@@ -43,7 +43,32 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		}
 		
 	}
+
+	if(!function_exists("s_echo")){
+		function s_echo($str) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo($str);
+		}
+	}
+
+	if (!function_exists("s_printf")) {
+		function s_printf($str, ...$params) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			printf($str, ...$params);
+		}
+	}
+
+	if (!function_exists("s_date")) {
+		function s_date($format, $time) {
+			$timezone = new DateTimeZone(date_default_timezone_get());
+			return (new DateTime('@' . $time))->setTimezone($timezone)->format($format);
+		}
+	}
+
+
+
 	
 	
+	 
 	
 	

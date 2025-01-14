@@ -17,7 +17,7 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 	public function putPostDate($postID, $dateFormat = ""){
 		
 		$date = get_the_date($dateFormat, $postID);
-		echo $date;
+		s_echo($date);
 	}
 	
 	
@@ -27,8 +27,7 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 	public function putPostMeta($postID, $key){
 		
 		$metaValue = get_post_meta($postID, $key, true);
-		
-		echo $metaValue;
+		s_echo($metaValue);
 	}
 	
 	/**
@@ -45,8 +44,7 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 			$content = print_r($postMeta, true);
 			$content = str_replace("[", "[ ", $content);
 			$content = str_replace("]", " ]", $content);
-			
-			echo $content;
+			s_echo($content);
 			echo "</pre>";
 		}
 		
@@ -110,8 +108,8 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 			
 			$arrTerms = array_slice($arrTerms, 0, $maxTerms, true);
 		}
-			
-		$arrTermsOutput = $this->objParamsProcessor->modifyArrTermsForOutput($arrTerms, $addCustomFields);
+		
+		$arrTermsOutput = $this->objParamsProcessor->modifyArrTermsForOutput($arrTerms, $taxonomy, $addCustomFields);
 		
 		return($arrTermsOutput);
 	}
@@ -168,8 +166,7 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 		
 		if(is_string($value) == false)
 			return(true);
-		
-		echo $value;
+		s_echo($value);
 	}
 	
 	
@@ -181,7 +178,7 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 		
 		$htmlTags = UniteFunctionsWPUC::getTagsHtmlList($postID);
 		
-		echo UniteProviderFunctionsUC::escCombinedHtml($htmlTags);
+		s_echo($htmlTags);
 	}
 	
 	

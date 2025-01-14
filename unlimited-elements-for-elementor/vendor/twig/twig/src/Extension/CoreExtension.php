@@ -350,6 +350,7 @@ function twig_cycle($values, $position)
 function twig_random(Environment $env, $values = null, $max = null)
 {
     if (null === $values) {
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.rand_mt_rand
         return null === $max ? mt_rand() : mt_rand(0, (int) $max);
     }
 
@@ -367,6 +368,7 @@ function twig_random(Environment $env, $values = null, $max = null)
             $max = $max;
         }
 
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.rand_mt_rand
         return mt_rand((int) $min, (int) $max);
     }
 
@@ -1176,7 +1178,7 @@ function twig_lower_filter(Environment $env, $string)
  */
 function twig_striptags($string, $allowable_tags = null)
 {
-    return strip_tags($string ?? '', $allowable_tags);
+    return wp_strip_all_tags($string ?? '', $allowable_tags);
 }
 
 /**
