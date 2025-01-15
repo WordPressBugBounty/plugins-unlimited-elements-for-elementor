@@ -37,31 +37,54 @@ class UniteCreatorAjaxSeach{
 		$maxItems = UniteFunctionsUC::getVal($args, "posts_per_page", 9);
 		
 		$numPosts = count($arrPosts);
-		
+				
 		//if maximum reached - return the original
 		
-		if($numPosts >= $maxItems)
-			return($arrPosts);
+		$addCount = $maxItems - count($arrPosts);
 		
-		$addCount = $maxItems - $numPosts;
-		
+		if($addCount <= $maxItems){
+						
+			if(GlobalsProviderUC::$showPostsQueryDebug == true && $addCount <= 0){
+				dmp("Max posts reach");
+			}
+			
+		}
+				
 		//search by post fields
-		if($this->searchInPostFields == true){
+		if($this->searchInPostFields == true && $addCount > 0){
 									
 			$arrPosts = $this->getPostsByFields($arrPosts, $args);
-						
+			
+			$addCount = $maxItems - count($arrPosts);
+			
+			if(GlobalsProviderUC::$showPostsQueryDebug == true && $addCount <= 0){
+				dmp("Max posts reach");
+			}
+			
 		}
 
 		//search in meta
-		if($this->searchInMeta == true){
+		if($this->searchInMeta == true && $addCount > 0){
 			$arrPosts = $this->getPostsByMeta($arrPosts, $args, $addCount);
 			$addCount = $maxItems - count($arrPosts);
+			
+			if(GlobalsProviderUC::$showPostsQueryDebug == true && $addCount <= 0){
+				dmp("Max posts reach");
+			}
+			
 		}
 		
 		//search in taxonomy
 		if($this->searchInTerms == true && $addCount > 0){
 			
 			$arrPosts = $this->getPostsByTerms($arrPosts, $args, $addCount);
+			
+			$addCount = $maxItems - count($arrPosts);
+			
+			if(GlobalsProviderUC::$showPostsQueryDebug == true && $addCount <= 0){
+				dmp("Max posts reach");
+			}
+			
 		}
 
 		if (GlobalsProviderUC::$showPostsQueryDebug == true ) {
@@ -71,7 +94,6 @@ class UniteCreatorAjaxSeach{
 			$totalPosts = count($arrPosts);
 			
 			dmp("<strong>Total Posts: {$totalPosts} </strong>");
-			
 		}
 
 		return($arrPosts);
@@ -350,7 +372,7 @@ class UniteCreatorAjaxSeach{
 		self::$arrCurrentParams = $arrParams;
 		
 		//enable hooks
-
+		
 		$enableHooks = UniteFunctionsUC::getVal($arrParams, "enable_third_party_hooks");
 		$enableHooks = UniteFunctionsUC::strToBool($enableHooks);
 		
@@ -403,7 +425,13 @@ class UniteCreatorAjaxSeach{
 			$this->searchInPostFields = true;
 			$this->searchPostFields = $arrSearchPostFields;
 		}
-				
+		
+		//skip main query if just meta or terms selected for example
+		
+		if(empty($arrSearchPostFields) && $applyModifyFilter == true){
+			GlobalsProviderUC::$skipRunPostQueryOnce = true;			
+		}
+		
 		if($applyModifyFilter == true)
 			UniteProviderFunctionsUC::addFilter("uc_filter_posts_list", array($this,"onPostsResponse"),10,3);
 		

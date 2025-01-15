@@ -2513,7 +2513,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			add_action("wp_error_added",array($this,"showWPErrorLog"),10,4);
 		}
 		
-		$wasSkipRun = true;
+		$wasSkipRun = false;
 				
 		if($this->skipPostListQueryRun == false)		
 			$query->query($args);
@@ -2524,7 +2524,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 			if($showDebugQuery == true)
 				dmp("Skip main query run");
-				
+			
 			$wasSkipRun = true;
 		}
 		

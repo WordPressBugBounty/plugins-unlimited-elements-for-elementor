@@ -1202,8 +1202,6 @@ class HelperProviderUC{
 			self::getRepeaterItems_printDebugValues($arrRepeaterItems);
 		
 		
-		dmp("inside editor: ".GlobalsProviderUC::$isInsideEditor);
-		
 		return($arrRepeaterItems);
 	}
 	

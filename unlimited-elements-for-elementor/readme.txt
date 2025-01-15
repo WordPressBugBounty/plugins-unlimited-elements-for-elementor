@@ -938,6 +938,12 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+= 1.5.137 - 2025-01-15 =
+
+* Fix: Fixed some small text output with the repeater
+* Fix: fixed ajax search, allow to search only by meta or terms
+
+
 = 1.5.136 - 2025-01-14 =
 
 Plugin Changes: 

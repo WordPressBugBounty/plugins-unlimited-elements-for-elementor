@@ -1,5 +1,11 @@
 
 
+version 1.5.137:
+
+* Fix: Fixed some small text output with the repeater
+* Fix: fixed ajax search, allow to search only by meta or terms
+
+
 version 1.5.136:
 
 * Fix: fixed a small php bug in getPostTerms twig template function

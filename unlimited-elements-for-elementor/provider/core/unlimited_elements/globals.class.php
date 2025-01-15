@@ -33,7 +33,8 @@ class GlobalsUnlimitedElements{
 	public static $enableGoogleYoutubeScopes = false;
 
 	public static $enableInsideNotification = true;
-
+	public static $insideNotificationModal = false;		//inside notification modal open
+	
 	public static $enableInstagramErrorMessage = false;
   	
 	public static $enableLimitProFunctionality = true;	//enable limit pro options in elementor
@@ -44,7 +45,6 @@ class GlobalsUnlimitedElements{
 	public static $insideNotificationText = "Unlock Access To All Pro Widgets and Features.  <a href='https://unlimited-elements.com/pricing/' target='_blank'>Upgrade Now</a> ";
 	public static $insideNotificationUrl = "https://unlimited-elements.com/pricing/";
 	
-	public static $insideNotificationModal = false;
 
 	const PLUGIN_NAME = "unlimitedelements";
 	const VIEW_DASHBOARD = "dashboard";
