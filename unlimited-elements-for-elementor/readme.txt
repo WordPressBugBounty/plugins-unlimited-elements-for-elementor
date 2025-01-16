@@ -938,6 +938,13 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+= 1.5.138 - 2025-01-16 =
+
+* Fix: fixed some php varning with $key not found
+* Fix: fixed negative timestamp detection issues
+* Fix: fixed s_date php function issues
+
+
 = 1.5.137 - 2025-01-15 =
 
 * Fix: Fixed some small text output with the repeater

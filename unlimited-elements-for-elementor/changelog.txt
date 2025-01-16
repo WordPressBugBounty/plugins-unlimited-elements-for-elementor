@@ -1,4 +1,10 @@
 
+= 1.5.138 - 2025-01-16 =
+
+* Fix: fixed some php varning with $key not found
+* Fix: fixed negative timestamp detection issues
+* Fix: fixed s_date php function issues
+
 
 = 1.5.137 - 2025-01-15 =
 

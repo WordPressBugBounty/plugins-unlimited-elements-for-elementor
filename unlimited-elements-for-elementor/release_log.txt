@@ -1,4 +1,10 @@
 
+version 1.5.138:
+
+* Fix: fixed some php varning with $key not found
+* Fix: fixed negative timestamp detection issues
+* Fix: fixed s_date php function issues
+
 
 version 1.5.137:
 

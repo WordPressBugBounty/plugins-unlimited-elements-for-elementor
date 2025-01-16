@@ -59,10 +59,16 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 	}
 
 	if (!function_exists("s_date")) {
-		function s_date($format, $time) {
+		
+		function s_date($format, $time = null) {
+			
+			if(empty($time))
+				$time = time();
+			
 			$timezone = new DateTimeZone(date_default_timezone_get());
 			return (new DateTime('@' . $time))->setTimezone($timezone)->format($format);
 		}
+		
 	}
 
 

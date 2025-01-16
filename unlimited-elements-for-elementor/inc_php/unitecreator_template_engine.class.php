@@ -293,10 +293,14 @@ class UniteCreatorTemplateEngineWork{
 				break;
 				case "clean":
 					
-					unset($arrItems[$key][$templateName]["item_repeater_class"]);
-					unset($arrItems[$key][$templateName]["item_index"]);
-					unset($arrItems[$key][$templateName]["item_id"]);
-					
+					foreach($arrItems as $key => $item){
+						
+						unset($arrItems[$key][$templateName]["item_repeater_class"]);
+						unset($arrItems[$key][$templateName]["item_index"]);
+						unset($arrItems[$key][$templateName]["item_id"]);
+						
+					}
+										
 				break;
 				default:
 					$sap = $input;
@@ -619,7 +623,7 @@ class UniteCreatorTemplateEngineWork{
 	 * filter uc date, clear html first, then replace the date
 	 */
 	public function filterUCDate($dateStamp, $format = "", $formatDateFrom = "d/m/Y"){
-
+				
 		//get the time ago string
 
 		if($format === "time_ago"){

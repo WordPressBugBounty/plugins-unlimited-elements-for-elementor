@@ -4669,7 +4669,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 						$params["meta_key"] = $metaKey;
 				}
 			}
-
+			
+			
 			$arrTerms = UniteFunctionsWPUC::getTerms($taxonomy, $orderBy, $orderDir, $isHide, $arrExcludeSlugs, $params);
 
 			if($showDebug == true){
@@ -4751,16 +4752,17 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$showDebug = UniteFunctionsUC::getVal($value, $name."_show_query_debug");
 		$showDebug = UniteFunctionsUC::strToBool($showDebug);
 		
-		if(GlobalsUC::$showQueryDebugByUrl == true){
-			$showDebug = true;
-			$this->advancedQueryDebug = true;
-		}
-
 
 		$queryDebugType = "";
 		if($showDebug == true)
 			$queryDebugType = UniteFunctionsUC::getVal($value, $name."_query_debug_type");
 
+		if(GlobalsUC::$showQueryDebugByUrl == true){
+			$showDebug = true;
+			$queryDebugType = "show_query";
+		}
+			
+			
 		$maxTerms = UniteFunctionsUC::getVal($value, $name."_maxterms");
 		$maxTerms = (int)$maxTerms;
 		if(empty($maxTerms))
@@ -4959,7 +4961,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 					$orderBy = "include";
 			}
 
-
+		
 			if(!empty($orderBy)){
 				
 				if($orderBy == "parent_children"){
@@ -5021,10 +5023,11 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if($showDebug == true){
 			echo "<div class='uc-div-ajax-debug'>";
 
-			dmp("The terms query is:");
+			dmp("The terms query Is:");
 			dmp($args);
 		}
-
+		
+		
 		$args = $this->getPostListData_getCustomQueryFilters($args, $value, $name, $data, false);
 		
 		$term_query = new WP_Term_Query();
@@ -5038,7 +5041,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		//term query debug
 
 		if($showDebug == true && $queryDebugType == "show_query"){
-
+			
 			$originalQueryVars = $term_query->query_vars;
 			$originalQueryVars = UniteFunctionsWPUC::cleanQueryArgsForDebug($originalQueryVars);
 

@@ -3337,8 +3337,27 @@ class UniteFunctionsUC{
 	}
 	
 	/**
+	 * check number if it's date format like YYYYMMDD
+	 */
+	public static function isNumberDateString($number){
+		
+		// Check if the number is in YYYYMMDD format
+	    if (preg_match('/^\d{8}$/', $number) == false)
+	    	return(false);
+	    
+        // Validate if it's a plausible date (YYYY-MM-DD)
+        $year = (int) substr($number, 0, 4);
+        $month = (int) substr($number, 4, 2);
+        $day = (int) substr($number, 6, 2);
+
+        if (checkdate($month, $day, $year))
+            return true; 
+	      
+        return(false);
+	}
+	
+	/**
 	 * check if some variable is time stamp
-	 * TODO - 20241205 - should be not time stamp 
 	 */
 	public static function isTimeStamp($number) {
 
@@ -3346,10 +3365,16 @@ class UniteFunctionsUC{
 	    if (!is_numeric($number) || intval($number) != $number) {
 	        return false;
 	    }
-	
+		
+	    $isNumberDate = self::isNumberDateString($number);
+	    
+	    if($isNumberDate == true)
+	    	return(false);
+	    
 	    // Validate the timestamp range (Unix epoch seconds range)
-	    $minTimestamp = 0; // January 1, 1970
+		$minTimestamp = -2208988800; // December 13, 1901, for 32-bit systems	    
 	    $maxTimestamp = 2147483647; // January 19, 2038, for 32-bit systems
+	    
 	    if ($number < $minTimestamp || $number > $maxTimestamp) {
 	        return false;
 	    }

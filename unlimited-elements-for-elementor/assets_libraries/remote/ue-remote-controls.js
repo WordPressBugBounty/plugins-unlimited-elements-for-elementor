@@ -2491,9 +2491,9 @@ function UERemoteWidgets(){
 				return(false);
 			
 			if(g_vars.trace_debug == true){
-				trace("on widget init");
+				trace("on widget init: " + widgetID);
 			}
-
+			
 			if(!g_vars.funcOnInit){
 
 				if(typeof func != "function")
@@ -2509,7 +2509,7 @@ function UERemoteWidgets(){
 				g_vars.trace_debug = true;
 			
 			initGlobal(widgetID, t.onWidgetInit);
-
+						
 			if(g_vars.is_inited == false){
 				
 				if(g_vars.trace_debug == true){
