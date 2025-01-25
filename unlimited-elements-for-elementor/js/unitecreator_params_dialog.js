@@ -1007,6 +1007,23 @@ function UniteCreatorParamsDialog(){
 	}
 
 
+	/**
+	 * init select2 for param dialog select type
+	 */
+	function initSelect2ParamDialogSelectType(){
+		
+		var selectType = g_objSelectType;
+		var selectTypeContainerClass = selectType.attr('class')
+
+		selectType.select2({
+			minimumResultsForSearch: Infinity,
+			selectionTitleAttribute: false,
+			theme: selectTypeContainerClass,
+			width: "100%"
+		});
+
+	}
+
 
 	function ____________RADIOBOOLEAN_PARAM____________(){};
 
@@ -2252,6 +2269,8 @@ function UniteCreatorParamsDialog(){
 		initRightContentSettings();
 
 		initConditions();
+
+		//initSelect2ParamDialogSelectType();
 
 		//for all the special params that run on init
 		triggerEvent(events.INIT);

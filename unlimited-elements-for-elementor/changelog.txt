@@ -1,4 +1,13 @@
 
+
+version 1.5.139: - 2025-01-25 =
+
+* Feature: make the functinality for price filter. get max and min price
+* Feature: added option for random terms
+* Fix: fixed dissapearing pagination issue
+* Fix: fixed wpml integration issues
+
+
 = 1.5.138 - 2025-01-16 =
 
 * Fix: fixed some php varning with $key not found

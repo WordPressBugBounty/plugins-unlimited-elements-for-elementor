@@ -494,7 +494,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		 */
 		public static function getQueryDebugWrapperStyles(){
 			
-			return("background: lightgrey; padding: 10px; margin-bottom: 10px; font-size: 12px;");
+			return("background: lightgrey; padding: 10px; margin-bottom: 10px; font-size: 12px; overflow:auto;");
 		}
 		
 		/**
@@ -1019,6 +1019,8 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 					return "border-top-left-radius:{{top}};border-top-right-radius:{{right}};border-bottom-right-radius:{{bottom}};border-bottom-left-radius:{{left}};";
 				case UniteCreatorDialogParam::PARAM_TEXTSHADOW:
 					return "text-shadow:{{x}} {{y}} {{blur}} {{color}};";
+				case UniteCreatorDialogParam::PARAM_TEXTSTROKE:
+					return "stroke-width:{{width}};stroke:{{color}};-webkit-text-stroke-width:{{width}};-webkit-text-stroke-color:{{color}};";
 				case UniteCreatorDialogParam::PARAM_BOXSHADOW:
 					return "box-shadow:{{x}} {{y}} {{blur}} {{spread}} {{color}} {{position}};";
 				case UniteCreatorDialogParam::PARAM_CSS_FILTERS:

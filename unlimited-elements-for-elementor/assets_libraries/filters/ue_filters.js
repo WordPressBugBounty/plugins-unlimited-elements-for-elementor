@@ -458,7 +458,7 @@ function UEDynamicFilters(){
 
 		if(!isInitAfter)
 			isInitAfter = isSpecialFilterInitAfter(objFilter, objGrid);
-		
+				
 		if(isInitAfter === true)
 			addFilterToInitAfter(objFilter, objGrid);
 		
@@ -2237,7 +2237,7 @@ function UEDynamicFilters(){
 		operateAjax_setHtmlWidgets(response, objFilters);
 
 		operateAjax_setHtmlSyngGrids(response, objGrid, isLoadMore);
-
+		
 		objGrid.trigger(g_vars.EVENT_AJAX_REFRESHED);
 		g_objBody.trigger(g_vars.EVENT_AJAX_REFRESHED_BODY, [objGrid]);
 
@@ -2988,7 +2988,9 @@ function UEDynamicFilters(){
 		var wasInitMode = objGrid.data("was_init_mode");
 
 		var arrFilterIDs = {};
-				
+		
+		var advancedSearchFilterID;
+		
 		
 		//get ajax options
 		jQuery.each(objFilters, function(index, objFilter){
@@ -3143,7 +3145,13 @@ function UEDynamicFilters(){
 
 					search = objInput.val();
 					search = search.trim();
-
+					
+					//add id
+					var isAdvancedSearch = objFilter.data("advancedsearch");
+					
+					if(isAdvancedSearch == true)
+						advancedSearchFilterID = getElementWidgetID(objFilter);
+										
 				break;
 				case g_types.GENERAL:
 					
@@ -3210,19 +3218,16 @@ function UEDynamicFilters(){
 							});
 							
 						}
-						
-						
 					}
 					
 					
 					if(g_showDebug == true){
-						
 						trace("Filter Data:");
 						trace(filterData);
 					}
-
-					if(generalType == "price"){
-
+					
+					if(generalType == "price" && isFiltersInitMode == false){
+						
 						var priceFromArg = getVal(filterData,"price_from");
 						var priceToArg = getVal(filterData,"price_to");
 
@@ -3232,6 +3237,7 @@ function UEDynamicFilters(){
 						if(priceToArg)
 							price_to = roundToOneDecimal(priceToArg);
 					}
+					
 					
 					//add title start
 					
@@ -3290,7 +3296,6 @@ function UEDynamicFilters(){
 			if(isFilterHidden == true)
 				isNoRefresh = true;
 			
-			
 			objFilter.data("uc_norefresh",false);
 			
 			var isMainFilter = (filterRole == "main");
@@ -3305,7 +3310,11 @@ function UEDynamicFilters(){
 
 			if(isNoRefresh === true)
 				isRefresh = false;
-
+			
+			if(g_showDebug == true){
+				trace("Filter Refresh: "+isRefresh);
+			}
+			
 			if(isRefresh == true){
 
 				var filterWidgetID = getElementWidgetID(objFilter);
@@ -3487,8 +3496,13 @@ function UEDynamicFilters(){
 			urlFilterString = addUrlParam(urlFilterString, "ucs=" + search);
 			
 			urlReplace += "&ucs=" + search;
+			
+			//add special search id
+			if(advancedSearchFilterID)
+				urlAjax += "&ucsid="+advancedSearchFilterID;
+			
 		}
-
+		
 		//avoid duplicates - exclude, disable the offset
 		
 		if(objGrid.hasClass("uc-avoid-duplicates") && isLoadMoreMode == true){

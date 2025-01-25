@@ -1238,6 +1238,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 			break;
 			case UniteCreatorSettings::TYPE_TYPOGRAPHY:
 			case UniteCreatorSettings::TYPE_TEXTSHADOW:
+			case UniteCreatorSettings::TYPE_TEXTSTROKE:
 			case UniteCreatorSettings::TYPE_BOXSHADOW:
 			case UniteCreatorSettings::TYPE_CSS_FILTERS:
 				$this->drawSubSettings($setting);

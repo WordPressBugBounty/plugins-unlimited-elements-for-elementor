@@ -1674,6 +1674,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 			$arr["parent"] = __("Parent", "unlimited-elements-for-elementor");
 			$arr["parent_children"] = __("Parent and Children", "unlimited-elements-for-elementor");
 			$arr["count"] = __("Count - (number of posts associated)", "unlimited-elements-for-elementor");
+			$arr["rand"] = __("Random", "unlimited-elements-for-elementor");
 
 			return($arr);
 		}

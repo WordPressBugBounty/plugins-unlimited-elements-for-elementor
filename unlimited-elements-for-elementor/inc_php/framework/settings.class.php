@@ -53,6 +53,7 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		const TYPE_DIMENTIONS = "dimentions";
 		const TYPE_TYPOGRAPHY = "typography";
 		const TYPE_TEXTSHADOW = "textshadow";
+		const TYPE_TEXTSTROKE = "textstroke";
 		const TYPE_BOXSHADOW = "boxshadow";
 		const TYPE_CSS_FILTERS = "css_filters";
 		const TYPE_GALLERY = "gallery";

@@ -13,7 +13,6 @@ class UniteCreatorAjaxSeach{
 	public static $customSearchEnabled = false;
 	public static $enableThirdPartyHooks = false;
 
-    private $searchInPostFields = false;
 	private $searchInMeta = false;
 	private $searchMetaSku = false;
 	private $searchInTerms = false;
@@ -21,6 +20,55 @@ class UniteCreatorAjaxSeach{
 	private $searchPostFields = array();
 	private $searchMetaKey = "";
 
+	/**
+	 * set post parts where clause
+	 */
+	public function setWherePostParts($where, $wp_query){
+		
+		if (in_array('all', $this->searchPostFields))
+			return ($where);
+
+		if(empty($this->searchPostFields))
+			return($where);
+		
+		//set fields to delete
+		$arrDelete = array("post_title"=>true,"post_excerpt"=>true,"post_content"=>true);
+
+		foreach($this->searchPostFields as $field){
+			
+			unset($arrDelete[$field]);
+		}
+		
+		//AI Help :)
+		
+		// Remove fields specified in $arrDelete
+		
+	    foreach ($arrDelete as $field => $remove) {
+	        if ($remove) {
+	            // Pattern to match the specific condition
+	            $pattern = "/\(wp_posts\.$field LIKE '[^']*'\)\s*(OR\s*)?/";
+	            $where = preg_replace($pattern, '', $where);
+	        }
+	    }
+	
+	    // Clean up unnecessary OR and extra spaces left after removal
+	    $where = preg_replace('/\s+OR\s+\)/', ')', $where);
+	    $where = preg_replace('/\(\s+OR\s+/', '(', $where);
+	
+	    $where = trim($where);		
+			    
+		if(GlobalsProviderUC::$showPostsQueryDebug == true){
+			
+			dmp("Mat the search for those fields: ");
+			dmp($this->searchPostFields);
+			
+			dmp($where);
+		}
+	    
+		remove_filter( 'posts_where', array($this,'setWherePostParts'), 10, 2 );
+		
+		return($where);
+	}
 	
 	/**
 	 * on posts response
@@ -29,7 +77,7 @@ class UniteCreatorAjaxSeach{
 		
 		if(GlobalsProviderUC::$isUnderAjaxSearch == false)
 			return($arrPosts);
-		
+					
 		$name = UniteFunctionsUC::getVal($value, "uc_posts_name");
 		
 		$args = GlobalsProviderUC::$lastQueryArgs;
@@ -37,7 +85,7 @@ class UniteCreatorAjaxSeach{
 		$maxItems = UniteFunctionsUC::getVal($args, "posts_per_page", 9);
 		
 		$numPosts = count($arrPosts);
-				
+		
 		//if maximum reached - return the original
 		
 		$addCount = $maxItems - count($arrPosts);
@@ -49,19 +97,7 @@ class UniteCreatorAjaxSeach{
 			}
 			
 		}
-				
-		//search by post fields
-		if($this->searchInPostFields == true && $addCount > 0){
-									
-			$arrPosts = $this->getPostsByFields($arrPosts, $args);
-			
-			$addCount = $maxItems - count($arrPosts);
-			
-			if(GlobalsProviderUC::$showPostsQueryDebug == true && $addCount <= 0){
-				dmp("Max posts reach");
-			}
-			
-		}
+		
 
 		//search in meta
 		if($this->searchInMeta == true && $addCount > 0){
@@ -99,79 +135,6 @@ class UniteCreatorAjaxSeach{
 		return($arrPosts);
 	}
 
-
-	/**
-	 * get posts by title or content or excerpt
-	 */
-	private function getPostsByFields($arrPosts, $args) {
-
-		if (in_array('all', $this->searchPostFields))
-			return ($arrPosts);
-
-		if(empty($this->searchPostFields))
-			return($arrPosts);
-		
-		
-		$db         = HelperUC::getDB();
-		$tablePosts = UniteProviderFunctionsUC::$tablePosts;
-		$postType   = UniteFunctionsUC::getVal($args, "post_type");
-		$limit      = UniteFunctionsUC::getVal($args, "posts_per_page");
-		$postFields = $this->searchPostFields;
-		
-		$search     = $db->escape($args["s"]);
-		$arrPosts   = array();
-
-		$sqlWhere   = array();
-		$sqlAnd     = "";
-		$sqlLike    = "";
-
-		// if postType contains array of post types or one post type
-		if (is_array($postType)) {
-			$sqlAnd = "'" . implode("','", $postType) . "'";
-			$sqlAnd = "post_type IN ({$sqlAnd})";
-		} else {
-			$sqlAnd = "post_type = '{$postType}'";
-		}
-
-		//prepare the where
-		
-		foreach ($postFields as $field) 
-		    $sqlWhere[] = "{$field} LIKE '%{$search}%'";
-    
-		$sqlLike = implode(' OR ', $sqlWhere);
-    	
-		$sql = "
-		    SELECT *
-		      FROM {$tablePosts}
-		     WHERE ({$sqlLike})
-		       AND {$sqlAnd}
-		       AND post_status = 'publish'
-		     LIMIT {$limit}
-		";
- 
-		try{
-			$arrPostsByFields = @$db->fetchSql($sql, false, 'OBJECT');
-		}catch(Exception $e){
-			
-			dmp("Wrong sql: ".$sql);
-			
-			throw($e);
-		}
-
-		//debug output
-		if (GlobalsProviderUC::$showPostsQueryDebug == true) {
-			
-			dmp("<strong>Search By Post Fields</strong> - ".implode(', ', $postFields));
-			dmp("Query:");
-			dmp($sql);
-			dmp("Found Posts: " . count($arrPostsByFields));
-			
-		}
-
-		$arrPosts = array_merge($arrPosts, $arrPostsByFields);
-
-		return($arrPosts);
-	}
 
 	/**
 	 * get posts from meta query
@@ -217,9 +180,9 @@ class UniteCreatorAjaxSeach{
 			dmp("Found Posts: ".count($arrPostsByMeta));
 			
 		}
-
+		
 		$arrPosts = array_merge($arrPosts, $arrPostsByMeta);
-
+		
 		return($arrPosts);
 	}
 
@@ -324,8 +287,59 @@ class UniteCreatorAjaxSeach{
 
 		return($arrPosts);
 	}
+	
+	
+	/**
+	 * is there is special search in search filter
+	 */
+	public static function isSearchFilterHasSpecialArgs($data){
+		
+		$searchBy = UniteFunctionsUC::getVal($data, "search_by");
+		
+		if(empty($searchBy))
+			return($output);
+			
+		if(is_array($searchBy) == false)
+			return($output);
+		
+		$firstItem = $searchBy[0];
+		
+		if($firstItem != "all")
+			return(true);
+			
+		//check search in meta
+		
+		$searchInMeta = UniteFunctionsUC::getVal($data, "search_in_meta");
+		$searchInMeta = UniteFunctionsUC::strToBool($searchInMeta);
+		
+		if($searchInMeta == true){
+			$searchInMetaName = UniteFunctionsUC::getVal($data, "searchin_meta_name");
+			$searchInMetaName = trim($searchInMetaName);
+			
+			if(!empty($searchInMetaName))
+				return(true);
+							
+		}
+		
+		//check search in terms
+		
+		$searchInTerms = UniteFunctionsUC::getVal($data, "search_in_terms");
+		$searchInTerms = trim($searchInTerms);
+		
+		if($searchInTerms == true){
 
+			$searchInTaxonomy = UniteFunctionsUC::getVal($data, "search_in_taxonomy");
+			$searchInTaxonomy = trim($searchInTaxonomy);
+			
+			if(!empty($searchInTaxonomy))
+				return(true);
+		}
+		
+		
+		return(false);
+	}
 
+	
 	/**
 	 * supress third party filters except of this class ones
 	 */
@@ -365,9 +379,7 @@ class UniteCreatorAjaxSeach{
 	/**
 	 * init the ajax search - before the get posts accure, from ajax request
 	 */
-	public function initCustomAjaxSeach(UniteCreatorAddon $addon){
-		
-		$arrParams = $addon->getProcessedMainParamsValues(UniteCreatorParamsProcessor::PROCESS_TYPE_CONFIG);
+	public function initCustomAjaxSeach($arrParams){
 		
 		self::$arrCurrentParams = $arrParams;
 		
@@ -416,15 +428,13 @@ class UniteCreatorAjaxSeach{
 		
 		if(!empty($arrSearchPostFields) && in_array("all", $arrSearchPostFields) == false){
 			
-			//set skip main post query
-			GlobalsProviderUC::$skipRunPostQueryOnce = true;
-			
-			$applyModifyFilter = true;
+			add_filter( 'posts_where', array($this,'setWherePostParts'), 10, 2 );
 			
 			self::$customSearchEnabled = true;
-			$this->searchInPostFields = true;
+			
 			$this->searchPostFields = $arrSearchPostFields;
 		}
+		
 		
 		//skip main query if just meta or terms selected for example
 		
@@ -432,8 +442,9 @@ class UniteCreatorAjaxSeach{
 			GlobalsProviderUC::$skipRunPostQueryOnce = true;			
 		}
 		
-		if($applyModifyFilter == true)
+		if($applyModifyFilter == true){
 			UniteProviderFunctionsUC::addFilter("uc_filter_posts_list", array($this,"onPostsResponse"),10,3);
+		}
 		
 	}
 

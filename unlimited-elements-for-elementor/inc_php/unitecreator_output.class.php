@@ -803,6 +803,39 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 		return $style;
 	}
 
+
+
+	private function processParamCSSSelector_textStroke($param, $selectors){
+
+		$value = UniteFunctionsUC::getVal($param, "value");
+		$width = UniteFunctionsUC::getVal($value, "width");
+		$color = UniteFunctionsUC::getVal($value, "color");
+
+		// Prepare CSS for stroke width
+		$width = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $width);
+
+		$css = "";
+
+		// If both width and color are available, apply the text stroke
+		if($width !== "" && $color !== ""){
+			$selectorValue = HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TEXTSTROKE);
+
+			$css = $this->processCSSSelectorReplaces($selectorValue, array(
+				"{{width}}" => $width,
+				"{{color}}" => $color,
+			));
+		}
+
+		// Combine the selectors and prepare the style
+		$selector = $this->combineCSSSelectors($selectors);
+		$style = $this->prepareCSSSelectorStyle($selector, $css);
+
+		return $style;
+	}
+
+
+
+
 	/**
 	 * process css selector of box shadow param
 	 */
@@ -1208,6 +1241,9 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 			break;
 			case UniteCreatorDialogParam::PARAM_TEXTSHADOW:
 				$style = $this->processParamCSSSelector_textShadow($param, $selectors);
+			break;
+			case UniteCreatorDialogParam::PARAM_TEXTSTROKE:
+				$style = $this->processParamCSSSelector_textStroke($param, $selectors);
 			break;
 			case UniteCreatorDialogParam::PARAM_BOXSHADOW:
 				$style = $this->processParamCSSSelector_boxShadow($param, $selectors);

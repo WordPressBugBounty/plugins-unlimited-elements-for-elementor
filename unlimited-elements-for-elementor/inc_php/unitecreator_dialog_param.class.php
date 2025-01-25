@@ -49,6 +49,7 @@ class UniteCreatorDialogParamWork{
 	const PARAM_ADDONPICKER = "uc_addonpicker";
 	const PARAM_TYPOGRAPHY = "uc_typography";
 	const PARAM_TEXTSHADOW = "uc_textshadow";
+	const PARAM_TEXTSTROKE = "uc_textstroke";
 	const PARAM_BOXSHADOW = "uc_boxshadow";
 	const PARAM_BORDER = "uc_border";
 	const PARAM_STATIC_TEXT = "static_text";
@@ -220,6 +221,7 @@ class UniteCreatorDialogParamWork{
 		$this->addParam(self::PARAM_BORDER, esc_html__("Border", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_BOXSHADOW, esc_html__("Box Shadow", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_TEXTSHADOW, esc_html__("Text Shadow", "unlimited-elements-for-elementor"));
+		$this->addParam(self::PARAM_TEXTSTROKE, esc_html__("Text Stroke", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_SLIDER, esc_html__("Slider", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_DATETIME, esc_html__("Date Time", "unlimited-elements-for-elementor"));
 
@@ -1077,6 +1079,16 @@ class UniteCreatorDialogParamWork{
 		exit();
 	}
 
+
+	/**
+	 * function for override
+	 */
+	protected function putTextStrokeParam(){
+		dmp("putTextStrokeParam: function for override");
+		exit();
+	}
+
+
 	/**
 	 * function for override
 	 */
@@ -1593,6 +1605,9 @@ class UniteCreatorDialogParamWork{
 			break;
 			case self::PARAM_TEXTSHADOW:
 				$this->putTextShadowParam();
+			break;
+			case self::PARAM_TEXTSTROKE:
+				$this->putTextStrokeParam();
 			break;
 			case self::PARAM_BOXSHADOW:
 				$this->putBoxShadowParam();

@@ -19,8 +19,7 @@ class UniteCreatorDialogParam extends UniteCreatorDialogParamWork{
 		return($paramText);
 	}
 	
-	
-	
+
 	/**
 	 * filter main params
 	 * function for override
@@ -52,6 +51,7 @@ class UniteCreatorDialogParam extends UniteCreatorDialogParamWork{
 		$this->arrParams[] = self::PARAM_BORDER;
 		$this->arrParams[] = self::PARAM_BOXSHADOW;
 		$this->arrParams[] = self::PARAM_TEXTSHADOW;
+		$this->arrParams[] = self::PARAM_TEXTSTROKE;
 		$this->arrParams[] = self::PARAM_DATETIME;
 		$this->arrParams[] = self::PARAM_BORDER_DIMENTIONS;
 		$this->arrParams[] = self::PARAM_CSS_FILTERS;
@@ -62,6 +62,5 @@ class UniteCreatorDialogParam extends UniteCreatorDialogParamWork{
 		
 		$this->arrParams = $this->filterMainParams($this->arrParams);
 	}
-	
-	
+
 }

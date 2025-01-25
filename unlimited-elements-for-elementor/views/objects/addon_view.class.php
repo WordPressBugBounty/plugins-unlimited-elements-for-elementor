@@ -1310,10 +1310,10 @@ class UniteCreatorAddonView{
 					<?php endif?>
 
 					<?php if($this->showTestAddon == true):?>
-					<a href="<?php echo esc_url($urlTestAddon)?>" target="_blank" class="unite-button-secondary " ><?php echo esc_html($textTestAddon)?></a>
+					<a href="<?php echo esc_url($urlTestAddonNew)?>" target="_blank" class="unite-button-secondary " ><?php echo esc_html($textTestAddon)?></a>
 
 					<?php if($this->showTestAddonNew == true):?>
-						<a href="<?php echo esc_url($urlTestAddonNew)?>" target="_blank" class="unite-button-primary " style="background-color:green !important;"><?php echo esc_html($textTestAddonNew)?></a>
+						<a href="<?php echo esc_url($urlTestAddon)?>" target="_blank" class="unite-button-primary " style="background-color:green !important;"><?php echo esc_html($textTestAddonNew)?></a>
 						&nbsp;&nbsp;
 					<?php endif?>
 

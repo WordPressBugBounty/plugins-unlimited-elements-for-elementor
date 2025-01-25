@@ -2335,6 +2335,7 @@ table.unite_table_settings_wide .setting_onecell_text {
 
 .unite-settings-sidebar .unite-list-settings > li[data-type="typography"],
 .unite-settings-sidebar .unite-list-settings > li[data-type="textshadow"],
+.unite-settings-sidebar .unite-list-settings > li[data-type="textstroke"],
 .unite-settings-sidebar .unite-list-settings > li[data-type="boxshadow"],
 .unite-settings-sidebar .unite-list-settings > li[data-type="css_filters"] {
 	position: relative;
@@ -3019,8 +3020,46 @@ table.unite_table_settings_wide .setting_onecell_text {
 	color: var(--ue-color-gray);
 }
 
+#----------SELECT2-ATTRIBUTE-PICKER---------------- {}
+
+.select2-container--uc-paramdialog-select-type .select2-results__options {
+	column-count: 3;
+	column-gap: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.select2-container--uc-paramdialog-select-type .select2-results__option {
+	display: inline-block;
+	padding-right: 5px;
+	padding-left: 5px;
+	width: calc(100% - 10px);
+}
+
+.select2-container--uc-paramdialog-select-type .select2-results__option[aria-selected="true"],
+.select2-container--uc-paramdialog-select-type .select2-results__option:hover{
+	background: #0a0151;
+	color:#fff;
+	font-weight: bold;
+}
+
+.select2-container--uc-paramdialog-select-type .select2-selection__rendered{
+	pointer-events: none;
+}
+
+@media(max-width:480px) {
+	.select2-container--uc-paramdialog-select-type .select2-results__options {
+		column-count: 2;
+		column-gap: 10px;
+	}
+}
+
 
 #----------RESPONSIVE-PICKER---------------- {}
+
+.unite-inputs select.unite-responsive-picker {
+	width:30px;height:12px;opacity:0;
+}
 
 .unite-inputs .unite-responsive-picker + .select2-container {
 	width: auto !important;

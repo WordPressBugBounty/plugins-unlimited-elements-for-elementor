@@ -6,6 +6,7 @@ use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 use Elementor\Scheme_Color;
 use Elementor\Group_Control_Typography;
+use Elementor\Group_Control_Text_Stroke;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Text_Shadow;
@@ -1040,6 +1041,9 @@ class UniteCreatorElementorWidget extends Widget_Base {
     		case UniteCreatorDialogParam::PARAM_TEXTSHADOW:
     			$controlType = Group_Control_Text_Shadow::get_type();
     		break;
+		    case UniteCreatorDialogParam::PARAM_TEXTSTROKE:
+			    $controlType = Group_Control_Text_Stroke::get_type();
+			break;
     		case UniteCreatorDialogParam::PARAM_BOXSHADOW:
     			$controlType = Group_Control_Box_Shadow::get_type();
     		break;
@@ -1660,6 +1664,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
 				$arrControl["fields_options"] = $arrDefaults;
 
+
     		break;
     		case UniteCreatorDialogParam::PARAM_BOXSHADOW:
     			$arrControl["name"] = $name;
@@ -1790,6 +1795,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
     	switch($type){		//single selector
     		case UniteCreatorDialogParam::PARAM_AUDIO:
     		case UniteCreatorDialogParam::PARAM_TEXTSHADOW:
+		    case UniteCreatorDialogParam::PARAM_TEXTSTROKE:
     		case UniteCreatorDialogParam::PARAM_BOXSHADOW:
     		case UniteCreatorDialogParam::PARAM_BORDER:
     		case UniteCreatorDialogParam::PARAM_BACKGROUND:
@@ -2079,6 +2085,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
     				case UniteCreatorDialogParam::PARAM_BACKGROUND:
     				case UniteCreatorDialogParam::PARAM_BORDER:
     				case UniteCreatorDialogParam::PARAM_TEXTSHADOW:
+				    case UniteCreatorDialogParam::PARAM_TEXTSTROKE:
     				case UniteCreatorDialogParam::PARAM_BOXSHADOW:
     				case UniteCreatorDialogParam::PARAM_CSS_FILTERS:
 

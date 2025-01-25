@@ -192,8 +192,9 @@ class HelperProviderCoreUC_EL{
 		if(class_exists($className) == true)
 			return(false);
 
-		
+		// class_alias('UniteCreatorElementorWidget', $className);
 		$code = "class {$className} extends UniteCreatorElementorWidget{}";
+		// phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
 		eval($code);
 
 		$widget = new $className();

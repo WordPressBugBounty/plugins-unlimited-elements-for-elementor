@@ -143,30 +143,41 @@ function UniteSettingsUC(){
 		});
 	}
 
-	/**
+/**
 	 * get all settings inputs
 	 */
-	function getObjInputs(controlsOnly) {
+    var _objInputCache = new Map();
+	function getObjInputs(controlsOnly, force = false) {
 		validateInited();
-
+	
 		var selectors = "input, textarea, select, .unite-setting-inline-editor, .unite-setting-input-object";
 		var selectorNot = "input[type='button'], input[type='range'], input[type='search'], .unite-responsive-picker, .unite-units-picker";
-
+	
 		if (g_temp.disableExcludeSelector !== true)
 			selectorNot += ", .unite-settings-exclude *";
-
+	
 		if (g_temp.objItemsManager) {
 			selectors += ", .uc-setting-items-panel";
 			selectorNot += ", .uc-setting-items-panel select, .uc-setting-items-panel input, .uc-setting-items-panel textarea";
 		}
-
+	
 		if (g_temp.isRepeaterExists === true)
 			selectorNot += ", .unite-setting-repeater *";
-
+	
 		if (controlsOnly === true)
 			selectors = "input[type='radio'], select";
 
-		return g_objParent.find(selectors).not(selectorNot);
+		const cacheKey = `${selectors}-${selectorNot}`;
+	
+		if (!force && _objInputCache.has(cacheKey)) {
+			return _objInputCache.get(cacheKey);
+		}
+		
+		const objInputs = g_objParent.find(selectors).not(selectorNot);
+	
+		_objInputCache.set(cacheKey, objInputs);
+		return objInputs;
+		// return g_objParent.find(selectors).not(selectorNot);
 	}
 
 
@@ -365,6 +376,7 @@ function UniteSettingsUC(){
 			break;
 			case "typography":
 			case "textshadow":
+			case "textstroke":
 			case "boxshadow":
 			case "css_filters":
 				value = getSubSettingsValue(objInput);
@@ -572,6 +584,7 @@ function UniteSettingsUC(){
 			break;
 			case "typography":
 			case "textshadow":
+			case "textstroke":
 			case "boxshadow":
 			case "css_filters":
 				defaultValue = objInput.data(dataname);
@@ -786,6 +799,7 @@ function UniteSettingsUC(){
 			break;
 			case "typography":
 			case "textshadow":
+			case "textstroke":
 			case "boxshadow":
 			case "css_filters":
 				setSubSettingsValue(objInput, value);
@@ -1071,8 +1085,15 @@ function UniteSettingsUC(){
 	 * destroy range sliders
 	 */
 	function destroyRangeSliders() {
-		g_objWrapper.find(".unite-setting-range-slider").slider("destroy");
-		g_objWrapper.find(".unite-setting-range-input").off("input");
+		let slider = 
+		g_objWrapper.find(".unite-setting-range-slider").each(function() {
+			let slider = jQuery(this);
+			if(slider.hasClass('ui-slider')){ 
+				slider.slider("destroy");
+			}
+		});
+		
+		g_objWrapper.find(".unite-setting-range-input")?.off("input");
 	}
 
 	/**
@@ -1104,70 +1125,63 @@ function UniteSettingsUC(){
 	/**
 	 * init select2
 	 */
-	function initSelect2(objInput, options) {
-		var dropdownParent = objInput.closest(".unite-setting-input");
-
-		if (dropdownParent.length === 0)
-			dropdownParent = objInput.closest(".unite-inputs");
-
-		if (dropdownParent.length === 0)
-			dropdownParent = jQuery("body");
-
-		var settings = jQuery.extend({
-			dropdownParent: dropdownParent,
-			closeOnSelect: true,
-			minimumResultsForSearch: 10,
-			templateResult: prepareTemplate,
-			templateSelection: prepareTemplate,
-		}, options);
-
-		objInput
-			.select2(settings)
-			.on("change", function () {
-				appendPlusButton();
-
-				t.onSettingChange(null, objInput);
-			})
-			.on("select2:closing", function () {
-				// hide tipsy
-				jQuery(".select2-dropdown").find(".uc-tip").trigger("mouseleave");
-			});
-
-		appendPlusButton();
-
-		function appendPlusButton() {
-			if (settings.ajax)
-				return;
-
-			var objOptions = objInput.find("option");
-			var objSelectedOptions = objOptions.filter(":selected");
-
-			if (objOptions.length === 0)
-				return;
-
-			// first check if all options are selected
-			if (objOptions.length === objSelectedOptions.length)
-				return;
-
-			// find inline search and insert plus button before
-			objInput
-				.next(".select2")
-				.find(".select2-search--inline")
-				.before("<li class=\"select2-selection__choice select2-selection__uc-plus-button\">+</li>");
-		}
-
-		function prepareTemplate(data) {
-			var $option = jQuery(data.element);
-			var content = $option.data("content");
-			var output = data.text;
-
-			if (content)
-				output = jQuery(content);
-
-			return output;
-		}
-	}
-
+    function initSelect2(objInput, options) {
+        if (!objInput || !objInput[0]) {
+            console.error("Invalid objInput element:", objInput);
+            return;
+        }
+    
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    observer.disconnect();
+    
+                    const dropdownParent = objInput.closest(".unite-setting-input, .unite-inputs").length 
+                        ? objInput.closest(".unite-setting-input, .unite-inputs") 
+                        : jQuery("body");
+    
+                    const settings = jQuery.extend({
+                        dropdownParent,
+                        closeOnSelect: true,
+                        minimumResultsForSearch: 10,
+                        templateResult: prepareTemplate,
+                        templateSelection: prepareTemplate,
+                    }, options);
+    
+                    objInput
+                        .select2(settings)
+                        .on("change", () => {
+                            appendPlusButton();
+                            t.onSettingChange(null, objInput);
+                        })
+                        .on("select2:closing", () => {
+                            jQuery(".select2-dropdown").find(".uc-tip").trigger("mouseleave");
+                        });
+    
+                    appendPlusButton();
+    
+                    function appendPlusButton() {
+                        const objOptions = objInput.find("option");
+                        const objSelectedOptions = objOptions.filter(":selected");
+    
+                        if (settings.ajax || objOptions.length === objSelectedOptions.length) return;
+    
+                        objInput
+                            .next(".select2")
+                            .find(".select2-search--inline")
+                            .before('<li class="select2-selection__choice select2-selection__uc-plus-button">+</li>');
+                    }
+    
+                    function prepareTemplate(data) {
+                        const content = jQuery(data.element).data("content");
+                        return content ? jQuery(content) : data.text;
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+    
+        observer.observe(objInput[0]);
+    }
 
 	function _______MULTI_SELECT_____(){}
 
@@ -2795,7 +2809,7 @@ function UniteSettingsUC(){
 
 		initSelect2(objSelect, {
 			allowClear: true,
-			data: data,
+			data: data, 
 			minimumInputLength: 1,
 			placeholder: objSelect.data("placeholder"),
 			ajax: {
@@ -3267,25 +3281,25 @@ function UniteSettingsUC(){
 		var isInited = objDialog.data("inited");
 
 		if (isInited === true)
-			return;
+            return;
 
 		var objSettings = new UniteSettingsUC();
 		var objSettingsElement = objDialog.find(".unite-settings");
 		var options = { disable_exclude_selector: true };
 
-		objSettings.init(objSettingsElement, options);
+					objSettings.init(objSettingsElement, options);
 
-		objSettings.setEventOnSelectorsChange(function () {
-			var value = objSettings.getSettingsValues();
-			var css = objSettings.getSelectorsCss();
-			var onChange = objDialog.data("on_change");
+					objSettings.setEventOnSelectorsChange(function () {
+						var value = objSettings?.getSettingsValues();
+						var css = objSettings?.getSelectorsCss();
+						var onChange = objDialog.data("on_change");
 
-			if (typeof onChange === "function")
-				onChange(value, css);
-		});
+						if (typeof onChange === "function")
+							onChange(value, css);
+					});
 
-		objDialog.data("inited", true).data("settings", objSettings);
-	}
+					objDialog.data("inited", true).data("settings", objSettings);
+				}
 
 	/**
 	 * get sub settings dialog
@@ -3302,7 +3316,7 @@ function UniteSettingsUC(){
 	function getSubSettingsDialogCss(objWrapper) {
 		var objSettings = getSubSettingsDialog(objWrapper).data("settings");
 
-		return objSettings.getSelectorsCss();
+		return objSettings?.getSelectorsCss();
 	}
 
 	/**
@@ -3311,7 +3325,7 @@ function UniteSettingsUC(){
 	function setSubSettingsDialogValue(objWrapper, value) {
 		var objSettings = getSubSettingsDialog(objWrapper).data("settings");
 
-		objSettings.setValues(value);
+		objSettings?.setValues(value);
 	}
 
 	/**
@@ -3512,7 +3526,7 @@ function UniteSettingsUC(){
 		var objSettings = new UniteSettingsUC();
 
 		objSettings.init(objItemSettingsWrapper);
-		objSettings.setValues(itemValues);
+		objSettings?.setValues(itemValues);
 
 		objItem.data("objsettings", objSettings);
 
@@ -4188,6 +4202,7 @@ function UniteSettingsUC(){
 			break;
 			case "typography":
 			case "textshadow":
+			case "textstroke":
 			case "boxshadow":
 			case "css_filters":
 				style = getSubSettingsSelectorsStyle(objInput, selectors);
@@ -4223,12 +4238,12 @@ function UniteSettingsUC(){
 		objWrapper.find(".unite-repeater-item").each(function () {
 			var objSettings = jQuery(this).data("objsettings");
 
-			objSettings.setSelectorWrapperID(g_selectorWrapperID);
+			objSettings?.setSelectorWrapperID(g_selectorWrapperID);
 
-			var value = objSettings.getSettingsValues();
-			var css = objSettings.getSelectorsCss();
+			var value = objSettings?.getSettingsValues();
+			var css = objSettings?.getSelectorsCss();
 
-			css = processSelectorReplaces(css, { "{{current_item}}": ".elementor-repeater-item-" + value._generated_id });
+			css = processSelectorReplaces(css, { "{{current_item}}": ".elementor-repeater-item-" + value?._generated_id });
 
 			style += css;
 		});
@@ -4388,7 +4403,7 @@ function UniteSettingsUC(){
 
 		if (!type)
 			return;
-
+        
 		var value = getSettingInputValue(objInput);
 
 		switch (type) {
@@ -4411,7 +4426,7 @@ function UniteSettingsUC(){
 
 		//process control change
 		processControlSettingChange(objInput);
-
+        
 		//trigger event by type
 		var hasSelector = isInputHasSelector(objInput);
 		var eventName;
@@ -4424,7 +4439,7 @@ function UniteSettingsUC(){
 			else
 				eventName = t.events.CHANGE;
 		}
-
+        
 		var name = getInputName(objInput);
 
 		triggerEvent(eventName, {
@@ -4517,13 +4532,21 @@ function UniteSettingsUC(){
 		var type = getInputType(objInput);
 		var basicType = getInputBasicType(objInput);
 
+        if(type == 'repeater') {
+            initRepeater(objInput, funcChange);
+            return;
+        }
+        if(type == 'icon') {
+            initIconPicker(objInput, funcChange);
+            return;
+        }        
+
+        const initialize = () => {
+
 		//init by type
 		switch (type) {
 			case "color":
 				initColorPicker(objInput, funcChange);
-			break;
-			case "icon":
-				initIconPicker(objInput, funcChange);
 			break;
 			case "image":
 				t.initImageChooser(objInput, funcChange);
@@ -4545,15 +4568,13 @@ function UniteSettingsUC(){
 			break;
 			case "typography":
 			case "textshadow":
+			case "textstroke":
 			case "boxshadow":
 			case "css_filters":
 				initSubSettings(objInput, funcChange);
 			break;
 			case "addon":
 				initAddonPicker(objInput);
-			break;
-			case "repeater":
-				initRepeater(objInput, funcChange);
 			break;
 			case "post":
 				initPostPicker(objInput);
@@ -4579,29 +4600,41 @@ function UniteSettingsUC(){
 
 				if (objCustomType) {
 					if (objCustomType.funcInit)
-						objCustomType.funcInit(objInput, t);
+					objCustomType.funcInit(objInput, t);
 				} else	//provider setting
 					g_ucAdmin.initProviderSettingEvents(type, objInput);
-			break;
-		}
+			    break;
+			}
+	
+            //init by base type
+            switch (basicType) {
+                case "div":
+                    //
+                break;
+                case "checkbox":
+                case "radio":
+                    objInput.on("click", funcChange);
+                break;
+                default:
+                    objInput.on("change", funcChange);
 
-		//init by base type
-		switch (basicType) {
-			case "div":
-				//
-			break;
-			case "checkbox":
-			case "radio":
-				objInput.on("click", funcChange);
-			break;
-			default:
-				objInput.on("change", funcChange);
+                    objInput.on("keyup", function (event) {
+                        t.triggerKeyupEvent(objInput, event, funcChange);
+                        });
+                break;
+			}
+        }
 
-				objInput.on("keyup", function (event) {
-					t.triggerKeyupEvent(objInput, event, funcChange);
-				});
-			break;
-		}
+        const observer = new IntersectionObserver((entries, observer) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					initialize();
+	
+					observer.unobserve(entry.target);
+				}
+			});
+		});
+		observer.observe(objInput[0]);
 	}
 
 	/**
@@ -4740,7 +4773,7 @@ function UniteSettingsUC(){
 
 		//destroy items manager
 		if (g_temp.objItemsManager) {
-			g_temp.objItemsManager.destroy();
+			g_temp.objItemsManager?.destroy();
 			g_temp.objItemsManager = null;
 			g_objParent.find(".uc-setting-items-panel-button").off("click");
 		}
@@ -4898,16 +4931,17 @@ function UniteSettingsUC(){
 
 		initOptions();
 		initItemsPanel();
+        getObjInputs(false, true);
 		initRepeaters();
-		
+
 		initSaps();
-		
+
 		initResponsivePicker();
 		initUnitsPicker();
 		initAnimationsSelector();
 		initGlobalEvents();
-		
-		
+
+
 		t.updateEvents();
 		t.clearSettingsInit();
 

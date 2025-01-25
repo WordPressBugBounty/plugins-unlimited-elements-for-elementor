@@ -952,6 +952,7 @@ class UniteCreatorAPIIntegrations{
 		$sheetId = $this->getParam(self::GOOGLE_SHEETS_FIELD_SHEET_ID, 0, $name);
 		$sheetId = $this->getSheetIdByUrl($sheetId);
 		$sheetId = intval($sheetId);
+
 		$cacheTime = $this->getCacheTimeParam(self::GOOGLE_SHEETS_FIELD_CACHE_TIME, self::GOOGLE_SHEETS_DEFAULT_CACHE_TIME,$name);
 	
 		$sheetsService = new UEGoogleAPISheetsService();
@@ -982,13 +983,14 @@ class UniteCreatorAPIIntegrations{
 
 			foreach($headers as $columnIndex => $header){
 				if(empty($row[$columnIndex]))
-					continue 2; // continue both loops
-
-				$attributes[$header] = $row[$columnIndex];
+					$attributes[$header] = ' ';
+				else
+					$attributes[$header] = $row[$columnIndex];
 			}
 
 			$data[] = $attributes;
 		}
+
 
 		return $data;
 	}
@@ -1076,7 +1078,7 @@ class UniteCreatorAPIIntegrations{
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Language Code", "unlimited-elements-for-elementor"),
 				"default" => "",
-				"desc" => __("2 digits of language code. for example: 'fr' (french) for the list of all codes: <a href='https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes'>Press Here</a>. Leave empty for auto select. ", "unlimited-elements-for-elementor")
+				"desc" => __("2 digits of language code. for example: 'fr' (french) for the list of all codes: <a href='https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes'>Press Here</a>. Leave empty for auto select. ", "unlimited-elements-for-elementor"),
 			),
 			
 			array(

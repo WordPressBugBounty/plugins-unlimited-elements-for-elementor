@@ -1,6 +1,6 @@
 "use strict";
 
-//version: 1.19
+//version: 1.20
 
 function UnlimitedElementsForm(){
   
@@ -25,8 +25,7 @@ function UnlimitedElementsForm(){
   /**
   * show custom error
   */
-  function showCustomError(objError, errorText, consoleErrorText){
-    
+  function showCustomError(objError, errorText, consoleErrorText){    
     objError.text(errorText);
     
     objError.show();
@@ -38,19 +37,15 @@ function UnlimitedElementsForm(){
     
     objErrorParent.addClass("ue_error_true");
     
-    throw new Error(consoleErrorText); 
-    
+    throw new Error(consoleErrorText);     
   }
   
   /**
   * get formula names
   */
-  function getFormulaNames(expr, objError){ 
-    
-    var regex = /\[(.*?)\]/g;
-    
-    var matches = expr.match(regex);   
-    
+  function getFormulaNames(expr, objError){     
+    var regex = /\[(.*?)\]/g;    
+    var matches = expr.match(regex);       
     var names;    
     
     if(matches)      
@@ -60,23 +55,18 @@ function UnlimitedElementsForm(){
       return(false);
     
     //check for space inside name
-    names.forEach(function(name, index){
-      
+    names.forEach(function(name, index){      
       for (var i = 0; i < name.length; i++) {
         
         var currentChar = name[i];
         
-        if(currentChar === " "){
-          
+        if(currentChar === " "){          
           var errorText = 'Unlimited Elements Form Error: Name option must not contain spaces inside. Found in name: '+name;
           var consoleErrorText = "Space character in name found";
           
-          showCustomError(objError, errorText, consoleErrorText);
-          
-        }
-        
-      }
-      
+          showCustomError(objError, errorText, consoleErrorText);          
+        }        
+      }      
     });
     
     //remove spacing in case they were not removed before
@@ -87,78 +77,66 @@ function UnlimitedElementsForm(){
     //exclude allowed symbols and check if array is empty, if not - then in formula some fields written without square parentacess
     unmatches = unmatches[0].replace(g_allowedSymbols, "").split(/[\[\]]/);
     
-    if(unmatches[0].length > 0){
-      
+    if(unmatches[0].length > 0){      
       var errorText = 'Unlimited Elements Form Error: Input Name should be surrounded by square parentheses inside Formula';
       var consoleErrorText = "Missing square parentheses inside Formula";
       
-      showCustomError(objError, errorText, consoleErrorText);
-      
+      showCustomError(objError, errorText, consoleErrorText);   
     }    
-    
-    return(names);
-    
+    return(names);    
   }
   
   /**
   * replace fields name with its values
   */
-  function replaceNamesWithValues(expr, objError, objCalcInput){
-    
+  function replaceNamesWithValues(expr, objError, objCalcInput){    
     var names = getFormulaNames(expr, objError);
     
     if(names == undefined || names == false)
       return(expr);
     
-    names.forEach(function(name, index){
-      
+    names.forEach(function(name, index){      
       var objInpput = jQuery(ueInputFieldSelector+'[name="'+name+'"]');
       
-      if(!objInpput.length){
-        
+      if(!objInpput.length){        
         var errorText = 'Unlimited Elements Form Error: couldn"t find Number Field Widget with name: '+name;
         var consoleErrorText = "Invalid Number Field Widget Name";
         
-        showCustomError(objError, errorText, consoleErrorText);
-        
+        showCustomError(objError, errorText, consoleErrorText);        
       }
       
-      if(objInpput.length > 1){
-        
+      if(objInpput.length > 1){        
         var errorText = 'Unlimited Elements Form Error: Name option must be unique. Found '+objInpput.length+' Number Field Widgets with name: '+name;
         var consoleErrorText = "Invalid Number Field Widget Name";
         
-        showCustomError(objError, errorText, consoleErrorText);
-        
+        //check if not in stiky container
+        var objParentSticky = objInpput.closest(".elementor-sticky");
+
+        if(!objParentSticky || objParentSticky.length == 0)
+        showCustomError(objError, errorText, consoleErrorText);        
       }
       
       //check if uppercase characters are in name
-      for (var i = 0; i < name.length; i++) {
-        
+      for (var i = 0; i < name.length; i++) {        
         var currentChar = name[i];
         
-        if (currentChar === currentChar.toUpperCase() && currentChar !== currentChar.toLowerCase()){
-          
+        if (currentChar === currentChar.toUpperCase() && currentChar !== currentChar.toLowerCase()){          
           var errorText = 'Unlimited Elements Form Error: Name option must not contain Uppercase characters. Found in name: '+name;
           var consoleErrorText = "Uppercase in name found";
           
-          showCustomError(objError, errorText, consoleErrorText);
-          
+          showCustomError(objError, errorText, consoleErrorText);          
         }
         
-        if(currentChar === " "){
-          
+        if(currentChar === " "){          
           var errorText = 'Unlimited Elements Form Error: Name option must not contain spaces inside. Found in name: '+name;
           var consoleErrorText = "Space character in name found";
           
-          showCustomError(objError, errorText, consoleErrorText);
-          
-        }
-        
+          showCustomError(objError, errorText, consoleErrorText);          
+        }        
       }
       
       var dataDateMode = objCalcInput.data("date-mode");   
-      
+
       //set formula input to date type
       if(dataDateMode == true)
         objCalcInput.attr("type", "date");
@@ -166,8 +144,7 @@ function UnlimitedElementsForm(){
       var inputType = objInpput.attr("type");      
       var inputValue;     
       
-      if(inputType != "date"){
-        
+      if(inputType != "date"){        
         inputValue = objInpput.val();    
         
         //if input is empty then count it as 0
@@ -177,23 +154,17 @@ function UnlimitedElementsForm(){
         //see if input value is round number, if so - make sure the number is unformatted
         var dataSeparateThousandsFormat =  objInpput.data("separate-thousands-format");
         
-        if(dataSeparateThousandsFormat == "de-DE"){
-          
-          inputValue = Number(inputValue.replace(/\./g, "").replace(/,/g, ""));
-          
-        }else{
-       
+        if(dataSeparateThousandsFormat == "de-DE"){          
+          inputValue = Number(inputValue.replace(/\./g, "").replace(/,/g, ""));          
+        }else{       
           //make sure value is number type (usefull for separating thousand option)
-          inputValue = Number(inputValue.toString().replace(/,/g, ''));
-          
+          inputValue = Number(inputValue.toString().replace(/,/g, ''));          
         }      		
         
         //add parentheses if valus is less then 0
         if(inputValue < 0)
-          inputValue = "("+inputValue+")";	
-        
-      }else{
-        
+          inputValue = "("+inputValue+")";	        
+      }else{        
         inputValue = new Date(objInpput.val()).getTime();         
       }
       
@@ -208,11 +179,9 @@ function UnlimitedElementsForm(){
   /*
   * validate the expression
   */
-  function validateExpression(expr){  
-    
+  function validateExpression(expr){      
     //allow Math.something (math js operation), numbers, float numbers, math operators, dots, comas    
-    var matches = expr.match(g_allowedSymbols);
-    
+    var matches = expr.match(g_allowedSymbols);    
     var result = "";
     
     if (matches) 
@@ -226,11 +195,9 @@ function UnlimitedElementsForm(){
   /**
   * get result from expression
   */
-  function getResult(expr, objError, objCalcInput) {
-    
+  function getResult(expr, objError, objCalcInput) {    
     //if space just erase it    
-    expr = expr.replace(/\s+/g, "");
-    
+    expr = expr.replace(/\s+/g, "");    
     //replace inputs name with its values
     expr = replaceNamesWithValues(expr, objError, objCalcInput);
    
@@ -239,8 +206,7 @@ function UnlimitedElementsForm(){
     //returan closest value from lookup table if needed
     var dataLookupTableMode = objCalcInput.data("lookup-table");
     
-    if(dataLookupTableMode == true){
-      
+    if(dataLookupTableMode == true){      
       result = getClosestValue(objCalcInput, objError);
       
       return(result);      
@@ -248,8 +214,7 @@ function UnlimitedElementsForm(){
     
     var dataDateMode = objCalcInput.data("date-mode");
     
-    if(dataDateMode == true){
-      
+    if(dataDateMode == true){      
       result = new Date(eval(expr));
       
       return(result);
@@ -262,62 +227,49 @@ function UnlimitedElementsForm(){
     var consoleErrorText = `Invalid operation: ${expr}`;
     
     //catch math operation error
-    try{
-      
+    try{      
       result = eval(expr);
       
       //hide error message after successful calculation
       objError.hide();      
     }
     
-    catch{      
-      
+    catch{            
       showCustomError(objError, errorText, consoleErrorText);      
     }
     
-    if(isNaN(result) == true){
-      
+    if(isNaN(result) == true){      
       showCustomError(objError, errorText, consoleErrorText);      
     }
     
-    return result;
-    
+    return result;    
   }
   
   /**
   * get number formated in fractional number
   */
-  function getFractionalResult(result, objCalcInput){
-    
-    var dataCharNum = objCalcInput.data("char-num");
-    
+  function getFractionalResult(result, objCalcInput){    
+    var dataCharNum = objCalcInput.data("char-num");    
     //replace coma woth period if needed here		
     var dataPeriod = objCalcInput.data("dot-instead-coma");
     
-    if(dataPeriod == true){
-      
+    if(dataPeriod == true){      
       //change type of the field to "text" (this makes coma change to dot)
       objCalcInput.attr("type", "text");
       
-      return(result.toFixed(dataCharNum));  
-      
-    } else{
-      
-      return(result.toFixed(dataCharNum))
-      
-    }		
-    
+      return(result.toFixed(dataCharNum));        
+    } else{      
+      return(result.toFixed(dataCharNum))      
+    }		    
   }
   
   /**
   * format result number
   */
-  function formatResultNumber(result, objCalcInput){
-    
+  function formatResultNumber(result, objCalcInput){    
     var dataDateMode = objCalcInput.data("date-mode");
     
     if(dataDateMode == true){
-      
       result =  result.toISOString().split('T')[0] 
       
       return(result);
@@ -335,17 +287,14 @@ function UnlimitedElementsForm(){
       return(Math.ceil(result))
     
     if(dataFormat == "fractional")
-      return(getFractionalResult(result, objCalcInput));
-    
+      return(getFractionalResult(result, objCalcInput));    
   }
   
   /**
   * add coma to separate thousands
   */
-  function getValueWithSeparatedThousands(val, objCalcInput){
-    
-    //input can be "text" or "number" type (some old versions of Text Field widget has calculation mode)
-    
+  function getValueWithSeparatedThousands(val, objCalcInput){    
+    //input can be "text" or "number" type (some old versions of Text Field widget has calculation mode)    
     var dataSeparateThousands = objCalcInput.data("separate-thousands");
     
     //if no such attribute exit function
@@ -375,15 +324,13 @@ function UnlimitedElementsForm(){
     else
     val = parseFloat(val[0]).toLocaleString(dataSeparateThousandsFormat)
     
-    return(val);
-    
+    return(val);    
   }
   
   /**
   * init calc mode
   */
-  function setResult(objCalcInput, objError){
-    
+  function setResult(objCalcInput, objError){    
     //if data formula is empty
     var dataFormula = objCalcInput.data("formula");
     
@@ -407,38 +354,32 @@ function UnlimitedElementsForm(){
     var inputType = objCalcInput.attr("type");
     
     if(dataRemoveReadonlyCalcMode == false || inputType != "number")
-      objCalcInput.attr('readonly', '');
-    
+      objCalcInput.attr('readonly', '');    
   }
   
   /**
   * input change controll
   */
-  function onInputChange(objCalcInput){
-    
-    objCalcInput.trigger("input_calc");
-    
+  function onInputChange(objCalcInput){    
+    objCalcInput.trigger("input_calc");    
   }
   
   /**
   * get parent object
   */
-  function getParentInput(dataName){
-    
+  function getParentInput(dataName){    
     dataName = dataName.replace('[', '');
     dataName = dataName.replace(']', '');
     
     var objInput = jQuery(ueInputFieldSelector+'[name="'+dataName+'"]');
     
-    return(objInput);
-    
+    return(objInput);    
   }
   
   /**
   * assign parent for lookup table fields
   */
   function assignParentsForLookupTable(objParent, parentAttrName){
-    
     var parentIdAttribute = objParent.attr("id");
     var objFormula = objParent.find("[data-formula]");
     
@@ -449,29 +390,24 @@ function UnlimitedElementsForm(){
     var objYField = getParentInput(dataYField);
     
     objXField.attr(parentAttrName, parentIdAttribute);
-    objYField.attr(parentAttrName, parentIdAttribute);
-    
+    objYField.attr(parentAttrName, parentIdAttribute);    
   }
   
   /**
   * remove duplicated values from array
   */
-  function removeDuplicatesFromArray(arr) {
-    
+  function removeDuplicatesFromArray(arr) {    
     var uniqueArray = [];
     
     jQuery.each(arr, function(index, value) {
       
       //check each inique value if it's not another array
-      if (jQuery.inArray(value, uniqueArray) === -1){
-        
+      if (jQuery.inArray(value, uniqueArray) === -1){        
         var valueArray = value.split(",");
         var valueArrayNum = valueArray.length;
         
-        uniqueArray.push(value);
-        
-      }
-      
+        uniqueArray.push(value);        
+      }      
     });
     // console.log(uniqueArray)
     return uniqueArray;
@@ -480,20 +416,17 @@ function UnlimitedElementsForm(){
   /**
   * assign parent calc number field input to each input inside formula
   */
-  function assignParentNumberField(objParent, objError){
-    
+  function assignParentNumberField(objParent, objError){    
     var objFormula = objParent.find("[data-formula]");
     var expr = objFormula.data("formula");
     var parentIdAttribute = objParent.attr("id");
     var parentAttrName = "data-parent-formula-input";
     var dataLookup = objFormula.data("lookup-table");
     
-    if(dataLookup == true){
-      
+    if(dataLookup == true){      
       assignParentsForLookupTable(objParent, parentAttrName);
       
-      return(false);
-      
+      return(false);      
     }
     
     var names = getFormulaNames(expr, objError);
@@ -501,8 +434,7 @@ function UnlimitedElementsForm(){
     if(names == undefined || names == false)
       return(false);
     
-    for(let i=0;i<names.length;i++){
-      
+    for(let i=0;i<names.length;i++){      
       var objInpput = getParentInput(names[i]); 
       var parentAttr = objInpput.attr(parentAttrName);     
       
@@ -521,65 +453,52 @@ function UnlimitedElementsForm(){
         g_parents.push(parentAttr);
       }
       
-      objInpput.attr(parentAttrName, g_parents);      
-      
+      objInpput.attr(parentAttrName, g_parents);    
     }  
-    
   }
   
   /**
   * Parse the CSV data into a two-dimensional array
   */
-  function getLookupTable(csvData){
-    
+  function getLookupTable(csvData){    
     csvData = csvData.split('\n').map(function (row) {
       return row.split(',');
     });
     
-    return(csvData);
-    
+    return(csvData);    
   }
   
   // Function to calculate the Euclidean distance between two points (width, height)
-  function euclideanDistance(x1, y1, x2, y2) {
-    
-    return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-    
+  function euclideanDistance(x1, y1, x2, y2) {    
+    return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));    
   }
   
   /**
   * find closest value
   */
-  function getClosestValue(objCalcInput, objError) {
-    
+  function getClosestValue(objCalcInput, objError) {    
     var dataX = objCalcInput.data("field-name-x");
     var dataY = objCalcInput.data("field-name-y");    
     var objXField = getParentInput(dataX);
-    var objYField = getParentInput(dataY);
-    
+    var objYField = getParentInput(dataY);    
     var csvData = objCalcInput.data("csv");
     var xValue = objXField.val();
-    var yValue = objYField.val();
-    
+    var yValue = objYField.val();    
     //format csv table
     var lookupTable = getLookupTable(csvData);
     
-    if(!xValue){
-      
+    if(!xValue){      
       var errorText = 'Unlimited Elements Form Error: no x-value found.';
       var consoleErrorText = 'Unlimited Elements Form Error: no x-value found.';
       
-      showCustomError(objError, errorText, consoleErrorText);
-      
+      showCustomError(objError, errorText, consoleErrorText);      
     }
     
-    if(!yValue){
-      
+    if(!yValue){      
       var errorText = 'Unlimited Elements Form Error: no y-value found.';
       var consoleErrorText = 'Unlimited Elements Form Error: no y-value found.';
       
-      showCustomError(objError, errorText, consoleErrorText);
-      
+      showCustomError(objError, errorText, consoleErrorText);      
     }
     
     //hide error object in case of successful calculation
@@ -588,77 +507,60 @@ function UnlimitedElementsForm(){
     var closestValue = null;
     var closestDistance = Infinity;
     
-    for (var row = 1; row < lookupTable.length; row++) {
-      
-      for (var col = 1; col < lookupTable[row].length; col++) {
-        
+    for (var row = 1; row < lookupTable.length; row++) {      
+      for (var col = 1; col < lookupTable[row].length; col++) {        
         var tableValue = lookupTable[row][col];
         var tableX = lookupTable[0][col];
         var tableY = lookupTable[row][0];
         var distance = euclideanDistance(xValue, yValue, tableX, tableY);
         
-        if (distance < closestDistance) {
-          
+        if (distance < closestDistance) {          
           closestDistance = distance;
-          closestValue = tableValue;
-          
-        }
-        
-      }
-      
+          closestValue = tableValue;          
+        }        
+      }      
     }
     
-    return +closestValue;
-    
+    return +closestValue;    
   }
   
   /**
   * get parent input calc
   */
-  function getParentCalcInput(objInput){
-    
-    var parentsArray = objInput.attr("data-parent-formula-input");
-    
+  function getParentCalcInput(objInput){    
+    var parentsArray = objInput.attr("data-parent-formula-input");    
     var objParentsArray = [];
     
     //make sure attr is an array
-    if(parentsArray != undefined){
-      
+    if(parentsArray != undefined){      
       parentsArray = parentsArray.split(",");
       
-      parentsArray.forEach(function(id, index){
-        
+      parentsArray.forEach(function(id, index){        
         var parentId = id;
         var objParentCalcInput = jQuery("#"+parentId).find("[data-calc-mode='true']");
         
-        objParentsArray.push(objParentCalcInput);
-        
+        objParentsArray.push(objParentCalcInput);        
       });
       
-      return(objParentsArray);
-      
-    }
-    
+      return(objParentsArray);      
+    }    
   }
   
   /**
   * show main input
   */
-  function showField(objFieldWidget, classHidden, elementorHiddenClass){
-    
+  function showField(objFieldWidget, classHidden, elementorHiddenClass){    
     objFieldWidget.removeClass(classHidden);
 
     var objParentElementorElement = objFieldWidget.closest(elementorElementSelector);
     
-    objParentElementorElement.removeClass(elementorHiddenClass);
-    
+    objParentElementorElement.removeClass(elementorHiddenClass);    
   }
   
   /**
   * hide main input
   */
-  function hideField(objFieldWidget, classHidden, elementorHiddenClass){
-    
+  function hideField(objFieldWidget, classHidden, elementorHiddenClass){    
     objFieldWidget.addClass(classHidden);
 
     //hide parent elementor-element container to avoid unnecessary gap
@@ -670,8 +572,8 @@ function UnlimitedElementsForm(){
   /**
   * get condition
   */
-  function getConditions(visibilityCondition, condition, objFieldValue, fieldValue){
-    
+  function getConditions(condition, objFieldValue, fieldValue){ 
+	var visibilityCondition;
     switch (condition) {
       case "=":
       
@@ -702,19 +604,16 @@ function UnlimitedElementsForm(){
       
       visibilityCondition = objFieldValue != fieldValue;
       
-      break;
-      
+      break;      
     }
     
-    return(visibilityCondition);
-    
+    return(visibilityCondition);    
   }
   
   /**
   * get operator
   */
-  function getOperators(operator, visibilityOperator){
-    
+  function getOperators(operator, visibilityOperator){    
     switch (operator){
       
       case "and":
@@ -726,80 +625,65 @@ function UnlimitedElementsForm(){
       
       visibilityOperator = "||";
       
-      break;
-      
+      break;      
     }   
     
-    return(visibilityOperator);
-    
+    return(visibilityOperator);    
   }
   
   
   /**
   * get names
   */
-  function getNames(arrNames, fieldName){
-    
+  function getNames(arrNames, fieldName){    
     arrNames = [];
     arrNames.push(fieldName);
     
-    return(arrNames);
-    
+    return(arrNames);    
   }
   
   /**
   * equal condition and input names error
   */
-  function equalConditionInputNameError(objField, arrNames, classError){
-    
-    var inputName = objField.attr("name");
-    
+  function equalConditionInputNameError(objField, arrNames, classError){    
+    var inputName = objField.attr("name");    
     var isNamesEqual = arrNames.indexOf(inputName) != -1;
     
     if(isNamesEqual == true){
       var conditionStyles = 'color:red;font-size:12px;padding:5px;border:1px solid #CE5F5F;border-radius:5px;width:100%';
       var errorHtml = "<div class="+classError+" style='"+conditionStyles+"'>Unlimited Field Error: can't set condition. Condition Item Name equals Field Name: [ " + inputName + " ]. Please use different names.</div>";
       
-      jQuery(errorHtml).insertBefore(objField.parent());
-      
-    }
-    
+      jQuery(errorHtml).insertBefore(objField.parent());      
+    }    
   }
   
   /**
   * set visibility in editor
   */
-  function setVisibilityInEditor(objFieldWidget, classError, classHidden){    
-    
+  function setVisibilityInEditor(objFieldWidget, classError, classHidden){      
     var hiddenHtml = "<div class="+classError+">Unlimited Field is hidden due to Visibility Condition Options. <br> This message shows only in editor.</div>";
     var objError = objFieldWidget.find("."+classError);
     
-    if(objFieldWidget.hasClass(classHidden) == true){
-      
+    if(objFieldWidget.hasClass(classHidden) == true){      
       if(!objError || !objError.length)
         objFieldWidget.prepend(hiddenHtml);
       
-    }else{
-      
+    }else{      
       if(objError && objError.length)
         objError.remove();
-      
-    }
-    
+    }    
   }
   
   /**
   * check if calculator input includes invisible inputs
   */
-  function checkInvisibleInputsInFormula(){
-    
+  function checkInvisibleInputsInFormula(){    
     //if no calc mode inpu found on page - do nothing
     if(!g_objCalcInputs.length)
       return(false);			
     
     //look after each calc mode input field on a page
-    g_objCalcInputs.each(function(){
-      
+    g_objCalcInputs.each(function(){      
       var objCalcInput = jQuery(this);
       
       //find main warapper of the widget
@@ -815,8 +699,7 @@ function UnlimitedElementsForm(){
       if(names == undefined || names == false)
         return(false);
       
-      names.forEach(function(name, index){
-        
+      names.forEach(function(name, index){        
         var objInpput = jQuery(ueInputFieldSelector+'[name="'+name+'"]');
         
         //check if field is hidden due to condition
@@ -829,27 +712,20 @@ function UnlimitedElementsForm(){
         
         // }
         
-      });
-      
-    });    
-    
+      });      
+    });        
   }
   
   /**
   * recalculate parent inputs
   */
-  function recalculateParentInputs(objParentCalkInputs){
-    
+  function recalculateParentInputs(objParentCalkInputs){    
     if(objParentCalkInputs != undefined){
       
-      objParentCalkInputs.forEach(function(parent, index){
-        
-        onInputChange(parent);          
-        
+      objParentCalkInputs.forEach(function(parent, index){        
+        onInputChange(parent);                  
       });
-      
-    }
-    
+    }    
   }
   
   /**
@@ -863,12 +739,11 @@ function UnlimitedElementsForm(){
     var objAllConditions = obj.find(`.${conditionClass}`);
     var visualConditionsNum = objAllConditions.length;
  
-    if(!objCondition || !objCondition.length){
-      
+    if(!objCondition || !objCondition.length){      
       obj.append(conditionHtml);
       
       //remove unnecesary visual condition in editor (currently not doing anything)
-      if(visualConditionsNum > conditionsNum){        
+      if(visualConditionsNum > conditionsNum){       
 
         objAllConditions.each(function(){
           var objCondition = jQuery(this);
@@ -885,7 +760,7 @@ function UnlimitedElementsForm(){
             var operator = conditionArray.operator;
             var fieldName = conditionArray.field_name;
             var condition = conditionArray.condition;
-            var fieldValue = parseInt(conditionArray.field_value);
+            var fieldValue = parseFloat(conditionArray.field_value);
 
             if(operator == currentOperator && fieldName == currentFieldName && condition == currentCondition && fieldValue == currentFieldValue)
             return(true);
@@ -898,8 +773,7 @@ function UnlimitedElementsForm(){
   /*
   * process the visibility array
   */
-  t.setVisibility = function(conditionArray, widgetId){	  
-    
+  t.setVisibility = function(conditionArray, widgetId){	      
     var objFieldWidget = jQuery("#"+widgetId);
     var classHidden = "ucform-has-conditions";
     var elementorHiddenClass = "elementor-hidden-desktop elementor-hidden-tablet elementor-hidden-mobile elementor-hidden-widescreen elementor-hidden-laptop";
@@ -916,23 +790,22 @@ function UnlimitedElementsForm(){
     //create val to contain all the names for errors catching purposes
     var arrNames;
     
-    for(let i=0; i<conditionsNum; i++){
-      
+    for(let i=0; i<conditionsNum; i++){      
       var conditionArray = conditions[i];
       var condition = conditionArray.condition;
       var fieldName = conditionArray.field_name;
-      var fieldValue = parseInt(conditionArray.field_value);
+      var fieldValue = parseFloat(conditionArray.field_value);
       var operator = conditionArray.operator;
       var id = conditionArray._id;
       
       var objField = jQuery(ueInputFieldSelector+'[name="'+fieldName+'"]');
       var isInEditor = objField.data("editor");
       
-      var objFieldValue = parseInt(objField.val());
+      var objFieldValue = parseFloat(objField.val());
       
       //sets the condition: "==", ">", "<" ...
-      var visibilityCondition = getConditions(visibilityCondition, condition, objFieldValue, fieldValue);
-      
+      var visibilityCondition = getConditions(condition, objFieldValue, fieldValue);
+     
       //set the conditions: "&&", "||"
       var visibilityOperator = getOperators(operator, visibilityOperator);             
       
@@ -951,8 +824,7 @@ function UnlimitedElementsForm(){
       equalConditionInputNameError(objInputField, arrNames, classError);
       
       if(isInEditor == "yes")
-        setConditionVisualInEditor(objFieldWidget, operator, fieldName, condition, fieldValue, conditionsNum, conditions);
-      
+        setConditionVisualInEditor(objFieldWidget, operator, fieldName, condition, fieldValue, conditionsNum, conditions);      
     }
     
     var isInEditor = objField.data("editor");
@@ -963,37 +835,31 @@ function UnlimitedElementsForm(){
       
       if(isInEditor == "yes"){
         // setVisibilityInEditor(objFieldWidget, classError, classHidden);
-      }
-      
+      }      
     }
     
-    if(eval(totalVisibilityCondition) == false){      
-      
+    if(eval(totalVisibilityCondition) == false){            
       hideField(objFieldWidget, classHidden, elementorHiddenClass);
       
       if(isInEditor == "yes"){        
         // setVisibilityInEditor(objFieldWidget, classError, classHidden);
-      }
-      
+      }      
     }
     
     //check if in formula exists invisible field
-    checkInvisibleInputsInFormula();
-    
+    checkInvisibleInputsInFormula();    
   }
   
   /**
   * init the form
   */
-  t.init = function(){
-    
+  t.init = function(){    
     //if no calc mode inpu found on page - do nothing
     if(!g_objCalcInputs.length)
       return(false);
     
     //look after each calc mode input field on a page
-    g_objCalcInputs.each(function(){
-      
+    g_objCalcInputs.each(function(){      
       var objCalcInput = jQuery(this);
       
       //find main warapper of the widget
@@ -1015,38 +881,28 @@ function UnlimitedElementsForm(){
         
         var objParentCalkInputs = getParentCalcInput(objInput); //parent calc input with formula attr
         
-        if(objParentCalkInputs != undefined){
-          
-          objParentCalkInputs.forEach(function(parent, index){
-            
+        if(objParentCalkInputs != undefined){          
+          objParentCalkInputs.forEach(function(parent, index){            
             var objParentError = parent.find(ueNumberErrorSelector);
             
-            setResult(parent, objParentError);         
-            
+            setResult(parent, objParentError);   
           });
-          
-        }
-        
-        
-      });
-      
+        }        
+      });      
     });
     
     //init events
     var objAllInputFields = jQuery(ueInputFieldSelector);
     
     //on input change trigger only parent calc number field, not all of them
-    objAllInputFields.on('input', function(){
-      
+    objAllInputFields.on('input', function(){      
       var objInput = jQuery(this); //triggered input
       var objParentCalkInputs = getParentCalcInput(objInput); //parent calc input with formula attr
       
-      recalculateParentInputs(objParentCalkInputs);   
-      
+      recalculateParentInputs(objParentCalkInputs); 
     });
     
-    objAllInputFields.each(function(){
-      
+    objAllInputFields.each(function(){      
       var objInput = jQuery(this); //triggered input
       var objParentCalkInputs = getParentCalcInput(objInput); //parent calc input with formula attr
       var dataCalcMode = objInput.data("calc-mode");
@@ -1054,8 +910,7 @@ function UnlimitedElementsForm(){
       if(dataCalcMode === false)
         return(true);
       
-      recalculateParentInputs(objParentCalkInputs);
-      
+      recalculateParentInputs(objParentCalkInputs);      
     });
     
   }
@@ -1063,8 +918,7 @@ function UnlimitedElementsForm(){
   /**
   * init vars
   */
-  function initVars(){
-    
+  function initVars(){    
     //selector
     ueInputFieldSelector = ".ue-input-field";
     ueNumberSelector = ".ue-number, .ue-content";
@@ -1078,22 +932,18 @@ function UnlimitedElementsForm(){
     //helpers
     g_allowedSymbols = /Math\.[a-zA-Z]+|\d+(?:\.\d+)?|[-+*/().,]+/g;
     
-  }
-  
-  initVars();
-  
+  }  
+  initVars();  
 }
 
 var g_ucUnlimitedForms = new UnlimitedElementsForm();
 
 g_ucUnlimitedForms.init();
 
-jQuery( document ).on( 'elementor/popup/show', (event, id, objPopup) => {
-  
+jQuery( document ).on( 'elementor/popup/show', (event, id, objPopup) => {  
   var g_ucUnlimitedForms = new UnlimitedElementsForm();
   
-  g_ucUnlimitedForms.init();
-  
+  g_ucUnlimitedForms.init();  
 });	
 
 //template switcher script

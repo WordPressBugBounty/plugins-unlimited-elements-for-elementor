@@ -399,7 +399,7 @@ class UniteCreatorActions{
 					HelperProviderUC::verifyAdminPermission();
 					
 					$response = $addons->getTestAddonData($data);
-
+					
 					HelperUC::ajaxResponseData($response);
 				break;
 				case "delete_test_addon_data":

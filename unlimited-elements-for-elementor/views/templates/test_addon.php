@@ -29,7 +29,7 @@ if(!empty($objAddonType->addonView_urlBack))
 
 	$textBackTo = esc_html__("Back To ", "unlimited-elements-for-elementor"). $this->textPlural .esc_html__(" List", "unlimited-elements-for-elementor");
 
-	$urlTestAddonNew = HelperUC::getViewUrl("testaddonnew", "id={$addonID}");
+	$urlTestAddonNew = HelperUC::getViewUrl("testaddon", "id={$addonID}");
 
 ?>
 

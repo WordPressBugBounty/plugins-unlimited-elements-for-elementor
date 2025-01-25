@@ -2513,6 +2513,11 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			add_action("wp_error_added",array($this,"showWPErrorLog"),10,4);
 		}
 		
+		//skip from the globals variabe
+		if(GlobalsProviderUC::$skipRunPostQueryOnce == true)
+			$this->skipPostListQueryRun = true;
+		
+		
 		$wasSkipRun = false;
 				
 		if($this->skipPostListQueryRun == false)		
@@ -2524,7 +2529,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 			if($showDebugQuery == true)
 				dmp("Skip main query run");
-			
+				
 			$wasSkipRun = true;
 		}
 		
@@ -2725,8 +2730,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			return(false);
 		
 		//some protection manual query in last widget, take the working one
-		
-		if($type == GlobalsProviderUC::QUERY_TYPE_MANUAL && GlobalsProviderUC::$lastPostQuery_type != GlobalsProviderUC::QUERY_TYPE_MANUAL)
+		//under ajax - no need for those checks
+			
+		if(GlobalsProviderUC::$isUnderAjax == false && $type == GlobalsProviderUC::QUERY_TYPE_MANUAL && GlobalsProviderUC::$lastPostQuery_type != GlobalsProviderUC::QUERY_TYPE_MANUAL)
 			return(false);
 		
 		//skip if no pagination set in widget
@@ -2735,9 +2741,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$isAjax = UniteFunctionsUC::getVal($this->lastValues, $this->lastName."_isajax");
 		$isAjax = UniteFunctionsUC::strToBool($isAjax);
 		
-		if($isAjax == false && empty($paginationType))
+		if(GlobalsProviderUC::$isUnderAjax == false && $isAjax == false && empty($paginationType))
 			return(false);
-			
+					
 			
 		GlobalsProviderUC::$lastPostQuery = $query;
 		GlobalsProviderUC::$lastPostQuery_page = 1;
@@ -3247,13 +3253,13 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	 * get post list data
 	 */
 	public function getPostListData($value, $name, $processType, $param, $data){
-
+		
 		if($processType != self::PROCESS_TYPE_OUTPUT && $processType != self::PROCESS_TYPE_OUTPUT_BACK)
 			return($data);
 		
 		$this->lastValues = $value;
 		$this->lastName = $name;
-			
+		
 		//skip get data for ajax search as it puts
 		
 		$isAjaxSearch = $this->addon->isAjaxSearch();
@@ -3262,12 +3268,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 			$this->skipPostListQueryRun = true;			
 		}
-		
-		//skip from the globals variabe
-		if(GlobalsProviderUC::$skipRunPostQueryOnce == true)
-			$this->skipPostListQueryRun = true;
-		
-		
+
 		// ---
 		
 		HelperUC::addDebug("getPostList values", $value);
@@ -3281,14 +3282,16 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$nameListing = UniteFunctionsUC::getVal($param, "name_listing");
 
 		if($useForListing == false)
-			$nameListing = null;
-
+			$this->lastName = null;
+		else
+			$this->lastName = $nameListing;
+		
+		
 		if(self::SHOW_DEBUG_POSTLIST_QUERIES == true)
 			HelperProviderUC::startDebugQueries();
 
-
 		$arrPosts = array();
-
+		
 		switch($source){
 			case "ue_templates":
 
@@ -4669,8 +4672,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 						$params["meta_key"] = $metaKey;
 				}
 			}
-			
-			
+
 			$arrTerms = UniteFunctionsWPUC::getTerms($taxonomy, $orderBy, $orderDir, $isHide, $arrExcludeSlugs, $params);
 
 			if($showDebug == true){
@@ -4741,6 +4743,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$taxonomy =  UniteFunctionsUC::getVal($value, $name."_taxonomy","category");
 
 		$orderBy =  UniteFunctionsUC::getVal($value, $name."_orderby","name");
+
 		$orderDir =  UniteFunctionsUC::getVal($value, $name."_orderdir","ASC");
 
 		$hideEmpty = UniteFunctionsUC::getVal($value, $name."_hideempty");
@@ -4961,7 +4964,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 					$orderBy = "include";
 			}
 
-		
+
 			if(!empty($orderBy)){
 				
 				if($orderBy == "parent_children"){
@@ -4979,8 +4982,14 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 				$args["order"] = $orderDir;
 			}
-			
+
+
+			if($orderBy == "rand"){
+				add_filter( 'terms_clauses', array($this, "randomOrderTaxonomyTerms"), 1, 1);
+			}
+
 		}
+
 
 		//exclude
 		if(!empty($arrExcludeIDs)){
@@ -5023,11 +5032,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if($showDebug == true){
 			echo "<div class='uc-div-ajax-debug'>";
 
-			dmp("The terms query Is:");
+			dmp("The terms query is:");
 			dmp($args);
 		}
-		
-		
+
 		$args = $this->getPostListData_getCustomQueryFilters($args, $value, $name, $data, false);
 		
 		$term_query = new WP_Term_Query();
@@ -5041,7 +5049,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		//term query debug
 
 		if($showDebug == true && $queryDebugType == "show_query"){
-			
+
 			$originalQueryVars = $term_query->query_vars;
 			$originalQueryVars = UniteFunctionsWPUC::cleanQueryArgsForDebug($originalQueryVars);
 
@@ -5084,10 +5092,25 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$arrTerms = UniteFunctionsWPUC::getTermsObjectsData($arrTermsObjects, $taxonomy);
 		
 		$arrTerms = $this->modifyArrTermsForOutput($arrTerms, $taxonomy, $useCustomFields, $postType);
-		
+
 			
 		return($arrTerms);
 	}
+
+
+
+	/**
+	 * filter order random taxonomy terms
+	 */
+	public function randomOrderTaxonomyTerms($clauses) {
+
+		$clauses["orderby"] = "ORDER BY RAND()";
+		
+		remove_filter( 'terms_clauses', array($this, "randomOrderTaxonomyTerms"), 1, 1);
+		
+		return $clauses;
+	}
+
 
 
 	protected function z_______________USERS____________(){}

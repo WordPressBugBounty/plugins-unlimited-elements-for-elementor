@@ -870,6 +870,14 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 	}
 
 	/**
+	 * put text stroke param
+	 */
+	protected function putTextStrokeParam(){
+
+		$this->addHtmlSelector();
+	}
+
+	/**
 	 * put box shadow param
 	 */
 	protected function putBoxShadowParam(){

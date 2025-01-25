@@ -106,6 +106,7 @@ GlobalsUC::$arrClientSideText = array(
 		"uc_datetime"=>esc_html__("Date Time","unlimited-elements-for-elementor"),
 		"uc_instagram"=>esc_html__("Instagram","unlimited-elements-for-elementor"),
 		"uc_textshadow"=>esc_html__("Text Shadow","unlimited-elements-for-elementor"),
+		"uc_textstroke"=>esc_html__("Text Stroke","unlimited-elements-for-elementor"),
 		"uc_boxshadow"=>esc_html__("Box Shadow","unlimited-elements-for-elementor"),
 		"uc_border_dimentions"=>esc_html__("Border Radius","unlimited-elements-for-elementor"),
 		"uc_css_filters"=>esc_html__("Css Filters","unlimited-elements-for-elementor"),

@@ -237,11 +237,10 @@ class UniteCreatorElementorIntegrate{
 
 			self::logMemoryUsage("Before Register Widget: ".$name. ", counter: ".self::$counterWidgets);
 
-			//class_alias('UniteCreatorElementorWidget', $className);
-			 
-			 $code = "class {$className} extends UniteCreatorElementorWidget{}";
-			 eval($code);
-			 
+			// class_alias('UniteCreatorElementorWidget', $className);
+			$code = "class {$className} extends UniteCreatorElementorWidget{}";
+			// phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
+			eval($code);
 			try{
 				$widget = new $className();
 				$manager = \Elementor\Plugin::instance()->widgets_manager;
@@ -272,7 +271,9 @@ class UniteCreatorElementorIntegrate{
 	 */
 	private function registerWidgetByClassName($className){
 
+		// class_alias('UniteCreatorElementorWidget', $className);
 		$code = "class {$className} extends UniteCreatorElementorWidget{}";
+		// phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
 	    eval($code);
 		//class_alias('UniteCreatorElementorWidget', $className);
 		$widget = new $className();

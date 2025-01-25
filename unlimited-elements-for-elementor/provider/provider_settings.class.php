@@ -2965,6 +2965,9 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 			case UniteCreatorSettings::TYPE_TEXTSHADOW:
 				$this->addTextShadowDialogSettings();
 			break;
+			case UniteCreatorSettings::TYPE_TEXTSTROKE:
+				$this->addTextStrokeDialogSettings();
+			break;
 			case UniteCreatorSettings::TYPE_BOXSHADOW:
 				$this->addBoxShadowDialogSettings();
 			break;
@@ -3211,6 +3214,50 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 
 		$this->addGroupSelector($groupSelectorName, $groupSelector, $groupSelectorValue, $groupSelectorReplace);
 	}
+
+
+	/**
+	 * add text stroke dialog settings
+	 */
+	private function addTextStrokeDialogSettings(){
+
+		$type = UniteCreatorDialogParam::PARAM_TEXTSTROKE;
+		$groupSelectorName = $type . "_group";
+
+		// stroke color
+		$colorName = "color";
+
+		$params = array();
+		$params["group_selector"] = $groupSelectorName;
+
+		$this->addColorPicker($colorName, "", __("Stroke Color", "unlimited-elements-for-elementor"), $params);
+
+		// stroke width
+		$widthName = "width";
+		$widthDefault = 2;
+
+		$params = array();
+		$params["min"] = 0;
+		$params["max"] = 10;
+		$params["step"] = 1;
+		$params["units"] = array("px");
+		$params["group_selector"] = $groupSelectorName;
+
+		$this->addRangeSlider($widthName, $widthDefault, __("Stroke Width", "unlimited-elements-for-elementor"), $params);
+
+		// group selector
+		$groupSelector = self::SELECTOR_PLACEHOLDER;
+		$groupSelectorValue = HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TEXTSTROKE);
+
+		$groupSelectorReplace = array(
+			"{{WIDTH}}" => $widthName,
+			"{{COLOR}}" => $colorName,
+		);
+
+		$this->addGroupSelector($groupSelectorName, $groupSelector, $groupSelectorValue, $groupSelectorReplace);
+	}
+
+
 
 	/**
 	 * add box shadow dialog settings

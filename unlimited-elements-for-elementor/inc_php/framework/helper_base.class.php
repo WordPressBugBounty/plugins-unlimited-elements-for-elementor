@@ -25,7 +25,7 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 		
 			if(gettype($arrData) == "string")
 				$arrData = array("data"=>$arrData);
-	
+			
 			$response = array_merge($response,$arrData);
 		}
 						
@@ -69,7 +69,7 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 	 * echo json ajax response
 	 */
 	public static function ajaxResponseError($message,$arrData = null){
-	
+				
 		self::ajaxResponse(false,$message,$arrData,true);
 	}
 	

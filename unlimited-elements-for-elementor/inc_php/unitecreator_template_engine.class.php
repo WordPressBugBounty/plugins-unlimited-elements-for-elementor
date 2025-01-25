@@ -1681,6 +1681,13 @@ class UniteCreatorTemplateEngineWork{
 				
 				return($arrData);
 			break;
+			case "get_max_price_filter_sync":
+				
+				$objFilters = new UniteCreatorFiltersProcess();
+				$priceRangeMaxValue = $objFilters->syncPriceRangeMaxValueWithGrid();
+
+				return($priceRangeMaxValue);
+			break;
 			case "get_rss_keys":
 				
                 $objRSS = new UniteCreatorRSS();
@@ -1700,13 +1707,6 @@ class UniteCreatorTemplateEngineWork{
 				$url = wp_get_attachment_url($arg1);
 				
 				return($url);
-			break;
-			case "get_max_price_value":
-
-				$objFilters = new UniteCreatorFiltersProcess();
-				$priceRangeMaxValue = $objFilters->syncPriceRangeMaxValueWithGrid($arg1);
-
-				return($priceRangeMaxValue);
 			break;
 			default:
 
