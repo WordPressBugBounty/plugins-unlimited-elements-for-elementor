@@ -2724,16 +2724,28 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	 * save last query and page - for pagination widget
 	 */
 	private function saveLastQueryAndPage($query, $type, $initialOffset = null){
-
+		
+		$isDebug = HelperUC::hasPermissionsFromQuery("ucpaginationdebug");
+				
 		//don't save under dynamic template loop - not allow paging or filter there.
-		if(GlobalsProviderUC::$isUnderDynamicTemplateLoop == true)
+		if(GlobalsProviderUC::$isUnderDynamicTemplateLoop == true){
+			
+			if($isDebug == true)
+				dmp("Save query - exit, under dynamic loop");
+				
 			return(false);
+		}
 		
 		//some protection manual query in last widget, take the working one
 		//under ajax - no need for those checks
 			
-		if(GlobalsProviderUC::$isUnderAjax == false && $type == GlobalsProviderUC::QUERY_TYPE_MANUAL && GlobalsProviderUC::$lastPostQuery_type != GlobalsProviderUC::QUERY_TYPE_MANUAL)
+		if(GlobalsProviderUC::$isUnderAjax == false && $type == GlobalsProviderUC::QUERY_TYPE_MANUAL && GlobalsProviderUC::$lastPostQuery_type != GlobalsProviderUC::QUERY_TYPE_MANUAL){
+			
+			if($isDebug == true)
+				dmp("Save query - exit, manual type");
+			
 			return(false);
+		}
 		
 		//skip if no pagination set in widget
 		
@@ -2741,10 +2753,14 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$isAjax = UniteFunctionsUC::getVal($this->lastValues, $this->lastName."_isajax");
 		$isAjax = UniteFunctionsUC::strToBool($isAjax);
 		
-		if(GlobalsProviderUC::$isUnderAjax == false && $isAjax == false && empty($paginationType))
-			return(false);
-					
+		if(GlobalsProviderUC::$isUnderAjax == false && !empty($this->lastName) && $isAjax == false && empty($paginationType)){
 			
+			if($isDebug == true)
+				dmp("Save query - exit, no ajax or type selected");
+			
+			return(false);
+		}
+
 		GlobalsProviderUC::$lastPostQuery = $query;
 		GlobalsProviderUC::$lastPostQuery_page = 1;
 		GlobalsProviderUC::$lastPostQuery_type = $type;
@@ -2754,6 +2770,11 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			GlobalsProviderUC::$lastPostQuery_paginationType = $type;
 
 		$queryVars = $query->query;
+		
+		if($isDebug == true){
+			dmp("Save query - query saved");
+			dmp($queryVars);
+		}
 		
 		$perPage = UniteFunctionsUC::getVal($queryVars, "posts_per_page");
 
@@ -3281,9 +3302,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		$nameListing = UniteFunctionsUC::getVal($param, "name_listing");
 
-		if($useForListing == false)
-			$this->lastName = null;
-		else
+		if($useForListing == true)
 			$this->lastName = $nameListing;
 		
 		

@@ -3372,12 +3372,14 @@ class UniteFunctionsUC{
 	    	return(false);
 	    
 	    // Validate the timestamp range (Unix epoch seconds range)
+	    /*
 		$minTimestamp = -2208988800; // December 13, 1901, for 32-bit systems	    
 	    $maxTimestamp = 2147483647; // January 19, 2038, for 32-bit systems
 	    
 	    if ($number < $minTimestamp || $number > $maxTimestamp) {
 	        return false;
 	    }
+	    */
 		
 	    return true;		
 	}

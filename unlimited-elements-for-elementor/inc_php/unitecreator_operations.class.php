@@ -170,7 +170,7 @@ class UCOperations extends UniteElementsBaseUC{
 	 * get raw values from general settings
 	 */
 	public function getCustomSettingsObjectValues($filepathSettings, $settingsKey){
-
+				
 		if(isset(self::$arrCustomSettingsCache[$settingsKey]))
 			return (self::$arrCustomSettingsCache[$settingsKey]);
 
@@ -756,7 +756,7 @@ class UCOperations extends UniteElementsBaseUC{
 			$request = UEHttp::make();
 			$request->debug($debug);
 			$request->cacheTime(180); // 3 minutes
-
+		
 			$response = $request->get($url);
 			$data = $response->body();
 

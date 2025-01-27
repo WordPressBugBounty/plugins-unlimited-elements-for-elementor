@@ -203,7 +203,7 @@ class UEHttpRequest{
 	 * @throws UEHttpException
 	 */
 	public function request($method, $url){
-
+		
 		$headers = $this->headers;
 		$query = $this->query;
 		$body = $this->prepareBody($method);
@@ -221,15 +221,21 @@ class UEHttpRequest{
 		$cacheTime = $this->prepareCacheTime($method);
 
 		$requestResponse = UniteProviderFunctionsUC::rememberTransient($cacheKey, $cacheTime, function() use ($url, $method, $headers, $body){
-						
-			$wpResponse = wp_remote_request($url, array(
+		
+		$arrRequest = array(
 				"method" => $method,
 				"headers" => $headers,
 				"body" => $body,
 				"timeout" => self::REQUEST_TIMEOUT,
-				"sslverify" => false,
-			));
-
+				"sslverify" => false
+		);
+		
+				
+		$wpResponse = wp_remote_request($url, $arrRequest);
+		
+		//this request fails because it redirects to this url: https://feeds.npr.org/1004/rss.xml
+		//how to get this redirect url here?
+		
 			if(is_wp_error($wpResponse) === true)
 				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 				throw new UEHttpRequestException($wpResponse->get_error_message(), $this);

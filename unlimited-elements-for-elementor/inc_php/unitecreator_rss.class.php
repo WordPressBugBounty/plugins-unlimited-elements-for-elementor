@@ -11,6 +11,16 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 
 class UniteCreatorRSS{
+
+    private $rssAutoDetectKeys = [
+        'title_key' => 'title',
+        'description_key' => 'description',
+        'content_key' => 'content',
+        'author_key' =>'dc_creator|author_name|author|dc-creator|credit',
+        'link_key' => 'link|atom_link_href|link_href',
+        'image_key' => 'media_thumbnail_url|media_group_media_content_url|media_content_media_thumbnail_url|media_content_url|image_url|enclosure_url',
+        'date_key' => 'publish_date_formatted|publish_date|published',
+    ];
 	
     /**
      * get rss fields
@@ -80,7 +90,8 @@ class UniteCreatorRSS{
 	 * get Rss Feed data
 	 */
 	public function getRssFeedData($data, $arrValues, $name, $showDebug = false){
-		
+		$data[$name] = array();
+
 		if($showDebug == true){
 			dmp("---- the debug is ON, please turn it off before release --- ");
 		}
@@ -90,7 +101,7 @@ class UniteCreatorRSS{
 			if($showDebug)
 				dmp("no data found");
 			
-			return(null);
+			return($data);
 		}
 			
 		
@@ -100,66 +111,77 @@ class UniteCreatorRSS{
 			if($showDebug)
 				dmp("no url found for rss");
 
-			return(null);
+			return($data);
 		}
+		
+		$getUrlDebug = false;
+		
+        $rssContent = HelperUC::$operations->getUrlContents($rss_url, $getUrlDebug);
 
-		if(!empty($rss_url)){
-			
-			$rssContent = HelperUC::$operations->getUrlContents($rss_url);
+        if(empty($rssContent)) {
+            if($showDebug)
+                dmp("no content found for rss");
 
-			if(!empty($rssContent)) {
-				$arrData = UniteFunctionsUC::maybeXmlDecode($rssContent);
+            return($data);
+        }
 
-				if($showDebug == true && is_array($arrData)) {
-					dmp("Original rss data");
+        $arrData = UniteFunctionsUC::maybeXmlDecode($rssContent);
 
-					$arrDataShow = UniteFunctionsUC::modifyDataArrayForShow($arrData);
+        if(empty($arrData)) {
+            if($showDebug)
+                dmp('no data found for rss');
 
-					dmp($arrDataShow);
-				}
+            return($data);
+        }
 
-				if(is_array($arrData) == false){
+        if($showDebug == true && is_array($arrData)) {
+            dmp("Original rss data");
 
-					if($showDebug == true){
-						dmp("No RSS data found. The input is: ");
-						echo "<div style='background-color:lightgray'>";
-						dmp(htmlspecialchars($rssContent));
-						echo "</div>";
-					}
+            $arrDataShow = UniteFunctionsUC::modifyDataArrayForShow($arrData);
 
-					return(null);
-				}
+            dmp($arrDataShow);
+        }
 
-				if(!empty($arrData)) {
-					(bool) $showDateFormated = UniteFunctionsUC::getVal($arrValues, $name."_rss_show_date_formatted");
-					$dateFormat = null;
-					if ($showDateFormated) {
-						$dateFormat = UniteFunctionsUC::getVal($arrValues, $name."_rss_date_format");
-						if (empty($dateFormat)) {
-							$dateFormat = 'd/m/Y, H:i';
-						}
-					}
+        if(is_array($arrData) == false){
 
-					$arrData = $this->simplifyRssDataArray($arrData, $dateFormat);
+            if($showDebug == true){
+                dmp("No RSS data found. The input is: ");
+                echo "<div style='background-color:lightgray'>";
+                dmp(htmlspecialchars($rssContent));
+                echo "</div>";
+            }
 
-					// trim by date limits
-					(bool) $showFilterByDate = UniteFunctionsUC::getVal($arrValues, $name."_rss_show_filter_by_date");
-					if($showFilterByDate && !empty($arrData)) {
-						$filterByDateOption = UniteFunctionsUC::getVal($arrValues, $name . "_rss_filter_by_date_option");
-						if (!empty($filterByDateOption) && $filterByDateOption != 'all') {
-							$arrData = $this->limitArrayByPublishDate($arrData, $filterByDateOption);
-						}
-					}
+            return($data);
+        }
 
-					// trim by items limit
-					(int) $dataItemsLimit = UniteFunctionsUC::getVal($arrValues, $name."_rss_items_limit");
-					if($dataItemsLimit > 0 && !empty($arrData))
-						$arrData = array_slice($arrData, 0, $dataItemsLimit, true);
+        if(!empty($arrData)) {
+            (bool) $showDateFormated = UniteFunctionsUC::getVal($arrValues, $name."_rss_show_date_formatted");
+            $dateFormat = null;
+            if ($showDateFormated) {
+                $dateFormat = UniteFunctionsUC::getVal($arrValues, $name."_rss_date_format");
+                if (empty($dateFormat)) {
+                    $dateFormat = 'd/m/Y, H:i';
+                }
+            }
 
-					$data[$name] = $arrData;
-				}
-			}
-		}
+            $arrData = $this->simplifyRssDataArray($arrData, $dateFormat);
+
+            // trim by date limits
+            (bool) $showFilterByDate = UniteFunctionsUC::getVal($arrValues, $name."_rss_show_filter_by_date");
+            if($showFilterByDate && !empty($arrData)) {
+                $filterByDateOption = UniteFunctionsUC::getVal($arrValues, $name . "_rss_filter_by_date_option");
+                if (!empty($filterByDateOption) && $filterByDateOption != 'all') {
+                    $arrData = $this->limitArrayByPublishDate($arrData, $filterByDateOption);
+                }
+            }
+
+            // trim by items limit
+            (int) $dataItemsLimit = UniteFunctionsUC::getVal($arrValues, $name."_rss_items_limit");
+            if($dataItemsLimit > 0 && !empty($arrData))
+                $arrData = array_slice($arrData, 0, $dataItemsLimit, true);
+
+            $data[$name] = $arrData;
+        }
 
 		return $data;
 	}
@@ -225,19 +247,46 @@ class UniteCreatorRSS{
 		if($items = $this->findRssItems($arrRss)) {
 			$items = $this->createNiceKeys($items, $dateFormat);
 
-			return $items;
-		}
+            if (!empty($items))
+                $arrRss = $items;
+            
+		} else
+            $arrRss = $this->createNiceKeys($arrRss, $dateFormat);
+		
+        if(empty($arrRss))
+        	return($arrRss);
+        
+        //detect image url
+        
+        $firstRssElement = UniteFunctionsUC::getArrFirstValue($arrRss);
+		
+        $hasImageKey = $this->hasImageKey($firstRssElement);
+        
+        if($hasImageKey == false)
+        	return($arrRss);
+        	
+        foreach ($arrRss as $rssKey => $rssItem) {
+        	
+             $imageLink = $this->getFirstImageLinkFromContent($rssItem);
 
-		$arrRss = $this->createNiceKeys($arrRss, $dateFormat);
+           	 if(!empty($imageLink))
+                  $arrRss[$rssKey]['image_url'] = $imageLink;
+             
+		}
 
 		return($arrRss);
 	}
 
+	/**
+	 * create nice keys
+	 */
 	private function createNiceKeys($arrRss, $dateFormat, $prefix = '') {
 		
 		$niceArr = array();
 
 		foreach ($arrRss as $key => $value) {
+            $key = strtolower($key);
+
 			// Replace colons with underscores and append to prefix
 			$newKey = $prefix . ($prefix ? '_' : '') . str_replace(':', '_', $key);
 
@@ -254,7 +303,7 @@ class UniteCreatorRSS{
 				} else {
 					$niceArr[$newKey] = $value;
 
-					if (!empty($dateFormat) && $newKey == 'publish_date') {
+					if (!empty($dateFormat) && ($newKey == 'publish_date' || $newKey == 'published')) {
 						$date_time = UniteFunctionsUC::date2Timestamp($value);
 
 						if (!empty($date_time))
@@ -317,9 +366,12 @@ class UniteCreatorRSS{
 		return false;
 	}
 
-    /* Filter widget params to get only a specific sublist by catid */
+    /**
+     * Filter widget params to get only a specific sublist by catid
+     */
     public function filterByTypeAndCatId($array, $type, $catIdValue) {
-        $result = array();
+        
+    	$result = array();
 
         foreach ($array as $key => $subArray) {
             if ($subArray['type'] != $type) {
@@ -336,10 +388,12 @@ class UniteCreatorRSS{
         return $result;
     }
 
-    /* Get all rss widget keys, if any key is empty use default key for it */
-    public function getRssFeedKeys($addon, $data)
-    {
-        $param = $addon->getParams();
+    /**
+     * Get all rss widget keys, if any key is empty use default key for it
+     */
+    public function getRssFeedKeys(UniteCreatorAddonWork $addon, $data){
+    	
+        $params = $addon->getParams();
 
         $keys = array();
 
@@ -357,48 +411,184 @@ class UniteCreatorRSS{
         if (empty($catValue)) {
             return;
         }
-
-        $rssKeyArr = $this->filterByTypeAndCatId($param, UniteCreatorDialogParam::PARAM_TEXTFIELD, $catValue['__attr_catid__']);
-
-        $isShowDebug = UniteFunctionsUC::getVal($data, "show_debug");
-        $isShowDebug = UniteFunctionsUC::strToBool($isShowDebug);
-
-        if ($isShowDebug) {
-            dmp('--- Values for Item Keys ---');
-        }
-        
-        
-        
-        foreach ($rssKeyArr as $rssKeyValue) {
-            $keyValue = UniteFunctionsUC::getVal($data, $rssKeyValue['name']);
-
-            if (empty($keyValue)) {
-                $keys[$rssKeyValue['name']] = $rssKeyValue['default_value'];
-            } else {
-                $keys[$rssKeyValue['name']] = $keyValue;
-            }
-
-            if ($isShowDebug) {
-                // show publish_date_formatted instead of publish_date if show formatted == true
-                if($keys[$rssKeyValue['name']] == 'publish_date' && array_key_exists('publish_date_formatted', $firstRssElement)) {
-                    dmp($rssKeyValue['title'] . ': "publish_date_formatted"');
-                } else if (array_key_exists($keys[$rssKeyValue['name']], $firstRssElement)) {
-                    dmp($rssKeyValue['title'] . ': "' . $keys[$rssKeyValue['name']] . '"');
-                } else {
-                    dmp($rssKeyValue['title'] . ': "' . $keys[$rssKeyValue['name']] . '" not found, please select another one');
-                }
-            }
-        }
+		
+        $rssKeyArr = $this->filterByTypeAndCatId($params, UniteCreatorDialogParam::PARAM_TEXTFIELD, $catValue['__attr_catid__']);
 		
         
+        $isAutoDetect = UniteFunctionsUC::getVal($data, "auto_detect_keys");
+        $isAutoDetect = UniteFunctionsUC::strToBool($isAutoDetect);
+        
+        $isShowDebug = UniteFunctionsUC::getVal($data, "show_debug");
+        $isShowDebug = UniteFunctionsUC::strToBool($isShowDebug);
+		
+        if ($isShowDebug) {
+            dmp('--- Fields Keys ---');
+        }
+
+        foreach ($rssKeyArr as $keyValue) {
+        	
+            $keyName = $keyValue['name'];
+            $defaultKey = null;
+
+            if ($isAutoDetect == false) {
+                $defaultKey = UniteFunctionsUC::getVal($keyValue, 'value');
+            }
+
+            $isAutoKey = false;
+            
+            if (!empty($defaultKey)) {
+            	
+                $keys[$keyName] = $defaultKey;
+            	                
+            } else {
+            	            	
+                $autoKey = $this->autoDetectKeys($keyName, $firstRssElement);
+				                
+                if (!empty($autoKey)) {
+            		            		
+                	$isAutoKey = true;
+                	
+                    $keys[$keyName] = $autoKey;
+
+                } else if($keyName == 'image_key') {
+                    
+                	$searchImageKey = $this->searchForImageKey($firstRssElement);
+
+                    if (!empty($searchImageKey))
+                        $keys[$keyName] = $searchImageKey;
+                       
+                }
+            }
+
+            if ($isShowDebug == true) {
+            	
+            	$title = UniteFunctionsUC::getVal($keyValue, "title");
+            	$key = UniteFunctionsUC::getVal($keys, $keyName);
+            	
+            	$autoText = $isAutoKey?" <span style='color:grey;'>[auto detect]</span>":"";
+            	
+                if(!array_key_exists($keyName, $keys))
+                    dmp("{$title}: <span style='color:darkred;'>not detected, please select a custom one</span>");
+                 else if (array_key_exists($keys[$keyName], $firstRssElement))
+                    dmp("{$title}: <b>$key</b> {$autoText}");
+                 else 
+                    dmp("{$title}: <span style='color:darkred;'> key not found, please select another one</span>");
+                
+            }
+            
+        }
+
         if ($isShowDebug) {
             dmp('--- first RSS item structure ---');
-            
-            $firstRssElement = UniteFunctionsUC::modifyDataArrayForShow($firstRssElement);
-            
-            HelperHtmlUC::putHtmlDataDebugBox($firstRssElement);
+            $firstRssShow = UniteFunctionsUC::modifyDataArrayForShow($firstRssElement);
+            dmp($firstRssShow);
         }
 
         return $keys;
+    }
+
+    /**
+     * Auto detect keys for rss widget
+     */
+    private function autoDetectKeys($keyName, $rssElement) {
+    	
+        if(array_key_exists($keyName, $this->rssAutoDetectKeys) == false)
+        	return(null);
+        	
+            $autoDetectKey = $this->rssAutoDetectKeys[$keyName];
+				
+            $arrKeys = explode('|', $autoDetectKey);
+
+            foreach ($arrKeys as $arrKey) {
+            	
+                $foundValue = UniteFunctionsUC::getVal($rssElement, $arrKey);
+
+                if (!empty($foundValue)) {
+                    return $arrKey;
+                }
+            }
+            
+            return(null);
+            
+    }
+
+    /**
+     * Search for image key in an array of values
+     */
+    public function searchForImageKey($rssItem) {
+    	
+        $pattern = '/^https?:\/\/.*\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i';
+
+        foreach ($rssItem as $key => $value) {
+            if (is_array($value)) {
+                $newKey = $this->searchForImageKey($value);
+                if (!empty($newKey)) {
+                    return $key . "." . $newKey;
+                }
+            } else if(preg_match($pattern, $value)) {
+                return $key;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if exist any possible image keys or a key with image link
+     */
+    private function hasImageKey($rssItem) {
+    	
+        $possibleImageKeys = $this->rssAutoDetectKeys['image_key'];
+
+        $rssKeys = explode('|', $possibleImageKeys);
+
+        foreach ($rssKeys as $rssKey) {
+            if(array_key_exists($rssKey, $rssItem)) {
+                return true;
+            }
+        }
+
+        $otherImageKey = $this->searchForImageKey($rssItem);
+        
+        if (!empty($otherImageKey)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Find first image in possible content keys or any other image
+     */
+    private function getFirstImageLinkFromContent($rssItem) {
+    	
+        $possibleContentKeys = $this->rssAutoDetectKeys['content_key'];
+        $possibleDescKeys = $this->rssAutoDetectKeys['description_key'];
+
+        $contentKeys = explode('|', $possibleContentKeys);
+        $descKeys = explode('|', $possibleDescKeys);
+        $rssKeys = array_merge($contentKeys, $descKeys);
+
+        $pattern = '/<img[^>]+src=["\']([^"\']+)["\']/i';
+
+        foreach ($rssKeys as $rssKey) {
+            if(array_key_exists($rssKey, $rssItem)) {
+                if (!is_array($rssItem[$rssKey])) {
+                    if (preg_match($pattern, $rssItem[$rssKey], $matches)) {
+                        if (!empty($matches[1])) {
+                            return $matches[1];
+                        }
+                    }
+                } else {
+                    $firstImage = $this->getFirstImageLinkFromContent($rssItem[$rssKey]);
+
+                    if (!empty($firstImage)) {
+                        return $firstImage;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 }

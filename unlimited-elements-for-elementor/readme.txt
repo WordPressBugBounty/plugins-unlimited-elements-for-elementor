@@ -938,6 +938,19 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+= 1.5.140 - 2025-01-27 =
+
+* Change: Update Freemius
+* Fix: Fixed pagination bug
+* Feature: added rss features
+
+= 1.5.139 - 2025-01-25 =
+
+* Feature: make the functinality for price filter. get max and min price
+* Feature: added option for random terms
+* Fix: fixed dissapearing pagination issue
+* Fix: fixed wpml integration issues
+
 = 1.5.138 - 2025-01-16 =
 
 * Fix: fixed some php varning with $key not found
@@ -1007,16 +1020,6 @@ Widgets Changes:
 * Fix: Woo Category Carousel (Pro) - Fixed issue where, with &quot;Open Link in New Tab&quot; set to &quot;Yes,&quot; the link from the title still did not open in a new page.
 * Fix: Unlimited Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
 
-
-= 1.5.135 - 2024-12-29 =
-
-*Fix: fixed small php bug in date convert function
-*Fix: fixed wp_filesystem php bugs
-
-= 1.5.134 - 2024-12-27 =
-
-* Fix - fixed version text display
-* Change - Improved performance by dramatically reduce number of convertStdClassToArray function calls
 
 
 [See changelog for all versions.](https://unlimited-elements.com/change-log/)

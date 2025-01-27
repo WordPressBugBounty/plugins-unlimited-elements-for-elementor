@@ -105,15 +105,13 @@ class UnlimitedElementsPluginUC extends UniteCreatorPluginBase{
 		require_once $this->pathPlugin . 'addontype_elementor_template.class.php';
 		require_once $this->pathPlugin . 'helper_provider_core.class.php';
 		
-		
 		if(GlobalsUnlimitedElements::$enableElementorSupport)
 			$this->includeCommonFiles_elementor();
 		
 		
 		if(GlobalsUnlimitedElements::$enableGutenbergSupport)
 			$this->includeCommonFiles_gutenberg();
-		
-		
+				
 	}
 	
 

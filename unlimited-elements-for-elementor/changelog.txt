@@ -1,6 +1,12 @@
 
+= 1.5.140 - 2025-01-27 =
 
-version 1.5.139: - 2025-01-25 =
+* Change: Update Freemius
+* Fix: Fixed pagination bug
+* Feature: added rss features
+
+
+= 1.5.139 - 2025-01-25 =
 
 * Feature: make the functinality for price filter. get max and min price
 * Feature: added option for random terms

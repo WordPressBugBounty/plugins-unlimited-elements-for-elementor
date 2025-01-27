@@ -30,7 +30,6 @@ class HelperProviderCoreUC_EL{
 	private static $arrPostsWidgetNames = null;
 	
 	
-	
 	/**
 	 * register post types of elementor library
 	 */
@@ -142,7 +141,7 @@ class HelperProviderCoreUC_EL{
 	 * get general settings values
 	 */
 	public static function getGeneralSettingsValues(){
-
+		
 		$arrValues = self::$operations->getCustomSettingsObjectValues(self::$filepathGeneralSettings, GlobalsUnlimitedElements::GENERAL_SETTINGS_KEY);
 
 		return($arrValues);
@@ -1610,8 +1609,8 @@ class HelperProviderCoreUC_EL{
 		self::$urlCore = GlobalsUC::$urlPlugin.$pathRelative;
 				
 		self::$filepathGeneralSettings = self::$pathCore."settings/general_settings_el.xml";
-				
-		//add_action("init", array("HelperProviderCoreUC_EL", "onInitAction"));
+		
+		do_action("ue_after_global_init");
 
 	}
 

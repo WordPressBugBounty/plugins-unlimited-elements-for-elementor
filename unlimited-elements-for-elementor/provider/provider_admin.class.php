@@ -907,7 +907,7 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 			return (false);
 
 		$arrKeys = UniteFunctionsWPUC::getAllWPActionKeys("admin_init");
-
+		
 		$keyToRemove = "";
 
 		foreach($arrKeys as $key){
