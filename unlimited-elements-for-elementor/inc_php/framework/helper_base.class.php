@@ -31,7 +31,6 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 						
 		$json = json_encode($response);
 		
-		
 		// clean the buffier, 
 		// but return the content if exists for showing the warnings
 		
@@ -48,6 +47,7 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 		if($isJsonOutput == true)
 			header('Content-Type: application/json');
 		
+		ini_set("display_errors","off");
 		s_echo($json);
 		exit();
 	}

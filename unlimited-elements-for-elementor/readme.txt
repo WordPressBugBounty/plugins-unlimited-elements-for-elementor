@@ -938,6 +938,13 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+version 1.5.141 - 2025-01-30 =
+
+* Fix: fixed pagination of manual type
+* Fix: clear placeholders from the form after send.
+* Fix: fixed empty terms override, in post filtering
+* Fix: fixed dissapearing fields of ajax search
+
 = 1.5.140 - 2025-01-27 =
 
 * Change: Update Freemius

@@ -791,7 +791,10 @@ class UniteCreatorFiltersProcess{
 	 * get tax query from terms array
 	 */
 	private function getTaxQuery($arrTax){
-
+		
+		if(empty($arrTax))
+			return(array());
+		
 		$arrQuery = array();
 
 		foreach($arrTax as $taxonomy=>$arrTerms){
@@ -859,17 +862,25 @@ class UniteCreatorFiltersProcess{
 	 * set arguments tax query, merge with existing if avaliable
 	 */
 	private function setArgsTaxQuery($args, $arrTaxQuery){
-
-		if(empty($arrTaxQuery))
+		
+		if(empty($arrTaxQuery) && self::$isModeReplace == false)
 			return($args);
 
 		$existingTaxQuery = UniteFunctionsUC::getVal($args, "tax_query");
-
+				
 		//if replace terms mode - just delete the existing tax query
 		if(self::$isModeReplace == true){
+			
+			if(empty($arrTaxQuery)){
+				
+				$args["tax_query"] = array();
+				return($args);
+				
+			}
+			
 			$existingTaxQuery = $this->keepNotInTaxQuery($existingTaxQuery);
 		}
-
+		
 		if(empty($existingTaxQuery)){
 
 			$args["tax_query"] = $arrTaxQuery;
@@ -993,14 +1004,13 @@ class UniteCreatorFiltersProcess{
 		$arrTerms = UniteFunctionsUC::getVal($arrFilters, "terms");
 		
 		//if mode init - the filters should be set by "all" the posts set, not by the selected ones.
-		
-		if(!empty($arrTerms) && self::$isModeInit == false){	
-			
+				
+		if(self::$isModeInit == false){	
+						
 			//combine the tax queries
 			$arrTaxQuery = $this->getTaxQuery($arrTerms);
 			
-			if(!empty($arrTaxQuery))
-				$args = $this->setArgsTaxQuery($args, $arrTaxQuery);
+			$args = $this->setArgsTaxQuery($args, $arrTaxQuery);
 			
 		}
 
@@ -1506,7 +1516,7 @@ class UniteCreatorFiltersProcess{
 		}
 
 		$addon->setParamsValues($arrSettingsValues);
-
+		
 		//init the ajax search object to modify the post search list, if available
 		if(GlobalsProviderUC::$isUnderAjaxSearch){
 			
@@ -2807,16 +2817,13 @@ class UniteCreatorFiltersProcess{
 		//pass advanced search or nothing
 		
 		$hasSpecialArgs = UniteCreatorAjaxSeach::isSearchFilterHasSpecialArgs($data);
-		
-		$output = array();
-		
+				
 		if($hasSpecialArgs == true)
-			$output["filter_attributes"] = "data-advancedsearch='true' ";
+			$data["filter_attributes"] = "data-advancedsearch='true' ";
 		else
-			$output["filter_attributes"] = "";
+			$data["filter_attributes"] = "";
 		
-			
-		return($output);		
+		return($data);		
 	}
 
 
@@ -2836,9 +2843,9 @@ class UniteCreatorFiltersProcess{
 			break;
 			case "type_search":
 				
-				$arguments = $this->addEditorFilterArguments_search($data);
+				$data = $this->addEditorFilterArguments_search($data);
 				
-				return($arguments);								
+				return($data);								
 			break;
 		}
 

@@ -2738,8 +2738,11 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 		//some protection manual query in last widget, take the working one
 		//under ajax - no need for those checks
-			
-		if(GlobalsProviderUC::$isUnderAjax == false && $type == GlobalsProviderUC::QUERY_TYPE_MANUAL && GlobalsProviderUC::$lastPostQuery_type != GlobalsProviderUC::QUERY_TYPE_MANUAL){
+				
+		if(GlobalsProviderUC::$isUnderAjax == false && 
+		   !empty(GlobalsProviderUC::$lastPostQuery_type) &&
+		   $type == GlobalsProviderUC::QUERY_TYPE_MANUAL && 
+		   GlobalsProviderUC::$lastPostQuery_type != GlobalsProviderUC::QUERY_TYPE_MANUAL){
 			
 			if($isDebug == true)
 				dmp("Save query - exit, manual type");
@@ -2850,7 +2853,6 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$maxItems = UniteFunctionsUC::getVal($value, $name."_maxitems_current");
 
 		$postType = UniteFunctionsUC::getVal($value, $name."_posttype_current");
-
 
 		//enable filters
 		$nameForFilter = $name;
@@ -3021,7 +3023,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$args = array();
 
 		$postIDs = UniteFunctionsUC::getVal($value, $name."_manual_select_post_ids");
-
+		
 		$isAvoidDuplicates = UniteFunctionsUC::getVal($value, $name."_manual_avoid_duplicates");
 		$isAvoidDuplicates = UniteFunctionsUC::strToBool($isAvoidDuplicates);
 
@@ -3059,19 +3061,20 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$postsPerPage = $limit;
 		}
 			
-
 		$showDebugQuery = UniteFunctionsUC::getVal($value, "{$name}_show_query_debug");
 		$showDebugQuery = UniteFunctionsUC::strToBool($showDebugQuery);
-
+		
 		$debugType = UniteFunctionsUC::getVal($value, "{$name}_query_debug_type");
 
 		if(self::SHOW_DEBUG_QUERY == true)
 			$debugType = "show_query";
 		
 		if(GlobalsUC::$showQueryDebugByUrl == true){
+			
 			$showDebugQuery = true;
 			$this->advancedQueryDebug = true;
 			$debugType = "show_query";
+			
 		}
 			
 		if(empty($postIDs)){
@@ -3108,14 +3111,14 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$nameForFilter = $name;
 		if(!empty($nameListing))
 			$nameForFilter = $nameListing;
-
+		
 		$isFilterable = $this->getIsFilterable($value, $nameForFilter);
 		
 		//update by post and get filters
 		$objFiltersProcess = new UniteCreatorFiltersProcess();
 		$args = $objFiltersProcess->processRequestFilters($args, $isFilterable);
 		
-
+		
 		if($showDebugQuery == true){
 			dmp("Manual Selection. The Query Is:");
 			dmp($args);

@@ -1105,7 +1105,7 @@ function UESyncObject(){
 		var objElement = objAPI.getElement();
 
 		if(g_vars.show_debug == true){
-
+			
 			trace("sync onchange: " + numCurrent);
 			trace(objElement);
 			trace(g_objApis);

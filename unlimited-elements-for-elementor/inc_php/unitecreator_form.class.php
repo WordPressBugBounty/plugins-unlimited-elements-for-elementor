@@ -251,7 +251,7 @@ class UniteCreatorForm{
 
 		try{
 			$debugMessages[] = "Form has been received.";
-
+	
 			// Validate form settings
 			$formErrors = $this->validateFormSettings($this->formSettings);
 
@@ -277,6 +277,7 @@ class UniteCreatorForm{
 			$fieldsErrors = $this->validateFormFields($this->formFields);
 
 			if(empty($fieldsErrors) === false){
+				
 				$errors = array_merge($errors, $fieldsErrors);
 
 				$validationError = $this->getValidationErrorMessage($fieldsErrors);
@@ -885,20 +886,26 @@ class UniteCreatorForm{
 	 * send email
 	 */
 	private function sendEmail($emailFields){
+				
+		try {
+			
+			$isSent = @wp_mail(
+				$emailFields["to"],
+				$emailFields["subject"],
+				$emailFields["message"],
+				$emailFields["headers"],
+				$emailFields["attachments"]
+			);
 
-		$isSent = wp_mail(
-			$emailFields["to"],
-			$emailFields["subject"],
-			$emailFields["message"],
-			$emailFields["headers"],
-			$emailFields["attachments"]
-		);
-
-		if($isSent === false){
-			$emails = implode(", ", $emailFields["to"]);
-
-			UniteFunctionsUC::throwError("Unable to send email to $emails.");
-		}
+			if($isSent === false){
+				$emails = implode(", ", $emailFields["to"]);
+	
+				UniteFunctionsUC::throwError("Unable to send email to $emails.");
+			}
+		
+		} catch (Exception $e) {
+    		UniteFunctionsUC::throwError($e->getMessage());
+		}		
 	}
 
 
@@ -981,6 +988,8 @@ class UniteCreatorForm{
 		$emailMessage = $this->replacePlaceholders($emailMessage, $emailPlaceholders, $emailReplaces);
 		$emailMessage = preg_replace("/(\r\n|\r|\n)/", "<br />", $emailMessage); // nl2br
 		
+		//clear placeholders that left
+		$emailMessage = $this->clearPlaceholders($emailMessage);
 		
 		return $emailMessage;
 	}
@@ -1462,7 +1471,15 @@ class UniteCreatorForm{
 		
 		
 	}
-
+	
+	/**
+	 * clear placeholders - content within curly braces
+	 */
+	private function clearPlaceholders($str) {
+		
+	    return preg_replace('/\{[^}]*\}/', '', $str);
+	}
+	
 	/**
 	 * get email fields
 	 */
@@ -1512,7 +1529,7 @@ class UniteCreatorForm{
 			"headers" => array(),
 			"attachments" => array(),
 		);
-
+		
 		$emailFields = $this->applyActionFieldsFilter($action, $emailFields);
 
 		$emailFields["headers"] = array_merge($this->prepareEmailHeaders($emailFields), $emailFields["headers"]);

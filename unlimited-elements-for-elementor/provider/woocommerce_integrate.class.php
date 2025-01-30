@@ -59,7 +59,8 @@ class UniteCreatorWooIntegrate{
 		
 		if($this->isInited == true)
 			return(false);
-			
+		
+		
 		//init
 		$this->optionIncludingTax = get_option( 'woocommerce_tax_display_shop' );
 		$this->currency = get_woocommerce_currency();
@@ -1041,6 +1042,9 @@ class UniteCreatorWooIntegrate{
 	 */
 	public static function getWooEndpoint($type){
 		
+		if(self::isWooActive() == false)
+			return(null);
+		
 		switch($type){
 			case "cart":
 				$url = wc_get_cart_url();
@@ -1225,6 +1229,10 @@ class UniteCreatorWooIntegrate{
 	 * get total number of cart products - with the quantity
 	 */
 	public function getCartNumProducts(){
+		
+		$isActive = self::isWooActive();
+		if($isActive == false)
+			return(0);
 		
 		$arrItems = WC()->cart->get_cart();
 
