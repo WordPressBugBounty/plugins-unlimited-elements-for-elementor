@@ -5,7 +5,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved. 
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorVariablesOutput{
 	
@@ -79,8 +79,8 @@ class UniteCreatorVariablesOutput{
 		
 		$options = $this->getVarValue("options");
 		
-		if(!empty($options) && getType($options) == "array"){
-			if(array_key_exists($paramValue, $options))
+		if(!empty($options) && is_array($options)){
+			if(is_scalar($paramValue) && array_key_exists($paramValue, $options))
 				$paramValue = $options[$paramValue];
 		}
 				
@@ -183,6 +183,11 @@ class UniteCreatorVariablesOutput{
 			case UniteCreatorDialogParam::PARAM_VAR_FILTER:
 				$content = $this->getContent_filter();
 			break;
+			case self::TYPE_ITEM_SIMPLE:
+				$content = $this->getContent_varItemSimple();
+			break;
+
+
 			default:
 				UniteFunctionsUC::throwError("Wrong main variable type: <b>{$type}</b>");
 			break;
@@ -201,4 +206,3 @@ class UniteCreatorVariablesOutput{
 	}
 	
 }
-

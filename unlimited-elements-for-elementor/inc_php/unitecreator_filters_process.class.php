@@ -5,7 +5,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorFiltersProcess{
 
@@ -56,7 +56,9 @@ class UniteCreatorFiltersProcess{
 
 	const ROLE_CHILD = "child";
 	const ROLE_TERM_CHILD = "term_child";
-
+	const ROLE_CHILD_AUTO_TERMS = "child_auto";
+	
+	
 	private function _______SORT_FILTER_WIDGET_DATA__________(){}
 
 	/**
@@ -268,7 +270,7 @@ class UniteCreatorFiltersProcess{
 
 		if($isError == true){
 			if(self::$showDebug == true){
-
+				
 				dmp("error get terms");
 				dmp($args);
 				dmp($arrTerms);
@@ -1140,8 +1142,11 @@ class UniteCreatorFiltersProcess{
 		if(!empty($lastFiltersInitRequest))
 			return($lastFiltersInitRequest);
 			
+		if(!empty(GlobalsProviderUC::$lastQueryRequest))
+			return(GlobalsProviderUC::$lastQueryRequest);
+		
 		$args = GlobalsProviderUC::$lastQueryArgs;
-			
+		
 		if(self::$showDebug == true){
 			dmp("--- Last Query Args:");
 			dmp($args);
@@ -1151,7 +1156,7 @@ class UniteCreatorFiltersProcess{
 		
 		if (is_wp_error($query)) {
 		    $error_message = $query->get_error_message();
-		    UniteFunctionsUC::throwError("test terms query failed: ".$error_message);
+		    UniteFunctionsUC::throwError("get last grid failed: ".$error_message);
 		}
 			
 		$request = $query->request;
@@ -1449,7 +1454,7 @@ class UniteCreatorFiltersProcess{
 	 * get content element html
 	 */
 	private function getContentWidgetHtml($arrContent, $elementID, $isGrid = true){
-	
+		
 		if(self::$isGutenberg == false)
 			$arrElement = HelperProviderCoreUC_EL::getArrElementFromContent($arrContent, $elementID);
 		else
@@ -1473,10 +1478,10 @@ class UniteCreatorFiltersProcess{
 			$widgetType = UniteFunctionsUC::getVal($arrElement, "widgetType");
 
 			if(strpos($widgetType, "ucaddon_") === false){
-
+				
 				if($widgetType == "global")
 					UniteFunctionsUC::throwError("Ajax filtering doesn't work with global widgets. Please change the grid to regular widget.");
-
+				
 				UniteFunctionsUC::throwError("Cannot output widget content for widget: $widgetType");
 			}
 						
@@ -1504,7 +1509,11 @@ class UniteCreatorFiltersProcess{
 			$blockName = UniteFunctionsUC::getVal($arrElement, "blockName");
 			$addon->initByBlockName($blockName, GlobalsUC::ADDON_TYPE_ELEMENTOR);
 		}
-
+		
+		if(self::$showEchoDebug == true){
+			$addonTitle = $addon->getTitle();
+			dmp("<b>Put Widget: $addonTitle </b>");
+		}
 
 		//make a check that ajax option is on in this widget
 
@@ -1650,7 +1659,7 @@ class UniteCreatorFiltersProcess{
 	private function getInitFiltersTaxRequest($request, $strTestIDs){
 		
 		if(strpos($request, "WHERE 1=2") !== false)
-			return(null);
+			return("");
 		
 		//trim the limit
 		
@@ -1674,7 +1683,7 @@ class UniteCreatorFiltersProcess{
 		$arrTermIDs = explode(",", $strTestIDs);
 
 		if(empty($arrTermIDs))
-			return(null);
+			return("");
 
 		$selectTerms = "";
 		$selectTop = "";
@@ -1774,7 +1783,8 @@ class UniteCreatorFiltersProcess{
 		$isModeFiltersInit = UniteFunctionsUC::strToBool($isModeFiltersInit);
 		
 		self::$isModeInit = $isModeFiltersInit;
-
+				
+		
 		$testTermIDs = UniteFunctionsUC::getPostGetVariable("testtermids","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
 		UniteFunctionsUC::validateIDsList($testTermIDs);
 
@@ -1783,6 +1793,7 @@ class UniteCreatorFiltersProcess{
 		$isModeReplace = UniteFunctionsUC::strToBool($isModeReplace);
 
 		GlobalsProviderUC::$isUnderAjax = true;
+		
 		
 		self::$isModeReplace = $isModeReplace;
 		
@@ -1805,41 +1816,46 @@ class UniteCreatorFiltersProcess{
 		
 		self::$arrContent = $arrContent;	//save content
 		
-		
 		//run the post query
 		
 		$arrHtmlWidget = $this->getContentWidgetHtml($arrContent, $elementID);
-
+		
 		if(empty(GlobalsProviderUC::$lastPostQuery))
 			self::$numTotalPosts = 0;
 		else
 			self::$numTotalPosts = GlobalsProviderUC::$lastPostQuery->found_posts;
-
+		
 		//find the term id's for test (find or not in the current posts query)
 		if(!empty($testTermIDs)){
-
+			
 			if(self::$showDebug == true)
 				dmp("---- Test Not Empty Terms----");
-
+						
 			$args = GlobalsProviderUC::$lastQueryArgs;
 			
 			if(self::$showDebug == true){
 				dmp("--- Last Query Args:");
 				dmp($args);
 			}
-			
-			$query = new WP_Query($args);
-			
-			if (is_wp_error($query)) {
-			    $error_message = $query->get_error_message();
-			    UniteFunctionsUC::throwError("test terms query failed: ".$error_message);
+						
+			if(!empty(GlobalsProviderUC::$lastQueryRequest)){
+				$request = GlobalsProviderUC::$lastQueryRequest;				
+			}
+			else{
+				
+				$query = new WP_Query($args);
+				
+				if (is_wp_error($query)) {
+				    $error_message = $query->get_error_message();
+				    UniteFunctionsUC::throwError("test terms query failed: ".$error_message);
+				}
+							
+				$request = $query->request;
 			}
 			
-			$request = $query->request;
-						
 			//some times other hooks distrubting the request
 			//clear filters and run again if empty requests
-			
+						
 			if(empty($request)){
 				
 				UniteFunctionsWPUC::clearAllWPFilters();
@@ -1847,25 +1863,32 @@ class UniteCreatorFiltersProcess{
 				$query = new WP_Query($args);
 				$request = $query->request;
 			}
-			
+						
 			if(self::$showDebug == true){
 				
 				if(empty($request))
 					dmp("EMPTY TAX REQUEST!!! - WILL CAUSE ERRORS IN TEST TERMS!");
 			}
-			
+						
 			self::$lastFiltersInitRequest = $request;
-			 
+						
 			$taxRequest = $this->getInitFiltersTaxRequest($request, $testTermIDs);
-			
+
 			if(self::$showDebug == true){
-
-				dmp("---- Terms request: ");
-				dmp($taxRequest);
+				
+				$countLen = strlen($taxRequest);
+				
+				dmp("---- Test Terms request count: $countLen");
+				
+				if($countLen < 500){
+					dmp("<div style='color:red;'>Note - request count is too low!</div>");
+					dmp($taxRequest);
+				}
+				
 			}
-
+			
 			$arrFoundTermIDs = array();
-
+	
 			if(!empty($taxRequest)){
 
 				$db = HelperUC::getDB();
@@ -1878,8 +1901,7 @@ class UniteCreatorFiltersProcess{
 					//just leave it empty
 				}
 			}
-
-
+			
 			if(self::$showDebug == true){
 
 				dmp("--- result - terms with num posts");
@@ -2832,6 +2854,7 @@ class UniteCreatorFiltersProcess{
 	 */
 	public function addEditorFilterArguments($data, $typeArg){
 		
+		
 		$filterType = self::TYPE_TABS;
 		
 		switch($typeArg){
@@ -3180,9 +3203,9 @@ s	 */
 		
 		if(is_admin() == true)
 			return(false);
-
+		
 		add_action("wp", array($this, "operateAjaxResponse"));
-
+		
 		add_action("ue_before_custom_posts_query", array($this, "onBeforeCustomPostsQuery"));
 		//add_action("ue_after_custom_posts_query", array($this, "onAfterCustomPostsQuery"));
 

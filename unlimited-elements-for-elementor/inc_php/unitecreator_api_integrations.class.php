@@ -7,7 +7,7 @@
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorAPIIntegrations{
 
@@ -976,7 +976,8 @@ class UniteCreatorAPIIntegrations{
 		$spreadsheet = $sheetsService->getSpreadsheetValues($spreadsheetId, $range);
 		$values = $spreadsheet->getValues();
 
-		$headers = array_shift($values); // extract first row as headers
+		$headers = $values[0]; // extract first row as headers
+
 
 		foreach($values as $rowIndex => $row){
 			$attributes = array("id" => $rowIndex + 1);

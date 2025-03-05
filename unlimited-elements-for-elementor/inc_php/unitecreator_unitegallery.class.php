@@ -5,7 +5,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved. 
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorUniteGallery{
 
@@ -713,9 +713,6 @@ class UniteCreatorUniteGallery{
 			$thumb = UniteFunctionsUC::getVal($item, "thumb");
 			$description = UniteFunctionsUC::getVal($item, "description");
 			
-			$title = htmlspecialchars($title);
-			$description = htmlspecialchars($description);
-			
 			$linkStart = "";
 			$linkEnd = "";
 			
@@ -732,6 +729,9 @@ class UniteCreatorUniteGallery{
 			if($linkStart)
 				$html .= $nl.$linkStart;
 			
+			$title = UniteFunctionsUC::sanitize($title, UniteFunctionsUC::SANITIZE_ATTR);
+			$description = UniteFunctionsUC::sanitize($description, UniteFunctionsUC::SANITIZE_ATTR);
+			
 			$html .= $nl."<img alt=\"{$title}\"";
 			$html .= $nl."   src=\"$thumb\"";
 			
@@ -741,12 +741,13 @@ class UniteCreatorUniteGallery{
 			}
 			
 			if(!empty($title)){
+								
 				$title = esc_attr($title);
 				$html .= $nl."    data-title=\"$title\"";
 			}
 			
 			if(!empty($description)){
-				esc_attr($description);
+								
 				$html .= $nl."    data-description=\"$description\"";
 			}
 			
@@ -754,18 +755,25 @@ class UniteCreatorUniteGallery{
 				$type = esc_attr($type);
 				$html .= $nl."    data-type=\"$type\"";
 			}
-				
+
+			$videoID = null;
+			
 			switch($type){
 				
 				case "youtube":
-				case "vimeo":
-				case "wistia":
-					
 					$videoID = UniteFunctionsUC::getVal($item, "videoid");
-					$videoID = esc_attr($videoID);
-					
-					if(!empty($videoID))
-						$html .= $nl."    data-videoid=\"$videoID\"";
+					$videoID = UniteFunctionsUC::sanitize($videoID, UniteFunctionsUC::SANITIZE_YOUTUBE);
+										
+				break;
+				case "vimeo":
+					$videoID = UniteFunctionsUC::getVal($item, "videoid");
+					$videoID = UniteFunctionsUC::sanitize($videoID, UniteFunctionsUC::SANITIZE_VIMEO);
+										
+				break;
+				case "wistia":
+										
+					$videoID = UniteFunctionsUC::getVal($item, "videoid");
+					$videoID = UniteFunctionsUC::sanitize($videoID, UniteFunctionsUC::SANITIZE_WISTIA);
 					
 				break;
 				case "html5video":
@@ -791,12 +799,19 @@ class UniteCreatorUniteGallery{
 						
 				break;
 			}
-				
+
+			
+			//youtube / vimeo / wistia
+			
+			if(!empty($videoID))
+				$html .= $nl."    data-videoid=\"$videoID\"";
+			
+			
 			$html .= ">";	//image end
 							
 			if(!empty($linkEnd))	
 				$html .= $linkEnd;
-			
+							
 			return($html);
 		}
 	

@@ -5,7 +5,7 @@
  * @copyright (C) 2012 Unite CMS, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorSettings extends UniteCreatorSettingsWork{
 	
@@ -506,11 +506,12 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$this->addSelect($name."_taxonomy", $arrTaxonomiesSimple, __("Select Taxonomy", "unlimited-elements-for-elementor"), $taxonomy, $params);
 		
 		// --------- add include by -------------
-
+		
 		$arrIncludeBy = array();
 		$arrIncludeBy["spacific_terms"] = __("Specific Terms","unlimited-elements-for-elementor");
 		$arrIncludeBy["parents"] = __("Children Of","unlimited-elements-for-elementor");
 		$arrIncludeBy["children_of_current"] = __("Children Of Current Term","unlimited-elements-for-elementor");
+		$arrIncludeBy["direct_children_of_selected_terms"] = __("Direct Children Of Selected Terms","unlimited-elements-for-elementor");
 		$arrIncludeBy["current_post_terms"] = __("Current Post Terms","unlimited-elements-for-elementor");
 		$arrIncludeBy["search"] = __("By Search Text","unlimited-elements-for-elementor");
 		$arrIncludeBy["childless"] = __("Only Childless","unlimited-elements-for-elementor");
@@ -525,8 +526,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_DROPDOWN;
 
 		$this->addMultiSelect($name."_includeby", $arrIncludeBy, esc_html__("Include By", "unlimited-elements-for-elementor"), "", $params);
-
-
+		
 		// --------- include by meta key -------------
 
 		$params = array();
@@ -568,11 +568,23 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 
 		$elementorCondition = array($name."_includeby"=>"spacific_terms");
 
-		$exclude = UniteFunctionsUC::getVal($value, $name."_exclude");
-
 		$addAttrib = "data-taxonomyname='{$name}_taxonomy'";
 
 		$this->addPostIDSelect($name."_include_specific", __("Select Specific Terms", "unlimited-elements-for-elementor"), $elementorCondition, "terms", $addAttrib, $params);
+
+
+		// --------- add include by direct children of selected terms -------------
+
+		$params = array();
+		$params["placeholder"] = "all--terms";
+		$params["description"] = __("Only direct children of those selected terms will be fetched", "unlimited-elements-for-elementor");
+		 
+		$elementorCondition = array($name."_includeby"=>"direct_children_of_selected_terms");
+		
+		$addAttrib = "data-taxonomyname='{$name}_taxonomy'";
+
+		$this->addPostIDSelect($name."_include_direct_children_of_selected_terms", __("Select Parent Terms", "unlimited-elements-for-elementor"), $elementorCondition, "terms", $addAttrib, $params);
+
 
 		// --------- add terms parents -------------
 
@@ -580,7 +592,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params["placeholder"] = "all--parents";
 
 		$elementorCondition = array($name."_includeby"=>"parents");
-
+		
 		$exclude = UniteFunctionsUC::getVal($value, $name."_exclude");
 
 		$addAttrib = "data-taxonomyname='{$name}_taxonomy' data-issingle='true'";
@@ -620,6 +632,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$arrExcludeBy["current_term"] = __("Current Term (for archive only)","unlimited-elements-for-elementor");
 		$arrExcludeBy["current_post_terms"] = __("Current Post Terms","unlimited-elements-for-elementor");
 		$arrExcludeBy["hide_empty"] = __("Hide Empty Terms","unlimited-elements-for-elementor");
+		$arrExcludeBy["hide_first_level_terms"] = __("Root Terms (without parents)","unlimited-elements-for-elementor");
 
 		$arrExcludeBy = array_flip($arrExcludeBy);
 
@@ -714,6 +727,8 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 
 		$params = array();
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_DROPDOWN;
+
+
 
 		$this->addSelect($name."_orderdir", $arrOrderDir, __("Order Direction", "unlimited-elements-for-elementor"), $orderDir, $params);
 
@@ -1314,7 +1329,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 			$placeholder = __("All Products", "unlimited-elements-for-elementor");
 
 		$placeholder = str_replace(" ", "--", $placeholder);
-
+		
 		$loaderText = __("Loading Data...", "unlimited-elements-for-elementor");
 		$loaderText = UniteFunctionsUC::encodeContent($loaderText);
 
@@ -1809,7 +1824,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params["elementor_condition"] = $arrConditionIncludeMeta;
 
 		$this->addRadioBoolean($name . "_includeby_meta_debug", __("Show Post Meta Fields for Debug", "unlimited-elements-for-elementor"), false, "Yes", "No", $params);
-
+		
 		// --------- include by PHP Function -------------
 		$arrConditionIncludeFunction = $arrConditionIncludeBy;
 		$arrConditionIncludeFunction[$name . "_includeby"] = "php_function";
@@ -3226,15 +3241,16 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 
 		// stroke color
 		$colorName = "color";
+		$colorDefault = "#000000";
 
 		$params = array();
 		$params["group_selector"] = $groupSelectorName;
 
-		$this->addColorPicker($colorName, "", __("Stroke Color", "unlimited-elements-for-elementor"), $params);
+		$this->addColorPicker($colorName, $colorDefault, __("Stroke Color", "unlimited-elements-for-elementor"), $params);
 
 		// stroke width
 		$widthName = "width";
-		$widthDefault = 2;
+		$widthDefault = "";
 
 		$params = array();
 		$params["min"] = 0;

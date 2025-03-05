@@ -1,5 +1,9 @@
 
 
+version 1.7.81
+
+replaced eval by another function
+
 version 1.7.80
 
 fixed fullscreen button on a slider that contains link

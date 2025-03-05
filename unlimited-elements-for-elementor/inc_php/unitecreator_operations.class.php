@@ -5,7 +5,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UCOperations extends UniteElementsBaseUC{
 
@@ -13,7 +13,8 @@ class UCOperations extends UniteElementsBaseUC{
 	private static $arrLayoutsGeneralSettings = null;
 	private static $arrCustomSettingsCache = array();
 	private static $arrUrlThumbCache = array();
-
+	private static $lastRequestResponse = null;
+	
 	const GENERAL_SETTINGS_OPTION = "unitecreator_general_settings";
 
 	private function a_______GENERAL_SETTING________(){
@@ -536,7 +537,7 @@ class UCOperations extends UniteElementsBaseUC{
 		$fieldsTitle = "Meta";
 		if($showCustomFields == true)
 			$fieldsTitle = "Custom";
-
+		
 		s_echo("<br>{$fieldsTitle} fields for post: <b>$postTitle </b>, post id: $postID <br>");
 
 		dmp($htmlFields);
@@ -721,8 +722,8 @@ class UCOperations extends UniteElementsBaseUC{
 	/**
 	 * get url contents from file or url with cache
 	 */
-	public function getUrlContents($url, $debug = false){
-
+	public function getUrlContents($url, $debug = false, $operateError = false){
+		
 		if($debug === true)
 			dmp("get contents from url: $url");
 
@@ -756,20 +757,43 @@ class UCOperations extends UniteElementsBaseUC{
 			$request = UEHttp::make();
 			$request->debug($debug);
 			$request->cacheTime(180); // 3 minutes
-		
+			
 			$response = $request->get($url);
+			
+			//save last request
+			self::$lastRequestResponse = $response;
+			
+			if($operateError){
+				
+				$responseError = $response->getError();
+				
+				if(!empty($responseError))
+					UniteFunctionsUC::throwError($responseError);
+				
+			}
+			
 			$data = $response->body();
-
+			
 			return $data;
 		}catch(Exception $e){
-			//
+			
+			if($operateError == true)
+				throw($e);
 		}
 
 		return null;
 	}
-
-	private function a____________DATE____________(){
+	
+	/**
+	 * get last request response
+	 */
+	public function getLastRequestResponse(){
+		
+		return self::$lastRequestResponse;
 	}
+	
+	
+	private function a____________DATE____________(){}
 
 	/**
 	 * get nice display of date ranges, ex. 4-5 MAR 2021
@@ -1006,7 +1030,7 @@ class UCOperations extends UniteElementsBaseUC{
 	public function modifyTextFromWidget($text){
 
 		//convert current page
-
+		
 		if(strpos($text, "%current_page_url%") !== false){
 			$urlPage = UniteFunctionsWPUC::getUrlCurrentPage(true);
 

@@ -5,7 +5,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 
@@ -383,6 +383,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		$objServices->includeGoogleAPI();
 
 		$error = "";
+		$textConnected = "";
 
 		try{
 			$accessToken = UEGoogleAPIHelper::getFreshAccessToken();
@@ -393,30 +394,32 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		}
 
 		$error = UniteFunctionsUC::getGetVar("google_connect_error", $error, UniteFunctionsUC::SANITIZE_NOTHING);
-		
-		
-		if(empty($accessToken) === false){
+
+		$isAccessTokenExpired = UEGoogleAPIHelper::isAccessTokenExpired();
+        $credentials = UEGoogleAPIHelper::isCredentials();
+
+		if($isAccessTokenExpired == false){
 			$email = UEGoogleAPIHelper::getUserEmail();
-			
 			$isValid = UniteFunctionsUC::isEmailValid($email);
-			if($isValid == false)
-				$email = "";
-			
-			// translators: %s is a string
-			$textConnected = sprintf(__("Connected to: <b>%s</b>", "unlimited-elements-for-elementor"), $email);
-			
+
+			if($isValid == true)
+				$textConnected = sprintf(__("Connected to: <b>%s</b>", "unlimited-elements-for-elementor"), $email);
+
+            $expirationTime = UEGoogleAPIHelper::getExpirationDate();
+			$textExpirationTime = sprintf(__("Expires in <b>%s</b>, the time will auto extend.", "unlimited-elements-for-elementor"), $expirationTime);
 			?>
+
 			<div class="uc-google-connect-message">
-				<?php 
-				echo wp_kses($textConnected,HelperUC::getKsesAllowedHTML()); 
-				?>
+                <div><?php echo wp_kses($textConnected, HelperUC::getKsesAllowedHTML()); ?></div>
+                <div><?php echo wp_kses($textExpirationTime, HelperUC::getKsesAllowedHTML()); ?></div>
 			</div>
+
 			<a class="button" href="<?php echo esc_url(UEGoogleAPIHelper::getRevokeUrl()); ?>">
 				<?php esc_html_e("Disconnect from Google Sheets", "unlimited-elements-for-elementor"); ?>
 			</a>
-			<?php
+		<?php
 		}else{
-			?>
+		?>
 			<a class="button" href="<?php echo esc_url(UEGoogleAPIHelper::getAuthUrl()); ?>">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" style="margin-bottom: -0.2em">
 					<path fill="#19b870" d="m21 6-6-6H5a2 2 0 0 0-2 2v20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6z" />
@@ -425,18 +428,23 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 				</svg>
 				<?php esc_html_e("Connect to Google Sheets", "unlimited-elements-for-elementor"); ?>
 			</a>
-			<?php
+
+			<?php if($isAccessTokenExpired == true && $credentials == true): ?>
+                <div class="uc-google-connect-error">
+                    <div><?php esc_html_e("The token has expired. Please connect again.", "unlimited-elements-for-elementor"); ?></div>
+                </div>
+			<?php endif; ?>
+		<?php
 		}
 
-		if(empty($error) === false){
-			?>
+		if(!empty($error)){
+		?>
 			<div class="uc-google-connect-error">
-				<?php 
-				// translators: %s is a string
-				echo esc_html(sprintf(__("Error: %s", "unlimited-elements-for-elementor"), $error)); //Security Update 1 
-				?>
+				<div><?php  echo esc_html(sprintf(__("Error: %s", "unlimited-elements-for-elementor"), $error)); //Security Update 1 ?></div>
 			</div>
-			<?php
+		<?php
+
+
 		}
 	}
 

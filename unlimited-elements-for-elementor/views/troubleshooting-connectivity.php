@@ -5,7 +5,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UEConnectivityTestView{
 	
@@ -129,7 +129,7 @@ private function checkUpdateCatalog(){
 	$optionCatalog = UniteCreatorWebAPI::OPTION_CATALOG;
 
 	dmp("Option catalog raw data: $optionCatalog");
-
+	
 	$data = get_option($optionCatalog);
 
 	dmp($data);
@@ -144,14 +144,14 @@ private function checkingCatalogData(){
 
 	$webAPI = new UniteCreatorWebAPI();
 	$data = $webAPI->getCatalogData();
-
+		
 	dmp("Checking saved widgets catalog data");
 
 	if(empty($data)){
 	
 		dmp("No catalog widgets data found!");
 
-		checkUpdateCatalog();
+		$this->checkUpdateCatalog();
 
 		return(false);
 	}

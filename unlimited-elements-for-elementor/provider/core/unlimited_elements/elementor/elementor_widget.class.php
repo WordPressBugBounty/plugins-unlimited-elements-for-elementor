@@ -1,6 +1,6 @@
 <?php
 
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
@@ -1568,7 +1568,8 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     			$arrControl["default"] = array(
     				"size" => UniteFunctionsUC::getVal($param, "default_value"),
-    				"unit" => $rangeUnit
+    				"unit" => $rangeUnit,
+    				"value" => UniteFunctionsUC::getVal($param, "default_value")
     			);
 
 
@@ -1655,6 +1656,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     		break;
     		case UniteCreatorDialogParam::PARAM_TEXTSHADOW:
+		    case UniteCreatorDialogParam::PARAM_TEXTSTROKE:
 
     			$arrControl["name"] = $name;
 
@@ -4050,7 +4052,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
 	    	//check if inside editor
 	        $isEditMode = $this->isEditMode();
-
+			
 	    	$objAddon->setParamsValues($arrMainParamValues);
 	    	$objAddon->setArrFonts($arrFonts);
 

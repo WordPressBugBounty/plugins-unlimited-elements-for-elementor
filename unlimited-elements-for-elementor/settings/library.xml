@@ -72,5 +72,5 @@
 			<include handle="fancybox" local="fancybox3/jquery.fancybox.min.css"></include>
 		</css>
 	</item>
-	
+	 
 </library>

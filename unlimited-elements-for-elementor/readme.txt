@@ -1,7 +1,7 @@
 === Unlimited Elements For Elementor ===
 Contributors: unitecms, valiano, iritmega, amitkeren, axmusic, freemius
 Donate link: http://unlimited-elements.com/
-Tags: elementor, elementor addons, elementor templates, elementor widgets, widgets for elementor
+Tags: elementor, elementor addons, elementor templates, elementor widgets, widgetsÂ forÂ elementor
 Requires at least: 3.5
 Tested up to: 6.7
 License: GPLv2 or later
@@ -9,9 +9,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Stable tag: 1.0
 
 Elementor all-in-one addons pack with the best widgets for Elementor, offering 100+ free widgets, templates, and tools to create stunning websites!
-
-== Description ==
  
+== Description ==
+
 <strong>Elementor</strong> users, elevate your web design experience with <strong>Unlimited Elements for Elementor</strong>. An all in one plugin that instantly gives you the most advanced widgets and tools to make better Elementor websites faster.  Take your WordPress website to the next level. 
 
 <a href="https://unlimited-elements.com/elementor-widgets/">View Elementor Widgets Demos</a>
@@ -235,7 +235,7 @@ Find everything you need in one convenient package and supercharge your <strong>
 
 14. [Price Range Filter (Pro)](https://unlimited-elements.com/price-range-filter-widget-for-elementor/) 
 
-15. [Colors Swatches Filter (Pro)](https://unlimited-elements.com/color-swatches-filter-widget-for-elementor/) 
+15. [Colors SwatchesÂ Filter (Pro)](https://unlimited-elements.com/color-swatches-filter-widget-for-elementor/) 
 
 16. [Off Canvas Filters (Pro)](https://unlimited-elements.com/off-canvas-filters-widget-for-elementor/) 
 
@@ -938,7 +938,43 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
-version 1.5.141 - 2025-01-30 =
+version 1.5.142 - 2025-03-05 =
+
+Plugin Changes:
+
+* Change: cleared some not needed php code
+* Fix: updated twig engine, fixed some deprecated messages of php 8.4
+* Fix: fixed some pagination with avoid duplicates issues
+* Fix: removed eval() funciton from unite gallery js
+* Fix: fixed some rss issues
+* Fix: improved the debug for rss feed
+* Fix: improved some security issues for images links and attributes
+
+Widgets Changes: 
+
+* Feature: Justified Image Carousel (Pro) - Added Item BG Color
+* Feature: Loop Accordion (Pro) - Added Remote Connection options for enhanced remote connectivity, allowing users to configure and secure remote access with Remote wigets.
+* Feature: Repeater Grid (Pro) - Activated a dynamic tag for the Number of Columns option, enabling the use of dynamic values.
+* Feature: Masonry &amp; Justified Gallery (Pro) - Added native pagination functionality for items when the Source is not set to Posts or Products.
+* Feature: Event List (Pro) - Enhanced badge customization by adding a badge width option, offering improved sizing control and layout precision.
+* Feature: Event List (Pro) - Improved badge customization by adding a padding option, allowing for precise spacing adjustments and a more polished design.
+* Feature: Event List (Pro) - Enhanced badge functionality by incorporating horizontal and vertical offset options, enabling more precise layout customization.
+* Feature: Swipe Carousel (Pro) - Added Button CSS ID option, enabling users to assign custom IDs to buttons for easier styling and targeting with CSS or JavaScript.
+* Feature: Snow Flakes Background (Free) - Added new Snowflake Style options, Snow Direction, and Snowflake Size option for enhanced customization.
+* Feature: Mega Menu (Pro) - Fixed issue related to positioning the dropdown element on the x-axis when a horizontal scroll appeared in certain cases.
+* Feature: Border Hero (Free) - Added basic styling options for all text elements of the widget: color, typography, text-stroke, margins, text-shadow. This change also allowed to resolv vulnerability where scripts could be injected under certain widget attributes.
+* Feature: Justified Image Carousel (Pro) - Added Image Grow On Hover
+* Feature: Justified Image Carousel (Pro) - Added Image Opacity On Hover
+* Fix: Mega Menu (Pro) - Fixed issue related to the overlay height value in some cases when it was increasing each time the user hovered over a menu item.
+* Fix: Repeater Carousel (Pro) - Fixed a bug where the carousel items were not taking the full width.
+* Fix: Random Image (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Multi Line Button (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Split Hero (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
+* Fix: Multi Level Sliding Menu (Pro) - Fixed issue when Menu widget was initialized twice in cases when it was added inside Elementor Template.
+* Fix: Snow Flakes Background (Free) - Fixed a bug where the snow background would glitch every few seconds.
+
+
+= 1.5.141 - 2025-01-30 =
 
 * Fix: fixed pagination of manual type
 * Fix: clear placeholders from the form after send.
@@ -971,62 +1007,7 @@ version 1.5.141 - 2025-01-30 =
 * Fix: fixed ajax search, allow to search only by meta or terms
 
 
-= 1.5.136 - 2025-01-14 =
-
-Plugin Changes: 
-
-* Fix: fixed a small php bug in getPostTerms twig template function
-* Feature: added ajax search by functionality
-* Fix: performance: ajax search don't run extra db query without ajax run
-* Fix: added some ajax search and woo ajax search functionality. 
-* Fix: better pagination detection in case of 2 widgets in a group
-* Fix: fixed post modified date
-* Fix: fixed time stamp detection function
-* Feature: added json / csv to repeater field
-
-Widgets Changes: 
-
-* Feature: Dynamic Post Popup (Pro) - Close Button element is now focusable, allowing users to interact with it using the keyboard (e.g., via the Tab key), enhancing accessibility and usability.
-* Feature: Radio Button Field (Pro) - Added support for HTML tags in the Item Title element, allowing users to include formatted text, links, or other HTML-based content within the Item Title.
-* Feature: Audio Player (Pro) - Introduced a new source option for the audio file called First Post From List. This feature allows users to dynamically pull the audio file from the first post in a selected list.
-* Feature: Content Tabs (Free) - Added Content Layout Type option - This new feature enables users to customize the order of elements within the content section of the widget, providing greater flexibility in arranging the layout to suit specific design requirements.
-* Feature: Content Tabs (Free) - Improved Title and Button Spacing options - These options now support all margin directions, not just Margin Top, allowing for more precise control over spacing between elements.
-* Feature: Team Member Carousel (Pro) - Added Typography option for Button Element - This new feature allows users to customize the typography of the button text, including font family, size, weight, style, and other related settings.
-* Feature: Square to Circle Social Icons (Free) - Gap between icons added.
-* Feature: Icon Box (Free) - Added Box Min Height option - This new option allows setting a minimum height for the box, ensuring consistent layout and design across different content variations.
-* Feature: Protected Content (Pro) - Added an option to protect the entire page.
-* Feature: Protected Content (Pro) - Added functionality to submit the password by pressing the Enter key.
-* Feature: Simple Popup (Free) - Close Button element is now focusable, allowing users to interact with it using the keyboard (e.g., via the Tab key), enhancing accessibility and usability.
-* Feature: Overlay Button (Free) - Added a new Overlay Border Radius option, which allows users to customize the border radius of the overlay element within the widget.
-* Feature: Protected Content (Pro) - Added a new Template Position option, allowing users to specify the precise placement of templates within the widget.
-* Feature: Stacking Cards (Pro) - Added an option to select the source of the item, allowing users to choose between Text Editor, Elementor Template, or content from a Section ID on the same page.
-* Feature: Woo AJAX Search (Pro) - Added option to search by sku
-* Feature: Woo AJAX Search (Pro) - Added option to search by custom post fields like post title or excerpt
-* Feature: AJAX Search (Pro) - Added option to search by custom post fields like post title or excerpt
-* Fix: Woo Product Carousel (Pro) - Fixed issue where HTML attributes of the &quot;Add to Cart&quot; button were not being displayed correctly, ensuring proper functionality and adherence to expected behavior.
-* Fix: Image Tooltip (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Notification (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Simple Popup (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Video Play Button (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Card Carousel (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Post Grid (Pro) - Resolved an issue where links were not functioning correctly in certain cases.
-* Fix: Woo Product Carousel (Pro) - Fixed an issue where the Regular Price of products was incorrectly displayed as the Sale Price on the front end.
-* Fix: Square to Circle Social Icons (Free) - Default icon color changed.
-* Fix: Woo Product Slider (Pro) - Fixed an issue where the Regular Price of products was incorrectly displayed as the Sale Price on the front end.
-* Fix: Transparent Split Hero (Free) - Fixed vulnerability where JavaScript code could be inserted into the image src option, potentially leading to XSS attacks.
-* Fix: Woo Product List (Free) - Fixed an issue where the Regular Price of products was incorrectly displayed as the Sale Price on the front end.
-* Fix: Woo Product List (Free) - Optimized the HTML code structure for widget, reducing unnecessary elements and improving overall efficiency.
-* Fix: Review Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Testimonial Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Product Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Woo Product Grid (Pro) - Fixed an issue where the Regular Price of products was incorrectly displayed as the Sale Price on the front end.
-* Fix: Overlay Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Coverflow Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Mega Slider (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Smoke Background Effect (Pro) - Fixed issue where widgets were not functioning correctly in cases where scripts on the website were placed in the header.
-* Fix: Woo Category Carousel (Pro) - Fixed issue where, with &quot;Open Link in New Tab&quot; set to &quot;Yes,&quot; the link from the title still did not open in a new page.
-* Fix: Unlimited Carousel (Pro) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-
 
 
 [See changelog for all versions.](https://unlimited-elements.com/change-log/)
+

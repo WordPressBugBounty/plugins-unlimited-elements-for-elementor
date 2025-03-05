@@ -2115,9 +2115,9 @@ function UEDynamicFilters(){
 				return(true);
 
 			objGridWidget.removeClass(g_vars.CLASS_REFRESH_SOON);
-
+			
 			childResponse.query_data = queryData;
-
+			
 			operateAjax_setHtmlGrid(childResponse, objGridWidget, isLoadMore);
 			
 			objGridWidget.trigger(g_vars.EVENT_AJAX_REFRESHED);
@@ -2193,8 +2193,7 @@ function UEDynamicFilters(){
 				if(objDebug.length)
 					objDebug.replaceWith(htmlDebug);
 			}
-
-
+			
 			objFilter.trigger(g_vars.EVENT_FILTER_RELOADED);
 
 		});
@@ -2235,7 +2234,7 @@ function UEDynamicFilters(){
 		var isGridRefreshed = operateAjax_setHtmlGrid(response, objGrid, isLoadMore);
 		
 		operateAjax_setHtmlWidgets(response, objFilters);
-
+		
 		operateAjax_setHtmlSyngGrids(response, objGrid, isLoadMore);
 		
 		objGrid.trigger(g_vars.EVENT_AJAX_REFRESHED);
@@ -2568,7 +2567,7 @@ function UEDynamicFilters(){
 		
 		//for the options - not refresh other filters
 		var isLoadMoreMode = (refreshType == g_vars.REFRESH_MODE_LOADMORE || refreshType == g_vars.REFRESH_MODE_PAGINATION);
-
+		
 		//get all grid filters
 		var objFilters = objGrid.data("filters");
 
@@ -2584,9 +2583,11 @@ function UEDynamicFilters(){
 		var params = {};
 		if(refreshType == "filters_children")
 			params["filters_init_type"] = "children";
-
+		
+		params["refresh_type"] = refreshType;
+		
 		var objAjaxOptions = getGridAjaxOptions(objFilters, objGrid, isFiltersInit, isLoadMoreMode, params);
-				
+		
 		if(!objAjaxOptions){
 
 			trace("ajax options are null");
@@ -2976,7 +2977,7 @@ function UEDynamicFilters(){
 		var arrAllFiltersData;		//all data gethered for the active filters
 		var arrFiltersForInit = [];
 		var urlAddFromFilters = "";
-
+		var isPaginationClicked = false;
 		var isGetUrlOnly = getVal(params,"getonly");
 
 		var initModeType = getVal(params,"filters_init_type");
@@ -2991,10 +2992,15 @@ function UEDynamicFilters(){
 		
 		var advancedSearchFilterID;
 		
+		var refreshType = getVal(params,"refresh_type");
+		
+		if(refreshType == g_vars.REFRESH_MODE_PAGINATION)
+			isPaginationClicked = true;
+		
 		
 		//get ajax options
 		jQuery.each(objFilters, function(index, objFilter){
-
+			
 			//protection against duplicate id's
 			var id = objFilter.attr("id");
 
@@ -3507,8 +3513,12 @@ function UEDynamicFilters(){
 		
 		if(objGrid.hasClass("uc-avoid-duplicates") && isLoadMoreMode == true){
 			
-			var strExcludePostIDs = getExcludePostIDs();
+			var objCurrentGridForExclude = null;
+			if(isPaginationClicked == true)
+				objCurrentGridForExclude = objGrid;
 						
+			var strExcludePostIDs = getExcludePostIDs(objCurrentGridForExclude);
+			
 			if(strExcludePostIDs){
 				urlAjax += "&ucexclude="+strExcludePostIDs;
 				offset = null;
@@ -3572,18 +3582,20 @@ function UEDynamicFilters(){
 	 * get all exclude post ids from all avoid duplicates grids
 	 * if it's a single avoid duplicates grid - don't get excludes
 	 */
-	function getExcludePostIDs(){
+	function getExcludePostIDs(objCurrentGrid){
 		
 		//check if it's only one grid involved
-		
-		var objGrids = jQuery(".uc-avoid-duplicates");
+		if(!objCurrentGrid)
+			var objGrids = jQuery(".uc-avoid-duplicates");
+		else
+			var objGrids = jQuery(".uc-avoid-duplicates").not(objCurrentGrid);
 		
 		if(objGrids.length == 0)
 			return("");
 		
 		//check if rand of only grid, get id's, else not
 		
-		if(objGrids.length == 1){
+		if(objGrids.length == 1 && !objCurrentGrid){
 			var queryData = objGrids.attr("querydata");
 			
 			var objQueryData = JSON.parse(queryData);

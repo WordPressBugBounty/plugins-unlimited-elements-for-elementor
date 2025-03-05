@@ -1,6 +1,6 @@
 <?php
 
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteProviderAdminUC extends UniteCreatorAdmin{
 
@@ -907,7 +907,7 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 			return (false);
 
 		$arrKeys = UniteFunctionsWPUC::getAllWPActionKeys("admin_init");
-		
+
 		$keyToRemove = "";
 
 		foreach($arrKeys as $key){

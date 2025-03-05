@@ -9,10 +9,10 @@
 if(!defined('UNLIMITED_ELEMENTS_INC'))
     define('UNLIMITED_ELEMENTS_INC', true);
 
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 if(!defined("UNLIMITED_ELEMENTS_VERSION"))
-	define("UNLIMITED_ELEMENTS_VERSION", "1.5.141");
+	define("UNLIMITED_ELEMENTS_VERSION", "1.5.142");
 
 //disable elementor support for debugging purposes. keep it commented
 //define("UE_DISABLE_ELEMENTOR_SUPPORT", true);
@@ -118,6 +118,7 @@ require_once $folderIncludesMain . 'unitecreator_addon_revisioner.class.php';
 require_once $folderIncludesMain . 'unitecreator_api_integrations.class.php';
 require_once $folderIncludesMain . 'unitecreator_rss.class.php';
 require_once $folderIncludesMain . 'unitecreator_pagination.class.php';
+require_once $folderIncludesMain . 'unitecreator_breadcrumbs.class.php';
 require_once $folderIncludesMain . 'unitecreator_import_changelog.class.php';
 
 

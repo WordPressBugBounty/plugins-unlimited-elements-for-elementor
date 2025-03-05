@@ -1002,21 +1002,24 @@ class UniteCreatetorParamsProcessorMultisource{
 		if($this->showDebugData == false)
 			return(false);
 
-		echo "<div style='background-color:#E5F7E1;font-size:12px;padding:5px;'>";
-
-		if($source == self::SOURCE_DEMO){
-			dmp("Switching to demo data source in editor only.");
-		}
-
-		$numItems = 0;
-
-		if(is_array($arrData))
-			$numItems = count($arrData);
+		HelperHtmlUC::putHtmlDataDebugBox_start();
 		
-		dmp("Input data from: <b>$source</b>, found: $numItems");
-		dmp($arrData);
-
-		echo "</div>";
+			if($source == self::SOURCE_DEMO){
+				dmp("Switching to demo data source in editor only.");
+			}
+	
+			$numItems = 0;
+	
+			if(is_array($arrData))
+				$numItems = count($arrData);
+			
+			dmp("Input data from: <b>$source</b>, found: $numItems");
+			
+			$arrData = UniteFunctionsUC::modifyDataArrayForShow($arrData);
+			
+			dmp($arrData);
+		
+		HelperHtmlUC::putHtmlDataDebugBox_end();
 	}
 
 	/**

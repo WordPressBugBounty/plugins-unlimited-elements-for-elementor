@@ -4,7 +4,7 @@ use Elementor\Controls_Manager;
 use Elementor\Repeater;
 use \Elementor\Utils;
 
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 class UniteCreatorElementorControls{

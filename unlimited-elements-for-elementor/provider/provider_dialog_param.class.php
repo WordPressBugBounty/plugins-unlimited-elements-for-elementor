@@ -5,7 +5,7 @@
  * @copyright (C) 2012 Unite CMS, All Rights Reserved. 
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorDialogParam extends UniteCreatorDialogParamWork{
 	
@@ -36,31 +36,39 @@ class UniteCreatorDialogParam extends UniteCreatorDialogParamWork{
 	public function initMainParams(){
 		
 		parent::initMainParams();
-		
-		$this->arrParams[] = self::PARAM_POSTS_LIST;
-		$this->arrParams[] = self::PARAM_POST_TERMS;
-		$this->arrParams[] = self::PARAM_WOO_CATS;
-		$this->arrParams[] = self::PARAM_USERS;		
-		$this->arrParams[] = self::PARAM_TEMPLATE;
-		$this->arrParams[] = self::PARAM_LISTING;
-		$this->arrParams[] = self::PARAM_TYPOGRAPHY;
-		$this->arrParams[] = self::PARAM_MARGINS;
-		$this->arrParams[] = self::PARAM_PADDING;
-		$this->arrParams[] = self::PARAM_BACKGROUND;
-		$this->arrParams[] = self::PARAM_MENU;
-		$this->arrParams[] = self::PARAM_BORDER;
-		$this->arrParams[] = self::PARAM_BOXSHADOW;
-		$this->arrParams[] = self::PARAM_TEXTSHADOW;
-		$this->arrParams[] = self::PARAM_TEXTSTROKE;
+
+		// Basic
 		$this->arrParams[] = self::PARAM_DATETIME;
-		$this->arrParams[] = self::PARAM_BORDER_DIMENTIONS;
-		$this->arrParams[] = self::PARAM_CSS_FILTERS;
-		$this->arrParams[] = self::PARAM_HOVER_ANIMATIONS;
 		$this->arrParams[] = self::PARAM_POST_SELECT;
 		$this->arrParams[] = self::PARAM_TERM_SELECT;
+
+		// CSS
+		$this->arrParams[] = self::PARAM_BACKGROUND;
+		$this->arrParams[] = self::PARAM_BORDER;
+		$this->arrParams[] = self::PARAM_BORDER_DIMENTIONS;
+		$this->arrParams[] = self::PARAM_BOXSHADOW;
+		$this->arrParams[] = self::PARAM_CSS_FILTERS;
+		$this->arrParams[] = self::PARAM_HOVER_ANIMATIONS;
+		$this->arrParams[] = self::PARAM_MARGINS;
+		$this->arrParams[] = self::PARAM_PADDING;
+		$this->arrParams[] = self::PARAM_TEXTSHADOW;
+		$this->arrParams[] = self::PARAM_TEXTSTROKE;
+		$this->arrParams[] = self::PARAM_TYPOGRAPHY;
+
+		// Advanced
+		$this->arrParams[] = self::PARAM_LISTING;
+		$this->arrParams[] = self::PARAM_MENU;
+		$this->arrParams[] = self::PARAM_POSTS_LIST;
+		$this->arrParams[] = self::PARAM_POST_TERMS;
 		$this->arrParams[] = self::PARAM_SPECIAL;
-		
+		$this->arrParams[] = self::PARAM_TEMPLATE;
+		$this->arrParams[] = self::PARAM_USERS;
+		$this->arrParams[] = self::PARAM_WOO_CATS;
+
+
 		$this->arrParams = $this->filterMainParams($this->arrParams);
+
+
 	}
 
 }

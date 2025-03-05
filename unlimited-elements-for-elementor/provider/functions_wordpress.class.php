@@ -1,7 +1,6 @@
 <?php
 
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
-
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 	class UniteFunctionsWPUC{
 
@@ -4187,16 +4186,11 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 	public static function clearFiltersFunctions($tag, $numCallback = null){
 		
 		global $wp_filter;
-		
-		dmp("clear filter functions: $tag");
-		
+				
 		$arrTags = UniteFunctionsUC::getVal($wp_filter, $tag);
 		
-		if(empty($arrTags)){
-
-			dmp("functions for tag: $tag not found");
+		if(empty($arrTags))			
 			return(false);
-		}
 		
 		if(empty($numCallback)){
 			unset($wp_filter[$tag]);
@@ -4539,12 +4533,28 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 	 * check if post exists by title
 	 */
 	public static function isPostExistsByTitle($title, $postType = "page"){
-
-		$post = get_page_by_title($title, ARRAY_A, $postType);
-
-		return !empty($post);
+	
+		global $wpdb;
+		
+		$sql = $wpdb->prepare(
+			"SELECT ID FROM $wpdb->posts 
+			WHERE post_title = %s 
+			AND post_type = %s 
+			AND post_status != 'trash'
+			LIMIT 1",
+			$title,
+			$postType
+		);
+		
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared		
+		$response = $wpdb->get_var($sql);
+		
+		$isExists = (bool)$response;
+		
+		return $isExists;
 	}
-
+	
+	
 	/**
 	 * tells if the page is posts of pages page
 	 */

@@ -6,7 +6,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorWebAPIWork{
 
@@ -699,10 +699,10 @@ class UniteCreatorWebAPIWork{
 		$body["blox_version"] = UNLIMITED_ELEMENTS_VERSION;
 
 		$body = $this->modifyDataBeforeRequest($body);
-
+	
 		$this->lastAPIData = array();
 		$this->lastAPIData["request"] = $body;
-
+		
 		// make request
 		$response = UEHttp::make()->post(self::$urlAPI, $body);
 		$data = $response->body();
@@ -841,8 +841,8 @@ class UniteCreatorWebAPIWork{
 
 		$this->addDebug("Updating catalog option: ".self::OPTION_CATALOG);
 
-		UniteProviderFunctionsUC::updateOption(self::OPTION_CATALOG, $arrData,false, false);
-
+		$response = UniteProviderFunctionsUC::updateOption(self::OPTION_CATALOG, $arrData,false, false);
+		
 		$arrSavedCatalog = UniteProviderFunctionsUC::getOption(self::OPTION_CATALOG);
 
 		//error debug
@@ -852,8 +852,8 @@ class UniteCreatorWebAPIWork{
 			$strData = serialize($arrData);
 
 			$len = strlen($strData);
-
-			$this->addDebug("<span style='color:red;'>The wp option: <b>".self::OPTION_CATALOG."</b> not saved. Options size: $len The  Maybe because it's some mysql DB problem. It should save large amount of data, but maybe there is a limit</span>");
+			
+			$this->addDebug("<span style='color:red;'>The wp option: <b>".self::OPTION_CATALOG."</b> not saved. Options size: $len chars.<br> Maybe because it's some mysql DB problem. <br>It should save large amount of data, but maybe there is a limit</span>");
 
 		}else{
 

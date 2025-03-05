@@ -1,6 +1,6 @@
 <?php
 
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class GlobalsProviderUC{
 			
@@ -36,6 +36,8 @@ class GlobalsProviderUC{
 	public static $skipRunPostQueryOnce = false;
 		
 	public static $lastQueryArgs = null;
+	public static $lastQueryRequest = null;
+	
 	public static $isUnderAjaxSearch = false;
 	public static $isUnderRenderPostItem = false;
 	public static $isUnderItem = false;

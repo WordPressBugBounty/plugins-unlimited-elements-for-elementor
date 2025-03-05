@@ -933,7 +933,129 @@ class UniteCreatorWooIntegrate{
 		
 		return($arrPostIDs);
 	}
+	
+	private function __________POST_QUERY_CLAUSES________(){}
+	
+	/**
+	 * modify post query clauses if needed
+	 */
+	public function checkModifyQueryClauses($args,$showDebug){
+		
+		$orderby = UniteFunctionsUC::getVal($args, "orderby");
+		
+		//check orderby
+		
+		$orderby = UniteFunctionsWPUC::SORTBY_SALES;
+				
+		switch($orderby){
+			case UniteFunctionsWPUC::SORTBY_SALES:
+			case UniteFunctionsWPUC::SORTBY_RATING:
 
+				if($showDebug == true)
+					dmp("modify post query for orderby:".$orderby);
+
+				add_filter( 'posts_clauses', array( $this, 'modifyWCSortbyQuery' ), 10, 2 );
+
+			break;
+		}
+		
+		//check variations
+		
+		//Vlodimir Task: please add sql in clauses to exclude out of stock variations from the terms if exists.
+		/* this code from chat gpt, need to do the oposite - find and exclude the out of stock variations
+		//if found instock: [meta_query] => Array
+        (
+            [0] => Array
+                (
+                    [key] => _stock_status
+                    [value] => instock
+                  
+        and found terms. 
+                  
+		
+		SELECT DISTINCT p.ID
+		FROM {$wpdb->posts} p
+		INNER JOIN {$wpdb->posts} v ON p.ID = v.post_parent
+		INNER JOIN {$wpdb->postmeta} pm ON v.ID = pm.post_id
+		WHERE p.post_type = 'product'
+		AND p.post_status = 'publish'
+		AND v.post_type = 'product_variation'
+		AND v.post_name LIKE '%your-slug-here%'
+		AND pm.meta_key = '_stock_status'
+		AND pm.meta_value = 'instock'		 
+		 
+		 */
+		
+	}
+	
+		
+	/**
+	 * before get posts
+	 */
+	public function modifyWCSortbyQuery($arrClauses){
+
+		if(empty(GlobalsProviderUC::$lastQueryArgs))
+			return($arrClauses);
+
+		$args = GlobalsProviderUC::$lastQueryArgs;
+
+		$postType = UniteFunctionsUC::getVal($args, "post_type");
+
+		if($postType != "product")
+			return($arrClauses);
+
+			
+		$isActive = self::isWooActive();
+
+		if($isActive == false)
+			return($arrClauses);
+
+		$orderBY = UniteFunctionsUC::getVal($args, "orderby");
+		$dir = UniteFunctionsUC::getVal($args, "order", "DESC");
+		
+		if(empty($orderBY))
+			return($arrClauses);
+
+		//add code filter by orderby
+
+		if(class_exists("WC_Query") == false)
+			return($arrClauses);
+
+		$objQuery = new WC_Query();
+
+		switch($orderBY){
+			case "price":
+
+				//if($dir == "DESC")
+					//$arrClauses = $objQuery->order_by_price_desc_post_clauses($arrClauses);
+				//else
+					//$arrClauses = $objQuery->order_by_price_asc_post_clauses($arrClauses);
+
+			break;
+			case 'sales':
+				$arrClauses = $objQuery->order_by_popularity_post_clauses($arrClauses);
+			break;
+			case 'rating':
+				$arrClauses = $objQuery->order_by_rating_post_clauses($arrClauses);
+
+				//change desc to ask
+
+				if($dir == "ASC"){
+					$orderby = UniteFunctionsUC::getVal($arrClauses, "orderby");
+					$orderby = str_replace("DESC", "ASC", $orderby);
+
+					$arrClauses["orderby"] = $orderby;
+				}
+
+			break;
+		}
+
+		remove_filter( 'posts_clauses', array( $this, 'modifyWCSortbyQuery' ), 10, 2 );
+
+		return($arrClauses);
+	}
+	
+	
 	private function __________STATIC_FUNCTIONS________(){}
 	
 	/**

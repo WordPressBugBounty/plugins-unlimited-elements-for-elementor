@@ -5,7 +5,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorDialogParamWork{
 
@@ -72,13 +72,18 @@ class UniteCreatorDialogParamWork{
 
 	const PARAM_VAR_GET = "uc_var_get";
 	const PARAM_VAR_FILTER = "uc_var_filter";
+    const PARAM_VAR_ITEM_SIMPLE = "uc_varitem_simple";
 	const PARAM_REPEATER = "repeater";
 
 	protected $addon, $objSettings, $objDatasets, $addonType;
 	private $type;
 	private $arrContentIDs = array();
 	private $arrParamsTypes = array();
+
 	protected $arrParams = array();
+
+	protected $arrSelectListParams = array();
+
 	protected $arrParamsItems = array();
 	protected $arrProParams = array();
 
@@ -122,6 +127,7 @@ class UniteCreatorDialogParamWork{
 
 		$this->initParamTypes();
 		$this->initProParams();
+
 	}
 
 	/**
@@ -171,12 +177,12 @@ class UniteCreatorDialogParamWork{
 	 */
 	protected function initParamTypes(){
 
-		$this->addParam("uc_textfield", esc_html__("Text Field", "unlimited-elements-for-elementor"));
-		$this->addParam("uc_number", esc_html__("Number", "unlimited-elements-for-elementor"));
+		$this->addParam(self::PARAM_TEXTFIELD, esc_html__("Text Field", "unlimited-elements-for-elementor"));
+		$this->addParam(self::PARAM_NUMBER, esc_html__("Number", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_RADIOBOOLEAN, esc_html__("Radio Boolean", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_TEXTAREA, esc_html__("Text Area", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_EDITOR, esc_html__("Editor", "unlimited-elements-for-elementor"));
-		$this->addParam("uc_checkbox", esc_html__("Checkbox", "unlimited-elements-for-elementor"));
+		$this->addParam(self::PARAM_CHECKBOX, esc_html__("Checkbox", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_DROPDOWN, esc_html__("Dropdown", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_MULTIPLE_SELECT, esc_html__("Multiple Select", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_COLORPICKER, esc_html__("Color Picker", "unlimited-elements-for-elementor"));
@@ -207,7 +213,7 @@ class UniteCreatorDialogParamWork{
 		$this->addParam(self::PARAM_DATASET, esc_html__("Dataset", "unlimited-elements-for-elementor"));
 
 		//variables
-		$this->addParam("uc_varitem_simple", esc_html__("Simple Variable", "unlimited-elements-for-elementor"));
+		$this->addParam(self::PARAM_VAR_ITEM_SIMPLE, esc_html__("Simple Variable", "unlimited-elements-for-elementor"));
 		$this->addParam("uc_var_paramrelated", esc_html__("Attribute Related", "unlimited-elements-for-elementor"));
 		$this->addParam("uc_var_paramitemrelated", esc_html__("Item Attribute Related", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_VAR_FILTER, esc_html__("By Filter Hook", "unlimited-elements-for-elementor"));
@@ -234,6 +240,100 @@ class UniteCreatorDialogParamWork{
 
 		$this->addParam(self::PARAM_SPECIAL, esc_html__("Special Attribute", "unlimited-elements-for-elementor"));
 
+	}
+
+
+	/**
+	 * group main and item params by categories
+	 */
+	private function initSelectListMainAndItemParams(){
+		
+		$categoryParams1 = esc_html__("Basic", "unlimited-elements-for-elementor");
+		$categoryParams2 = esc_html__("Css", "unlimited-elements-for-elementor");
+		$categoryParams3 = esc_html__("Advanced", "unlimited-elements-for-elementor");
+		
+		$arrCategoriesParams = array(
+			$categoryParams1 => array(
+				self::PARAM_TEXTFIELD,
+				self::PARAM_NUMBER,
+				self::PARAM_RADIOBOOLEAN,
+				self::PARAM_TEXTAREA,
+				self::PARAM_CHECKBOX,
+				self::PARAM_DROPDOWN,
+				self::PARAM_MULTIPLE_SELECT,
+				self::PARAM_SLIDER,
+				self::PARAM_COLORPICKER,
+				self::PARAM_LINK,
+				self::PARAM_EDITOR,
+				self::PARAM_ICON_LIBRARY,
+				self::PARAM_IMAGE,
+				self::PARAM_HR,
+				self::PARAM_HEADING,
+				self::PARAM_DATETIME,
+			),
+			$categoryParams2 => array(
+				self::PARAM_BACKGROUND,
+				self::PARAM_BORDER,
+				self::PARAM_TYPOGRAPHY,
+				self::PARAM_BORDER_DIMENTIONS,
+				self::PARAM_BOXSHADOW,
+				self::PARAM_CSS_FILTERS,
+				self::PARAM_HOVER_ANIMATIONS,
+				self::PARAM_MARGINS,
+				self::PARAM_PADDING,
+				self::PARAM_TEXTSHADOW,
+				self::PARAM_TEXTSTROKE,
+			),
+			$categoryParams3 => array(
+				self::PARAM_AUDIO,
+				self::PARAM_MENU,
+				self::PARAM_TEMPLATE,
+				self::PARAM_USERS,
+				self::PARAM_POST_SELECT,
+				self::PARAM_TERM_SELECT,
+				self::PARAM_LISTING,
+				self::PARAM_POSTS_LIST,
+				self::PARAM_POST_TERMS,
+				self::PARAM_WOO_CATS,
+				self::PARAM_INSTAGRAM,
+				self::PARAM_ICON,
+				self::PARAM_SPECIAL,
+			),
+		);
+
+		$arrSetCategoriesToParams = array();
+		$arrDoneParams = array();
+		
+		foreach ($arrCategoriesParams as $category => $params) {
+			
+			foreach ($params as $param) {
+                if(in_array($param, $this->arrParams)){
+				    $arrSetCategoriesToParams[$category][] = $param;
+				    $arrDoneParams[$param] = true;
+                }else
+                	dmp("the param not found!!! $param");                
+			}
+			
+		}
+		
+		//check params not in the list and add to the first category
+		
+		foreach($this->arrParams as $param)
+			if(isset($arrDoneParams[$param]) == false){
+			  $arrSetCategoriesToParams[$categoryParams1][] = $param;
+			  
+		}
+			 
+		$this->arrSelectListParams = $arrSetCategoriesToParams;
+			 
+	}
+
+
+	/**
+	 * group variable main and item params
+	 */
+	private function initSelectListVariableItemsAndMainsParams(){
+		$this->arrSelectListParams = array($this->arrParams);
 	}
 
 
@@ -845,7 +945,7 @@ class UniteCreatorDialogParamWork{
 			"template"=>__("Template Loop","unlimited-elements-for-elementor"),
 			"gallery"=>__("Gallery","unlimited-elements-for-elementor"),
 			"remote"=>__("Remote","unlimited-elements-for-elementor"),
-			"items"=>__("Items","unlimited-elements-for-elementor")
+			"items"=>__("Items","unlimited-elements-for-elementor"),
 		);
 
 		$htmlSelect = HelperHtmlUC::getHTMLSelect($arrItems,"template","name='use_for' class='unite-inputs-select uc-control' data-controlled-selector='.uc-listing-param-options'", true);
@@ -853,7 +953,7 @@ class UniteCreatorDialogParamWork{
 		$arrRemoteItems = array(
 			"parent"=>__("Remote Parent","unlimited-elements-for-elementor"),
 			"controller"=>__("Remote Controller","unlimited-elements-for-elementor"),
-			"background"=>__("Remote Background","unlimited-elements-for-elementor")
+			"background"=>__("Remote Background","unlimited-elements-for-elementor"),
 		);
 
 		$htmlSelectRemote = HelperHtmlUC::getHTMLSelect($arrRemoteItems,"parent","name='remote_type' class='unite-inputs-select'", true);
@@ -1420,30 +1520,29 @@ class UniteCreatorDialogParamWork{
 
 		//put tab content
 		$class = "uc-tab";
-		$selectHtml = "";
+		$liClass = "";
 		if($isSelected == true){
 			$class = "uc-tab uc-tab-selected";
-			$selectHtml .= " selected='selected' ";
+			$liClass .= "active";
 		}
 
 		if($this->type == self::TYPE_MAIN && isset($this->arrParamsItems[$paramType]) == false)
-			$selectHtml .= " class='uc-hide-when-item'";
+			$liClass .= " uc-hide-when-item";
 
-		if($isSelect == true):
-		?>
-			<option <?php s_echo($selectHtml)?> data-type="<?php echo esc_attr($paramType)?>" value="<?php echo esc_attr($contentID)?>" <?php s_echo($addHtml)?> >
+		if($isSelect == true): ?>
+
+            <li class="<?php s_echo($liClass)?>" data-type="<?php echo esc_attr($paramType)?>" data-value="<?php echo esc_attr($contentID)?>" <?php s_echo($addHtml)?>><?php echo esc_html($title, "unlimited-elements-for-elementor")?></li>
+
+		<?php else:	?>
+
+            <a href="javascript:void(0)" data-type="<?php echo esc_attr($paramType)?>" data-contentid="<?php echo esc_attr($contentID)?>" class="<?php echo esc_attr($class)?>" <?php s_echo($addHtml)?>>
 				<?php echo esc_html($title, "unlimited-elements-for-elementor")?>
-			</option>
-		<?php
-		else:
-		?>
-			<a href="javascript:void(0)" data-type="<?php echo esc_attr($paramType)?>" data-contentid="<?php echo esc_attr($contentID)?>" class="<?php echo esc_attr($class)?>" <?php s_echo($addHtml)?>>
-				<?php echo esc_html($title, "unlimited-elements-for-elementor")?>
-			</a>
-		<?php
-		endif;
+            </a>
+
+		<?php endif;
 
 	}
+
 
 	/**
 	 * put filter param
@@ -1697,19 +1796,52 @@ class UniteCreatorDialogParamWork{
 
 		<?php esc_html_e("Attribute Type: " , "unlimited-elements-for-elementor")?>
 
-		<select class="uc-paramdialog-select-type">
+        <button class="uc-paramdialog-select-type-custom-button ui-button ui-corner-all ui-widget" type="button">
+            <span><?php esc_html_e("Select Attribute" , "unlimited-elements-for-elementor")?></span>
+            <i class="fa-solid fa-caret-right uc-button-arrow-default"></i>
+        </button>
 
-			<?php
-				$firstParam = true;
-				foreach($this->arrParams as $paramType){
-					$this->putTab($paramType, $firstParam, true);
-					$firstParam = false;
-				}
-			?>
-		</select>
+        <div class="uc-paramdialog-select-type-custom">
+            <div class="uc-paramdialog-select-type-list-custom">
+                <ul>
+	                <?php
+                        $i = 1;
+                        foreach($this->arrSelectListParams as $category => $params){
+
+                                echo "<div class='uc-li-column'>";
+
+                                if($category)
+                                    echo "<h3 class='uc-param-category-name'>".esc_html__($category, "unlimited-elements-for-elementor")."</h3>";
+
+                                echo "<div class='uc-scroll-li-column'>";
+                                if($i == 1)
+	                                $firstParam = true;
+
+                                foreach($params as $paramType){
+                                    $this->putTab($paramType, $firstParam, true);
+                                    if($firstParam == true){
+                                        $tabPrefix = "uc_tabparam_".$this->type."_";
+                                        $contentID = $tabPrefix.$paramType;
+                                    }
+                                    $firstParam = false;
+                                }
+
+	                            echo "</div>";
+	                            echo "</div>";
+
+                                $i++;
+                        }
+	                ?>
+                </ul>
+            </div>
+
+            <input type="text" class="uc-paramdialog-select-type" value="<?php echo $contentID; ?>">
+        </div>
+
 		<?php
 
 	}
+
 
 	/**
 	 * put condition
@@ -1849,11 +1981,11 @@ class UniteCreatorDialogParamWork{
 						<div class="dialog-param-right">
 
 							<?php
-
 							$firstParam = true;
 							foreach($this->arrParams as $paramType):
 
 								$tabContentID = UniteFunctionsUC::getVal($this->arrContentIDs, $paramType);
+
 								if(empty($tabContentID))
 									UniteFunctionsUC::throwError("No content ID found for param: {$paramType} ");
 
@@ -1979,7 +2111,7 @@ class UniteCreatorDialogParamWork{
 			self::PARAM_ICON_LIBRARY,
 			self::PARAM_MARGINS,
 			self::PARAM_PADDING,
-			self::PARAM_DATETIME
+			self::PARAM_DATETIME,
 		);
 		
 		$this->arrParamsItems = UniteFunctionsUC::arrayToAssoc($this->arrParamsItems);
@@ -2011,7 +2143,7 @@ class UniteCreatorDialogParamWork{
 				"uc_varitem_simple",
 				"uc_var_paramrelated",
 				self::PARAM_VAR_GET,
-				self::PARAM_VAR_FILTER
+				self::PARAM_VAR_FILTER,
 		);
 
 	}
@@ -2027,9 +2159,8 @@ class UniteCreatorDialogParamWork{
 		$this->arrParams = array(
 				"uc_varitem_simple",
 				"uc_var_paramrelated",
-				"uc_var_paramitemrelated"
+				"uc_var_paramitemrelated",
 		);
-
 	}
 
 
@@ -2047,7 +2178,6 @@ class UniteCreatorDialogParamWork{
 	 */
 	private function sortMainParams(){
 
-
 		$arrParams = array();
 
 		foreach($this->arrParams as $type){
@@ -2060,6 +2190,20 @@ class UniteCreatorDialogParamWork{
 		$this->arrParams = array_keys($arrParams);
 
 	}
+
+	/**
+	 * sort params
+	 */
+    private function sortSelectListMainAndItemParams() {
+
+	    $arrParams = array();
+	    foreach ($this->arrSelectListParams as $category => $params) {
+		    sort($params);
+		    $arrParams[$category] = $params;
+	    }
+
+	    $this->arrSelectListParams = $arrParams;
+    }
 
 
 	/**
@@ -2080,31 +2224,34 @@ class UniteCreatorDialogParamWork{
 		$this->objSettings = new UniteCreatorSettings();
 		$this->objDatasets = new UniteCreatorDataset();
 
+		$isSortParams = HelperProviderCoreUC_EL::getGeneralSetting("alphabetic_attributes");
+		$isSortParams = UniteFunctionsUC::strToBool($isSortParams);
+
 		switch($this->type){
 			case self::TYPE_MAIN:
-
 				$this->initMainParams();
 				$this->initItemParams();
+				
+				$this->initSelectListMainAndItemParams();
 			break;
 			case self::TYPE_ITEM_VARIABLE:
 				$this->initVariableItemParams();
+				$this->initSelectListVariableItemsAndMainsParams();
 			break;
 			case self::TYPE_MAIN_VARIABLE:
 				$this->initVariableMainParams();
+				$this->initSelectListVariableItemsAndMainsParams();
 			break;
 			default:
 				UniteFunctionsUC::throwError("Wrong param dialog type: $type");
 			break;
 		}
 
-    	$isSortParams = HelperProviderCoreUC_EL::getGeneralSetting("alphabetic_attributes");
-		$isSortParams = UniteFunctionsUC::strToBool($isSortParams);
-
-		if($isSortParams == true)
+		if($isSortParams == true) {
 			$this->sortMainParams();
+			$this->sortSelectListMainAndItemParams();
+		}
 
 	}
-
-
 
 }

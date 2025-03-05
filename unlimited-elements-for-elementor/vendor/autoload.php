@@ -11,7 +11,7 @@ if (PHP_VERSION_ID < 50600) {
         if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
             fwrite(STDERR, $err);
         } elseif (!headers_sent()) {
-            s_echo( $err );
+            echo $err;
         }
     }
     trigger_error(
@@ -22,4 +22,4 @@ if (PHP_VERSION_ID < 50600) {
 
 require_once __DIR__ . '/composer/autoload_real.php';
 
-return ComposerAutoloaderInitf37ff32fb982745e22823b94eafc1a46::getLoader();
+return ComposerAutoloaderInit8653cf5b093dce57c959b6e354e52b14::getLoader();

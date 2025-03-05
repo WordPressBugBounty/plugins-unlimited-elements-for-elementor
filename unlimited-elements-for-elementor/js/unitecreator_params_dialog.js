@@ -3,7 +3,7 @@
 function UniteCreatorParamsDialog(){
 
 	var t = this;
-	var g_objWrapper, g_objSelectType, g_objTabContentWrapper, g_objLeftArea, g_objRightArea;
+	var g_objWrapper, g_objSelectType, g_objTabContentWrapper, g_objLeftArea, g_objRightArea, g_objCustomListAttributes;
 	var g_objError, g_objParamTitle, g_objParamName;
 	var g_objTexts, g_objParent, g_objData, g_objSettings, g_currentOpenedType, g_currentOpenedName;
 
@@ -40,6 +40,7 @@ function UniteCreatorParamsDialog(){
 		});
 
 
+
 		return(arrTypes);
 	}
 
@@ -60,6 +61,7 @@ function UniteCreatorParamsDialog(){
 	function getCurrentRightContent(){
 
 		var objContent = g_objRightArea.find(".uc-content-selected");
+
 		if(objContent.length == 0)
 			throw new Error("no current content found");
 
@@ -116,7 +118,10 @@ function UniteCreatorParamsDialog(){
 
 		var objParam = {};
 
-		var selectedTab = g_objSelectType.find("option:selected");
+		//var selectedTab = g_objSelectType.find("option:selected");
+
+		var selectedTab = g_objCustomListAttributes.find("li.active");
+
 
 		if(selectedTab.length == 0)
 			throw new Error("No param tab selected");
@@ -422,6 +427,7 @@ function UniteCreatorParamsDialog(){
 		var actionTitle = g_objTexts.add_button;
 		var dialogTitle = g_objTexts.add_title;
 		var paramType = null;
+		var dialogAddEditClass = "";
 
 		g_currentOpenedType = dialogType;
 		g_currentOpenedName = null;
@@ -439,6 +445,11 @@ function UniteCreatorParamsDialog(){
 			dialogTitle = g_objTexts.edit_title + ": " + paramTitle;
 
 			paramType = objData.type;
+
+			dialogAddEditClass = 'uc-dialog-edit';
+		}
+		else{
+			dialogAddEditClass = 'uc-dialog-add';
 		}
 
 		//show/hide admin label
@@ -502,12 +513,14 @@ function UniteCreatorParamsDialog(){
 		}
 				
 		g_objWrapper.dialog({
-			dialogClass:"unite-ui unite-dialog-responsive",
+			dialogClass:"unite-ui unite-dialog-responsive "+dialogAddEditClass,
 			buttons:buttonOpts,
 			minWidth:1020,
 			title: dialogTitle,
 			modal:true,
 			open:function(){
+
+
 
 				if(isEdit == false){
 					
@@ -531,7 +544,10 @@ function UniteCreatorParamsDialog(){
 						g_objParamName.focus();
 				}
 
+				initCustomListAttributesForSelectType();
 				triggerEvent(events.OPEN);
+
+
 				
 			}
 		
@@ -545,16 +561,21 @@ function UniteCreatorParamsDialog(){
 	 */
 	function selectParamDialogTabByType(type){
 
-		var options = g_objSelectType.find("option");
+		//var options = g_objSelectType.find("option");
 
-		options.each(function(index, option){
+		var customListAttributes = g_objCustomListAttributes;
+
+		customListAttributes.find('li').removeClass("active");
+
+		customListAttributes.find('li').each(function(index, option){
 			var objOption = jQuery(option);
 			var tabType = objOption.data("type");
 
 			if(tabType == type){
-				var optionValue = objOption.val();
+				var optionValue = objOption.data("value");
 				g_objSelectType.val(optionValue);
 				g_objSelectType.trigger("change");
+				objOption.addClass("active");
 
 				return(false);
 			}
@@ -1007,23 +1028,6 @@ function UniteCreatorParamsDialog(){
 	}
 
 
-	/**
-	 * init select2 for param dialog select type
-	 */
-	function initSelect2ParamDialogSelectType(){
-		
-		var selectType = g_objSelectType;
-		var selectTypeContainerClass = selectType.attr('class')
-
-		selectType.select2({
-			minimumResultsForSearch: Infinity,
-			selectionTitleAttribute: false,
-			theme: selectTypeContainerClass,
-			width: "100%"
-		});
-
-	}
-
 
 	function ____________RADIOBOOLEAN_PARAM____________(){};
 
@@ -1264,8 +1268,11 @@ function UniteCreatorParamsDialog(){
 	 */
 	function getControlParamOptions(param){
 
+
+
 		switch(param.type){
 			case "uc_dropdown":
+			case "uc_multiple_select":
 				if(param.hasOwnProperty("options") == false)
 					return(null);
 
@@ -1283,6 +1290,7 @@ function UniteCreatorParamsDialog(){
 				options[param.false_name] = param.false_value;
 				return(options);
 			break;
+
 			default:
 				throw new Error("Wrong control param type: " + param.type);
 			break;
@@ -1921,7 +1929,7 @@ function UniteCreatorParamsDialog(){
 	 * on select type change
 	 */
 	function onSelectTypeChange(){
-		
+
 		var isLimited = isDialogLimited();
 		if(isLimited == true)
 			return(false);
@@ -1935,7 +1943,8 @@ function UniteCreatorParamsDialog(){
 		
 		//check if set pro param mode
 		var isPro = objContent.hasClass("uc-pro-param");
-		
+
+
 		//check the 
 		var isSetPro = isPro;
 		var containsPro = g_ucAdmin.getVal(g_objData, "is_pro");
@@ -2222,6 +2231,70 @@ function UniteCreatorParamsDialog(){
 
 
 	/**
+	 * init custom list attributes for param dialog select type
+	 */
+	function initCustomListAttributesForSelectType(){
+
+		// Variables for dropdown and list elements
+		var dialog = jQuery('.ui-dialog');
+		var selectType = g_objSelectType;
+		var listContainer = g_objCustomListAttributes;
+		var listButton = jQuery('.uc-paramdialog-select-type-custom-button');
+		var icon = listButton.find('i');
+		var ul = listContainer.find('ul');
+		var listButtonArrowDownClass = 'uc-button-arrow-down';
+		var activeItem = '';
+
+		// Get active attribue data
+		if(dialog.hasClass('uc-dialog-edit'))
+			activeItem = listContainer.find('li.active');
+
+		if(dialog.hasClass('uc-dialog-add'))
+			activeItem = listContainer.find('li').removeClass('active').first().addClass('active');
+
+		var activeItemValue = activeItem.data('value');
+		var activeItemText = activeItem.text();
+
+		// Set active attribute
+		selectType.val(activeItemValue).trigger('change');
+		listButton.find('span').text(activeItemText);
+		listContainer.hide();
+		icon.removeClass(listButtonArrowDownClass);
+
+		// Click button to show/hide custom list attributes
+		listButton.off('click');
+		listButton.on('click', function(){
+
+			if(listContainer.css('display') == 'none')
+				listContainer.show();
+			else
+				listContainer.hide();
+
+			icon.toggleClass(listButtonArrowDownClass);
+
+		});
+
+		// Handle list item click events
+		ul.off('click');
+		ul.on('click', 'li', function () {
+			var selectedItem = jQuery(this);
+			var selectedItemValue = selectedItem.data('value');
+			var selectedItemText = selectedItem.text();
+
+			listContainer.find('li').removeClass('active');
+			selectedItem.addClass('active');
+
+			listButton.find('span').text(selectedItemText);
+			selectType.val(selectedItemValue).trigger('change');
+
+			listContainer.hide();
+			icon.toggleClass(listButtonArrowDownClass);
+		});
+
+	}
+
+
+	/**
 	 * init the dialog
 	 */
 	function init(){
@@ -2229,10 +2302,13 @@ function UniteCreatorParamsDialog(){
 		g_objTexts = g_objWrapper.data("texts");
 		
 		g_objSelectType = g_objWrapper.find(".uc-paramdialog-select-type");
+		g_objCustomListAttributes = g_objWrapper.find(".uc-paramdialog-select-type-list-custom");
+
 
 		g_objTabContentWrapper = g_objWrapper.find(".uc-tabsparams-content-wrapper");
 		g_objLeftArea = g_objTabContentWrapper.find(".dialog-param-left");
 		g_objRightArea = g_objTabContentWrapper.find(".dialog-param-right");
+
 		g_objError = g_objWrapper.find(".uc-dialog-param-error");
 		g_objParamTitle = g_objWrapper.find(".uc-param-title");
 		g_objParamName = g_objWrapper.find(".uc-param-name");
@@ -2270,10 +2346,11 @@ function UniteCreatorParamsDialog(){
 
 		initConditions();
 
-		//initSelect2ParamDialogSelectType();
-
 		//for all the special params that run on init
 		triggerEvent(events.INIT);
+
+
+
 
 		//init specific params
 		var arrParamTypes = getArrParamTypes();

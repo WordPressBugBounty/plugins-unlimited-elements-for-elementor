@@ -5,7 +5,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 class UniteCreatorTemplateEngineWork{
@@ -726,7 +726,7 @@ class UniteCreatorTemplateEngineWork{
 
 		dmp("Params:");
 		dmp($this->arrParams);
-
+	
 		dmp("Items:");
 		dmp($this->arrItems);
 
@@ -1371,10 +1371,10 @@ class UniteCreatorTemplateEngineWork{
 				return($value);
 			break;
 			case "modify_text":
-
+				
 				$arg1 = HelperUC::$operations->modifyTextFromWidget($arg1);
 
-				return($arg1);
+			return($arg1);
 			break;
 			case "get_term_image":
 				
@@ -1688,12 +1688,20 @@ class UniteCreatorTemplateEngineWork{
 
 				return($priceRangeMaxValue);
 			break;
+
+            case "get_breadcrumbs":
+                $objBreadcrumbs = new UniteCreatorBreadcrumbs();
+
+                $breadcrumbs = $objBreadcrumbs->getBreadcrumbItems($this->arrParams);
+
+                return $breadcrumbs;
+            break;
 			case "get_rss_keys":
 				
                 $objRSS = new UniteCreatorRSS();
-
+				
                 $arrData = $objRSS->getRssFeedKeys($this->addon, $this->arrParams);
-
+				
             return($arrData);
 			break;
 			case "get_url_from_string":
@@ -1774,6 +1782,7 @@ class UniteCreatorTemplateEngineWork{
 		$getPostTags = new Twig\TwigFunction('getPostTags', array($this,"getPostTags"));
 		$getPostData = new Twig\TwigFunction('getPostData', array($this,"getPostData"));
 		$putPagination = new Twig\TwigFunction('putPagination', array($this,"putPagination"));
+
 
 		$putListingItemTemplate = new Twig\TwigFunction('putListingItemTemplate', array($this,"putListingItemTemplate"));
 		$putDynamicLoopTemplate = new Twig\TwigFunction('putDynamicLoopTemplate', array($this,"putDynamicLoopTemplate"));
@@ -2047,7 +2056,7 @@ class UniteCreatorTemplateEngineWork{
 
 		if(empty($this->twig))
 			$this->initTwig();
-
+		
 		$params = $this->arrParams;
 
 		if($isInsideItems == true)

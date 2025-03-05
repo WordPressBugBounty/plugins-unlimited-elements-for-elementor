@@ -5,7 +5,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  *
@@ -332,13 +332,31 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 
 			if(GlobalsUC::$isLocal == true)
 				return(true);
-
+			
 			if(UniteFunctionsWPUC::isCurrentUserHasPermissions() == true)
 				return(true);
 
 			return(false);
 		}
+		
+		/**
+		 * check if there is permissions from query
+		 * and it's logged in or local
+		 */
+		public static function getQueryVarWithPermission($getvar){
 
+			if(UniteFunctionsWPUC::isCurrentUserHasPermissions() == false)
+				return(null);
+			
+			$value = UniteFunctionsUC::getGetVar($getvar,"",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
+
+			if(empty($value))
+				return(null);
+			
+			return($value);
+		}
+		
+		
 		/**
 		 * get kses allowed html
 		 */
@@ -1367,30 +1385,6 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		self::putCustomScript($script);
 	}
 
-	/**
-	 * add animations scripts and styles
-	 */
-	public static function putAnimationIncludes($animateOnly = false){
-
-		if(self::$isPutAnimations == true)
-			return (false);
-
-		$urlAnimateCss = GlobalsUC::$url_assets_libraries . "animate/animate.css";
-		self::addStyleAbsoluteUrl($urlAnimateCss, "animate");
-
-		if($animateOnly == true)
-			return (false);
-
-		UniteProviderFunctionsUC::addAdminJQueryInclude();
-
-		$urlWowJs = GlobalsUC::$url_assets_libraries . "animate/wow.min.js";
-		self::addScriptAbsoluteUrl($urlWowJs, "wowjs");
-
-		$script = "jQuery(document).ready(function(){new WOW().init()});";
-		UniteProviderFunctionsUC::printCustomScript($script);
-
-		self::$isPutAnimations = true;
-	}
 
 	/**
 	 *

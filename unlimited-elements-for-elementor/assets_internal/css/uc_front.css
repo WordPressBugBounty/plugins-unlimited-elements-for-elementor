@@ -3,8 +3,6 @@
 	box-sizing: border-box;
 }
 
-.uc-grid-front .wow {visibility:hidden;}
-
 .uc-grid-front .uc-grid-row{
 	display:block;
 	clear:both;

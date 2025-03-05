@@ -4,7 +4,7 @@ use Elementor\Plugin;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 class UniteCreatorElementorIntegrate{

@@ -105,6 +105,7 @@ class UEGoogleAPIHelper{
 		$params = array(
 			"revoke_token" => self::getAccessToken(),
 			"state" => $returnUrl,
+			"time" => time(),
 		);
 
 		$url = GlobalsUnlimitedElements::GOOGLE_CONNECTION_URL . "?" . http_build_query($params);
@@ -229,6 +230,21 @@ class UEGoogleAPIHelper{
 		return self::$credentials;
 	}
 
+
+	/**
+	 * Get the credentials.
+	 *
+	 * @return array
+	 */
+	public static function isCredentials(){
+		if(empty(self::$credentials) === false)
+			return true;
+
+		return false;
+	}
+
+
+
 	/**
 	 * Set the credentials.
 	 *
@@ -264,6 +280,7 @@ class UEGoogleAPIHelper{
 	 */
 	private static function getRefreshToken(){
 
+
 		$credentials = self::getCredentials();
 		$refreshToken = UniteFunctionsUC::getVal($credentials, "refresh_token");
 
@@ -283,12 +300,32 @@ class UEGoogleAPIHelper{
 		return $expirationTime;
 	}
 
+
+	/**
+	 * Get the expiration format date.
+	 *
+	 * @return int
+	 */
+	public static function getExpirationDate(){
+
+		$expirationDate = self::getExpirationTime();
+
+		$date_format = get_option('date_format');
+		$time_format = get_option('time_format');
+
+		$formatted_date = date_i18n($date_format, $expirationDate);
+		$formatted_time = date_i18n($time_format, $expirationDate);
+
+		return "$formatted_date $formatted_time";
+
+	}
+
 	/**
 	 * Determine if the access token is expired.
 	 *
 	 * @return bool
 	 */
-	private static function isAccessTokenExpired(){
+	public static function isAccessTokenExpired(){
 
 		$accessToken = self::getAccessToken();
 		$expirationTime = self::getExpirationTime();
@@ -319,7 +356,7 @@ class UEGoogleAPIHelper{
 		$request = UEHttp::make();
 		$request->acceptJson();
 
-		$response = $request->get(GlobalsUnlimitedElements::GOOGLE_CONNECTION_URL, array("refresh_token" => $refreshToken));
+		$response = $request->get(GlobalsUnlimitedElements::GOOGLE_CONNECTION_URL, array("refresh_token" => $refreshToken, "time" => time()));
 		$data = $response->json();
 
 		if(isset($data["error"]) === true)

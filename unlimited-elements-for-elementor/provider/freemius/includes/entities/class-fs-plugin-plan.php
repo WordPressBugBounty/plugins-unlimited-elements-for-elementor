@@ -13,6 +13,7 @@
 	/**
 	 * Class FS_Plugin_Plan
 	 *
+	 * @property FS_Pricing[] $pricing
 	 */
 	class FS_Plugin_Plan extends FS_Entity {
 

@@ -5,7 +5,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorAdmin extends UniteBaseAdminClassUC{
 
@@ -213,14 +213,6 @@ class UniteCreatorAdmin extends UniteBaseAdminClassUC{
 				HelperUC::addScript("unitecreator_admin_layouts", "unitecreator_admin_layouts");
 
 			break;
-			case GlobalsUC::VIEW_LAYOUT_IFRAME:
-				self::onAddScriptsGridEditor();
-			break;
-			case GlobalsUC::VIEW_LAYOUT:
-
-				self::onAddScriptsGridEditor(true);
-
-			break;
 			default:
 			case GlobalsUC::VIEW_ADDONS_LIST:
 				UniteCreatorManager::putScriptsIncludes(UniteCreatorManager::TYPE_ADDONS);
@@ -298,32 +290,6 @@ class UniteCreatorAdmin extends UniteBaseAdminClassUC{
 
 	}
 
-
-	/**
-	 * add grid editor scripts. include the browser scripts in them
-	 */
-	public static function onAddScriptsGridEditor($isOuter = false){
-
-		if($isOuter == true){
-
-			HelperUC::addScript("unitecreator_page_builder", "unitecreator_page_builder");
-		}
-
-		self::onAddScriptsBrowser();
-
-		HelperUC::putAnimationIncludes(true);
-
-		HelperUC::addScript("unitecreator_grid_builder", "unitecreator_grid_editor");
-		HelperUC::addScript("unitecreator_grid_actions_panel", "unitecreator_grid_actions_panel");
-		HelperUC::addScript("unitecreator_grid_panel", "unitecreator_grid_panel");
-		HelperUC::addScript("unitecreator_grid_objects", "unitecreator_grid_objects");
-
-		//grid builder (inside iframe)
-		if($isOuter == false){
-			HelperUC::putSmoothScrollIncludes();
-		}
-
-	}
 
 
 	/**

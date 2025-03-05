@@ -1,6 +1,6 @@
 <?php
 
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteProviderFunctionsUC{
 
@@ -778,10 +778,11 @@ class UniteProviderFunctionsUC{
 	public static function updateOption($option, $value, $supportMultisite = false,$autoload = null){
 
 		if($supportMultisite == true && is_multisite()){
-			update_site_option($option, $value);
+			$response = update_site_option($option, $value);
 		}else
-			update_option($option, $value, $autoload);
-
+			$response = update_option($option, $value, $autoload);
+		
+		return($response);
 	}
 
 	

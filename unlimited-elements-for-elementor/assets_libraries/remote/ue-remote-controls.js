@@ -734,8 +734,8 @@ function UERemoteCarouselAPI(){
 
 	var g_owlCarousel, g_owl, g_isInited;
 	var t = this;
-	var enableDebug = false;
-
+	var g_enableDebug = false;
+	
 
 	/**
 	* console log some string
@@ -780,16 +780,24 @@ function UERemoteCarouselAPI(){
 		do some action
 	*/
 	this.doAction = function(action, arg1, arg2){
-
+				
 		validateInited();
 
-		if(enableDebug == true){
-			trace("carousel action: "+action+" "+arg1+" "+arg2);
+		if(g_enableDebug == true){
+			
+			var strAction = action;
+			
+			if(arg1)
+				strAction += " "+arg1;
+			
+			if(arg2)
+				strAction += " "+arg2;
+			
+			trace("carousel action: "+strAction);
 		}
-
+		
 		switch(action){
 			case "next":
-
 				g_owlCarousel.trigger('next.owl.carousel');
 			break;
 			case "prev":
@@ -836,7 +844,7 @@ function UERemoteCarouselAPI(){
 
       			var currentItem = g_owl.relative(g_owl.current());
 
-      			if(enableDebug === true){
+      			if(g_enableDebug === true){
       				trace("num current: " + currentItem);
       			}
 
@@ -959,22 +967,37 @@ function UERemoteCarouselAPI(){
 	*/
 	this.init = function(objParent){
 
+		if(typeof ucRemoteDebugEnabled != "undefined")
+			g_enableDebug = true;
+		
 		if(objParent.hasClass("owl-carousel") == false)
 			throw new Error("owl-carousel class not found");
 
 		g_owlCarousel = objParent;
-
+		
 		g_owl = g_owlCarousel.data("owl.carousel");
-
+		
+		g_owlCarousel.on("uc_ajax_refreshed", onAjaxRefreshed);
+		
 		if(!g_owl)
 			return(false);
 
 		g_isInited = true;
-
+		
+		
 		return(true);
-
+	}
+	
+	/**
+	 * on ajax refreshed
+	 */
+	function onAjaxRefreshed(){
+		
+		g_owl = g_owlCarousel.data("owl.carousel");
+		
 	}
 
+	
 }
 
 /**
@@ -2278,8 +2301,16 @@ function UERemoteWidgets(){
 	this.doAction = function(action, arg1, arg2){
 
 		if(g_vars.trace_debug){
+						
+			var strAction = action;
+			if(arg1)
+				strAction += " "+arg1;
+			if(arg2)
+				strAction += " "+arg2;
+
 			trace("Do Action: ");
-			trace(action+ " "+arg1+" "+arg2);
+			
+			trace(strAction);
 		}
 		
 		if(!g_api){
@@ -2296,7 +2327,7 @@ function UERemoteWidgets(){
 				var apiType = g_api.getAPIType();
 
 				if(apiType == "carousel"){
-
+										
 					g_api.doAction(action);
 					
 					return(false);

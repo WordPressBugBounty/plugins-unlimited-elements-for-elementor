@@ -1,5 +1,16 @@
 
 
+version 1.5.142:
+
+* Change: cleared some not needed php code
+* Fix: updated twig engine, fixed some deprecated messages of php 8.4
+* Fix: fixed some pagination with avoid duplicates issues
+* Fix: removed eval() funciton from unite gallery js
+* Fix: fixed some rss issues
+* Fix: improved the debug for rss feed
+* Fix: improved some security issues for images links and attributes
+
+
 version 1.5.141:
 
 * Fix: fixed pagination of manual type

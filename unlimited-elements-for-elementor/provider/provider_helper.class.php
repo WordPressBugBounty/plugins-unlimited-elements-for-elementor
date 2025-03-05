@@ -663,12 +663,10 @@ class HelperProviderUC{
 			
 			if(!empty($mainKey))
 				dmp("Main key detected: <b>$mainKey</b>");
-			
-			$arrDataShow = UniteFunctionsUC::modifyDataArrayForShow($arrDataOriginal);
-			
+						
 			dmp("Original Data Found: ");
 			
-			HelperHtmlUC::putHtmlDataDebugBox($arrDataShow);
+			HelperHtmlUC::putHtmlDataDebugBox($arrDataOriginal);
 		}
 
 		if(is_array($arrData) == false){
@@ -894,9 +892,7 @@ class HelperProviderUC{
 		$numItems = count($arrRepeaterItems);
 		
 		dmp("Final Response: <b style='color:blue;'>$numItems</b> Repeater Items:");
-				
-		$arrRepeaterItems = UniteFunctionsUC::modifyDataArrayForShow($arrRepeaterItems);
-		
+						
 		HelperHtmlUC::putHtmlDataDebugBox($arrRepeaterItems);
 		
 	}
@@ -1976,8 +1972,25 @@ class HelperProviderUC{
 		$post = get_post();
 		
 		HelperUC::$operations->putPostCustomFieldsDebug($post->ID);
+				
+	}
+	
+	/**
+	 * show current post meta debug
+	 */
+	public static function showCurrentPostTermsDebug(){
+		
+		$post = get_post();
+		
+		$arrTermsTitles = UniteFunctionsWPUC::getPostTermsTitles($post, true);
+		
+		$postTitle = $post->post_title;
+		
+		dmp("Post Terms for post <b>$postTitle</b>: ");
+		dmp($arrTermsTitles);
 		
 	}
+	
 	
 
 }

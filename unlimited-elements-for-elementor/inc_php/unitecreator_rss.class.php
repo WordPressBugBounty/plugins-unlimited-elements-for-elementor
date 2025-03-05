@@ -7,21 +7,37 @@
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 class UniteCreatorRSS{
-
-    private $rssAutoDetectKeys = [
+	
+	public static $showDebug = false;
+	
+    private $rssAutoDetectKeys = array(
         'title_key' => 'title',
         'description_key' => 'description',
         'content_key' => 'content',
         'author_key' =>'dc_creator|author_name|author|dc-creator|credit',
         'link_key' => 'link|atom_link_href|link_href',
         'image_key' => 'media_thumbnail_url|media_group_media_content_url|media_content_media_thumbnail_url|media_content_url|image_url|enclosure_url',
-        'date_key' => 'publish_date_formatted|publish_date|published',
-    ];
+        'date_key' => 'publish_date|published|publish_date_original'
+    );
 	
+    /**
+     * constructor
+     */
+    public function __construct(){
+    	
+    	if(self::$showDebug == false){
+    		$rssDebug = HelperUC::hasPermissionsFromQuery("ucrssdebug");
+    		
+    		if($rssDebug == true)
+    			self::$showDebug = true;
+    	}
+    	    	
+    }
+    
     /**
      * get rss fields
      */
@@ -31,7 +47,7 @@ class UniteCreatorRSS{
             array(
                 "type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
                 "id" => "rss_url",
-                "text" => $name ? __("RSS Feed URL(".$name.")", "unlimited-elements-for-elementor") : __("RSS URL", "unlimited-elements-for-elementor"),
+                "text" => __("RSS URL", "unlimited-elements-for-elementor"),
                 "desc" => __("Enter some RSS service url. Example: https://wired.com/feed/rss", "unlimited-elements-for-elementor"),
                 "placeholder" => "Example: https://wired.com/feed/rss",
                 "label_block" => true,
@@ -90,8 +106,12 @@ class UniteCreatorRSS{
 	 * get Rss Feed data
 	 */
 	public function getRssFeedData($data, $arrValues, $name, $showDebug = false){
+		
+		if(self::$showDebug == true)
+			$showDebug = true;
+		
 		$data[$name] = array();
-
+		
 		if($showDebug == true){
 			dmp("---- the debug is ON, please turn it off before release --- ");
 		}
@@ -104,7 +124,6 @@ class UniteCreatorRSS{
 			return($data);
 		}
 			
-		
 		$rss_url = UniteFunctionsUC::getVal($arrValues, $name.'_rss_url');
 
 		if(empty($rss_url)){
@@ -116,17 +135,37 @@ class UniteCreatorRSS{
 		
 		$getUrlDebug = false;
 		
-        $rssContent = HelperUC::$operations->getUrlContents($rss_url, $getUrlDebug);
-
+		if(self::$showDebug == true)
+			$getUrlDebug = true;
+		
+		if($showDebug){
+			dmp("Get rss data from: $rss_url");			
+		}
+		try{
+	        
+			$rssContent = HelperUC::$operations->getUrlContents($rss_url, $getUrlDebug, true);
+				        
+		}catch(Exception $e){
+			
+            if($showDebug){
+                dmp("Failed to fetch rss: ".$e->getMessage());
+            }
+            
+            return($data);
+		}
+        
+        
+        //dmp($response);exit();
+        
         if(empty($rssContent)) {
             if($showDebug)
                 dmp("no content found for rss");
 
             return($data);
         }
-
+		
         $arrData = UniteFunctionsUC::maybeXmlDecode($rssContent);
-
+		
         if(empty($arrData)) {
             if($showDebug)
                 dmp('no data found for rss');
@@ -135,11 +174,10 @@ class UniteCreatorRSS{
         }
 
         if($showDebug == true && is_array($arrData)) {
+        	
             dmp("Original rss data");
-
-            $arrDataShow = UniteFunctionsUC::modifyDataArrayForShow($arrData);
-
-            dmp($arrDataShow);
+			            
+			HelperHtmlUC::putHtmlDataDebugBox($arrData);						
         }
 
         if(is_array($arrData) == false){
@@ -150,7 +188,7 @@ class UniteCreatorRSS{
                 dmp(htmlspecialchars($rssContent));
                 echo "</div>";
             }
-
+			
             return($data);
         }
 
@@ -165,16 +203,18 @@ class UniteCreatorRSS{
             }
 
             $arrData = $this->simplifyRssDataArray($arrData, $dateFormat);
-
+			
             // trim by date limits
             (bool) $showFilterByDate = UniteFunctionsUC::getVal($arrValues, $name."_rss_show_filter_by_date");
             if($showFilterByDate && !empty($arrData)) {
+            	
                 $filterByDateOption = UniteFunctionsUC::getVal($arrValues, $name . "_rss_filter_by_date_option");
+                                
                 if (!empty($filterByDateOption) && $filterByDateOption != 'all') {
                     $arrData = $this->limitArrayByPublishDate($arrData, $filterByDateOption);
                 }
             }
-
+	
             // trim by items limit
             (int) $dataItemsLimit = UniteFunctionsUC::getVal($arrValues, $name."_rss_items_limit");
             if($dataItemsLimit > 0 && !empty($arrData))
@@ -182,10 +222,25 @@ class UniteCreatorRSS{
 
             $data[$name] = $arrData;
         }
-
+		
+        
 		return $data;
 	}
-
+	
+	/**
+	 * get the date
+	 */
+	private function getDateString($arrItem){
+		
+		if (array_key_exists('publish_date_original', $arrItem))
+			return($arrItem["publish_date_original"]);
+		
+		if (array_key_exists('publish_date', $arrItem))
+			return($arrItem["publish_date"]);
+		
+		return(null);
+	}
+	
 	/**
 	 * limit the array (filter) by publish date
 	 */
@@ -215,14 +270,17 @@ class UniteCreatorRSS{
 			default:
 				break;
 		}
-
+		
 		if ($from_time > 0 && $to_time > 0) {
 			$newArray = array();
-
-			foreach ($arrData as $key => $value) {
+ 			
+			foreach ($arrData as $key => $value){
+				
 				if (array_key_exists('publish_date', $value)) {
 					
-					$timestamp = UniteFunctionsUC::date2Timestamp($value['publish_date']);
+					$dateString = $this->getDateString($value);
+					
+					$timestamp = UniteFunctionsUC::date2Timestamp($dateString);
 					
 					if ($timestamp >= $from_time && $timestamp < $to_time) {
 						$newArray[] = $arrData[$key];
@@ -306,8 +364,11 @@ class UniteCreatorRSS{
 					if (!empty($dateFormat) && ($newKey == 'publish_date' || $newKey == 'published')) {
 						$date_time = UniteFunctionsUC::date2Timestamp($value);
 
-						if (!empty($date_time))
-							$niceArr['publish_date_formatted'] = date($dateFormat, $date_time);
+						if (!empty($date_time)){
+							
+							$niceArr['publish_date_original'] = $value;
+							$niceArr[$key] = s_date($dateFormat, $date_time);							
+						}
 					}
 				}
 			}
@@ -321,7 +382,7 @@ class UniteCreatorRSS{
 	 * create data for rss
 	 */
 	private function createDate($arrRss, $dateFormat) {
-		
+				
 		$niceArr = array();
 
 		foreach ($arrRss as $key => $value) {
@@ -330,9 +391,9 @@ class UniteCreatorRSS{
 			} else {
 				$timestamp = UniteFunctionsUC::date2Timestamp($value);
 				if (!empty($timestamp)) {
-					$formatedDate = date($dateFormat, $timestamp);
+					$formatedDate = s_date($dateFormat, $timestamp);
 					if (empty($formatedDate)) {
-						$formatedDate = date('d/m/Y H:i:s', $timestamp);
+						$formatedDate = s_date('d/m/Y H:i:s', $timestamp);
 					}
 
 					$niceArr[$key] = $formatedDate;
@@ -394,9 +455,9 @@ class UniteCreatorRSS{
     public function getRssFeedKeys(UniteCreatorAddonWork $addon, $data){
     	
         $params = $addon->getParams();
-
+		
         $keys = array();
-
+		
         $rssFeedArr = UniteFunctionsUC::getVal($data, "rss_feed");
         if (empty($rssFeedArr)) {
             return;
@@ -443,7 +504,7 @@ class UniteCreatorRSS{
             } else {
             	            	
                 $autoKey = $this->autoDetectKeys($keyName, $firstRssElement);
-				                
+				
                 if (!empty($autoKey)) {
             		            		
                 	$isAutoKey = true;
@@ -484,6 +545,18 @@ class UniteCreatorRSS{
             dmp($firstRssShow);
         }
 
+        
+        //set original date key
+        
+        if(isset($firstRssElement["publish_date_original"]))
+        	$keys["date_key_original"] = "publish_date_original";
+        else
+        if(isset($firstRssElement["publish"]))
+        	$keys["date_key_original"] = "publish";
+        else
+        	$keys["date_key_original"] = "publish_date";
+        
+        
         return $keys;
     }
 
@@ -538,16 +611,22 @@ class UniteCreatorRSS{
      */
     private function hasImageKey($rssItem) {
     	
-        $possibleImageKeys = $this->rssAutoDetectKeys['image_key'];
-
+        $possibleImageKeys = UniteFunctionsUC::getVal($this->rssAutoDetectKeys, "image_key");    
+		
+        if(empty($possibleImageKeys))
+        	return(false);
+        
         $rssKeys = explode('|', $possibleImageKeys);
 
+        if(empty($rssKeys) == false)
+        	return(false);
+        
         foreach ($rssKeys as $rssKey) {
             if(array_key_exists($rssKey, $rssItem)) {
                 return true;
             }
         }
-
+		
         $otherImageKey = $this->searchForImageKey($rssItem);
         
         if (!empty($otherImageKey)) {

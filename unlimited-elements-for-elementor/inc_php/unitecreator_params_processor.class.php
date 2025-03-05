@@ -5,7 +5,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorParamsProcessorWork{
 
@@ -1009,7 +1009,11 @@ class UniteCreatorParamsProcessorWork{
 			$imageUrl = UniteProviderFunctionsUC::getImageUrlFromImageID($imageId, $imageSize);
 		else
 			$imageUrl = HelperUC::URLtoFull($imageUrl);
-
+		
+		//sanitize the url
+		if(!empty($imageUrl))
+			$imageUrl = UniteFunctionsUC::sanitize($imageUrl, UniteFunctionsUC::SANITIZE_URL);
+					
 		$data[$name] = $imageUrl;
 
 		$sizeFilters = UniteFunctionsUC::getVal($param, "size_filters");
@@ -1029,10 +1033,10 @@ class UniteCreatorParamsProcessorWork{
 
 		$keyThumb = $name . "_thumb";
 		$urlThumb = UniteFunctionsUC::getVal($data, $keyThumb);
-
+		
 		if(empty($urlThumb) === true)
 			$data[$keyThumb] = $imageUrl;
-
+		
 		return $data;
 	}
 
@@ -1512,7 +1516,7 @@ class UniteCreatorParamsProcessorWork{
 	  * get link param data
 	 */
 	private function getLinkData($data, $value, $name, $param, $processType){
-
+		
 		if(is_string($value) === true)
 			$value = array("url" => $value);
 		
@@ -1521,7 +1525,7 @@ class UniteCreatorParamsProcessorWork{
 		if(is_array($url))
 			$url = "";
 		
-		$url = esc_url($url);
+		$url = UniteFunctionsUC::sanitize($url, UniteFunctionsUC::SANITIZE_URL);
 		
 		$isExternal = UniteFunctionsUC::getVal($value, "is_external");
 		$noFollow = UniteFunctionsUC::getVal($value, "nofollow");
@@ -1555,6 +1559,7 @@ class UniteCreatorParamsProcessorWork{
 		$data[$name . "_full"] = $urlFull;
 		$data[$name . "_noprefix"] = $urlNoPrefix;
 
+		
 		return $data;
 	}
 
@@ -1588,7 +1593,7 @@ class UniteCreatorParamsProcessorWork{
 			// skip key with forbidden characters
 			if(preg_match("/[^\da-z_-]+/", $key) === 1)
 				continue;
-
+		
 			// skip href attribute and javascript events
 			if($key === "href" || strpos($key, "on") === 0)
 				continue;
@@ -1821,10 +1826,15 @@ class UniteCreatorParamsProcessorWork{
             case "rss_feed":
                 
             	$arrValues = UniteFunctionsUC::getVal($param, "value");
-            	
+            	            	
             	$objRss = new UniteCreatorRSS();
             	
-               	$data = $objRss->getRssFeedData($data, $arrValues, $name);
+            	$addonValues = $this->addon->getOriginalValues();
+				
+            	$showDebug = UniteFunctionsUC::getVal($addonValues,"show_debug");
+            	$showDebug = UniteFunctionsUC::strToBool($showDebug);
+            	
+               	$data = $objRss->getRssFeedData($data, $arrValues, $name, $showDebug);
                 
 			break;
             case "repeater":

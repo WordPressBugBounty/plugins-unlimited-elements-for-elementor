@@ -515,6 +515,10 @@ class UniteCreatorElementorPagination{
 		if($isDebug == true){
 			dmp("pagination query:");
 			dmp(GlobalsProviderUC::$lastPostQuery->query);
+			
+			$totalPosts = GlobalsProviderUC::$lastPostQuery->found_posts;
+			
+			dmp("Total Posts: $totalPosts");
 		}
 
 		global $wp_rewrite;

@@ -5,7 +5,7 @@
  * @copyright (C) 2021 Unlimited Elements, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 /**
@@ -484,8 +484,36 @@ defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
 		 */
 		public static function putHtmlDataDebugBox($data){
 			
-			echo "<div style='background-color:#E5F7E1;font-size:12px;padding:5px;'>";
+			self::putHtmlDataDebugBox_start();
+			
+			if(is_array($data))
+				$data = UniteFunctionsUC::modifyDataArrayForShow($data);
+			
+			if(is_string($data))
+				$data = htmlspecialchars($data);
+			
 			dmp($data);
+			
+			self::putHtmlDataDebugBox_end();
+		}
+
+		/**
+		 * put debug box - start
+		 */
+		public static function putHtmlDataDebugBox_start(){
+			
+			echo "<div style='background-color:#E5F7E1;
+				              font-size:12px;padding:5px;
+				              max-width:800px;
+				              max-height:600px;
+				              overflow:scroll;margin-bottom:30px;'>";
+		}
+		
+		/**
+		 * put debug box end
+		 */
+		public static function putHtmlDataDebugBox_end(){
+			
 			echo "</div>";
 		}
 		

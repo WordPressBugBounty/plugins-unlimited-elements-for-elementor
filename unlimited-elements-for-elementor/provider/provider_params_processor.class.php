@@ -5,7 +5,7 @@
  * @copyright (C) 2012 Unite CMS, All Rights Reserved.
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * */
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	
@@ -317,96 +317,18 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	 */
 	private function checkModifyQueryClauses($args,$showDebug){
 
-
 		$postType = UniteFunctionsUC::getVal($args, "post_type");
 
 		if($postType != "product")
 			return(false);
-
-		$orderby = UniteFunctionsUC::getVal($args, "orderby");
-
-
-		switch($orderby){
-			case UniteFunctionsWPUC::SORTBY_SALES:
-			case UniteFunctionsWPUC::SORTBY_RATING:
-
-				if($showDebug == true)
-					dmp("modify post query for orderby:".$orderby);
-
-				add_filter( 'posts_clauses', array( $this, 'modifyWCQuery' ), 10, 2 );
-
-			break;
-		}
-
+			
+		$objWoo = new UniteCreatorWooIntegrate();
+		
+		$objWoo->checkModifyQueryClauses($args, $showDebug);
+		
 	}
 
 
-	/**
-	 * before get posts
-	 */
-	public function modifyWCQuery($arrClauses){
-
-		if(empty(GlobalsProviderUC::$lastQueryArgs))
-			return($arrClauses);
-
-		$args = GlobalsProviderUC::$lastQueryArgs;
-
-
-		$postType = UniteFunctionsUC::getVal($args, "post_type");
-
-		if($postType != "product")
-			return($arrClauses);
-
-		$isActive = UniteCreatorWooIntegrate::isWooActive();
-
-		if($isActive == false)
-			return($arrClauses);
-
-		$orderBY = UniteFunctionsUC::getVal($args, "orderby");
-		$dir = UniteFunctionsUC::getVal($args, "order", "DESC");
-
-
-		if(empty($orderBY))
-			return($arrClauses);
-
-		//add code filter by orderby
-
-		if(class_exists("WC_Query") == false)
-			return($arrClauses);
-
-		$objQuery = new WC_Query();
-
-		switch($orderBY){
-			case "price":
-
-				//if($dir == "DESC")
-					//$arrClauses = $objQuery->order_by_price_desc_post_clauses($arrClauses);
-				//else
-					//$arrClauses = $objQuery->order_by_price_asc_post_clauses($arrClauses);
-
-			break;
-			case 'sales':
-				$arrClauses = $objQuery->order_by_popularity_post_clauses($arrClauses);
-			break;
-			case 'rating':
-				$arrClauses = $objQuery->order_by_rating_post_clauses($arrClauses);
-
-				//change desc to ask
-
-				if($dir == "ASC"){
-					$orderby = UniteFunctionsUC::getVal($arrClauses, "orderby");
-					$orderby = str_replace("DESC", "ASC", $orderby);
-
-					$arrClauses["orderby"] = $orderby;
-				}
-
-			break;
-		}
-
-		remove_filter( 'posts_clauses', array( $this, 'modifyWCQuery' ), 10, 2 );
-
-		return($arrClauses);
-	}
 
 
 
@@ -2442,11 +2364,30 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 		$args = $this->getPostListData_getPostGetFilters_pagination($args, $value, $name, $data, $param);
 
+		//---- disable other hooks:
+		
+		$disableOtherHooks = UniteFunctionsUC::getVal($value, "{$name}_disable_other_hooks");
+		
+		//disable by url
+		if(GlobalsUC::$showQueryDebugByUrl == true && HelperUC::hasPermissionsFromQuery("uctestquery_clear"))
+			$disableOtherHooks = "yes";
+		
+		if($disableOtherHooks === "yes" && GlobalsProviderUC::$isUnderAjax == true){
+			
+			global $wp_filter;
+			$wp_filter = array();
+			
+			if($showDebugQuery == true){
+				dmp("<b>Disable third party hooks...</b>");
+			}
+			
+		}
+		
 		
 		//update by post and get filters
 		$objFiltersProcess = new UniteCreatorFiltersProcess();
 		$args = $objFiltersProcess->processRequestFilters($args, $isFilterable);
-				
+		
 		// process out of stock variation
 
 		if($excludeOutofStockVariation == true){
@@ -2473,32 +2414,36 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 		}
 		
-		//disable other hooks:
-
-		$disableOtherHooks = UniteFunctionsUC::getVal($value, "{$name}_disable_other_hooks");
 		
-		if($disableOtherHooks === "yes" && GlobalsProviderUC::$isUnderAjax == true){
-			global $wp_filter;
-			$wp_filter = array();
+		
+		//clear some hook by url - for debug
+		
+		if(GlobalsUC::$showQueryDebugByUrl == true){
 			
-			if($showDebugQuery == true){
-				dmp("disable third party hooks...");
+			$filterToDisable = HelperUC::getQueryVarWithPermission("uctestquery_clearhook");
+			
+			if(!empty($filterToDisable)){
+				
+				dmp("<b>Debug: clear filter:  $filterToDisable </b>");
+				
+				UniteFunctionsWPUC::clearFiltersFunctions($filterToDisable);
+				
 			}
-
+			
 		}
-
+		
 
 		//remember last args
 		GlobalsProviderUC::$lastQueryArgs = $args;
-
+		
 		//check for modify orderby query clauses (for woo)
 		$this->checkModifyQueryClauses($args, $showDebugQuery);
-				
+		
 		//for debug
 		//UniteFunctionsWPUC::clearFiltersFunctions("posts_where");
 		
 		$query = new WP_Query();
-
+		
 		do_action("ue_before_custom_posts_query", $query);
 		
 		$args["cache_results"] = true;
@@ -2517,11 +2462,22 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if(GlobalsProviderUC::$skipRunPostQueryOnce == true)
 			$this->skipPostListQueryRun = true;
 		
+		//debug - clear some arguments by query
 		
+		if(GlobalsUC::$showQueryDebugByUrl == true){
+		
+			$argsToClear = HelperUC::getQueryVarWithPermission("uctestquery_cleararg");
+						
+			if(!empty($argsToClear))
+				add_action("pre_get_posts", array($this,"preGetPostsModifyQueryDebug"), 9999, 1);
+		}
+					
 		$wasSkipRun = false;
 				
-		if($this->skipPostListQueryRun == false)		
+		if($this->skipPostListQueryRun == false){
 			$query->query($args);
+			GlobalsProviderUC::$lastQueryRequest = $query->request;
+		}
 		else{
 			
 			//if skipped - set to false for next run time.
@@ -2548,7 +2504,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 			dmp("<strong>The Query Request Is:</strong>");
 			dmp($query->request);
-
+		
 			dmp("<strong>The Final Query Vars:</strong>");
 			dmp($originalQueryVars);
 
@@ -2858,7 +2814,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$nameForFilter = $name;
 		if(!empty($nameListing))
 			$nameForFilter = $nameListing;
-
+		
 		$isFilterable = $this->getIsFilterable($value, $nameForFilter);
 
 		if($orderBy == "default")
@@ -2967,9 +2923,12 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			GlobalsProviderUC::$lastQueryArgs = $wp_query->query_vars;
 
 			$query = new WP_Query( $currentQueryVars );
-
+			
 		}
-
+			
+		if(!empty($query))
+			GlobalsProviderUC::$lastQueryRequest = $query->request;
+		
 
 		HelperUC::addDebug("Query Vars", $currentQueryVars);
 	
@@ -3130,8 +3089,11 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		add_action("pre_get_posts", array($this,"clearTaxQueryForGetPostListData_manualSelection"), 1, 1);
 		
-		if($this->skipPostListQueryRun == false)
+		if($this->skipPostListQueryRun == false){
 			$query = new WP_Query($args);
+			
+			GlobalsProviderUC::$lastQueryRequest = $query->request;
+		}
 		else{
 			
 			$query = new WP_Query();
@@ -3204,14 +3166,6 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	}
 
 
-	/**
-	 * remove tax query from manual query
-	 */
-	public function clearTaxQueryForGetPostListData_manualSelection($query) {
-		if (isset($query->query_vars['tax_query']))
-			unset($query->query_vars['tax_query']);
-	}
-
 
 	/**
 	 * get the ue templates data
@@ -3226,7 +3180,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if(GlobalsUC::$showQueryDebugByUrl == true)
 			$showDebugQuery = true;
 
-
+		
 		if(empty($strTemplatesIDs)){
 
 			if($showDebugQuery == true){
@@ -3456,7 +3410,40 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		return($data);
 	}
+	
+	protected function z_______________BY_PRE_GET_POSTS____________(){}
+	
+	/**
+	 * pre get posts - modify the query for debug
+	 */
+	public function preGetPostsModifyQueryDebug($query){
+		
+		$argsToClear = HelperUC::getQueryVarWithPermission("uctestquery_cleararg");
 
+		if (!empty($argsToClear)) {
+			
+	        // Convert comma-separated string to an array
+	        $argsArray = array_map('trim', explode(',', $argsToClear));
+	
+	        foreach ($argsArray as $arg) {
+	        	
+	            dmp("<b>Unsetting argument: $arg</b>");
+	            unset($query->query_vars[$arg]);
+	        }
+	    }		
+		
+		remove_action("pre_get_posts", array($this,"preGetPostsModifyQueryDebug"), 9999, 1);
+		
+	}
+	
+	/**
+	 * remove tax query from manual query
+	 */
+	public function clearTaxQueryForGetPostListData_manualSelection($query) {
+		if (isset($query->query_vars['tax_query']))
+			unset($query->query_vars['tax_query']);
+	}
+	
 
 	protected function z_______________DYNAMIC_LOOP_GALLERY____________(){}
 
@@ -4761,6 +4748,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	 */
 	public function getWPTermsData($value, $name, $processType, $param, $data){
 		
+				
 		$postType = UniteFunctionsUC::getVal($value, $name."_posttype","post");
 		$taxonomy =  UniteFunctionsUC::getVal($value, $name."_taxonomy","category");
 
@@ -4796,7 +4784,14 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$arrIncludeBy = UniteFunctionsUC::getVal($value, $name."_includeby");
 		if(empty($arrIncludeBy))
 			$arrIncludeBy = array();
-
+		
+		//add special auto mode
+		$arrWidgetValues = $this->addon->getOriginalValues();
+		$filterRole = UniteFunctionsUC::getVal($arrWidgetValues, "filter_role");
+		
+		if($filterRole == UniteCreatorFiltersProcess::ROLE_CHILD_AUTO_TERMS)
+			$arrIncludeBy[] = "auto_terms_main_filter_children";
+		
 		$arrExcludeBy = UniteFunctionsUC::getVal($value, $name."_excludeby");
 		if(empty($arrExcludeBy))
 			$arrExcludeBy = array();
@@ -4813,7 +4808,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$useCustomFields = UniteFunctionsUC::getVal($param, "use_custom_fields");
 		$useCustomFields = UniteFunctionsUC::strToBool($useCustomFields);
 
+
 		$isHide = false;
+
 		if($hideEmpty == "hide")
 			$isHide = true;
 
@@ -4838,6 +4835,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		//includeby
 		$arrIncludeTermIDs = array();
+		$arrIncludeDirectChildrenOfSelectedTermsIDs = array();
 		$includeParentID = null;
 		$isDirectParent = true;
 		
@@ -4852,6 +4850,11 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				case "spacific_terms":
 
 					$arrIncludeTermIDs = UniteFunctionsUC::getVal($value, $name."_include_specific");
+
+				break;
+				case "direct_children_of_selected_terms":
+
+					$arrIncludeDirectChildrenOfSelectedTermsIDs = UniteFunctionsUC::getVal($value, $name."_include_direct_children_of_selected_terms");
 
 				break;
 				case "parents":
@@ -4916,12 +4919,19 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 						$arrIncludeTermIDs = array("999999999");
 
 				break;
+				case "auto_terms_main_filter_children":
+					
+					dmp("get terms from main filter");
+					
+				break;
 				default:
 					dmp("wrong include by: $includeby");
 				break;
 			}
 
 		}
+
+		$hideFirstLevelTerms = false;
 
 		foreach($arrExcludeBy as $excludeBy){
 
@@ -4944,6 +4954,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 					if(!empty($arrTermIDs))
 						$arrExcludeIDs  = array_merge($arrExcludeIDs, $arrTermIDs);
 
+				break;
+				case "hide_first_level_terms":
+					$hideFirstLevelTerms = true;
 				break;
 				default:
 					dmp("wrong exclude by: ".$excludeBy);
@@ -5005,11 +5018,11 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				$args["order"] = $orderDir;
 			}
 
-
+			
 			if($orderBy == "rand"){
 				add_filter( 'terms_clauses', array($this, "randomOrderTaxonomyTerms"), 1, 1);
 			}
-
+			
 		}
 
 
@@ -5032,6 +5045,21 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			$args["include"] = $arrIncludeTermIDs;
 		}
+
+
+		//include children of selected parents terms
+		if(!empty($arrIncludeDirectChildrenOfSelectedTermsIDs)){
+
+
+			if(!empty($arrExcludeIDs))
+				$arrIncludeDirectChildrenOfSelectedTermsIDs = array_diff($arrIncludeDirectChildrenOfSelectedTermsIDs, $arrExcludeIDs);
+	
+			if(!empty($arrIncludeDirectChildrenOfSelectedTermsIDs))
+				add_filter( 'terms_clauses', function( $clauses ) use ( $arrIncludeDirectChildrenOfSelectedTermsIDs ) {
+					return $this->getDirectChildrenOfSelectedTerms( $clauses, $arrIncludeDirectChildrenOfSelectedTermsIDs );
+				}, 1, 2 );
+
+		}
 		
 			
 		if(!empty($includeParentID)){
@@ -5048,6 +5076,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$args["suppress_filters"] = false;
 
 		//------- get the terms and filter by slugs if available
+
+		if($hideFirstLevelTerms == true)
+			add_filter( 'terms_clauses', array($this, "hideFirstLevelTaxonomyTerms"), 1, 1);
 
 		HelperUC::addDebug("Terms Query", $args);
 
@@ -5133,6 +5164,34 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		return $clauses;
 	}
 
+
+	/**
+	 * filter hide first level taxonomy terms
+	 */
+	public function hideFirstLevelTaxonomyTerms($clauses) {
+		
+		// display only categories where parent != 0, it means display only child categories
+		$clauses['where'] .= " AND tt.parent != 0";
+		
+		remove_filter( 'terms_clauses', array($this, "hideFirstLevelTaxonomyTerms"), 1, 1);
+		
+		return $clauses;
+	}
+
+
+	/**
+	 * filter get direct children of selected parent terms
+	 */
+	public function getDirectChildrenOfSelectedTerms($clauses, $arrIncludeDirectChildrenOfSelectedTermsIDs) {
+	
+		$termsIDs = implode(', ', $arrIncludeDirectChildrenOfSelectedTermsIDs);
+
+		$clauses['where'] .= " AND tt.parent IN (" . $termsIDs . ")";
+
+		remove_filter('terms_clauses', array($this, "getDirectChildrenOfSelectedTerms"), 1, 2);
+
+		return $clauses;
+	}
 
 
 	protected function z_______________USERS____________(){}
@@ -5468,7 +5527,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			return $data;
 
 		//skip backend editor
-
+	
 		switch($special){
 			case "post_filter":
 				$data = $this->modifyData_postFilterOptions($data, $specialData);

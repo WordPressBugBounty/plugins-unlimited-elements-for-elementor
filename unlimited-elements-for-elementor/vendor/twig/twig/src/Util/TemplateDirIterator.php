@@ -22,7 +22,7 @@ class TemplateDirIterator extends \IteratorIterator
     #[\ReturnTypeWillChange]
     public function current()
     {
-        return UniteFunctionsUC::fileGetContents(parent::current());
+        return file_get_contents(parent::current());
     }
 
     /**

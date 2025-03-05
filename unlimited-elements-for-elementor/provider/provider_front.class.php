@@ -6,7 +6,7 @@
 * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 * */
 
-defined('UNLIMITED_ELEMENTS_INC') or die('Restricted access');
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteProviderFrontUC{
 	
@@ -120,7 +120,10 @@ class UniteProviderFrontUC{
 		
 		HelperProviderUC::showCurrentPostMetaDebug();
 		
+		HelperProviderUC::showCurrentPostTermsDebug();
+		
 	}
+	
 	
 	/**
 	 * on plugins loaded

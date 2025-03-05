@@ -158,7 +158,7 @@ class UEHttpRequest{
 	 * @throws UEHttpException
 	 */
 	public function get($url, $query = array()){
-
+		
 		return $this->withQuery($query)->request(self::METHOD_GET, $url);
 	}
 
@@ -172,7 +172,7 @@ class UEHttpRequest{
 	 * @throws UEHttpException
 	 */
 	public function post($url, $body = array()){
-
+		
 		return $this->withBody($body)->request(self::METHOD_POST, $url);
 	}
 
@@ -180,22 +180,19 @@ class UEHttpRequest{
 	 * print response debug
 	 */
 	private function printResponseDebug($requestResponse){
-		
-			$displayResponse = $requestResponse;
+					
+			$body = UniteFunctionsUC::getVal($requestResponse, "body");
 			
-			if(isset($displayResponse["body"]) && strlen($displayResponse["body"]) > 500){
-				
-				$displayResponse["body"] = substr($displayResponse["body"],0,500)." (cutted)...";
-				
-			}
+			$body = UniteFunctionsUC::truncateString($body,1000);
 			
-			dmp($displayResponse);
-		
+			HelperHtmlUC::putHtmlDataDebugBox($body);
+			
 	}
+	
 	
 	/**
 	 * Make a request to the server.
-	 *
+	 * Cache only "get" responses
 	 * @param string $method
 	 * @param string $url
 	 *
@@ -208,19 +205,31 @@ class UEHttpRequest{
 		$query = $this->query;
 		$body = $this->prepareBody($method);
 		$url = $this->prepareUrl($url, $query);
-
+		
 		if($this->isDebug() === true){
 			dmp("Request data:");
 			dmp($url);
 			dmp($headers);
-			dmp($query);
-			dmp($body);
 		}
-
-		$cacheKey = $this->prepareCacheKey($url);
+				
+		$cacheKey = $this->prepareCacheKey($url, $body);
 		$cacheTime = $this->prepareCacheTime($method);
-
-		$requestResponse = UniteProviderFunctionsUC::rememberTransient($cacheKey, $cacheTime, function() use ($url, $method, $headers, $body){
+		
+		if($cacheTime > 0){
+			
+			$requestResponse = UniteProviderFunctionsUC::getTransient($cacheKey);
+			
+			if(!empty($requestResponse)){
+								
+				if($this->isDebug() == true){
+					dmp("get the response from cache");
+					$this->printResponseDebug($requestResponse);
+				}
+				
+				return new UEHttpResponse($requestResponse);
+			}
+			
+		}
 		
 		$arrRequest = array(
 				"method" => $method,
@@ -229,50 +238,63 @@ class UEHttpRequest{
 				"timeout" => self::REQUEST_TIMEOUT,
 				"sslverify" => false
 		);
+
+		if($this->isDebug() === true){
+			dmp("do the request!");
+		}
 		
-				
 		$wpResponse = wp_remote_request($url, $arrRequest);
 		
-		//this request fails because it redirects to this url: https://feeds.npr.org/1004/rss.xml
-		//how to get this redirect url here?
+		if(is_wp_error($wpResponse) === true)
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new UEHttpRequestException($wpResponse->get_error_message(), $this);
+
+		$status = wp_remote_retrieve_response_code($wpResponse);
+		$headers = wp_remote_retrieve_headers($wpResponse);
+		$body = wp_remote_retrieve_body($wpResponse);
 		
-			if(is_wp_error($wpResponse) === true)
-				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-				throw new UEHttpRequestException($wpResponse->get_error_message(), $this);
-
-			$requestResponse = array(
-				"status" => wp_remote_retrieve_response_code($wpResponse),
-				"headers" => wp_remote_retrieve_headers($wpResponse)->getAll(),
-				"body" => wp_remote_retrieve_body($wpResponse),
-			);
+		$requestResponse = array(
+			"status" => $status,
+			"headers" => $headers,
+			"body" => $body,
+		);
+		
+		//validation
+		
+		if(is_callable($this->validateResponse) === true){
 			
-			if($this->isDebug() === true){
-				dmp("do the request!");
-			}
+			$response = new UEHttpResponse($requestResponse);
+			$validResponse = call_user_func($this->validateResponse, $response);
 
-			if(is_callable($this->validateResponse) === true){
-				$response = new UEHttpResponse($requestResponse);
-				$validResponse = call_user_func($this->validateResponse, $response);
-
-				if($validResponse === false)
-					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-					throw new UEHttpResponseException("Response validation failed.", $response);
-			}
-
-			return $requestResponse;
-		});
-
+			if($validResponse === false)
+				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+				throw new UEHttpResponseException("Response validation failed.", $response);
+		}
+			
 		//show debug
 		if($this->isDebug() === true){
 			
-			dmp("Cached / fetched response:");
+			dmp("Fetched Response ($status):");
 			$this->printResponseDebug($requestResponse);
 			
 		}
+		
+		//if empty body - cache time is mimimum
+		if(empty($body) && $cacheTime > 0){
+			
+			if($this->isDebug())
+				dmp("empty body - set time to 10 sec");
+			
+			$cacheTime = 10;
+		}
 
+		if($cacheTime > 0)
+			UniteProviderFunctionsUC::setTransient($cacheKey, $requestResponse, $cacheTime);
+		
 		return new UEHttpResponse($requestResponse);
 	}
-
+	
+	
 	/**
 	 * Determine if the debug mode is enabled.
 	 *
@@ -364,9 +386,17 @@ class UEHttpRequest{
 	 *
 	 * @return string
 	 */
-	private function prepareCacheKey($url){
-
-		return self::CACHE_KEY . ":" . md5($url);
+	private function prepareCacheKey($url, $body = array()){
+		
+		$text = $url;
+		
+		if(!empty($body)){
+			$text .= UniteFunctionsUC::encodeContent($body);
+		}
+			
+		$key = self::CACHE_KEY . ":" . md5($text);
+		
+		return $key;
 	}
 
 	/**
