@@ -30,8 +30,8 @@ class UniteCreatorForm{
 	const ACTION_WEBHOOK2 = "webhook2";
 	const ACTION_REDIRECT = "redirect";
 	const ACTION_GOOGLE_SHEETS = "google_sheets";
-	const ACTION_HOOK = "hook";	
-	
+	const ACTION_HOOK = "hook";
+	const ACTION_MAILPOET = "mailpoet";
 	const PLACEHOLDER_ADMIN_EMAIL = "admin_email";
 	const PLACEHOLDER_EMAIL_FIELD = "email_field";
 	const PLACEHOLDER_FORM_FIELDS = "form_fields";
@@ -365,6 +365,49 @@ class UniteCreatorForm{
 
 							$debugMessages[] = "Hook: $customActionName has been successfully executed.";
 						break;
+
+						case self::ACTION_MAILPOET:
+							
+							$mailPoetAPI = false;
+
+							// Check if MailPoet API is available
+							if (class_exists('\MailPoet\API\API'))
+								$mailPoetAPI = \MailPoet\API\API::MP( 'v1' );
+
+
+							$mailPoetLists = explode(',', UniteFunctionsUC::getVal($this->formSettings, "mailpoet_list_field"));
+							$emailField = UniteFunctionsUC::getVal($this->formSettings, "name_email_field");
+							$firstNameField = UniteFunctionsUC::getVal($this->formSettings, "name_first_name_field");
+							$lastNameField = UniteFunctionsUC::getVal($this->formSettings, "name_last_name_field");
+
+							// Build subscriber data
+							$subscriber = [];
+							foreach ($this->formFields as $field){
+								switch ($field['name']) {
+									case $emailField:
+										$subscriber['email'] = $field['value'];
+										break;
+									case $firstNameField:
+										$subscriber['first_name'] = $field['value'];
+										break;
+									case $lastNameField:
+										$subscriber['last_name'] = $field['value'];
+										break;
+								}
+							}
+
+							// Process subscription if email exists and API is available
+							if (!empty($subscriber['email']) && $mailPoetAPI != false) {
+								try{
+									$mailPoetAPI->addSubscriber($subscriber, (array) $mailPoetLists);
+									$debugMessages[] = 'Subscriber added successfully!';
+								}catch(Exception $exception) {
+									$error_string = $exception->getMessage();
+									$debugMessages[] = $error_string;
+								}
+							}
+
+							break;
 
 						default:
 							UniteFunctionsUC::throwError("Form action \"$action\" is not implemented.");

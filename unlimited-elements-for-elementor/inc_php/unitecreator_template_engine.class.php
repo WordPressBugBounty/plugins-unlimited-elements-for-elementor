@@ -1742,7 +1742,16 @@ class UniteCreatorTemplateEngineWork{
 
 	}
 
-
+	/**
+	 * filter sanitize html
+	 */
+	public function filterSanitizeHtml($html){
+		
+		$html = UniteFunctionsUC::sanitize($html, UniteFunctionsUC::SANITIZE_HTML);
+		
+		return($html);
+	}
+	
 	/**
 	 * add extra functions to twig
 	 */
@@ -1752,6 +1761,8 @@ class UniteCreatorTemplateEngineWork{
 		$filterFilter = new Twig\TwigFilter("filter", array($this, "filter"), array("needs_environment" => true));
 		$filterMap = new Twig\TwigFilter("map", array($this, "map"), array("needs_environment" => true));
 		$filterSort = new Twig\TwigFilter("sort", array($this, "sort"), array("needs_environment" => true));
+		
+		$filterSafe = new Twig\TwigFilter("ucsafe", array($this, "filterSanitizeHtml"), array("is_safe" => array("html")));
 		
 		//add extra functions
 		$putItemsFunction = new Twig\TwigFunction('put_items', array($this,"putItems"));
@@ -1823,6 +1834,8 @@ class UniteCreatorTemplateEngineWork{
 		$this->twig->addFilter($filterFilter);
 		$this->twig->addFilter($filterMap);
 		$this->twig->addFilter($filterSort);
+		
+		$this->twig->addFilter($filterSafe);
 
 		//add extra functions
 		$this->twig->addFunction($putItemsFunction);
@@ -2075,5 +2088,6 @@ class UniteCreatorTemplateEngineWork{
 
 		$this->addon = $addon;
 	}
-
+	
+	
 }

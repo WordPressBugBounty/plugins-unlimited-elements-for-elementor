@@ -248,8 +248,10 @@ function UniteCreatorParamsPanel(){
 				
 		switch(paramType){
 			case "uc_textfield":
+				
 				if(typeof objParam["font_editable"] !== "undefined")
 					name += "|raw";
+			
 			break;
 			case "uc_hr":
 				return(false);	//don't add hr
@@ -391,6 +393,10 @@ function UniteCreatorParamsPanel(){
 		else
 			var text = "{{"+textNoSlashes+"}}";
 		
+		//prepare to add the ucsafe
+		if (text.indexOf("|raw}}") !== -1 && !rawInsertText)
+			rawInsertText = text;
+		
 		if(rawInsertText){
 			
 			rawInsertText = g_ucAdmin.replaceAll(rawInsertText, "[param_name]", textNoSlashes);
@@ -410,8 +416,12 @@ function UniteCreatorParamsPanel(){
 		var tooltip = g_ucAdmin.getVal(objParam, "tooltip");
 		
 		var addHtml = "";
-				
+		
+		
 		if(rawInsertText){
+			
+			rawInsertText = rawInsertText.replace("|raw}}","|ucsafe|raw}}");
+			
 			addHtml += " data-rawtext=\""+rawInsertText+"\"";
 		}
 		

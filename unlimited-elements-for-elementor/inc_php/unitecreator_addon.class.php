@@ -1890,6 +1890,42 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 		return(false);
 	}
 
+	/**
+	 * check if the addon's HTML is escaped
+	 */
+	public function isHTMLEscaped(){
+		
+		$arrParams = $this->getParams(UniteCreatorDialogParam::PARAM_TEXTFIELD);
+
+		if(empty($arrParams))
+			return(true);
+		
+		foreach($arrParams as $param) {
+			
+			$type = UniteFunctionsUC::getVal($param, "type");
+			
+			switch($type){
+				case UniteCreatorDialogParam::PARAM_CONTENT:
+				case UniteCreatorDialogParam::PARAM_TEXTAREA:
+				case UniteCreatorDialogParam::PARAM_TEXTFIELD:
+				break;
+				default:
+					continue(2);
+				break;
+			}
+			
+			$name = UniteFunctionsUC::getVal($param, "name");
+						
+			$html = UniteFunctionsUC::getVal($this->arrTemplates, "html");
+			
+			if( strpos($html, '{{' . $name . '|raw}}') !== false ) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
 
 	/**
 	 * check if this addon supports ajax

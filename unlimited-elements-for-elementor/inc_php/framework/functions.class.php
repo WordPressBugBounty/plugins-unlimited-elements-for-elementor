@@ -20,6 +20,7 @@ class UniteFunctionsUC{
 	const SANITIZE_WISTIA = "sanitize_wistia";
 	const SANITIZE_URL = "sanitize_url";
 	const SANITIZE_ATTR = "sanitize_attr";
+	const SANITIZE_HTML = "sanitize_html";
 	
 	
 	private static $serial = 0;
@@ -2188,7 +2189,26 @@ class UniteFunctionsUC{
 		return($arrLinks);
 	}
 
+	/**
+	 * do url decode
+	 */
+	public static function hexEntityDecode($matches) {
+	    return chr(hexdec($matches[1]));
+	}
 
+	/**
+	 * decode the url
+	 */
+	public static function urlDecode($url) {
+		
+	    $decoded = urldecode($url);
+	    
+	    $decoded = preg_replace_callback('/&#x([a-fA-F0-9]+);/i', array("UniteFunctionsUC","hexEntityDecode"), $decoded);
+		
+	    return trim($decoded);
+	}	
+	
+	
 	public static function z___________VALIDATIONS_________(){}
 
 	/**
@@ -2200,7 +2220,7 @@ class UniteFunctionsUC{
 			UniteFunctionsUC::throwError("Object: $objectName don't have method $strMethod");
 
 	}
-
+	
 
 	/**
 	 * validate that the value is in array
@@ -2572,6 +2592,9 @@ class UniteFunctionsUC{
 			case self::SANITIZE_ATTR:
 				$str = self::sanitizeSecuredAttribute($str);
 			break;
+			case self::SANITIZE_HTML:
+				$str = self::sanitizeHTMLRemoveJS($str);
+			break;
 			default:
 				self::throwError("Sanitize string error: wrong type: $type");
 			break;
@@ -2619,8 +2642,33 @@ class UniteFunctionsUC{
         return false;
     }
 	
+    
     /**
-     * sanitize securd string
+     * remove all JS from HTML output
+     */
+	public static function sanitizeHTMLRemoveJS($html) {
+		
+	    // Remove <script> tags completely
+        $html = preg_replace('#<script[^>]*?>.*?</script>#is', '', $html);
+
+        // Remove all event handlers that start with 'javascript:'
+        $html = preg_replace('/\s*on\w+\s*=\s*["\']?\s*javascript\s*:[^"\'>]*["\']?/i', '', $html);
+
+		// Remove all event handlers, even if malformed (e.g., <iframe/onload=...>)
+        $html = preg_replace('/\s*\/?on\w+\s*=\s*["\']?[^"\'>]*["\']?/i', '', $html);
+        
+        // Remove javascript: URLs in href/src/xlink:href/etc.
+        $html = preg_replace('/\s*(href|src|xlink:href)\s*=\s*["\']?\s*javascript\s*:[^"\'>]*["\']?/i', '', $html);
+
+        // Remove potentially harmful attributes
+        $html = preg_replace('/\s*(autofocus|formaction|fscommand|seekSegmentTime|xmlns)\s*=\s*["\'][^"\']*["\']?/i', '', $html);
+        
+        return trim($html);		
+	}
+
+	
+	/*
+     * sanitize secured string
      */
     public static function sanitizeSecuredAttribute($str){
     	
@@ -2649,6 +2697,7 @@ class UniteFunctionsUC{
 		return($color);
 	}
 	
+	
 	/**
 	 * Sanitizes a URL by detecting malicious payloads.
 	 * Returns an empty string if the URL contains potential threats.
@@ -2657,11 +2706,10 @@ class UniteFunctionsUC{
 		
 		if(empty($url))
 			return($url);
-		
+	    			
 	    // Trim and decode the URL for better detection
-	    $decodedUrl = trim(urldecode($url));
-	
-	    // Define malicious patterns to detect
+	    $decodedUrl = self::urlDecode($url);
+	    
 	    $patterns = array(
 	        '/javascript:/i',         // Prevents JavaScript execution
 	        '/data:/i',               // Prevents data URI schemes
@@ -2674,14 +2722,12 @@ class UniteFunctionsUC{
 	        '/[\x00-\x1F\x7F]/',      // Detects control characters
 	    );
 			
-	    // Check if any pattern matches the URL
 	    foreach ($patterns as $pattern) {
 	        if (preg_match($pattern, $decodedUrl)) {
 	            return ""; // Return empty string if a threat is found
 	        }
 	    }
 	
-	    // If no threats are found, sanitize using esc_url()
 	    return esc_url($url);
 	}	
 	

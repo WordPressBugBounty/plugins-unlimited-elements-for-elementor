@@ -370,26 +370,6 @@ class UniteCreatorPluginIntegrations{
 	
 	
 	/**
-	 * check integrate with relevancy
-	 * add "relevancy" if search found and relevancy plugin exists
-	 */
-	public static function checkPostQueryRelevancy($args){
-		
-		if(function_exists("relevanssi_init") == false)
-			return($args);
-		
-		$search = UniteFunctionsUC::getVal($args, "s");
-		
-		if(empty($search))
-			return($args);
-		
-		$args["relevanssi"] = true;
-		
-		return($args);
-	}
-	
-	
-	/**
 	 * check if installed multi language plugins - polylang or wpml, and add "lang" argument
 	 */
 	public static function checkPostQueryLanguage($args){
@@ -401,17 +381,6 @@ class UniteCreatorPluginIntegrations{
 	}
 	
 	
-	/**
-	 * modify post query integrations
-	 */
-	public static function modifyPostQueryIntegrations($args){
-		
-		$args = self::checkPostQueryRelevancy($args);
-		
-		$args = self::checkPostQueryLanguage($args);
-		
-		return($args);
-	}
 	
 	private function ___________SIMPLE_AUTHOR_BOX_________(){}
 	
@@ -555,7 +524,7 @@ class UniteCreatorPluginIntegrations{
 		add_filter("ue_modify_post_data",array($this,"translatePressModifyPostData"));
 	}
 	
-	private function ___________GENERAL_INIT_INTEGRATIONS_________(){}
+	private function ___________FAVORITES_PLUGIN_________(){}
 	
 	/**
 	 * favorites plugin posts includeby
@@ -567,11 +536,74 @@ class UniteCreatorPluginIntegrations{
 		return($includeBy);
 	}
 	
+	private function ___________RELEVANCY_________(){}
+	
+	/**
+	 * check integrate with relevancy
+	 * add "relevancy" if search found and relevancy plugin exists
+	 * this function is not functional right now
+	 */
+	public static function checkPostQueryRelevanssi($args){
+		
+		if(function_exists("relevanssi_init") == false)
+			return($args);
+		
+		$search = UniteFunctionsUC::getVal($args, "s");
+		
+		if(empty($search))
+			return($args);
+		
+		$args["relevanssi"] = true;
+		
+		return($args);
+	}
+	
+	/**
+	 * check integrate with relevancy
+	 * add "relevancy" if search found and relevancy plugin exists
+	 */
+	public static function checkDisableRelevanssi($args){
+		
+		if(function_exists("relevanssi_init") == false)
+			return($args);
+		
+		if(GlobalsProviderUC::$isUnderAjax == false)
+			return($args);
+		
+		$search = UniteFunctionsUC::getVal($args, "s");
+		
+		if(empty($search))
+			return($args);
+			
+		unset($args["relevanssi"]);		
+		
+		remove_filter('posts_request', 'relevanssi_prevent_default_request');
+				
+		return($args);
+	}
+	
+	
+	
+	private function ___________GENERAL_INIT_INTEGRATIONS_________(){}
+		
+	
+	/**
+	 * modify post query integrations
+	 */
+	public static function modifyPostQueryIntegrations($args){
+		
+		$args = self::checkDisableRelevanssi($args);	//disable relevanssi plugin
+		
+		$args = self::checkPostQueryLanguage($args);
+		
+		return($args);
+	}
+	
+	
 	/**
 	 * get user post ids
 	 */
 	public function favoritesGetUserPostIDs($arrIDs, $includeBY, $limit){
-		
 		
 		$arrIDs = array();
 		

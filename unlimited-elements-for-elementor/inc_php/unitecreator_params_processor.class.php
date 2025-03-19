@@ -1741,10 +1741,10 @@ class UniteCreatorParamsProcessorWork{
 	 * put hover animation style if needed
 	 */
 	protected function outputHoverAnimationsStyles($value, $name, $param, $processType){
-
+				
 		if(empty($value) === true)
 			return;
-
+		
 		if($processType !== self::PROCESS_TYPE_OUTPUT
 			&& $processType !== self::PROCESS_TYPE_OUTPUT_BACK)
 			return;
@@ -1752,7 +1752,7 @@ class UniteCreatorParamsProcessorWork{
 		if(strpos($value, GlobalsUnlimitedElements::PREFIX_ANIMATION_CLASS) === 0)
 			HelperUC::includeUEAnimationStyles();
 		else
-			HelperProviderCoreUC_EL::includeHoverAnimationsStyles();
+			HelperProviderCoreUC_EL::includeHoverAnimationsStyles($value);
 	}
 
 	private function z__________SPECIAL_PARAMS_DATA__________(){}

@@ -780,18 +780,19 @@ class UniteCreatorUniteGallery{
 					
 					$urlMp4 = UniteFunctionsUC::getVal($item, "url_mp4");
 					
-					$urlMp4 = sanitize_url($urlMp4);
+					$urlMp4 = UniteFunctionsUC::sanitize($urlMp4, UniteFunctionsUC::SANITIZE_URL);
 					$urlMp4 = esc_attr($urlMp4);
 					
 					if(!empty($urlMp4))
 						$html .= $nl."    data-videomp4=\"$urlMp4\"";
-										
+					
 				break;
 				case "iframe":
 					
 					$urlVideo = UniteFunctionsUC::getVal($item, "url_video");
-					
-					$urlVideo = sanitize_url($urlVideo);
+										
+					$urlVideo = UniteFunctionsUC::sanitize($urlVideo, UniteFunctionsUC::SANITIZE_URL);
+										
 					$urlVideo = esc_attr($urlVideo);
 					
 					if(!empty($urlVideo))

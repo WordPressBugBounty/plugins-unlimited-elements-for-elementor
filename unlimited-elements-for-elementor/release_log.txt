@@ -1,5 +1,15 @@
 
 
+version 1.5.143:
+
+* Fix: fixed elementor animations file include
+* Fix: disable relevanssi plugin for our search filter work well.
+* Fix: fixed some url and content output security isuses
+* Feature: added the |ucsafe filter to twig for secure the html output
+* Feature: added the option out of stock variation for the product list
+* Feature: made form integration with mailpoet
+
+ 
 version 1.5.142:
 
 * Change: cleared some not needed php code

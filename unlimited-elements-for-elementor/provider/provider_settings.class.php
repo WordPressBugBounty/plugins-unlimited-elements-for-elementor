@@ -526,7 +526,8 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_DROPDOWN;
 
 		$this->addMultiSelect($name."_includeby", $arrIncludeBy, esc_html__("Include By", "unlimited-elements-for-elementor"), "", $params);
-		
+
+
 		// --------- include by meta key -------------
 
 		$params = array();
@@ -592,7 +593,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params["placeholder"] = "all--parents";
 
 		$elementorCondition = array($name."_includeby"=>"parents");
-		
+
 		$exclude = UniteFunctionsUC::getVal($value, $name."_exclude");
 
 		$addAttrib = "data-taxonomyname='{$name}_taxonomy' data-issingle='true'";
@@ -1329,7 +1330,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 			$placeholder = __("All Products", "unlimited-elements-for-elementor");
 
 		$placeholder = str_replace(" ", "--", $placeholder);
-		
+
 		$loaderText = __("Loading Data...", "unlimited-elements-for-elementor");
 		$loaderText = UniteFunctionsUC::encodeContent($loaderText);
 
@@ -2102,10 +2103,8 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 
 		if($isForWooProducts === true){
 			$arrExclude["out_of_stock"] = __("Out Of Stock Products (woo)", "unlimited-elements-for-elementor");
+			$arrExclude["out_of_stock_variation"] = __("Out Of Stock Variation Products (woo)", "unlimited-elements-for-elementor");
 			$arrExclude["products_on_sale"] = __("Products On Sale (woo)", "unlimited-elements-for-elementor");
-
-			//todo: finish this
-			//$arrExclude["out_of_stock_variation"] = __("Out Of Stock Variation (woo)", "unlimited-elements-for-elementor");
 		}
 
 		$arrExclude["terms"] = __("Terms", "unlimited-elements-for-elementor");

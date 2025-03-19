@@ -267,7 +267,7 @@ class UniteCreatorAddonViewChildParams{
 		$key = "HTML Output - |raw";
 		$text = "
 {# use the raw filter for printing attribute with html tags#}
-{{ some_attribute|raw }}
+{{ some_attribute|ucsafe|raw }}
 ";
 
 		//----- Json Decode ------

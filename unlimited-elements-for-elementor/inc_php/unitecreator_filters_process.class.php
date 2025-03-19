@@ -1871,9 +1871,9 @@ class UniteCreatorFiltersProcess{
 			}
 						
 			self::$lastFiltersInitRequest = $request;
-						
+			
 			$taxRequest = $this->getInitFiltersTaxRequest($request, $testTermIDs);
-
+			
 			if(self::$showDebug == true){
 				
 				$countLen = strlen($taxRequest);
@@ -1893,7 +1893,7 @@ class UniteCreatorFiltersProcess{
 
 				$db = HelperUC::getDB();
 				try{
-
+					
 					$arrFoundTermIDs = $db->fetchSql($taxRequest);
 					$arrFoundTermIDs = $this->modifyFoundTermsIDs($arrFoundTermIDs);
 

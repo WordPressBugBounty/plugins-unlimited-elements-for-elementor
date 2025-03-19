@@ -419,13 +419,17 @@ class HelperProviderCoreUC_EL{
 	/**
 	 * include hover animations styles
 	 */
-	public static function includeHoverAnimationsStyles(){
+	public static function includeHoverAnimationsStyles($value = ""){
 		
 		if(class_exists("\Elementor\Control_Hover_Animation") == false)
 			return(false);
-		 
-		wp_enqueue_style("e-animations");
 		
+		if(!defined("ELEMENTOR_URL"))
+			return(false);
+			
+		$urlAnimationsCss = ELEMENTOR_URL."assets/lib/animations/animations.min.css";
+		
+		UniteProviderFunctionsUC::addStyle("e-animations", $urlAnimationsCss);
 	}
 	
 	
