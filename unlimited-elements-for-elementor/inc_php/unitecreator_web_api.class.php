@@ -529,7 +529,7 @@ class UniteCreatorWebAPIWork{
 			return(array());
 
 		$arrCatalog = UniteFunctionsUC::getVal($arrData, "catalog");
-
+		
 		//return from old way
 		if(!isset($arrCatalog["addons"])){
 			$arrCatalogOutput = array();

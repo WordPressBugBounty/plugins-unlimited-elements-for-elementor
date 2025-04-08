@@ -1865,12 +1865,12 @@ class UniteFunctionsUC{
 
 		if(is_string($str) == false)
 			return($str);
-
+		
 		//not allowed html tags
 
 		if($str != wp_strip_all_tags($str))
 			return($str);
-
+		
 		//try to csv decode
 
 		$arrLines = explode("\n", $str);
@@ -1881,20 +1881,33 @@ class UniteFunctionsUC{
 		$arrKeys = array();
 
 		$arrItems = array();
-
+		
+		$delimiter = null;
+		
 		foreach($arrLines as $line){
 
 			$line = trim($line);
 
 			if(empty($line))
 				continue;
-
-			$arrLine = str_getcsv($line);
+			
+			//set delimiter
+			if(empty($delimiter)) {
+				
+				$delimiter = ",";
+				
+				if(strpos($line, ';') !== false){
+				    $commaCount = substr_count($line, ',');
+				    $semicolonCount = substr_count($line, ';');
+				    $delimiter = ($commaCount >= $semicolonCount) ? ',' : ';';
+				}
+			}
+			
+			$arrLine = str_getcsv($line, $delimiter);
 
 			if(empty($arrLine))
 				continue;
-
-
+			
 			//get the keys
 			if(empty($arrKeys)){
 				$arrKeys = $arrLine;
@@ -1902,15 +1915,13 @@ class UniteFunctionsUC{
 				continue;
 			}
 
-			//get the item
-
-			if(count($arrLine) != count($arrKeys))
-				continue;
-
+			//if not equal - add to the line empty sells to the end
+			if (count($arrLine) != count($arrKeys))
+				$arrLine = array_pad($arrLine, count($arrKeys), "");
+			
 			//create the item
-
 			$item = array();
-
+			
 			foreach($arrKeys as $index=>$key){
 
 				$value = $arrLine[$index];
@@ -2569,7 +2580,12 @@ class UniteFunctionsUC{
 	 * sanitize some string
 	 */
 	public static function sanitize($str, $type){
-
+		
+		$showDebug = false;
+		
+		if($showDebug == true)
+			dmp("sanitize ($type): $str");
+		
 		switch($type){
 			case self::SANITIZE_ID:
 			case self::SANITIZE_KEY:
@@ -2599,6 +2615,9 @@ class UniteFunctionsUC{
 				self::throwError("Sanitize string error: wrong type: $type");
 			break;
 		}
+		
+		if($showDebug == true)
+			dmp("sanitize output: $str");
 		
 		return($str);
 	}
@@ -2715,13 +2734,13 @@ class UniteFunctionsUC{
 	        '/data:/i',               // Prevents data URI schemes
 	        '/vbscript:/i',           // Prevents VBScript execution
 	        '/expression\(/i',        // Prevents CSS expressions
-	        '/(on\w+\s?=)/i',         // Detects inline event handlers (onClick, onError, etc.)
+			'/(\bon\w+\s*=\s*["\']?.*["\']?)/i', // Detects inline event handlers (onClick, onError, etc.)
 	        '/<\/?(script|iframe|object|embed|svg|form|link|meta)[^>]*>/i', // Prevents script tags and dangerous elements
 	        '/\b(eval|alert|prompt|confirm|print)\s*\(/i', // Detects dangerous functions
 	        '/["\']\s*;\s*(?:base64|window|document|location)/i', // Prevents common injection attempts
 	        '/[\x00-\x1F\x7F]/',      // Detects control characters
 	    );
-			
+		
 	    foreach ($patterns as $pattern) {
 	        if (preg_match($pattern, $decodedUrl)) {
 	            return ""; // Return empty string if a threat is found

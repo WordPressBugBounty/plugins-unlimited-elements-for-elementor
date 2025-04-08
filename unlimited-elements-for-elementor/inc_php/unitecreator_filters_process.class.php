@@ -1262,28 +1262,38 @@ class UniteCreatorFiltersProcess{
 		if(self::$isUnderAjax == false)
 			return(array());
 		
+		$isDebug = GlobalsProviderUC::$showPostsQueryDebug;
+			
 		$request = $this->getLastGridRequest();
 		
 		$prefix = UniteProviderFunctionsUC::$tablePrefix;
 		
 		$request = $this->modifySyncPostsRequest($request);
-		
-		$sql = "SELECT MIN(CAST(wp_postmeta.meta_value AS SIGNED)) AS min_price, 
-				MAX(CAST(wp_postmeta.meta_value AS SIGNED)) AS max_price
-		FROM {$prefix}posts AS p
-		JOIN (
-			{$request}
-		) AS req ON p.ID = req.ID
-		JOIN wp_postmeta ON (p.ID = wp_postmeta.post_id)
-		WHERE wp_postmeta.meta_key = '_price'";		
-		
+
+		$sql = "SELECT MIN(CAST({$prefix}postmeta.meta_value AS SIGNED)) AS min_price, 
+		           MAX(CAST({$prefix}postmeta.meta_value AS SIGNED)) AS max_price
+		          FROM {$prefix}posts AS p
+		          JOIN ({$request}) AS req ON p.ID = req.ID
+		          JOIN {$prefix}postmeta ON (p.ID = {$prefix}postmeta.post_id)
+		         WHERE {$prefix}postmeta.meta_key = '_price'";
 
 		$db = HelperUC::getDB();
 		try{
 	
 			$response = @$db->fetchSql($sql);
 			
+		if($isDebug == true){
+			dmp("Price range repsonse");
+			dmp($response);
+		}
+			
 		}catch(Exception $e){
+			
+			if($isDebug == true){
+				dmp("Price range error");
+				dmp($e->getMessage());
+			}
+			
 			//leave it empty
 		}
 
@@ -1649,6 +1659,7 @@ class UniteCreatorFiltersProcess{
 
 		}
 
+
 		return($arrHTML);
 	}
 
@@ -1657,6 +1668,7 @@ class UniteCreatorFiltersProcess{
 	 * get init filtres taxonomy request
 	 */
 	private function getInitFiltersTaxRequest($request, $strTestIDs){
+
 		
 		if(strpos($request, "WHERE 1=2") !== false)
 			return("");
@@ -1718,7 +1730,6 @@ class UniteCreatorFiltersProcess{
 		$query .= $sql;
 		
 		$fullQuery = "SELECT $selectTop from($query) as summary";
-
 
 		return($fullQuery);
 	}
@@ -1784,7 +1795,6 @@ class UniteCreatorFiltersProcess{
 		
 		self::$isModeInit = $isModeFiltersInit;
 				
-		
 		$testTermIDs = UniteFunctionsUC::getPostGetVariable("testtermids","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
 		UniteFunctionsUC::validateIDsList($testTermIDs);
 
@@ -1815,6 +1825,7 @@ class UniteCreatorFiltersProcess{
 			UniteFunctionsUC::throwError(self::$platform." content not found");
 		
 		self::$arrContent = $arrContent;	//save content
+
 		
 		//run the post query
 		
@@ -1839,7 +1850,7 @@ class UniteCreatorFiltersProcess{
 			}
 						
 			if(!empty(GlobalsProviderUC::$lastQueryRequest)){
-				$request = GlobalsProviderUC::$lastQueryRequest;				
+				$request = GlobalsProviderUC::$lastQueryRequest;
 			}
 			else{
 				
@@ -1871,9 +1882,9 @@ class UniteCreatorFiltersProcess{
 			}
 						
 			self::$lastFiltersInitRequest = $request;
-			
+						
 			$taxRequest = $this->getInitFiltersTaxRequest($request, $testTermIDs);
-			
+
 			if(self::$showDebug == true){
 				
 				$countLen = strlen($taxRequest);
@@ -1893,7 +1904,7 @@ class UniteCreatorFiltersProcess{
 
 				$db = HelperUC::getDB();
 				try{
-					
+
 					$arrFoundTermIDs = $db->fetchSql($taxRequest);
 					$arrFoundTermIDs = $this->modifyFoundTermsIDs($arrFoundTermIDs);
 

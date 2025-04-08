@@ -627,6 +627,7 @@ class UniteCreatorElementorIntegrate{
 			
 			$this->renderBGOutput($elementID, $output);
 			
+			do_action("ue_render_background_addon", $objAddon);
 			
 		}catch(Exception $e){
 			//just skip

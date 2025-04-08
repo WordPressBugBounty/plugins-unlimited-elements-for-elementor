@@ -229,6 +229,7 @@ class UniteCreatorForm{
 		}
 
 		$addonForm = HelperProviderCoreUC_EL::getAddonWithDataFromContent($postContent, $formId);
+
 		$formSettings = $addonForm->getProcessedMainParamsValues();
 		$formFields = $this->getFieldsData($templateContent ?: $postContent, $formData, $formFiles);
 		
@@ -266,7 +267,7 @@ class UniteCreatorForm{
 			// Check for spam
 			$isSpam = $this->detectFormSpam();
 
-			
+
 			if($isSpam === true){
 				$spamError = $this->getSpamErrorMessage();
 
@@ -367,45 +368,10 @@ class UniteCreatorForm{
 						break;
 
 						case self::ACTION_MAILPOET:
-							
-							$mailPoetAPI = false;
 
-							// Check if MailPoet API is available
-							if (class_exists('\MailPoet\API\API'))
-								$mailPoetAPI = \MailPoet\API\API::MP( 'v1' );
+							$mailPoetMessage = $this->mailPoetService();
 
-
-							$mailPoetLists = explode(',', UniteFunctionsUC::getVal($this->formSettings, "mailpoet_list_field"));
-							$emailField = UniteFunctionsUC::getVal($this->formSettings, "name_email_field");
-							$firstNameField = UniteFunctionsUC::getVal($this->formSettings, "name_first_name_field");
-							$lastNameField = UniteFunctionsUC::getVal($this->formSettings, "name_last_name_field");
-
-							// Build subscriber data
-							$subscriber = [];
-							foreach ($this->formFields as $field){
-								switch ($field['name']) {
-									case $emailField:
-										$subscriber['email'] = $field['value'];
-										break;
-									case $firstNameField:
-										$subscriber['first_name'] = $field['value'];
-										break;
-									case $lastNameField:
-										$subscriber['last_name'] = $field['value'];
-										break;
-								}
-							}
-
-							// Process subscription if email exists and API is available
-							if (!empty($subscriber['email']) && $mailPoetAPI != false) {
-								try{
-									$mailPoetAPI->addSubscriber($subscriber, (array) $mailPoetLists);
-									$debugMessages[] = 'Subscriber added successfully!';
-								}catch(Exception $exception) {
-									$error_string = $exception->getMessage();
-									$debugMessages[] = $error_string;
-								}
-							}
+							$debugMessages[] = $mailPoetMessage;
 
 							break;
 
@@ -478,6 +444,58 @@ class UniteCreatorForm{
 
 		HelperUC::ajaxResponse($success, $message, $data);
 	}
+
+
+	/**
+	 * mailpoet service
+	 */
+
+	private function mailPoetService()
+	{
+		// Check if MailPoet API is available
+		if (!class_exists('\MailPoet\API\API')) {
+			return(array());
+		}
+
+		$mailPoetAPI    = \MailPoet\API\API::MP( 'v1' );
+		$formFields     = $this->formFields;
+		$mailPoetLists  = explode( ',', UniteFunctionsUC::getVal( $this->formSettings, "mailpoet_list_field" ) );
+		$emailField     = UniteFunctionsUC::getVal( $this->formSettings, "name_email_field" );
+		$firstNameField = UniteFunctionsUC::getVal( $this->formSettings, "name_first_name_field" );
+		$lastNameField  = UniteFunctionsUC::getVal( $this->formSettings, "name_last_name_field" );
+		$mailPoetMessage  = array();
+
+		// Build subscriber data
+		$subscriber = array();
+		foreach ($formFields as $field) {
+			switch ($field['name']) {
+				case $emailField:
+					$subscriber['email'] = $field['value'];
+					break;
+				case $firstNameField:
+					$subscriber['first_name'] = $field['value'];
+					break;
+				case $lastNameField:
+					$subscriber['last_name'] = $field['value'];
+					break;
+			}
+		}
+
+		// Process subscription if email exists and API is available
+		$subscriber_email = UniteFunctionsUC::getVal($subscriber, 'email');
+		if (!empty($subscriber_email) && $mailPoetAPI) {
+			try {
+				$mailPoetAPI->addSubscriber($subscriber, (array) $mailPoetLists);
+				$mailPoetMessage[] = 'Subscriber added successfully!';
+			} catch (Exception $exception) {
+				$mailPoetMessage[] = $exception->getMessage();
+			}
+		}
+
+		return $mailPoetMessage;
+	}
+
+
 
 	/**
 	 * check if the email is valid (including placeholders)
@@ -1139,8 +1157,9 @@ class UniteCreatorForm{
 	 * get redirect fields
 	 */
 	private function getRedirectFields(){
-
+		
 		$url = UniteFunctionsUC::getVal($this->formSettings, "redirect_url");
+		$url = $this->addPlaceholdersToRedirectUrl($url);
 		$url = esc_url_raw($url);
 
 		$redirectFields = array(
@@ -1148,6 +1167,46 @@ class UniteCreatorForm{
 		);
 
 		return $redirectFields;
+	}
+
+	/**
+	 * add placeholder of the form fields to redirect url
+	 * vlodimir - why need another function, there is function that replace placeholders already no? 
+	 * replacePlaceholders some of those for example
+	 */
+	private function addPlaceholdersToRedirectUrl($url) {
+		
+		$hasPlaceholders = preg_match('/\{(.*?)\}/', $url);
+		if (!$hasPlaceholders)
+			return $url;
+
+		$formFields = $this->formFields;
+
+		$fieldValues = array();
+		foreach ($formFields as $field) {
+			$fieldValues[$field['name']] = $field['value'];
+		}
+
+		preg_match_all('/\{(.*?)\}/', $url, $matches);
+		$fieldNamesInUrl = $matches[1];
+
+
+		$searchStrings = array();
+		$replaceValues = array();
+
+		foreach ($fieldNamesInUrl as $fieldName) {
+			$searchStrings[] = '{' . $fieldName . '}';
+
+			if (isset($fieldValues[$fieldName]) && !empty($fieldValues[$fieldName])) {
+				$replaceValues[] = $fieldValues[$fieldName];
+			} else {
+				$replaceValues[] = '';
+			}
+		}
+
+		$updatedUrl = str_replace($searchStrings, $replaceValues, $url);
+
+		return $updatedUrl;
 	}
 
 	/**

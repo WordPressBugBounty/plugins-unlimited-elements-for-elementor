@@ -1234,7 +1234,6 @@ class UniteCreatorTemplateEngineWork{
 	 * output various functionality
 	 */
 	public function ucfunc($type, $arg1 = null, $arg2= null, $arg3=null){
-
 		switch($type){
 			case "put_date_range":
 
@@ -1682,9 +1681,9 @@ class UniteCreatorTemplateEngineWork{
 				return($arrData);
 			break;
 			case "get_max_price_filter_sync":
-				
 				$objFilters = new UniteCreatorFiltersProcess();
 				$priceRangeMaxValue = $objFilters->syncPriceRangeMaxValueWithGrid();
+
 
 				return($priceRangeMaxValue);
 			break;

@@ -369,16 +369,6 @@ class UniteCreatorPluginIntegrations{
 	}
 	
 	
-	/**
-	 * check if installed multi language plugins - polylang or wpml, and add "lang" argument
-	 */
-	public static function checkPostQueryLanguage($args){
-		
-		if(function_exists('pll_current_language') || UniteCreatorWpmlIntegrate::isWpmlExists())
-			$args['lang'] = UniteFunctionsWPUC::getLanguage();
-		
-		return($args);
-	}
 	
 	
 	
@@ -536,37 +526,39 @@ class UniteCreatorPluginIntegrations{
 		return($includeBy);
 	}
 	
-	private function ___________RELEVANCY_________(){}
+	private function ___________RELEVANSSI_________(){}
+
+
 	
 	/**
-	 * check integrate with relevancy
-	 * add "relevancy" if search found and relevancy plugin exists
-	 * this function is not functional right now
+	 * add relevanssi integration settings to post list select
 	 */
-	public static function checkPostQueryRelevanssi($args){
+	public function addRelevanssiIntegrationSetting($arrAjaxSettings, $paramName){
 		
-		if(function_exists("relevanssi_init") == false)
-			return($args);
+		$arrAjaxSettings[] = array(
+			"name"         => $paramName . '_relevanssi_integration',
+			"type"         => UniteCreatorDialogParam::PARAM_RADIOBOOLEAN,
+			"label"        => __( 'Enable Relevanssi Plugin Integration', "unlimited-elements-for-elementor" ),
+			"default"      => "",
+			'label_on'     => __( 'Yes', 'unlimited-elements-for-elementor' ),
+			'label_off'    => __( 'No', 'unlimited-elements-for-elementor' ),
+			'return_value' => 'true',
+			'separator'    => 'before',
+			'condition' => array($paramName.'_isajax'=>"true"),
+			'description'  => __('When searching using search filter, if enable the search using relevancy plugin', 'unlimited-elements-for-elementor')
+		);
 		
-		$search = UniteFunctionsUC::getVal($args, "s");
-		
-		if(empty($search))
-			return($args);
-		
-		$args["relevanssi"] = true;
-		
-		return($args);
+		return($arrAjaxSettings);
 	}
 	
+	
 	/**
-	 * check integrate with relevancy
-	 * add "relevancy" if search found and relevancy plugin exists
+	 * modify query arguments for relevanssi
+	 * disable relevanssi, or enable if the checkbox turned on
 	 */
-	public static function checkDisableRelevanssi($args){
+	public function relevanssiModifyQueryArgs($args, $value, $name){
 		
-		if(function_exists("relevanssi_init") == false)
-			return($args);
-		
+		/*
 		if(GlobalsProviderUC::$isUnderAjax == false)
 			return($args);
 		
@@ -574,15 +566,65 @@ class UniteCreatorPluginIntegrations{
 		
 		if(empty($search))
 			return($args);
-			
-		unset($args["relevanssi"]);		
+		*/
 		
-		remove_filter('posts_request', 'relevanssi_prevent_default_request');
-				
+		$relevanssiIntegration = UniteFunctionsUC::getVal($value, "{$name}_relevanssi_integration");
+		$relevanssiIntegration = UniteFunctionsUC::strToBool($relevanssiIntegration);
+		
+		if($relevanssiIntegration == true){		//enable
+
+			$args["relevanssi"] = true;
+			
+		}else{	// disable
+			
+			unset($args["relevanssi"]);		
+			
+			remove_filter('posts_request', 'relevanssi_prevent_default_request');
+		}
+		
+		
 		return($args);
 	}
 	
+	/**
+	 * init relevancy plugin integrations
+	 */
+	private function initRelevanssiIntegrations(){
+		
+		//add setting in post list
+		add_filter("ue_modify_post_grid_ajax_settings",array($this,"addRelevanssiIntegrationSetting"),10,2);
+
+		//modiify the query arguments
+		add_filter("ue_modify_posts_query_args",array($this,"relevanssiModifyQueryArgs"),10,3);
+		
+	}
 	
+	private function ___________LANGUAGES_________(){}
+
+	
+	/**
+	 * add "lang" to post query
+	 */
+	public function languagesPostQueryAddLang($args){
+		
+		$args["lang"] = UniteFunctionsWPUC::getLanguage();
+		
+		return($args);
+	}
+	
+	/**
+	 * init languages integration
+	 */
+	private function initLanguagesIntegration(){
+		
+		if(function_exists('pll_current_language') == false && UniteCreatorWpmlIntegrate::isWpmlExists() == false)
+			return(false);
+
+		//modify post query arguments, add current site language
+		
+		add_filter("ue_modify_posts_query_args",array($this,"languagesPostQueryAddLang"));
+				
+	}
 	
 	private function ___________GENERAL_INIT_INTEGRATIONS_________(){}
 		
@@ -591,11 +633,9 @@ class UniteCreatorPluginIntegrations{
 	 * modify post query integrations
 	 */
 	public static function modifyPostQueryIntegrations($args){
-		
-		$args = self::checkDisableRelevanssi($args);	//disable relevanssi plugin
-		
+				
 		$args = self::checkPostQueryLanguage($args);
-		
+						
 		return($args);
 	}
 	
@@ -671,6 +711,11 @@ class UniteCreatorPluginIntegrations{
 		if(defined("FAVORITES_PLUGIN_FILE"))
 			$this->initFavoritesIntegration();
 		
+		if(function_exists("relevanssi_init"))
+			$this->initRelevanssiIntegrations();
+		
+		$this->initLanguagesIntegration();
+			
 		//if(function_exists("trp_enable_translatepress"))
 			//$this->initTranslatePressIntegration();
 			

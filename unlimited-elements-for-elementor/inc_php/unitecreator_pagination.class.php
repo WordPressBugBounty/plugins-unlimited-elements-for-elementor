@@ -135,8 +135,9 @@ class UniteCreatorElementorPagination{
 
 
 			);
-
-
+			
+			$arrAjaxSettings = apply_filters("ue_modify_post_grid_ajax_settings", $arrAjaxSettings, $paramName);
+			
 			$arrSettings = array_merge($arrSettings, $arrAjaxSettings);
 		}
 

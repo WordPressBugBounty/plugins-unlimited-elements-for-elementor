@@ -33,7 +33,7 @@ function ueCheckCatalog(){
 function checkSomeFunc(){
 
 	$webAPI = new UniteCreatorWebAPI();
-	$data = $webAPI->getCatalogArray_pages();
+	$data = $webAPI->getCatalogData();
 	
 	dmp($data);
 	

@@ -1,5 +1,35 @@
 
 
+version 1.5.144 - 2025-04-08 =
+
+Plugin Changes:
+
+* Feature: finished the breadcrumbs widget functionality
+* Feature: added get wpml current langauge sticky posts functionality
+* Feature: added option for ";" in csv input
+* Feature: added option for placeholders in url in form redirect
+* Fix: fixed some sanitize url pattern so it detect less false positive
+* Fix: fixed price range filter small bugs
+* Fix: fixed unite gallery small width issues
+
+
+Widgets Changes:
+
+* Feature: Calendar (Pro) - Added Event Background Color Override Source option to the Source settings. This new option allows users to define a custom source field for overriding the default event background color.
+* Feature: Gradient Button (Free) - Added &quot;Hover Transition Duration&quot;, and also added the &quot;aria-label&quot; option to enhance accessibility and SEO by allowing users to describe the button's purpose.
+* Feature: Gradient Hover Effect Button (Free) - Added new typography, button padding, text color, button border, border radius, box shadow, and text shadow options.
+* Feature: Liquid Button (Free) - Added &quot;Show Icon&quot; option with styling option to show button icon.
+* Feature: Gradient Button (Free) - Added &quot;Show Icon&quot; option with styling option to show button icon.
+* Feature: Border Button Effect (Free) - Added &quot;Show Icon&quot; option with styling option to show button icon.
+* Feature: Masonry Post Grid (Pro) - Added Show Empty Message option, allowing users to display a custom message when no posts are available.
+* Change: Border Button Effect (Free) - Moved button style options to side by side Normal and Hover tabs, and added additional styling options, Border Radius, Border, Box Shadow, and Text Shadow.
+* Change: Parallelogram Button (Free) - Moved the hover options from the separate tab to side-by-side &quot;Normal&quot; and &quot;Hover&quot; tabs for better accessibility and ease of use.
+* Fix: Dropdown Button (Pro) - Fixed issue when Dropdown Item Color was not working as expected in some cases.
+* Fix: Side Menu (Pro) - Fixed issue where the menu item icon was not changing to active when the current page link was expanded.
+* Fix: Remote Arrows (Free) - Fixed issue when Set Disable On First / Last option was not working correctly.
+* Fix: Testimonial Carousel (Free) - Fixed issue when the widget was not working in Safari with Layout Type Marquee.
+* Fix: Checkboxes Filter (Pro) - Fixed issue when Loader Type: Hidden Filter was not hiding the filter widget during the loading process.
+
 version 1.5.143 - 2025-03-19 =
 
 Plugin Changes:

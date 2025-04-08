@@ -1117,31 +1117,20 @@ img.ug-sepia-effect{
     width: 23px;
     margin-top:5px;
     background-position: 0px 0px;	
+		transition: all .3s !important;
 }
 
 .ug-zoompanel.ug-skin-default .ug-zoompanel-plus{
 	margin-top:0px;
 }
 
-.ug-zoompanel.ug-skin-default .ug-zoompanel-plus{
-	background-image:url('../skins/default/icon_zoom_plus.png');
-}
-
-.ug-zoompanel.ug-skin-default .ug-zoompanel-minus{
-	background-image:url('../skins/default/icon_zoom_minus.png');
-}
-
-.ug-zoompanel.ug-skin-default .ug-zoompanel-return{
-	background-image:url('../skins/default/icon_zoom_back.png');
-}
-
 .ug-zoompanel.ug-skin-default .ug-zoompanel-button.ug-button-hover{
-    background-position: 0px -23px;
+    opacity: .75;
 }
 
 .ug-zoompanel.ug-skin-default .ug-zoompanel-button-disabled,
 .ug-zoompanel.ug-skin-default .ug-zoompanel-button.ug-button-hover.ug-zoompanel-button-disabled{
-    background-position: 0px -46px;
+    opacity: .5;
     cursor:default;
 }
 

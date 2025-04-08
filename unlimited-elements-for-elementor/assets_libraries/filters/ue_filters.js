@@ -1,4 +1,3 @@
-
 //UE Filters Version 1.26
 
 function UEDynamicFilters(){
@@ -2179,6 +2178,7 @@ function UEDynamicFilters(){
 			objFilter.html(htmlInner);
 
 
+
 			//---- put the debug if exists
 
 			var htmlDebug = null;
@@ -2996,7 +2996,8 @@ function UEDynamicFilters(){
 		
 		if(refreshType == g_vars.REFRESH_MODE_PAGINATION)
 			isPaginationClicked = true;
-		
+
+		var child_auto, childAutoTaxonomy, childAutoSlug, childAutoString = "";
 		
 		//get ajax options
 		jQuery.each(objFilters, function(index, objFilter){
@@ -3094,9 +3095,9 @@ function UEDynamicFilters(){
 
 					//if not init mode - take first item
 					var objTerm = getTermsListSelectedTerm(objFilter);
-
+				
 					if(objTerm){
-
+						
 						if(isFiltersInitMode == false){
 
 							arrTerms.push(objTerm);
@@ -3116,6 +3117,7 @@ function UEDynamicFilters(){
 								strSelectedTerms +=",";
 
 							strSelectedTerms += termID;
+							
 						}
 
 					}
@@ -3162,7 +3164,7 @@ function UEDynamicFilters(){
 				case g_types.GENERAL:
 					
 					var generalType = objFilter.data("generaltype");
-					
+				
 					if(generalType == g_types.GENERAL_MOBILE_DRAWER)
 						return(true);
 					
@@ -3336,6 +3338,25 @@ function UEDynamicFilters(){
 				if(!isGetUrlOnly)
 					objFilter.addClass(g_vars.CLASS_REFRESH_SOON);
 			}
+			
+			if(filterRole == "main"){
+				var objTerm = getTermsListSelectedTerm(objFilter);
+
+				if(objTerm && objTerm != null){
+
+					childAutoTaxonomy = objTerm.taxonomy;
+					childAutoSlug = objTerm.slug;
+				}
+			}
+			
+			if(filterRole == "child_auto" && arrTerms.length){
+				child_auto = true;
+
+				if(childAutoTaxonomy && childAutoSlug){
+					childAutoString = "&ucmainterm=" + childAutoTaxonomy + ":" + childAutoSlug;
+				}
+			
+			}
 
 
 		});		//end filters iteration
@@ -3391,10 +3412,9 @@ function UEDynamicFilters(){
 			var syncedWidgetIDs = getVal(dataLayout,"synced_widgetids");
 			g_lastSyncGrids = getVal(dataLayout,"synced_grids");
 		}
-
-
+		
 		var urlFilterString = "";
-
+		
 		var urlAddition = "ucfrontajaxaction=getfiltersdata&layoutid="+layoutID+"&elid="+widgetID;
 		
 		urlAjax = addUrlParam(urlAjax, urlAddition);
@@ -3444,19 +3464,22 @@ function UEDynamicFilters(){
 
 		if(numItems)
 			urlAjax += "&uccount="+numItems;
-
+	
 		if(arrTerms.length){
-
 			var strTerms = buildTermsQuery(arrTerms);
+		
 			if(strTerms)
 				urlAjax += "&ucterms="+strTerms;
-			
 			//set the url params as well
 			
 			urlReplace = addUrlParam(urlReplace, "ucterms="+strTerms);
 
 			urlFilterString = addUrlParam(urlFilterString, "ucterms="+strTerms);
 		}
+		
+		 if(child_auto && arrTerms.length && childAutoString != ""){
+			 urlAjax += childAutoString;
+		 }
 
 		if(orderby){
 

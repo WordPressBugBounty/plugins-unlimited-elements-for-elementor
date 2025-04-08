@@ -3048,6 +3048,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	 */
 	public static function deleteDuplicatePostsFromArray($arrPosts){
 		
+		if(empty($arrPosts))
+			return($arrPosts);
+		
 		$uniquePosts = array();
 
 		foreach ($arrPosts as $post) {
@@ -4351,7 +4354,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	 * get wordpress language
 	 */
 	public static function getLanguage(){
-
+				
 		$locale = get_locale();
 		if(is_string($locale) == false)
 			return ("en");
@@ -4763,6 +4766,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 		return ($arrAllKeys);
 	}
+
 	
 	/**
 	 * run on admin init - use for internal hooks

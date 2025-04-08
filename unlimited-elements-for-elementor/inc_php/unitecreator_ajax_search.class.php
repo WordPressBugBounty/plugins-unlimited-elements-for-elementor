@@ -132,6 +132,7 @@ class UniteCreatorAjaxSeach{
 			dmp("<strong>Total Posts: {$totalPosts} </strong>");
 		}
 
+
 		return($arrPosts);
 	}
 
@@ -173,15 +174,18 @@ class UniteCreatorAjaxSeach{
 
 		//debug output
 		if(GlobalsProviderUC::$showPostsQueryDebug == true){
-			
+
 			dmp("<strong>Search By Meta Fields</strong>");
 			dmp("Query:");
 			dmp($args);
 			dmp("Found Posts: ".count($arrPostsByMeta));
-			
+
 		}
 		
 		$arrPosts = array_merge($arrPosts, $arrPostsByMeta);
+		
+		if (!empty($arrPosts))
+			$arrPosts = UniteFunctionsWPUC::deleteDuplicatePostsFromArray($arrPosts);
 		
 		return($arrPosts);
 	}

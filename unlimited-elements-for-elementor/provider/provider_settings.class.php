@@ -1551,9 +1551,9 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 			$this->addMultiSelect($name . "_posttype", $arrTypesSimple, esc_html__("Post Types", "unlimited-elements-for-elementor"), $postType, $params);
 
 		//----- hr -------
+		
 		$params = array();
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_HR;
-		$params["elementor_condition"] = $arrCustomOnlyCondition;
 
 		$this->addHr($name . "_post_before_include", $params);
 
@@ -1608,7 +1608,23 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 
 		$this->addMultiSelect($name . "_includeby", $arrIncludeBy, esc_html__("Include By", "unlimited-elements-for-elementor"), $includeBy, $params);
 
+
+		//---- Display sticky posts from default language only -----
+		$isWpmlExists = UniteCreatorWpmlIntegrate::isWpmlExists();
 		
+		if($isWpmlExists == true){
+			
+			$arrConditionIncludeStickyPostOnly = $arrConditionIncludeBy;
+			$arrConditionIncludeStickyPostOnly[$name . "_includeby"] = "sticky_posts_only";
+			
+			$params = array();
+			$params["origtype"] = UniteCreatorDialogParam::PARAM_RADIOBOOLEAN;
+			$params["elementor_condition"] = $arrConditionIncludeStickyPostOnly;
+			
+			$this->addRadioBoolean($name . "_sticky_post_default_lang", __("Sticky Post - Default Language", "unlimited-elements-for-elementor"), false, "Yes", "No", $params);
+		}
+
+
 		//---- Include By Author -----
 		
 		if($isAdmin == false)
