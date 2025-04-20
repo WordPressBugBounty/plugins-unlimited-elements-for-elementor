@@ -938,6 +938,33 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+version 1.5.145 - 2025-04-20 =
+
+Plugin Changes:
+
+* Fix: fixed the translate before time notice
+* Fix: removed the get_breadcrumbs function to avoid php collisions
+* Fix: fixed some small security issue with testtermids
+* Feature: updated the widgets gallery code to use svg icons
+
+Widgets Changes:
+
+* Feature: Remote Item Navigation (Pro) - Added a dedicated block of styling options for the Hover State of Items, allowing more control over hover effects and appearance.
+* Feature: Loop Carousel (Pro) - Added a new &quot;Layout&quot; option, allowing users to select between Carousel or Marquee layouts for better flexibility.
+* Feature: Glare Button Effect (Free) - Added new typography, text color, button border, box shadow, and text shadow options.
+* Feature: Thumbnail Gallery (Free) - Added Title and Description Typography option, enabling users to customize the font, size, weight, and other typography settings.
+* Feature: Text Rotator (Free) - Added new Text Shadow option for all text elements within the widget. This option allows adding shadow effects to any text element.
+* Feature: Payment Method Icons (Free) - Added two new layout options, &quot;Carousel&quot; and &quot;Marquee,&quot; and also improved widget performance.
+* Feature: Scroll Accordion (Pro) - Added Active styling options for Title Text Color and Background Color of the title
+* Feature: Event List (Pro) - Added Calendar Date option for cases when Date Type is set to Text Field.
+* Feature: Liquid Full Screen Menu (Pro) - Added new Active Styling options for the Hamburger Element, allowing for more customization.
+* Feature: Woo Product Carousel (Free) - Added Button Add to Cart (Variable Products) styling options, for better product presentation.
+* Feature: Mega Slider (Pro) - Improved Animation Duration option to ensure compatibility with all Animation Types.
+* Feature: Line Chart (Free) - Added styling options for the X and Y axis titles and values for better customization.
+* Feature: Post Grid (Free) - Added a new option called &quot;Show Post Type Name,&quot; which allows displaying the post type name within the widget.
+* Feature: Fullscreen Menu (Free) - Created a new option called &quot;Expand All After Page Load&quot; which allows all sections or items to be expanded automatically when the page finishes loading
+
+
 version 1.5.144 - 2025-04-08 =
 
 Plugin Changes:
@@ -967,119 +994,6 @@ Widgets Changes:
 * Fix: Remote Arrows (Free) - Fixed issue when Set Disable On First / Last option was not working correctly.
 * Fix: Testimonial Carousel (Free) - Fixed issue when the widget was not working in Safari with Layout Type Marquee.
 * Fix: Checkboxes Filter (Pro) - Fixed issue when Loader Type: Hidden Filter was not hiding the filter widget during the loading process.
-
-
-version 1.5.143 - 2025-03-19 =
-
-Plugin Changes:
-
-* Fix: fixed elementor animations file include
-* Fix: disable relevanssi plugin for our search filter work well.
-* Fix: fixed some url and content output security isuses
-* Feature: added the |ucsafe filter to twig for secure the html output
-* Feature: added the option out of stock variation for the product list
-* Feature: made form integration with mailpoet
-
-Widgets Changes:
-
-* Feature: Unlimited Timeline (Free) - Added Content Background Alternating option, allowing users to set alternating background colors for improved visual distinction between content sections.
-* Feature: Woo Product Carousel (Free) - Added an additional button that can accept values from custom fields, allowing for greater flexibility and dynamic content integration.
-* Feature: Stacking Cards (Pro) - Added a new option, &quot;Enable Lightbox,&quot; allowing users to enable or disable the lightbox feature for improved media viewing.
-* Feature: Event List (Pro) - Added Item Event Date Type option allowing to choose between Date Picket or Text Field option.
-* Feature: Stacking Cards (Pro) - Added Item Button Text option, allowing users to customize the text displayed on the button for better flexibility.
-* Feature: Fullscreen Menu (Free) - Added all the animations from Animated Hamburger Icons widget to Fullscreen Menu widget.
-* Feature: Woo Category Carousel (Free) - Added a new option, Category Characters Number, allowing users to set a specific character limit for category names
-* Feature: Quantity Increment Buttons (Pro) - Added support for using the Quantity Increment Buttons widget on Single Product Pages.
-* Feature: Icon Box Hover Effect (Pro) - Added Title Tag option, allowing users to set a specific HTML tag for titles to improve SEO and accessibility.
-* Feature: Woo Product Carousel (Free) - Added Show Comma Between Categories option, allowing categories to be separated by commas for better readability.
-* Feature: Vertical Curved Timeline (Free) - Added Title Tag option, allowing users to set a specific HTML tag for titles to improve SEO and accessibility.
-* Feature: Calendar (Pro) - Fixed issue where the Enable Link option was not functioning properly.
-* Feature: Thumbnail Gallery (Pro) - Added &quot;Gallery Height - Mobile&quot; option, allowing users to set a custom height for the gallery on mobile devices.
-* Feature: Post Grid (Free) - Added &quot;Show Grid / List Switcher&quot; option, providing a toggle icon that allows users to seamlessly switch between the current layout and a &quot;Side By Side&quot; layout, where each item is displayed in a separate row for improved readability and organization.
-* Feature: Gradient Underline Text Effect (Free) - Added Enable Hover Effect option, allowing users to disable the hover effect if needed.
-* Feature: Post Query Summary (Pro) - Added Enable Thousand Separator option, allowing numbers to be automatically formatted with thousand separators for better readability.
-* Change: Vertical Curved Timeline (Free) - Changed tag for Item Description from &lt;p&gt; to &lt;div&gt;.
-* Fix: WordPress Menu (Free) - Added CSS fix to prevent flex container items from overlapping other elements by enabling them to shrink when there isn’t enough space.
-* Fix: RSS Feed (Free) - Fixed issue where the Show Text option was missing, causing the description element to not appear.
-* Fix: Neon Glowing Button Effect (Pro) - Fixed issue when Glow effect was not working correctly in Safari browser.
-* Fix: Statistic Counter (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Grid Gallery (Pro) - Fixed issue where the Gallery was not resizing properly after the Thumbpanel was hidden.
-* Fix: Logo Marquee (Free) - Fixed an issue related to Logo Marquee not working on mobile devices in certain scenarios.
-* Fix: Vertical Curved Timeline (Free) - Fixed issue when the Curved Timeline were not solid in some cases.
-* Fix: Interactive Circle Infographic (Pro) - Fixed issue where inner container was not perfectly stabilized in rotating animation, causing slight misalignment and angle distortion.
-* Fix: Calendar (Pro) - Fixed an issue where the &quot;Open Event Link In New Tab&quot; option was not working as expected.
-* Fix: Woo Product Carousel (Free) - Refactored and optimized widgets' HTML structure by cleaning up unnecessary elements and reorganizing the markup for better readability.
-* Other: Testimonial Box (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-
-
-version 1.5.142 - 2025-03-05 =
-
-Plugin Changes:
-
-* Change: cleared some not needed php code
-* Fix: updated twig engine, fixed some deprecated messages of php 8.4
-* Fix: fixed some pagination with avoid duplicates issues
-* Fix: removed eval() funciton from unite gallery js
-* Fix: fixed some rss issues
-* Fix: improved the debug for rss feed
-* Fix: improved some security issues for images links and attributes
-
-Widgets Changes: 
-
-* Feature: Justified Image Carousel (Pro) - Added Item BG Color
-* Feature: Loop Accordion (Pro) - Added Remote Connection options for enhanced remote connectivity, allowing users to configure and secure remote access with Remote wigets.
-* Feature: Repeater Grid (Pro) - Activated a dynamic tag for the Number of Columns option, enabling the use of dynamic values.
-* Feature: Masonry &amp; Justified Gallery (Pro) - Added native pagination functionality for items when the Source is not set to Posts or Products.
-* Feature: Event List (Pro) - Enhanced badge customization by adding a badge width option, offering improved sizing control and layout precision.
-* Feature: Event List (Pro) - Improved badge customization by adding a padding option, allowing for precise spacing adjustments and a more polished design.
-* Feature: Event List (Pro) - Enhanced badge functionality by incorporating horizontal and vertical offset options, enabling more precise layout customization.
-* Feature: Swipe Carousel (Pro) - Added Button CSS ID option, enabling users to assign custom IDs to buttons for easier styling and targeting with CSS or JavaScript.
-* Feature: Snow Flakes Background (Free) - Added new Snowflake Style options, Snow Direction, and Snowflake Size option for enhanced customization.
-* Feature: Mega Menu (Pro) - Fixed issue related to positioning the dropdown element on the x-axis when a horizontal scroll appeared in certain cases.
-* Feature: Border Hero (Free) - Added basic styling options for all text elements of the widget: color, typography, text-stroke, margins, text-shadow. This change also allowed to resolv vulnerability where scripts could be injected under certain widget attributes.
-* Feature: Justified Image Carousel (Pro) - Added Image Grow On Hover
-* Feature: Justified Image Carousel (Pro) - Added Image Opacity On Hover
-* Fix: Mega Menu (Pro) - Fixed issue related to the overlay height value in some cases when it was increasing each time the user hovered over a menu item.
-* Fix: Repeater Carousel (Pro) - Fixed a bug where the carousel items were not taking the full width.
-* Fix: Random Image (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Multi Line Button (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Split Hero (Free) - Resolved vulnerability where scripts could be injected under certain widget attributes. This fix ensures that scripts are properly sanitized and prevented from being inserted into widget attributes, mitigating potential security risks.
-* Fix: Multi Level Sliding Menu (Pro) - Fixed issue when Menu widget was initialized twice in cases when it was added inside Elementor Template.
-* Fix: Snow Flakes Background (Free) - Fixed a bug where the snow background would glitch every few seconds.
-
-
-= 1.5.141 - 2025-01-30 =
-
-* Fix: fixed pagination of manual type
-* Fix: clear placeholders from the form after send.
-* Fix: fixed empty terms override, in post filtering
-* Fix: fixed dissapearing fields of ajax search
-
-= 1.5.140 - 2025-01-27 =
-
-* Change: Update Freemius
-* Fix: Fixed pagination bug
-* Feature: added rss features
-
-= 1.5.139 - 2025-01-25 =
-
-* Feature: make the functinality for price filter. get max and min price
-* Feature: added option for random terms
-* Fix: fixed dissapearing pagination issue
-* Fix: fixed wpml integration issues
-
-= 1.5.138 - 2025-01-16 =
-
-* Fix: fixed some php varning with $key not found
-* Fix: fixed negative timestamp detection issues
-* Fix: fixed s_date php function issues
-
-
-= 1.5.137 - 2025-01-15 =
-
-* Fix: Fixed some small text output with the repeater
-* Fix: fixed ajax search, allow to search only by meta or terms
-
 
 
 

@@ -31,18 +31,20 @@ class UniteCreatorAddonType_Elementor extends UniteCreatorAddonType{
 		$this->catalogKey = "addons";
 		$this->arrCatalogExcludeCats = array("basic");
 		
-		$this->textPlural = __("Widgets", "unlimited-elements-for-elementor");
-		$this->textSingle = __("Widget", "unlimited-elements-for-elementor");
-		$this->textShowType = __("Elementor Widget", "unlimited-elements-for-elementor");
+		//can't translate here - before init
+		
+		$this->textPlural = "Widgets";
+		$this->textSingle = "Widget";
+		$this->textShowType = "Elementor Widget";
 		
 		if($isGutenbergPlugin == true){
-			$this->textPlural = __("Blocks", "unlimited-elements-for-elementor");
-			$this->textSingle = __("Block", "unlimited-elements-for-elementor");
-			$this->textShowType = __("Gutenberg Blocks", "unlimited-elements-for-elementor");
+			$this->textPlural = "Blocks";
+			$this->textSingle = "Block";
+			$this->textShowType = "Gutenberg Blocks";
 		}
 		
-		$this->browser_textBuy = esc_html__("Go Pro", "unlimited-elements-for-elementor");
-		$this->browser_textHoverPro = __("Upgrade to PRO version <br> to use this widget", "unlimited-elements-for-elementor");
+		$this->browser_textBuy = "Go Pro";
+		$this->browser_textHoverPro = "Upgrade to PRO version <br> to use this widget";
 		$this->browser_urlPreview = "https://unlimited-elements.com/widget-preview/?widget=[name]";
 		
 		$urlLicense = "https://unlimited-elements.com/pricing/";

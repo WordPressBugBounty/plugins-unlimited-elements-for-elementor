@@ -1,5 +1,12 @@
 
 
+version 1.5.145:
+
+* Fix: fixed the translate before time notice
+* Fix: removed the get_breadcrumbs function to avoid php collisions
+* Fix: fixed some small security issue with testtermids
+* Feature: updated the widgets gallery code to use svg icons
+
 version 1.5.144:
 
 * Feature: finished the breadcrumbs widget functionality

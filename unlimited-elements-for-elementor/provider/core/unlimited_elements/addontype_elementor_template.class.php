@@ -33,7 +33,7 @@ class UniteCreatorAddonType_Elementor_Template extends UniteCreatorAddonType_Lay
 		$this->showDescriptionField = false;
 		
 		$this->allowNoCategory = false;
-		$this->defaultCatTitle = __("Main", "unlimited-elements-for-elementor");
+		$this->defaultCatTitle = "Main";	//can't translate here
 		
 		$this->postType = GlobalsUnlimitedElements::POSTTYPE_UNLIMITED_ELEMENS_LIBRARY;
 		$this->isBloxPage = false;
@@ -42,12 +42,12 @@ class UniteCreatorAddonType_Elementor_Template extends UniteCreatorAddonType_Lay
 		
 		//$this->arrCatalogExcludeCats = array("basic");
 		
-		$this->textPlural = __("Templates", "unlimited-elements-for-elementor");
-		$this->textSingle = __("Template", "unlimited-elements-for-elementor");
-		$this->textShowType = __("Elementor Template", "unlimited-elements-for-elementor");
+		$this->textPlural = "Templates";
+		$this->textSingle = "Template";
+		$this->textShowType = "Elementor Template";
 		
-		$this->browser_textBuy = esc_html__("Activate Plugin", "unlimited-elements-for-elementor");
-		$this->browser_textHoverPro = __("This template is available<br>when the plugin is activated.", "unlimited-elements-for-elementor");
+		$this->browser_textBuy = "Activate Plugin";
+		$this->browser_textHoverPro = "This template is available<br>when the plugin is activated.";
 		
 		$urlLicense = HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_LICENSE_ELEMENTOR);		
 		$this->browser_urlBuyPro = $urlLicense;

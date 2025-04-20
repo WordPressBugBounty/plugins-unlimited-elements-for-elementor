@@ -8,17 +8,6 @@
 
 if(!defined('ABSPATH')) exit;
 
-/**
- * Get breadcrumbs for the current page
- *
- * @return array Breadcrumb items
- */
-function get_breadcrumbs() {
-    global $params;
-
-    $breadcrumbs = new UniteCreatorBreadcrumbs();
-    return $breadcrumbs->getBreadcrumbItems($params);
-}
 
 class UniteCreatorBreadcrumbs {
 
@@ -29,7 +18,9 @@ class UniteCreatorBreadcrumbs {
      * @return array Breadcrumb items
      */
     public function getBreadcrumbItems($params) {
+    	
         $items = array();
+        
         $home_text = $this->getParamValueByKey('home_text', $params);
         $show_home = $this->getParamValueByKey('show_home', $params);
         $show_category_breadcrumbs = $this->getParamValueByKey('show_category_breadcrumbs', $params, 'true');
@@ -180,7 +171,7 @@ class UniteCreatorBreadcrumbs {
         $currentPageID = get_queried_object_id();
         $ancestors = get_post_ancestors($currentPageID);
         $ancestors = array_reverse($ancestors);
-
+		
         foreach($ancestors as $ancestor_id) {
             $items[] = array(
                 'text' => html_entity_decode(get_the_title($ancestor_id), ENT_QUOTES, 'UTF-8'),

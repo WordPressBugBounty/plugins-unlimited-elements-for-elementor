@@ -1,5 +1,33 @@
 
 
+version 1.5.145 - 2025-04-20 =
+
+Plugin Changes:
+
+* Fix: fixed the translate before time notice
+* Fix: removed the get_breadcrumbs function to avoid php collisions
+* Fix: fixed some small security issue with testtermids
+* Feature: updated the widgets gallery code to use svg icons
+
+Widgets Changes:
+
+* Feature: Remote Item Navigation (Pro) - Added a dedicated block of styling options for the Hover State of Items, allowing more control over hover effects and appearance.
+* Feature: Loop Carousel (Pro) - Added a new &quot;Layout&quot; option, allowing users to select between Carousel or Marquee layouts for better flexibility.
+* Feature: Glare Button Effect (Free) - Added new typography, text color, button border, box shadow, and text shadow options.
+* Feature: Thumbnail Gallery (Free) - Added Title and Description Typography option, enabling users to customize the font, size, weight, and other typography settings.
+* Feature: Text Rotator (Free) - Added new Text Shadow option for all text elements within the widget. This option allows adding shadow effects to any text element.
+* Feature: Payment Method Icons (Free) - Added two new layout options, &quot;Carousel&quot; and &quot;Marquee,&quot; and also improved widget performance.
+* Feature: Scroll Accordion (Pro) - Added Active styling options for Title Text Color and Background Color of the title
+* Feature: Event List (Pro) - Added Calendar Date option for cases when Date Type is set to Text Field.
+* Feature: Liquid Full Screen Menu (Pro) - Added new Active Styling options for the Hamburger Element, allowing for more customization.
+* Feature: Woo Product Carousel (Free) - Added Button Add to Cart (Variable Products) styling options, for better product presentation.
+* Feature: Mega Slider (Pro) - Improved Animation Duration option to ensure compatibility with all Animation Types.
+* Feature: Line Chart (Free) - Added styling options for the X and Y axis titles and values for better customization.
+* Feature: Post Grid (Free) - Added a new option called &quot;Show Post Type Name,&quot; which allows displaying the post type name within the widget.
+* Feature: Fullscreen Menu (Free) - Created a new option called &quot;Expand All After Page Load&quot; which allows all sections or items to be expanded automatically when the page finishes loading
+
+
+
 version 1.5.144 - 2025-04-08 =
 
 Plugin Changes:

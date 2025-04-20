@@ -13,7 +13,7 @@ class UniteProviderCoreAdminUC_Elementor extends UniteProviderAdminUC{
 		$this->pluginTitle = GlobalsUnlimitedElements::$pluginTitleCurrent;
 
 		
-		$this->textBuy = esc_html__("Activate Plugin", "unlimited-elements-for-elementor");
+		$this->textBuy = "Activate Plugin";
 		$this->linkBuy = null;
 
 		$this->defaultAddonType = GlobalsUnlimitedElements::ADDONSTYPE_ELEMENTOR;

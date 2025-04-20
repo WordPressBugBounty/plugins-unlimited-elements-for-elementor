@@ -53,10 +53,12 @@ class UniteCreatorAddonType{
 		
 		$this->typeName = "";
 		
-		$this->textSingle = __("Addon", "unlimited-elements-for-elementor");
-		$this->textPlural = __("Addons", "unlimited-elements-for-elementor");
-		$this->textShowType = __("Regular Addon", "unlimited-elements-for-elementor");
-		$this->defaultCatTitle = __("Main", "unlimited-elements-for-elementor");
+		//can't translate here
+		
+		$this->textSingle = "Addon";
+		$this->textPlural = "Addons";
+		$this->textShowType = "Regular Addon";
+		$this->defaultCatTitle = "Main";
 		
 	}
 	

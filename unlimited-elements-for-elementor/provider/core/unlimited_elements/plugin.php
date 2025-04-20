@@ -29,7 +29,7 @@ class UnlimitedElementsPluginUC extends UniteCreatorPluginBase{
 		
 		parent::__construct($pathPlugin);
 		
-		$this->title = esc_html__("Unlimited Elements for Elementor", "unlimited-elements-for-elementor");
+		$this->title = "Unlimited Elements for Elementor";	//can't translate here
 		$this->description = "Create and use widgets for Elementor Page Builder";
 						
 		$this->init();

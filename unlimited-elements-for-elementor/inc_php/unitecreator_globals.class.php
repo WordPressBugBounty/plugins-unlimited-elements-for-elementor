@@ -260,11 +260,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			UniteFunctionsUC::validateNotEmpty(GlobalsUC::$url_assets_internal, "assets internal");
 
 			self::$isLocal = UniteFunctionsUC::isLocal();
-
-			self::initDBTableTitles();
-
-			//dmp("init globals");
-
+		
 			UniteProviderFunctionsUC::doAction(UniteCreatorFilters::ACTION_AFTER_INIT_GLOBALS);
 
 			if(self::$is_admin){
@@ -274,21 +270,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			}
 			
 		}
-
-		/**
-		 * init table titles
-		 */
-		private static function initDBTableTitles(){
-
-			$arrTitles = array();
-			$arrTitles[GlobalsUC::$table_addons] = esc_html__("Addon", "unlimited-elements-for-elementor");
-			$arrTitles[GlobalsUC::$table_categories] = esc_html__("Category", "unlimited-elements-for-elementor");
-			$arrTitles[GlobalsUC::$table_layouts] = esc_html__("Page", "unlimited-elements-for-elementor");
-
-			UniteCreatorDB::$arrTableTitles = $arrTitles;
-
-		}
-
 
 		/**
 		 * init after the includes done
@@ -315,6 +296,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				GlobalsUC::$SHOW_TRACE = true;
 			}
 						
+		}
+		
+		/**
+		 * init after init action trigger
+		 */
+		public static function initAfterInitTrigger(){
+			
+			load_plugin_textdomain("unlimited-elements-for-elementor", false, GlobalsUC::$pathWPLanguages);
+
+			//init client text
+			ugelInitClientText();
 		}
 		
 		/**

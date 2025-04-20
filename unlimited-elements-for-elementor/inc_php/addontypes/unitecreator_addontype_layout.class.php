@@ -41,7 +41,7 @@ class UniteCreatorAddonType_Layout extends UniteCreatorAddonType{
 		$this->textShowType = $this->textSingle;
 		
 		$this->paramsSettingsType = "screenshot";
-		$this->paramSettingsTitle = __("Preview Image Settings", "unlimited-elements-for-elementor");
+		$this->paramSettingsTitle = "Preview Image Settings";	//can't translate here
 		
 		$this->requireCatalogPreview = true;
 		$this->allowWebCatalog = false;

@@ -1669,7 +1669,6 @@ class UniteCreatorFiltersProcess{
 	 */
 	private function getInitFiltersTaxRequest($request, $strTestIDs){
 
-		
 		if(strpos($request, "WHERE 1=2") !== false)
 			return("");
 		
@@ -1691,9 +1690,9 @@ class UniteCreatorFiltersProcess{
 		$request = str_replace($prefix."posts.*", $prefix."posts.id", $request);
 
 		//wrap it in get term id's request
-
-		$arrTermIDs = explode(",", $strTestIDs);
-
+		
+		$arrTermIDs = UniteFunctionsUC::csvToArray($strTestIDs);
+		
 		if(empty($arrTermIDs))
 			return("");
 
@@ -1703,20 +1702,23 @@ class UniteCreatorFiltersProcess{
 		$query = "SELECT \n";
 
 		foreach($arrTermIDs as $termID){
-
+			
+			if(empty($termID))
+				continue;	
+			
 			if(!empty($selectTerms)){
 				$selectTerms .= ",\n";
 				$selectTop .= ",\n";
 			}
 
 			$name = "term_$termID";
-
+			
 			$selectTerms .= "SUM(if(tt.`parent` = $termID OR tt.`term_id` = $termID, 1, 0)) AS $name";
 
 			$selectTop .= "SUM(if($name > 0, 1, 0)) as $name";
 
 		}
-
+		
 		$query .= $selectTerms;
 
 		$sql = "
@@ -1730,7 +1732,7 @@ class UniteCreatorFiltersProcess{
 		$query .= $sql;
 		
 		$fullQuery = "SELECT $selectTop from($query) as summary";
-
+		
 		return($fullQuery);
 	}
 
@@ -1797,13 +1799,12 @@ class UniteCreatorFiltersProcess{
 				
 		$testTermIDs = UniteFunctionsUC::getPostGetVariable("testtermids","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
 		UniteFunctionsUC::validateIDsList($testTermIDs);
-
+				
 		//replace terms mode
 		$isModeReplace = UniteFunctionsUC::getPostGetVariable("ucreplace","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
 		$isModeReplace = UniteFunctionsUC::strToBool($isModeReplace);
 
 		GlobalsProviderUC::$isUnderAjax = true;
-		
 		
 		self::$isModeReplace = $isModeReplace;
 		
@@ -2027,7 +2028,7 @@ class UniteCreatorFiltersProcess{
 		$elementID = UniteFunctionsUC::getPostGetVariable("elid","",UniteFunctionsUC::SANITIZE_KEY);
 
 		$arrContent = HelperProviderCoreUC_EL::getElementorContentByPostID($layoutID);
-
+		
 		if(empty($arrContent))
 			UniteFunctionsUC::throwError("Elementor content not found");
 

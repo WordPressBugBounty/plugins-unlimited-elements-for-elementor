@@ -20,8 +20,8 @@ class UniteCreatorAddonType_Layout_Section extends UniteCreatorAddonType_Layout{
 		$this->typeName = GlobalsUC::ADDON_TYPE_LAYOUT_SECTION;
 		
 		$this->isBasicType = false;
-		$this->textSingle = __("Section", "unlimited-elements-for-elementor");
-		$this->textPlural = __("Sections", "unlimited-elements-for-elementor");
+		$this->textSingle = "Section";	//can't translate here
+		$this->textPlural = "Sections";
 		$this->layoutTypeForCategory = $this->typeName;
 		
 		$this->textShowType = $this->textSingle;
@@ -39,7 +39,7 @@ class UniteCreatorAddonType_Layout_Section extends UniteCreatorAddonType_Layout{
 		$this->catalogKey = $this->typeName;
 		
 		$this->paramsSettingsType = "screenshot";
-		$this->paramSettingsTitle = __("Preview Image Settings", "unlimited-elements-for-elementor");
+		$this->paramSettingsTitle = "Preview Image Settings";
 		$this->showParamsTopBarButton = true;
 		$this->putScreenshotOnGridSave = true;
 	}

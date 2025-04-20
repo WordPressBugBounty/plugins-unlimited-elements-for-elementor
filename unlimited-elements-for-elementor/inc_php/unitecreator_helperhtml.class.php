@@ -705,7 +705,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$trace = $e->getTraceAsString();
 
 			echo "<div style='color:darkred;'>";
-
+			
 			dmp($message);
 
 			if(GlobalsUC::$SHOW_TRACE == true || $forceTrace === true)
