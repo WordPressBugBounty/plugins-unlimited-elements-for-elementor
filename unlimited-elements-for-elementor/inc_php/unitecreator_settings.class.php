@@ -564,9 +564,9 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 	 * set current addon
 	 */
 	public function setCurrentAddon(UniteCreatorAddon $addon){
-
+		
 		$this->currentAddon = $addon;
-
+		
 	}
 
 
@@ -683,28 +683,12 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 
 			break;
 			case "schema":
-
-				$arrParam = array();
-				$arrParam["origtype"] = UniteCreatorDialogParam::PARAM_RADIOBOOLEAN;
-				$arrParam["description"] = UniteFunctionsUC::getVal($param, "description");
-
-				$this->addRadioBoolean($name."_enable", $param["title"],false,"Yes","No",$arrParam);
-
-				$arrParam = array();
-				$arrParam["origtype"] = UniteCreatorDialogParam::PARAM_DROPDOWN;
-				$arrParam["description"] = __("Use 'Schema Collect' option where there are multiple schemas on page. The last schema should be 'Output' type, others are 'Collect' type","unlimited-elements-for-elementor");
-				$arrParam["elementor_condition"] = array($name."_enable"=>"true");
-
-				//------- schema type
-
-				$arrOptions = array();
-				$arrOptions["output"] = "Schema Output";
-				$arrOptions["collect"] = "Schema Collect";
-
-				$arrOptions = array_flip($arrOptions);
-
-				$this->addSelect($name."_type", $arrOptions, "Schema Type","output", $arrParam);
-
+				
+				$objSchema = new UniteCreatorSchema();
+				$objSchema->setObjAddon($this->currentAddon);
+				
+				$objSchema->addSchemaSettings($this, $name, $param);
+				
 			break;
 			case "dynamic_popup":
 
@@ -1599,7 +1583,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
     		return(false);
 
     	$addonID =  $this->currentAddon->getID();
-
+		
     	$urlEditAddon = HelperUC::getViewUrl_EditAddon($addonID, "", "tab=uc_tablink_html");
 
     	$arrParams = array();

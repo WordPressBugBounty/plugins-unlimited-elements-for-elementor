@@ -310,7 +310,7 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 	/**
 	 * copy addon assets
 	 */
-	private function copyAssets(){
+	private function copyAssets($imagesMode = 'all'){
 
 		$options = $this->addon->getOptions();
 		$dirAssets = $this->addon->getOption("path_assets");
@@ -347,10 +347,45 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 					$pathDirDelete = $pathAssetsDest . $dir . "/";
 
 					UniteFunctionsUC::deleteDir($pathDirDelete);
-
+					
 				break;
 			}
 		}
+		switch($imagesMode) {
+		case 'images-only':
+			$fileList = UniteFunctionsUC::getFileList($pathAssets);
+			foreach($fileList as $file) {
+				$ext = strtolower(pathinfo($file, PATHINFO_EXTENSION) ?? '');
+				switch($ext) {
+				case 'jpeg':
+				case 'jpg':
+				case 'svg':
+				case 'gif':
+				case 'png':
+					break;
+				default:
+					unlink($pathAssetsDest . $file);
+				}
+			}	
+		break;
+		case 'no-images':
+			$fileList = UniteFunctionsUC::getFileList($pathAssets);
+			foreach($fileList as $file) {
+				$ext = strtolower(pathinfo($file, PATHINFO_EXTENSION) ?? '');
+				switch($ext) {
+					case 'jpeg':
+					case 'jpg':
+					case 'svg':
+					case 'gif':
+					case 'png':
+						unlink($pathAssetsDest . $file);
+					break;
+				}
+			}		
+		break;
+		}
+
+
 	}
 
 	/**
@@ -499,6 +534,79 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 			$this->deleteExportAddonFolder();
 			throw $e;
 		}
+	}
+	
+	/**
+	 * export addon - create export file with no images and send save it in $moveFolder
+	 */
+	public function exportNoImages($moveFolder){
+
+		$this->validateInited();
+
+		try{
+
+			$this->catExportData = $catExportData;
+
+			$this->prepareExportFolders_addons();
+
+			$this->createExportFiles();
+
+			$imagesMode = 'no-images';
+			$this->copyAssets($imagesMode);
+
+			$this->makeExportZipFile();
+			$this->deleteExportAddonFolder();
+
+			if(!empty($moveFolder)){
+
+				$this->moveExportZipToFolder($moveFolder, $createCategoryFolders);
+
+				$this->deleteExportAddonFolder();
+			}else{
+				$this->downloadFile();
+				exit();
+			}
+		}catch(Exception $e){
+			$this->deleteExportAddonFolder();
+			throw $e;
+		}
+	}
+	
+	/**
+	 * export addon - create export file (images only) and send it to download.
+	 */
+	public function exportImagesOnly($moveFolder){
+
+		$this->validateInited();
+
+		try{
+
+			$this->catExportData = $catExportData;
+
+			$this->prepareExportFolders_addons();
+
+			// $this->createExportFiles();
+
+			$imagesMode = 'images-only';
+			$this->copyAssets($imagesMode);
+
+			$this->makeExportZipFile();
+			$this->deleteExportAddonFolder();
+
+			if(!empty($moveFolder)){
+
+				$this->moveExportZipToFolder($moveFolder, $createCategoryFolders);
+
+				$this->deleteExportAddonFolder();
+			}else{
+				$this->downloadFile();
+				exit();
+			}
+		}catch(Exception $e){
+			$this->deleteExportAddonFolder();
+			throw $e;
+		}
+
 	}
 
 	private function a_______EXPORT_CATEGORY______(){

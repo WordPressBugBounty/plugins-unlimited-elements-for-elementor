@@ -64,6 +64,7 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 	 * construct
 	 */
 	public function __construct(){
+		
 		$this->addon = new UniteCreatorAddon();
 
 		if(GlobalsUC::$isProVersion)
@@ -75,7 +76,7 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 		
 		if(GlobalsProviderUC::$renderPlatform == GlobalsProviderUC::RENDER_PLATFORM_GUTENBERG)
 			$this->isGutenberg = true;
-		
+				
 	}
 
 
@@ -2544,7 +2545,7 @@ $css
 					$isModify = true;
 				break;
 				case "schema":
-
+					
 					$html .= "{{ucfunc(\"put_schema_items_json_byparam\",\"{$name}\")}}\n\n";
 
 					$isModify = true;

@@ -40,6 +40,28 @@ class UEGoogleAPISheetsService extends UEGoogleAPIClient{
 		return $response;
 	}
 
+
+	/**
+	 * Get the spreadsheet values with links.
+	 *
+	 * @param string $spreadsheetId
+	 * @param string $range
+	 * @param array $params
+	 *
+	 * @return UEGoogleAPISheetValues
+	 */
+	public function getSpreadsheetValuesWithLinksAndAttributes($spreadsheetId, $ranges = array(), $params = array()) {
+		$params["fields"] = 'sheets.data.rowData.values(effectiveFormat.textFormat,textFormatRuns,formattedValue,hyperlink)';
+		if (!empty($ranges))
+			$params["ranges"] = $ranges;
+
+		$response = $this->get("/$spreadsheetId", $params);
+		$response = UEGoogleAPISheetValues::transform($response);
+
+		return $response;
+	}
+
+
 	/**
 	 * Batch update the spreadsheet.
 	 *

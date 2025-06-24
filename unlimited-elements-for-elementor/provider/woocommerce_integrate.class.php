@@ -1298,6 +1298,24 @@ class UniteCreatorWooIntegrate{
 		return($arrImageIDs);
 	}
 	
+	/**
+	 * add exclude arguments
+	 */
+	public static function addExcludeCatalogVisibilityArguments($args){
+		
+			if(!isset($args['tax_query'])) {
+			  $args['tax_query'] = array();
+			}
+			
+		    $args['tax_query'][] = array(
+		        'taxonomy' => 'product_visibility',
+		        'field'    => 'name',
+		        'terms'    => array('exclude-from-catalog'),
+		        'operator' => 'NOT IN',
+		    );			
+		
+		return($args);
+	}
 	
 	private function __________VARIATIONS________(){}
 	
@@ -1306,36 +1324,39 @@ class UniteCreatorWooIntegrate{
 	 * get variation terms from query args
 	 * todo: Finish this function
 	 */
-	public function getVariationTermsFromQueryArgs($args){
-		// Get the post type from args
+	public function getVariationTermsFromQueryArgs($args) {
 		$postType = UniteFunctionsUC::getVal($args, "post_type");
-
-		// Check if the post type is 'product', return empty array if not
-		if($postType != "product")
-			return(array());
-
-		// Get the tax_query from args
-		$taxQuery = UniteFunctionsUC::getVal($args, "tax_query");
-
-		if(empty($taxQuery))
-			return(array());
-
-		$variationTerms = array();
-
-		foreach($taxQuery as $query){
-			// Skip if the element is not an array or doesn't have 'taxonomy' key (e.g., 'relation')
-			if(!is_array($query) || !isset($query['taxonomy']))
-				continue;
-
-			// Check if the taxonomy is a product variation attribute (starts with "pa_")
-			if(strpos($query['taxonomy'], 'pa_') === 0){
-				// Add the query element to variation terms
-				$variationTerms[] = $query;
-			}
+		if ($postType != "product") {
+			return array();
 		}
 
-		// Return the filtered variation terms
+		$taxQuery = UniteFunctionsUC::getVal($args, "tax_query");
+		if (empty($taxQuery)) {
+			return array();
+		}
+
+		$variationTerms = array();
+		$this->collectVariationTerms($taxQuery, $variationTerms);
+
 		return $variationTerms;
+	}
+
+	
+	/**
+	 * collect Variation Terms from different arrays
+	 */
+	private function collectVariationTerms($query, &$variationTerms) {
+		if (!is_array($query)) return;
+
+		foreach ($query as $item) {
+			if (is_array($item) && isset($item['taxonomy'])) {
+				if (strpos($item['taxonomy'], 'pa_') !== false) {
+					$variationTerms[] = $item;
+				}
+			} elseif (is_array($item)) {
+				$this->collectVariationTerms($item, $variationTerms);
+			}
+		}
 	}
 	
 	/**

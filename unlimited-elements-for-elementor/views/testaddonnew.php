@@ -90,15 +90,17 @@ class UniteCreatorTestAddonNewView{
 		</div>
 
 		<?php require HelperUC::getPathTemplate("addon_preview"); ?>
-
-		<script>
+		
+		<?php 
+		
+		$script = '
 			jQuery(document).ready(function () {
 				var objView = new UniteCreatorTestAddonNew();
 				objView.init();
 			});
-		</script>
-
-		<?php
+		';
+		
+		UniteProviderFunctionsUC::printCustomScript($script);
 	}
 
 }

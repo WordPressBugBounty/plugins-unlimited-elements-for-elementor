@@ -135,6 +135,16 @@ class UniteProviderFrontUC{
 	}
 	
 	/**
+	 * check schema
+	 */
+	public function onFooterCheckShowSchema(){
+		
+		$objSchema = new UniteCreatorSchema();
+		$objSchema->showAddonSchema();
+		
+	}
+	
+	/**
 	 *
 	 * the constructor
 	 */
@@ -160,6 +170,8 @@ class UniteProviderFrontUC{
 		$this->addAction( 'plugins_loaded', 'onPluginsLoaded' );
 		
 		$this->addAction( 'wp_footer', 'onFooterDebugPostData' );
+		
+		$this->addAction( 'wp_footer', 'onFooterCheckShowSchema' );
 		
 		UniteFunctionsWPUC::onFrontInit();
 				

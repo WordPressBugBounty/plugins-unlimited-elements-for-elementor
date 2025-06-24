@@ -329,17 +329,38 @@
 
     <field type="bulk_control_end" />
 
+    <field name="recaptcha_heading"
+      type="statictext"
+      label="&lt;b&gt;Google reCAPTCHA v3&lt;/b&gt;">
+    </field>
+	
+	<field name="recaptcha_site_key"
+      type="text"
+      label="Site Key"
+      description="Your Google reCAPTCHA v3 site key."
+      default="">
+    </field>
+	
+	<field name="recaptcha_secret_key"
+      type="text"
+      label="Secret Key"
+      description="Your Google reCAPTCHA v3 secret key."
+      default="">
+    </field>
+    
     <field name="email_test_heading"
       type="statictext"
       label="&lt;b&gt;Email Test&lt;/b&gt;">
     </field>
 
+    
     <field name="email_test_button"
       type="button"
       value="Send Test Email"
       gotoview="email-test"
       label="Send a test email to check your SMTP configuration.">
     </field>
+
 
   </fieldset>
   <fieldset name="troubleshooting" label="Troubleshooting">

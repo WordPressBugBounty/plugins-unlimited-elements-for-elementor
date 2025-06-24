@@ -20,8 +20,6 @@ class UniteCreatorTemplateEngineWork{
 
 	private static $arrSetVarsCache = array();
 	private static $urlBaseCache = null;
-	private static $arrCollectedSchemaItems = array();
-
 	private static $isPostIDSaved = false;
 	private static $originalQueriedObject;
 	private static $originalQueriedObjectID;
@@ -32,10 +30,10 @@ class UniteCreatorTemplateEngineWork{
 	 * init twig
 	 */
 	public function __construct(){
-
 		$this->objParamsProcessor = new UniteCreatorParamsProcessor();
-
 	}
+
+
 
 	public function a_____PROTECTIONS____(){}
 	
@@ -403,73 +401,17 @@ class UniteCreatorTemplateEngineWork{
 		$this->putItems(null, "css_item");
 	}
 
-
-
-	/**
-	 * put html items schema
-	 */
-	public function putSchemaItems($titleKey = "title", $contentKey = "content",$schemaType = "faq", $isCollect = false){
-
-		if(empty($titleKey))
-			$titleKey = "title";
-
-		if(empty($contentKey))
-			$contentKey = "content";
-
-		$arrWidgetItems = $this->arrItems;
-
-		if($isCollect == true){
-
-			self::$arrCollectedSchemaItems = array_merge(self::$arrCollectedSchemaItems, $arrWidgetItems);
-
-			return(false);
-		}
-
-		//output
-
-		// combine from collected and empty the collected
-
-		if(empty($arrWidgetItems))
-			$arrWidgetItems = array();
-
-		if(!empty(self::$arrCollectedSchemaItems)){
-
-			$arrWidgetItems = array_merge(self::$arrCollectedSchemaItems, $arrWidgetItems);
-
-			self::$arrCollectedSchemaItems = array();
-		}
-		
-		if(empty($arrWidgetItems))
-			return(false);
-		
-		$arrItems = HelperUC::$operations->getArrSchema($arrWidgetItems, "faq",$titleKey, $contentKey);
-		
-		if(empty($arrWidgetItems))
-			return(false);
-		
-		$jsonItems = json_encode($arrItems);
-
-		$htmlSchema = '<script type="application/ld+json">'.$jsonItems.'</script>';
-
-		s_echo($htmlSchema);
-
-		//echo htmlspecialchars($htmlSchema);	//debug
-
-	}
-
-
 	/**
 	 * check and put schema items by param
 	 */
 	public function checkPutSchemaItems($paramName){
-
+		
 		$param = $this->addon->getParamByName($paramName);
-
 		$type = UniteFunctionsUC::getVal($param, "type");
 
 		if($type != UniteCreatorDialogParam::PARAM_SPECIAL)
 			return(false);
-
+		
 		$arrValues = UniteFunctionsUC::getVal($param, "value");
 
 		if(empty($arrValues))
@@ -477,29 +419,29 @@ class UniteCreatorTemplateEngineWork{
 
 		$isEnable = UniteFunctionsUC::getVal($arrValues, $paramName."_enable");
 		$isEnable = UniteFunctionsUC::strToBool($isEnable);
-
+		
 		if($isEnable == false)
 			return(false);
-
+		
 		$schemaType = UniteFunctionsUC::getVal($arrValues, $paramName."_type");
+		
+		$showDebug = UniteFunctionsUC::getVal($arrValues, $paramName."_debug");
+		
+		$title = UniteFunctionsUC::getVal($arrValues, $paramName."_title");
+					
+		$arrParamsItems = $this->addon->getParamsItems();
 
-		$titleName = UniteFunctionsUC::getVal($param, "schema_title_name","title");
-		$contentName = UniteFunctionsUC::getVal($param, "schema_content_name","content");
-
-
-		//collect items
-		if($schemaType === "collect"){
-
-			$this->putSchemaItems($titleName, $contentName,"faq", true);
-
-			return(false);
+		$arrSettings = array();
+		foreach($arrValues as $key=>$value){
+			$key = str_replace("{$paramName}_","",$key);
+			$arrSettings[$key] = $value;
 		}
-
-
-		$this->putSchemaItems($titleName, $contentName);
-
-
+		
+		$objSchema = new UniteCreatorSchema();
+		$objSchema->putSchemaItems($schemaType, $this->arrItems, $arrParamsItems, $arrSettings);
+		
 	}
+
 
 
 	/**
@@ -1242,7 +1184,7 @@ class UniteCreatorTemplateEngineWork{
 
 			break;
 			case "get_general_setting":
-
+				
 				$value = HelperProviderCoreUC_EL::getGeneralSetting($arg1);
 
 				return($value);
@@ -1533,11 +1475,11 @@ class UniteCreatorTemplateEngineWork{
 			case "put_schema_items_json":
 
 					//$arg1- titleKey, $arg2 - contentKey, $arg3 - schemaName
-
+					
 					$this->putSchemaItems($arg1, $arg2, $arg3);
 			break;
 			case "put_schema_items_json_byparam":
-
+					
 					$this->checkPutSchemaItems($arg1);
 			break;
 			case "render":		//render twig template
@@ -1662,16 +1604,20 @@ class UniteCreatorTemplateEngineWork{
 				require_once GlobalsUC::$pathFramework."alphabet.class.php";
 				
 				$objAlphabet = new UELanguageAlphabets();
-				$arrAlphabet = $objAlphabet->getAlphabet($arg1);
-				
-				if(empty($arrAlphabet)){
-					dmp("$arg1 language not exists. Please choose one of those: ");
-					$arrLanguages = $objAlphabet->getLanguages();
-					
-					dmp($arrLanguages);
-				}
+				$arrAlphabet = $objAlphabet->getAlphabetForWidget($arg1);
+				//$arrAlphabet = $objAlphabet->getAlphabetForWidgetNew($arg1);
 				
 				return($arrAlphabet);
+			break;
+			case "get_alphabet_new":
+				
+				require_once GlobalsUC::$pathFramework."alphabet.class.php";
+				
+				$objAlphabet = new UELanguageAlphabets();
+				$arrAlphabet = $objAlphabet->getAlphabetForWidgetNew($arg1);
+				
+				return($arrAlphabet);
+				
 			break;
 			case "get_alphabet_sync":
 				
@@ -1723,6 +1669,7 @@ class UniteCreatorTemplateEngineWork{
 				dmp("<span style='color:red;'>ucfunc error: unknown action <b>'$type'</b>. Please check that the plugin is at latest version.</span>");
 			break;
 		}
+
 
 	}
 
@@ -2037,6 +1984,7 @@ class UniteCreatorTemplateEngineWork{
 	public function setArrItems($arrItems){
 
 		$this->arrItems = $arrItems;
+
 
 		$numItems = 0;
 		if(is_array($arrItems))

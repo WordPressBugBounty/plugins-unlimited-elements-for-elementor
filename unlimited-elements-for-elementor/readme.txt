@@ -938,6 +938,124 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+version 1.5.146 - 2025-06-24 =
+
+Plugin Changes:
+
+* Feature: improved the schema fields detection
+* Feature: added more options to the alphabet filter
+* Feature: added page title to the email placeholders
+* Feature: added recaptcha option for the forms
+* Feature: added honey pot for the forms
+* Feature: added option for debug by url in breadcrumbs
+* Fix: fixed form csv export with commas and special characters inside
+* Fix: filters same category checkbox issue
+* Fix: clear system variables from active filters
+* Fix: added exclude catalog visibility in woo products list
+* Update: update unite gallery to new version
+
+Widget Changes:
+
+* Feature: Content Tabs (Free) - Added Graphic Element Color option for hover, active, and regular states, and new Accordion state icon colors. Fixed close behavior, remote controls in accordion, and WooCommerce tab conflict.
+* Feature: Submit Button (Free) - Added possibility of using the {page_title} placeholder in the Mail Subject option.
+* Feature: Image Accordion (Free) - Organized options into tabs (Regular and Active), added additional Color and Spacing options, added Item Button Text, fixed Transition Duration max value, and improved code structure.
+* Feature: List Marquee (Pro) - Added support for using the widget within Elementor Popup.
+* Feature: Layers (Pro) - Added Image Border Radius option and Rotation option for Text Type Item.
+* Feature: Masks & Patterns Background (Free) - Added Custom Mask Type value.
+* Feature: Horizontal Timeline (Pro) - Added Bullet Background Color Active, Bullet Color Active, and Change Item On Click options.
+* Feature: Woo AJAX Search (Free) - Made Results Item Layout option responsive.
+* Feature: Mega Slider (Pro) - Added Auto Height option and Enable Keyboard Control option; added protection from WordPress theme CSS overrides.
+* Feature: Mega Menu (Pro) - Changed Expand Collapse Icon to Icon Library with SVG support; added Responsive Color, Expand Collapse Icon Position, Expand Collapse Icon Size; added aria-label attribute; fixed styling and accessibility.
+* Feature: Liquid Full Screen Menu (Pro) - Added Menu Icon Type option for Custom Menu Icon.
+* Feature: Masonry Post Grid (Pro) - Added Item Hover Animation option.
+* Feature: Material Carousel (Pro) - Added Scroll to Head, Scroll to Head Force on Mobile, Scroll to Head Offset, and Content Min Height options.
+* Feature: Floating Chat Buttons (Pro) - Added accessibility attributes.
+* Feature: Fullscreen Menu (Free) - Added aria-haspopup="menu" and other ARIA roles; fixed multiple accessibility and icon color issues.
+* Feature: Select Dropdown Filter (Free) - Added Advanced Layout Type option.
+* Feature: Content Switcher (Pro) - Added Force Single Row option.
+* Feature: Woo Product Grid (Free) - Added Link Type option; renamed to Link Open Type for clarity.
+* Feature: Dark Mode (Free) - Added ue-light-mode class support to exclude containers with background images.
+* Feature: Instagram Feed (Free) - Added Lazy Load placeholder.
+* Feature: Image and Video Slider (Pro) - Added Remote Connection feature.
+* Feature: Remote Dropdown (Pro) - Added First Selected option and Accordion Layout Type option.
+* Feature: Icon Box (Free) - Updated Animated Border Effect with Start Position; added Show Button Icon, Hover Transition Duration, Title HTML Tag; enhanced styling, Text Shadow, reorganized Layout tab.
+* Feature: Content Grid (Free) - Added Link Full Item option; added Height Type and Image Position options.
+* Feature: Expanding Content Cards (Pro) - Added Vertical Title Typography option.
+* Feature: Thumbnail Gallery (Free), Compact Gallery (Free), Slider Gallery (Free), Grid Gallery (Pro), Carousel Gallery (Pro), Masonry & Justified Gallery (Pro) - Updated Navigation Icon options: color, hover, Icon Type, Gallery Height for Tablet; fixed display issues.
+* Feature: Remote Item Navigation (Pro) - Added Title Color Hover and Icon Hover Color options.
+* Feature: Calendar (Pro) - Added Event Type, Day of the Week, Start/End Repeater Dates, and Direction option.
+* Feature: Team Member Grid (Pro) - Added Image CSS Filter and Hover Filter options.
+* Feature: Stacking Cards (Pro) - Added Show Background Image and Alternate Image Position options.
+* Feature: Semi Circle Progress Bar (Pro) - Added Max Value option.
+* Feature: Unlimited Carousel (Pro) - Added Link Whole Item option; fixed Image Grow animation and empty link issue.
+* Feature: Vertical Curved Timeline (Free) - Added RTL option; fixed Font Awesome icon connection.
+* Feature: Content Accordion (Free) - Added Transition Duration option.
+* Feature: Radio Button Field (Free) - Added Default Value option; fixed Set First Item Active timing.
+* Feature: Hotspots (Free) - Improved popup design (border, padding, typography, shadow); added Spot Padding; rebuilt widget to fix tooltip issues; added image attributes.
+* Feature: Event Box (Free) - Added Location, Show Start Date, End Date; removed redundant Date Number and Month Name; improved responsive styling.
+* Feature: Review Box (Free) - Added Reviewed Item Name, Date Published; optimized HTML and styling.
+* Feature: Post Card Slider (Pro) - Added Show Nav Icons and Change Slides on Mousewheel.
+* Feature: Post Ticker (Free) - Changed label display to flex; fixed Label Background Color.
+* Feature: Icon Accordion (Free) - Added Unfold Content widget support.
+* Feature: Loop Grid (Pro) - Fixed YouTube videos disappearing with Tabs Filter.
+* Feature: Content Slider (Pro) - Fixed Remote Connection, Autoplay Hover Pause, style conflicts.
+* Feature: Content Carousel (Free) - Improved structure and Autoplay Hover Pause.
+* Feature: Card Carousel (Free) - Improved structure and maintainability.
+* Feature: Testimonial Carousel (Free) - Added Text Direction for Marquee Layout; improved structure.
+* Feature: Testimonial Grid (Free) - Fixed RTL containment.
+* Feature: Before After (Free) - Fixed image jump on load.
+* Feature: Dynamic Post Popup (Pro) - Updated event binding for better compatibility.
+* Feature: Coverflow Carousel (Free) - Fixed alignment after Elementor animations.
+* Feature: Logo Carousel (Pro) - Protected nav dot styles.
+* Feature: Glowing Content Card (Free) - Fixed multiple instances behavior.
+* Feature: Call To Action Button (Free) - Fixed query string ampersand escaping.
+* Feature: Unlimited Table (Pro) - Fixed Icons Size option.
+* Feature: Search Filter (Pro) - Increased CSS priority for Placeholder/Input Text Color.
+* Feature: Shape Bullets (Free) - Made icon and spacing options responsive.
+* Feature: Unlimited Google Maps (Pro) - Fixed Category Toggle and double click.
+* Feature: Checkboxes Filter (Pro) - Fixed multi-filters OR logic.
+* Feature: Woo Product Carousel (Free) - Fixed second image duplicate; increased CSS priority.
+* Change: Team Member Carousel (Pro) - Removed `overflow: hidden` from image container element.
+* Change: Post Grid (Free) - Renamed Link Type option to Link Open Type.
+* Change: Icon Box (Free) - Enhanced styling, added hover states, organized options in Layout tab, renamed Text option to Description.
+* Change: Post Ticker (Free) - Changed label display CSS to flex for better alignment.
+* Change: Event Box (Free) - Removed Date Number and Month Name options (replaced by Start Date).
+* Fix: Mega Menu (Pro) - Added aria-label="menu" attribute for better accessibility.
+* Fix: Line Text Divider (Free) - Fixed text vertical centering.
+* Fix: Gradient Button (Free) - Fixed CSS transition in Gutenberg editor.
+* Fix: Content Slider (Pro) - Fixed Slider functionality with Remote Connection; fixed Autoplay Hover Pause; added style protection.
+* Fix: Tabs Filter (Pro) - Organized widget code for better structure.
+* Fix: Content Tabs (Free) - Fixed multiple bugs: close option, WooCommerce tab conflict, remote controls with accordion.
+* Fix: Before After (Free) - Fixed image jump on load.
+* Fix: Dynamic Post Popup (Pro) - Updated outdated event binding.
+* Fix: Post Carousel (Free) - Organized widget code.
+* Fix: Image Accordion (Free) - Organized widget code.
+* Fix: Card Carousel (Free) - Organized widget code.
+* Fix: Testimonial Carousel (Free) - Organized widget code.
+* Fix: Content Carousel (Free) - Organized widget code; fixed Autoplay Hover Pause.
+* Fix: Post Grid (Free) - Fixed Link Full Item z-index.
+* Fix: Testimonial Grid (Free) - Fixed RTL layout containment.
+* Fix: Icon Accordion (Free) - Added support for Unfold Content widget inside Icon Accordion.
+* Fix: Loop Grid (Pro) - Fixed YouTube video disappearing with Tabs Filter.
+* Fix: Fullscreen Menu (Free) - Fixed duplicate form field IDs; fixed Icon Color option; improved ARIA attributes.
+* Fix: Statistic Counter (Free) - Fixed motion effects animation behavior.
+* Fix: Woo Product Carousel (Free) - Fixed second product image duplication; increased CSS priority for typography.
+* Fix: Unlimited Google Maps (Pro) - Fixed Category Toggle and double click issue.
+* Fix: Glowing Content Card (Free) - Fixed multiple instances behavior.
+* Fix: Call To Action Button (Free) - Fixed ampersand escaping in query strings.
+* Fix: Unlimited Table (Pro) - Fixed icon resizing.
+* Fix: Search Filter (Pro) - Increased CSS priority for text colors.
+* Fix: Image Accordion (Free) - Fixed Transition Duration max value.
+* Fix: Coverflow Carousel (Free) - Corrected position after Elementor animations.
+* Fix: Logo Carousel (Pro) - Prevented theme styles overriding navigation dots.
+* Fix: Vertical Curved Timeline (Free) - Fixed Font Awesome icon visibility.
+* Fix: Hotspots (Free) - Rebuilt widget to fix tooltip container color conflicts; added image attributes.
+* Fix: Shape Bullets (Free) - Made icon size and spacing responsive.
+* Fix: Mega Slider (Pro) - Protected styling from theme overrides.
+* Fix: Compact Gallery (Free) - Updated Navigation Icon options for consistency.
+
+
+
 version 1.5.145 - 2025-04-20 =
 
 Plugin Changes:
@@ -963,38 +1081,6 @@ Widgets Changes:
 * Feature: Line Chart (Free) - Added styling options for the X and Y axis titles and values for better customization.
 * Feature: Post Grid (Free) - Added a new option called &quot;Show Post Type Name,&quot; which allows displaying the post type name within the widget.
 * Feature: Fullscreen Menu (Free) - Created a new option called &quot;Expand All After Page Load&quot; which allows all sections or items to be expanded automatically when the page finishes loading
-
-
-version 1.5.144 - 2025-04-08 =
-
-Plugin Changes:
-
-* Feature: finished the breadcrumbs widget functionality
-* Feature: added get wpml current langauge sticky posts functionality
-* Feature: added option for ";" in csv input
-* Feature: added option for placeholders in url in form redirect
-* Fix: fixed some sanitize url pattern so it detect less false positive
-* Fix: fixed price range filter small bugs
-* Fix: fixed unite gallery small width issues
-
-
-Widgets Changes:
-
-* Feature: Calendar (Pro) - Added Event Background Color Override Source option to the Source settings. This new option allows users to define a custom source field for overriding the default event background color.
-* Feature: Gradient Button (Free) - Added &quot;Hover Transition Duration&quot;, and also added the &quot;aria-label&quot; option to enhance accessibility and SEO by allowing users to describe the button's purpose.
-* Feature: Gradient Hover Effect Button (Free) - Added new typography, button padding, text color, button border, border radius, box shadow, and text shadow options.
-* Feature: Liquid Button (Free) - Added &quot;Show Icon&quot; option with styling option to show button icon.
-* Feature: Gradient Button (Free) - Added &quot;Show Icon&quot; option with styling option to show button icon.
-* Feature: Border Button Effect (Free) - Added &quot;Show Icon&quot; option with styling option to show button icon.
-* Feature: Masonry Post Grid (Pro) - Added Show Empty Message option, allowing users to display a custom message when no posts are available.
-* Change: Border Button Effect (Free) - Moved button style options to side by side Normal and Hover tabs, and added additional styling options, Border Radius, Border, Box Shadow, and Text Shadow.
-* Change: Parallelogram Button (Free) - Moved the hover options from the separate tab to side-by-side &quot;Normal&quot; and &quot;Hover&quot; tabs for better accessibility and ease of use.
-* Fix: Dropdown Button (Pro) - Fixed issue when Dropdown Item Color was not working as expected in some cases.
-* Fix: Side Menu (Pro) - Fixed issue where the menu item icon was not changing to active when the current page link was expanded.
-* Fix: Remote Arrows (Free) - Fixed issue when Set Disable On First / Last option was not working correctly.
-* Fix: Testimonial Carousel (Free) - Fixed issue when the widget was not working in Safari with Layout Type Marquee.
-* Fix: Checkboxes Filter (Pro) - Fixed issue when Loader Type: Hidden Filter was not hiding the filter widget during the loading process.
-
 
 
 [See changelog for all versions.](https://unlimited-elements.com/change-log/)

@@ -681,6 +681,8 @@ function UniteSettingsUC(){
 			break;
 			case "group_selector":
 			case "map":
+			case 'select_post_type':
+			case 'post_ids':
 				// no clear
 			break;
 			default:
@@ -852,6 +854,8 @@ function UniteSettingsUC(){
 			break;
 			case "group_selector":
 			case "map":
+			case 'select_post_type':
+			case 'post_ids':
 				// no set
 			break;
 			default:

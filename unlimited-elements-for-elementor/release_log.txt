@@ -1,4 +1,19 @@
 
+version 1.5.146:
+
+* Feature: added option for debug by url in breadcrumbs
+* Fix: filters same category checkbox issue
+* Fix: clear system variables from active filters
+* Update: update unite gallery to new version
+* Feature: improved the schema fields detection
+* Feature: added more options to the alphabet filter
+* Feature: added page title to the email placeholders
+* Fix: fixed form csv export with commas and special characters inside
+* Fix: added exclude catalog visibility in woo products list
+* Feature: added recaptcha option for the forms
+* Feature: added honey pot for the forms
+
+
 
 version 1.5.145:
 

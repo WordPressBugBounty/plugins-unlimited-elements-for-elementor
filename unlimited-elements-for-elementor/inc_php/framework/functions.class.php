@@ -3928,6 +3928,8 @@ class UniteFunctionsUC{
 		exit;
 	}
 
+		
+	
 	/**
 	 * Download CSV file
 	 */
@@ -3943,14 +3945,24 @@ class UniteFunctionsUC{
 		foreach ($rows as $row) {
 			$fields = array();
 			foreach ($headers as $key => $header) {
-				$fields[] = self::getVal($row, $key);
+				
+				$value = self::getVal($row, $key);
+				
+			    $value = str_replace('"', '""', $value); // double quotes inside
+
+	            if (preg_match('/[,"\r\n]/', $value)) {
+	                $value = '"' . $value . '"';
+	            }
+				
+	            $fields[] = $value;
+	            
 			}
 			s_echo(implode(',', $fields) . "\n");
 		}
 
 		exit;
 	}
-
+	
 	/**
 	 * send file to download
 	 */
@@ -4151,6 +4163,7 @@ class UniteFunctionsUC{
 	 * rename 
 	*/
 	public static function move($source, $destination) {
+		
 		return rename($source, $destination);
 	}
 

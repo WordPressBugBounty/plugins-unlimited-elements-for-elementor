@@ -1,6 +1,6 @@
 "use strict";
 
-//version: 1.20
+//version: 1.21
 
 function UnlimitedElementsForm(){
   
@@ -111,9 +111,9 @@ function UnlimitedElementsForm(){
         
         //check if not in stiky container
         var objParentSticky = objInpput.closest(".elementor-sticky");
-
+        
         if(!objParentSticky || objParentSticky.length == 0)
-        showCustomError(objError, errorText, consoleErrorText);        
+          showCustomError(objError, errorText, consoleErrorText);        
       }
       
       //check if uppercase characters are in name
@@ -136,7 +136,7 @@ function UnlimitedElementsForm(){
       }
       
       var dataDateMode = objCalcInput.data("date-mode");   
-
+      
       //set formula input to date type
       if(dataDateMode == true)
         objCalcInput.attr("type", "date");
@@ -200,7 +200,7 @@ function UnlimitedElementsForm(){
     expr = expr.replace(/\s+/g, "");    
     //replace inputs name with its values
     expr = replaceNamesWithValues(expr, objError, objCalcInput);
-   
+    
     var result;
     
     //returan closest value from lookup table if needed
@@ -442,12 +442,12 @@ function UnlimitedElementsForm(){
       
       g_parents = removeDuplicatesFromArray(g_parents);
       
-	  //find if any inputs in formula are x / y field for some lookup table - if exist then push to g_parents parentAttr var
+      //find if any inputs in formula are x / y field for some lookup table - if exist then push to g_parents parentAttr var
       var objParentLookupTableInputByXField = jQuery('[data-field-name-x="'+names[i]+'"]');
       var objParentLookupTableInputByYField = jQuery('[data-field-name-y="'+names[i]+'"]');
       var isXFiledForLookupTable = objParentLookupTableInputByXField && objParentLookupTableInputByXField.length > 0;
       var isYFiledForLookupTable = objParentLookupTableInputByYField && objParentLookupTableInputByYField.length > 0;
-		
+      
       //for lookup tables (if already exist parent copy its name)
       if(parentAttr !== undefined && isXFiledForLookupTable == true || parentAttr !== undefined && isYFiledForLookupTable == true){        
         g_parents.push(parentAttr);
@@ -551,7 +551,7 @@ function UnlimitedElementsForm(){
   */
   function showField(objFieldWidget, classHidden, elementorHiddenClass){    
     objFieldWidget.removeClass(classHidden);
-
+    
     var objParentElementorElement = objFieldWidget.closest(elementorElementSelector);
     
     objParentElementorElement.removeClass(elementorHiddenClass);    
@@ -562,7 +562,7 @@ function UnlimitedElementsForm(){
   */
   function hideField(objFieldWidget, classHidden, elementorHiddenClass){    
     objFieldWidget.addClass(classHidden);
-
+    
     //hide parent elementor-element container to avoid unnecessary gap
     var objParentElementorElement = objFieldWidget.closest(elementorElementSelector);
     
@@ -573,7 +573,7 @@ function UnlimitedElementsForm(){
   * get condition
   */
   function getConditions(condition, objFieldValue, fieldValue){ 
-	var visibilityCondition;
+    var visibilityCondition;
     switch (condition) {
       case "=":
       
@@ -738,13 +738,13 @@ function UnlimitedElementsForm(){
     var objCondition = obj.find(`[data-condition="['${operator}', '${fieldName}', '${condition}', '${fieldValue}']"]`);
     var objAllConditions = obj.find(`.${conditionClass}`);
     var visualConditionsNum = objAllConditions.length;
- 
+    
     if(!objCondition || !objCondition.length){      
       obj.append(conditionHtml);
       
       //remove unnecesary visual condition in editor (currently not doing anything)
       if(visualConditionsNum > conditionsNum){       
-
+        
         objAllConditions.each(function(){
           var objCondition = jQuery(this);
           var dataCondition = objCondition.data("condition").replace(/'/g, '"');
@@ -753,21 +753,28 @@ function UnlimitedElementsForm(){
           var currentFieldName = currentConditionAttr[1];
           var currentCondition = currentConditionAttr[2];
           var currentFieldValue = currentConditionAttr[3];
-
+          
           for(let i=0; i<conditionsNum; i++){
-      
+            
             var conditionArray = conditions[i];
             var operator = conditionArray.operator;
             var fieldName = conditionArray.field_name;
             var condition = conditionArray.condition;
             var fieldValue = parseFloat(conditionArray.field_value);
-
+            
             if(operator == currentOperator && fieldName == currentFieldName && condition == currentCondition && fieldValue == currentFieldValue)
-            return(true);
+              return(true);
           }      
         });
       }
     }
+  }
+  
+  /**
+  * check if number 
+  */
+  function isNumber(value) {
+    return !isNaN(value) && !isNaN(parseFloat(value));
   }
   
   /*
@@ -794,18 +801,25 @@ function UnlimitedElementsForm(){
       var conditionArray = conditions[i];
       var condition = conditionArray.condition;
       var fieldName = conditionArray.field_name;
-      var fieldValue = parseFloat(conditionArray.field_value);
+      var fieldValue = conditionArray.field_value;
+
+      if(isNumber(fieldValue) == true)
+        fieldValue = parseFloat(fieldValue);
+
       var operator = conditionArray.operator;
       var id = conditionArray._id;
       
       var objField = jQuery(ueInputFieldSelector+'[name="'+fieldName+'"]');
       var isInEditor = objField.data("editor");
       
-      var objFieldValue = parseFloat(objField.val());
+      var objFieldValue = objField.val();
+      
+      if(isNumber(objFieldValue) == true)
+        objFieldValue = parseFloat(objFieldValue);
       
       //sets the condition: "==", ">", "<" ...
       var visibilityCondition = getConditions(condition, objFieldValue, fieldValue);
-     
+    
       //set the conditions: "&&", "||"
       var visibilityOperator = getOperators(operator, visibilityOperator);             
       
@@ -949,8 +963,8 @@ jQuery( document ).on( 'elementor/popup/show', (event, id, objPopup) => {
 //template switcher script
 jQuery(document).ready(function(){
   jQuery("body").on("uc_tsw_updated", function(){
-	  var g_ucUnlimitedForms = new UnlimitedElementsForm();
-
-	  g_ucUnlimitedForms.init();	
-	});
+    var g_ucUnlimitedForms = new UnlimitedElementsForm();
+    
+    g_ucUnlimitedForms.init();	
+  });
 });

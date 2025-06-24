@@ -10,7 +10,9 @@ if(!defined('ABSPATH')) exit;
 
 
 class UniteCreatorBreadcrumbs {
-
+	
+	public static $showDebug = false;
+	
     /**
      * Get page items for breadcrumb
      *
@@ -18,6 +20,16 @@ class UniteCreatorBreadcrumbs {
      * @return array Breadcrumb items
      */
     public function getBreadcrumbItems($params) {
+    	
+    	//set debug
+    	
+		$isDebug = HelperUC::hasPermissionsFromQuery("ucbreadcrumbsdebug");
+		if($isDebug == true)
+			self::$showDebug = true;
+		
+			
+    	if(self::$showDebug == true)
+    		dmp("Breadcrumbs Debug");
     	
         $items = array();
         
@@ -33,37 +45,84 @@ class UniteCreatorBreadcrumbs {
             $items[] = $this->getHomeItem($home_text);
         }
 
-        if(is_front_page()) {
-            return $items;
+
+
+	    if(is_front_page()) {
+
+        	if(self::$showDebug == true)
+    			dmp("---- Front Page -----");
+
         } elseif(is_home()) {
+
+        	if(self::$showDebug == true)
+    			dmp("---- Home -----");
+
             $items = array_merge($items, $this->getBreadcrumbs_blogHome());
-            return $items;
-        } elseif(is_category()) {
+        } elseif(is_category() || is_archive()) {
+
+        	if(self::$showDebug == true)
+    			dmp("---- Category or Archive -----");
+
             $items = array_merge($items, $this->getBreadcrumbs_category($show_category_breadcrumbs, $categories_show_direction, $max_category_depth));
-            return $items;
         } elseif(is_page()) {
+
+	        if(self::$showDebug == true)
+    			dmp("---- Page -----");
+
             $items = array_merge($items, $this->getBreadcrumbs_page());
-            return $items;
         } elseif(is_single()) {
+
+        	if(self::$showDebug == true)
+    			dmp("---- Single -----");
+
             $items = array_merge($items, $this->getBreadcrumbs_single($show_category_breadcrumbs, $categories_show_direction, $max_category_depth, $show_blog_page));
-            return $items;
+
         } elseif(is_post_type_archive()) {
+
+        	if(self::$showDebug == true)
+    			dmp("---- Post Type Archive -----");
+
             $items = array_merge($items, $this->getBreadcrumbs_postTypeArchive());
-            return $items;
+
         } elseif(is_tag()) {
+
+        	if(self::$showDebug == true)
+    			dmp("---- Tag -----");
+
             $items = array_merge($items, $this->getBreadcrumbs_tag());
-            return $items;
+
         } elseif(is_author()) {
+
+        	if(self::$showDebug == true)
+    			dmp("---- Author -----");
+
             $items = array_merge($items, $this->getBreadcrumbs_author());
-            return $items;
+
         } elseif(is_search()) {
+
+        	if(self::$showDebug == true)
+    			dmp("---- Search -----");
+
             $items = array_merge($items, $this->getBreadcrumbs_search($search_page_text));
-            return $items;
+
         } elseif(is_year() || is_month() || is_day()) {
+
+        	if(self::$showDebug == true)
+    			dmp("---- Date -----");
+
             $items = array_merge($items, $this->getBreadcrumbs_date());
-            return $items;
+
         }
 
+
+        if(self::$showDebug == true){
+
+        	dmp("The Items:");
+        	dmp($items);
+        }
+
+
+        
         return $items;
     }
 
@@ -74,18 +133,21 @@ class UniteCreatorBreadcrumbs {
      * @return array Home breadcrumb item
      */
     private function getHomeItem($home_text) {
+    	
         $frontPageID = get_option('page_on_front');
         $currentPageID = get_queried_object_id();
-
+		
         if($frontPageID && $frontPageID == $currentPageID) {
             return array(
                 'text' => html_entity_decode($home_text, ENT_QUOTES, 'UTF-8'),
-                'url' => ''
+                'url' => '',
+                'type' => ''
             );
         } else {
             return array(
                 'text' => html_entity_decode($home_text, ENT_QUOTES, 'UTF-8'),
-                'url' => home_url('/')
+                'url' => home_url('/'),
+                'type' => ''
             );
         }
     }
@@ -95,7 +157,8 @@ class UniteCreatorBreadcrumbs {
      *
      * @return array Breadcrumb items
      */
-    private function getBreadcrumbs_blogHome() {
+    private function getBreadcrumbs_blogHome(){
+    	
         $items = array();
 
         $postsPageID = get_option('page_for_posts');
@@ -103,13 +166,24 @@ class UniteCreatorBreadcrumbs {
             $page = get_post($postsPageID);
             $items[] = array(
                 'text' => html_entity_decode($page->post_title, ENT_QUOTES, 'UTF-8'),
-                'url' => ''
+                'url' => '',
+                'typ' => ''
             );
         }
 
         return $items;
     }
 
+    /**
+     * get taxonomy label of some category
+     */
+    private function getCategoryType($category){
+    	
+    	$taxonomyName = UniteFunctionsWPUC::getTermTaxonomyName($category);
+    	        
+        return($taxonomyName);
+    }
+    
     /**
      * Get breadcrumbs for category archives
      *
@@ -119,7 +193,8 @@ class UniteCreatorBreadcrumbs {
      * @return array Breadcrumb items
      */
     private function getBreadcrumbs_category($show_category_breadcrumbs, $categories_show_direction, $max_category_depth) {
-        $items = array();
+        
+    	$items = array();
 
         if($show_category_breadcrumbs !== 'true') {
             return $items;
@@ -131,7 +206,9 @@ class UniteCreatorBreadcrumbs {
             return $items;
         }
 
-        $ancestors = get_ancestors($current_category->term_id, 'category');
+	    $taxonomy = $current_category->taxonomy;
+
+        $ancestors = get_ancestors($current_category->term_id,  $taxonomy);
         $ancestors = array_reverse($ancestors);
         $ancestors_to_show = $ancestors;
 
@@ -144,30 +221,39 @@ class UniteCreatorBreadcrumbs {
         }
 
         foreach($ancestors_to_show as $ancestor_id) {
-            $ancestor_obj = get_term($ancestor_id, 'category');
+        	
+            $ancestor_obj = get_term($ancestor_id,  $taxonomy);
             if(!is_wp_error($ancestor_obj)) {
+            	            	
                 $items[] = array(
                     'text' => html_entity_decode($ancestor_obj->name, ENT_QUOTES, 'UTF-8'),
-                    'url' => get_category_link($ancestor_id)
+                    'url' => get_category_link($ancestor_id),
+                	'type' => $this->getCategoryType($ancestor_obj)
                 );
             }
         }
-
+        
         $items[] = array(
             'text' => html_entity_decode($current_category->name, ENT_QUOTES, 'UTF-8'),
-            'url' => ''
+            'url' => '',
+        	'type' => $this->getCategoryType($current_category)
         );
+
+
 
         return $items;
     }
 
-    /**
+
+
+	/**
      * Get breadcrumbs for a page
      *
      * @return array Breadcrumb items
      */
     private function getBreadcrumbs_page() {
-        $items = array();
+        
+    	$items = array();
         $currentPageID = get_queried_object_id();
         $ancestors = get_post_ancestors($currentPageID);
         $ancestors = array_reverse($ancestors);
@@ -175,18 +261,65 @@ class UniteCreatorBreadcrumbs {
         foreach($ancestors as $ancestor_id) {
             $items[] = array(
                 'text' => html_entity_decode(get_the_title($ancestor_id), ENT_QUOTES, 'UTF-8'),
-                'url' => get_permalink($ancestor_id)
+                'url' => get_permalink($ancestor_id),
+            	'type' => UniteFunctionsWPUC::getPostTypeTitleByPost($ancestor_id)
             );
         }
 
         $items[] = array(
             'text' => html_entity_decode(get_the_title(), ENT_QUOTES, 'UTF-8'),
-            'url' => ''
+            'url' => '',
+            'type' => UniteFunctionsWPUC::getPostTypeTitle()
         );
-
+		
         return $items;
     }
+	
+    /**
+     * add blog page
+     */
+    private function addBlogPage($items){
+    	    	
+      $postsPageID = get_option('page_for_posts');
 
+      if(empty($postsPageID))
+      	return($items);
+      
+      $posts_page = get_post($postsPageID);
+
+      if(empty($posts_page))
+      	 return($items);
+     	
+      $items[] = array(
+        'text' => html_entity_decode($posts_page->post_title, ENT_QUOTES, 'UTF-8'),
+		'url' => get_permalink($postsPageID),
+		'type' => UniteFunctionsWPUC::getPostTypeTitle($posts_page->post_type)
+	  );
+	  
+      return($items);
+    }
+    
+    /**
+     * add post type item
+     */
+    private function addPostTypeItem($items, $objPostType){
+    	
+    	if(empty($objPostType))
+    		return($items);
+    	
+    	if($objPostType->has_archive == false)
+    		return($items);
+	    
+	    $items[] = array(
+	    	'text' => html_entity_decode($objPostType->labels->name, ENT_QUOTES, 'UTF-8'),
+	    	'url' => get_post_type_archive_link($objPostType->name),
+	    	'type' => ""
+	    );
+	    
+	    return($items);
+    }
+    
+    
     /**
      * Get breadcrumbs for a single post
      *
@@ -197,29 +330,34 @@ class UniteCreatorBreadcrumbs {
      * @return array Breadcrumb items
      */
     private function getBreadcrumbs_single($show_category_breadcrumbs, $categories_show_direction, $max_category_depth, $show_blog_page) {
-        $items = array();
 
-        if($show_blog_page === 'true') {
-            $postsPageID = get_option('page_for_posts');
-
-            if($postsPageID && $postsPageID > 0) {
-                $posts_page = get_post($postsPageID);
-
-                if($posts_page) {
-                    $items[] = array(
-                        'text' => html_entity_decode($posts_page->post_title, ENT_QUOTES, 'UTF-8'),
-                        'url' => get_permalink($postsPageID)
-                    );
-                }
-            }
+        
+    	$items = array();
+					
+        if($show_blog_page === 'true'){
+			  
+        	if(self::$showDebug == true)
+		       	 dmp("add blog option");
+        	
+        	$postType = get_post_type();
+			$objPostType = get_post_type_object($postType);
+        				 
+			$isBuiltIn = ($objPostType && $objPostType->_builtin);
+        				
+			if($isBuiltIn == true)
+        		$items = $this->addBlogPage($items);
+        	else 
+        		$items = $this->addPostTypeItem($items, $objPostType);
         }
-
+        	
         if($show_category_breadcrumbs === 'true') {
+        	
             $categories = get_the_category();
 
             if(!empty($categories)) {
+            	
                 $category = $this->getMostSpecificCategory($categories);
-
+				                
                 if($category) {
                     $ancestors = get_ancestors($category->term_id, 'category');
                     $ancestors = array_reverse($ancestors);
@@ -240,20 +378,25 @@ class UniteCreatorBreadcrumbs {
                     foreach($categories_to_show as $cat_id) {
                         $cat_obj = get_term($cat_id, 'category');
                         if(!is_wp_error($cat_obj)) {
-                            $is_current = ($cat_id === $category->term_id);
+                            
+                        	$is_current = ($cat_id === $category->term_id);
+                                                    	
                             $items[] = array(
                                 'text' => html_entity_decode($cat_obj->name, ENT_QUOTES, 'UTF-8'),
-                                'url' => $is_current ? get_category_link($cat_id) : get_category_link($cat_id)
+                                'url' => $is_current ? get_category_link($cat_id) : get_category_link($cat_id),
+                            	'type' => $this->getCategoryType($category)
                             );
                         }
                     }
                 }
             }
         }
-
+		
+        
         $items[] = array(
             'text' => html_entity_decode(get_the_title(), ENT_QUOTES, 'UTF-8'),
-            'url' => ''
+            'url' => '',
+			'type' => UniteFunctionsWPUC::getPostTypeTitle()
         );
 
         return $items;
@@ -265,13 +408,15 @@ class UniteCreatorBreadcrumbs {
      * @return array Breadcrumb items
      */
     private function getBreadcrumbs_postTypeArchive() {
-        $items = array();
+        
+    	$items = array();
 
         $post_type = get_post_type_object(get_post_type());
         if($post_type) {
             $items[] = array(
                 'text' => html_entity_decode($post_type->labels->name, ENT_QUOTES, 'UTF-8'),
-                'url' => ''
+                'url' => '',
+                'type' => ''
             );
         }
 
@@ -284,13 +429,15 @@ class UniteCreatorBreadcrumbs {
      * @return array Breadcrumb items
      */
     private function getBreadcrumbs_tag() {
+    	
         $items = array();
 
         $items[] = array(
             'text' => html_entity_decode(single_tag_title('', false), ENT_QUOTES, 'UTF-8'),
-            'url' => ''
+            'url' => '',
+        	'type' => ''
         );
-
+		
         return $items;
     }
 
@@ -300,11 +447,13 @@ class UniteCreatorBreadcrumbs {
      * @return array Breadcrumb items
      */
     private function getBreadcrumbs_author() {
-        $items = array();
+        
+    	$items = array();
 
         $items[] = array(
             'text' => html_entity_decode(get_the_author(), ENT_QUOTES, 'UTF-8'),
-            'url' => ''
+            'url' => '',
+        	'type' => ''
         );
 
         return $items;
@@ -321,8 +470,9 @@ class UniteCreatorBreadcrumbs {
 
         $items[] = array(
             'text' => html_entity_decode($search_page_text . ' "' . get_search_query() . '"', ENT_QUOTES, 'UTF-8'),
-            'url' => ''
-        );
+            'url' => '',
+        	'type' => ''
+       	);
 
         return $items;
     }
@@ -338,17 +488,20 @@ class UniteCreatorBreadcrumbs {
         if(is_year()) {
             $items[] = array(
                 'text' => html_entity_decode(get_the_date('Y'), ENT_QUOTES, 'UTF-8'),
-                'url' => ''
+                'url' => '',
+                'type' => ''
             );
         } elseif(is_month()) {
             $items[] = array(
                 'text' => html_entity_decode(get_the_date('F Y'), ENT_QUOTES, 'UTF-8'),
-                'url' => ''
+                'url' => '',
+                'type' => ''
             );
         } elseif(is_day()) {
             $items[] = array(
                 'text' => html_entity_decode(get_the_date('F j, Y'), ENT_QUOTES, 'UTF-8'),
-                'url' => ''
+                'url' => '',
+                'type' => ''
             );
         }
 

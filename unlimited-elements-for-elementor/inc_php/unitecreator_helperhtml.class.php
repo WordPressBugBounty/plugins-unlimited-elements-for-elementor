@@ -526,6 +526,27 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		}
 		
 		/**
+		 * get debug message html output
+		 */
+		public static function getDebugWarningMessageHtml($message){
+			
+			$html = "
+				<div style='background-color:#e3af7b;
+							border:2px solid #d99857;
+							color:#000000;
+				              font-size:18px;
+				              margin-top:10px;
+				              padding:10px;
+				              max-width:800px;
+				              max-height:600px;
+				              overflow:scroll;margin-bottom:30px;'>$message</div>
+			";
+			
+			return($html);
+		}
+		
+		
+		/**
 		 * put all browser dialogs of all addon types
 		 */
 		public static function putAddonTypesBrowserDialogs($filterType = null, $objLayoutType = null){
@@ -705,7 +726,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$trace = $e->getTraceAsString();
 
 			echo "<div style='color:darkred;'>";
-			
+
 			dmp($message);
 
 			if(GlobalsUC::$SHOW_TRACE == true || $forceTrace === true)

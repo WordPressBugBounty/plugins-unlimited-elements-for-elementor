@@ -1,4 +1,8 @@
 
+version 1.7.84
+
+changed carousel and video icons to svg
+
 version 1.7.83
 
 changed size panel icons and bullets icons to svg

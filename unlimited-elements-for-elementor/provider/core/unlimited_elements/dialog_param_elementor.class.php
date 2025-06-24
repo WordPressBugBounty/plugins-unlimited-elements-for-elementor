@@ -976,20 +976,8 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 
  		    <div class="<?php echo esc_attr($optionsClass)?>" data-control="schema" style="display:none">
 
-				<div class="unite-inputs-label">
-			 		    <?php esc_attr_e("Items Attribute - Title","unlimited-elements-for-elementor")?>
-				</div>
-
- 		    	<input type="text" name="schema_title_name" value="title" placeholder="example: title">
-
-				<div class="vert_sap20"></div>
-
-				<div class="unite-inputs-label">
-			 		    <?php esc_attr_e("Items Attribute - Content","unlimited-elements-for-elementor")?>
-				</div>
-
- 		    	<input type="text" name="schema_content_name" value="content" placeholder="example: content">
-
+				<!-- put schema options here -->
+				
 			</div>
 
 <!-- image size -->

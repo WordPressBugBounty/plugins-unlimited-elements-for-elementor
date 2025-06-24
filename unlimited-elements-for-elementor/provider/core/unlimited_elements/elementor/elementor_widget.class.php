@@ -2024,9 +2024,10 @@ class UniteCreatorElementorWidget extends Widget_Base {
     		case UniteCreatorDialogParam::PARAM_MENU:
     		case UniteCreatorDialogParam::PARAM_LISTING:
     		case UniteCreatorDialogParam::PARAM_SPECIAL:
-
+				
     			$settings = new UniteCreatorSettings();
-
+				$settings->setCurrentAddon($this->objAddon);
+				
     			$arrChildParams = $settings->getMultipleCreatorParams($param);
 
     			foreach($arrChildParams as $childParam){
@@ -2054,7 +2055,8 @@ class UniteCreatorElementorWidget extends Widget_Base {
     			$param["add_current_posts"] = true;
 
     			$settings = new UniteCreatorSettings();
-
+				$settings->setCurrentAddon($this->objAddon);
+    			
     			$arrChildParams = $settings->getMultipleCreatorParams($param);
 
     			foreach($arrChildParams as $childParam)
@@ -3465,7 +3467,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
     	  		$this->ucRegisterControls_cat();
 
     	  }else{
-
+				
     	  		$this->ucRegisterControls_addon();
 
     	  }

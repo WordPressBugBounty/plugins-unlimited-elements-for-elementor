@@ -62,7 +62,7 @@ class UniteCreatorAPIIntegrations{
 	const GOOGLE_SHEETS_FIELD_SHEET_ID = "google_sheets_sheet_id";
 	const GOOGLE_SHEETS_FIELD_CACHE_TIME = "google_sheets_cache_time";
 	const GOOGLE_SHEETS_DEFAULT_CACHE_TIME = 10;
-
+	const GOOGLE_SHEETS_EXCLUDE_FIRST_ROW = "google_sheets_exclude_first_row";
 	const WEATHER_FORECAST_FIELD_EMPTY_API_KEY = "weather_forecast_empty_api_key";
 	const WEATHER_FORECAST_FIELD_LOCALE = "weather_forecast_locale";
 	const WEATHER_FORECAST_FIELD_COUNTRY = "weather_forecast_country";
@@ -928,6 +928,13 @@ class UniteCreatorAPIIntegrations{
 				"desc" => sprintf(__("Optional. You can specify the cache time of results in minutes. The default value is %d minutes.", "unlimited-elements-for-elementor"), self::GOOGLE_SHEETS_DEFAULT_CACHE_TIME),
 				"default" => self::GOOGLE_SHEETS_DEFAULT_CACHE_TIME,
 			),
+			array(
+				"id" => self::GOOGLE_SHEETS_EXCLUDE_FIRST_ROW,
+				"type" => UniteCreatorDialogParam::PARAM_RADIOBOOLEAN,
+				"text" => __("Exclude First Row", "unlimited-elements-for-elementor"),
+				// translators: %s is a string
+				"desc" => __("You can exclude first row from Google Sheet Table", "unlimited-elements-for-elementor"),
+			),
 		));
 
 		return $fields;
@@ -947,6 +954,7 @@ class UniteCreatorAPIIntegrations{
 		$this->validateGoogleCredentials();
 				
 		$spreadsheetId = $this->getRequiredParam(self::GOOGLE_SHEETS_FIELD_ID, "Spreadsheet ID", $name);
+
 		$spreadsheetId = $this->getSpreadsheetIdByUrl($spreadsheetId);
 
 		$sheetId = $this->getParam(self::GOOGLE_SHEETS_FIELD_SHEET_ID, 0, $name);
@@ -962,21 +970,32 @@ class UniteCreatorAPIIntegrations{
 
 		// get sheet title for the range
 		$spreadsheet = $sheetsService->getSpreadsheet($spreadsheetId);
+
 		$range = null;
 
 		foreach($spreadsheet->getSheets() as $sheet){
 			if($sheet->getId() === $sheetId){
 				$range = $sheet->getTitle();
-
 				break;
 			}
 		}
 
+
 		// get spreadsheet values
-		$spreadsheet = $sheetsService->getSpreadsheetValues($spreadsheetId, $range);
-		$values = $spreadsheet->getValues();
+
+
+		/*$spreadsheet = $sheetsService->getSpreadsheetValues($spreadsheetId, $range);
+		$values = $spreadsheet->getValues();*/
+
+		$spreadsheet = $sheetsService->getSpreadsheetValuesWithLinksAndAttributes($spreadsheetId, $range);
+		$values = $spreadsheet->getValuesWithLinksAndAttributes();
 
 		$headers = $values[0]; // extract first row as headers
+
+
+		$excludeFirstRow = $this->getParam(self::GOOGLE_SHEETS_EXCLUDE_FIRST_ROW,0, $name);
+		if($excludeFirstRow == true)
+			unset($values[0]);
 
 
 		foreach($values as $rowIndex => $row){

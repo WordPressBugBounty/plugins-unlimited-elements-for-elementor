@@ -11,6 +11,10 @@
 defined ('UNLIMITED_ELEMENTS_INC') or die ('restricted aceess');
 
 class UniteCreatorPluginIntegrations{
+
+	private $activeLang;
+
+	private $defaultLang;
 	
 	private function ___________JET_ENGINE_________(){}
 	
@@ -545,7 +549,7 @@ class UniteCreatorPluginIntegrations{
 			'return_value' => 'true',
 			'separator'    => 'before',
 			'condition' => array($paramName.'_isajax'=>"true"),
-			'description'  => __('When searching using search filter, if enable the search using relevancy plugin', 'unlimited-elements-for-elementor')
+			'description'  => __('When searching using search filter, if enable the search using relevancy plugin', 'unlimited-elements-for-elementor'),
 		);
 		
 		return($arrAjaxSettings);
@@ -695,6 +699,41 @@ class UniteCreatorPluginIntegrations{
 		add_filter("ue_get_custom_includeby_postids",array($this,"favoritesGetUserPostIDs"),10,3);
 		
 	}
+
+	/**
+	 * init process sticky posts
+	 */
+	private function initProcessStickyPosts() {
+		add_action('ue_before_get_only_sticky_posts', array($this,'getStickyPostsBasedOnDefaultLanguage'), 10, 2);
+	}
+
+	/**
+	 * get sticky posts based on default language
+	 */
+	public function getStickyPostsBasedOnDefaultLanguage($value, $name) {
+		$stickyPostDefaultLangOption = UniteFunctionsUC::getVal( $value, "{$name}_sticky_post_default_lang" );
+		$stickyPostDefaultLangOption = UniteFunctionsUC::strToBool( $stickyPostDefaultLangOption );
+
+		$isWpmlExists = UniteCreatorWpmlIntegrate::isWpmlExists();
+		if($isWpmlExists == false)
+			return;
+
+		$objWPML     = new UniteCreatorWpmlIntegrate();
+		$this->defaultLang = $objWPML->getDefaultSiteLanguage();
+		$this->activeLang  = $objWPML->getActiveLanguage();
+
+		if ($stickyPostDefaultLangOption == true && $this->activeLang != $this->defaultLang){
+			do_action('wpml_switch_language', $this->defaultLang);
+			add_action("ue_after_custom_posts_query", array($this, "resetStickyPostsToActiveLanguage"), 10);
+		}
+	}
+
+	/**
+	 * reset sticky posts to active language
+	 */
+	public function resetStickyPostsToActiveLanguage() {
+		do_action('wpml_switch_language', $this->activeLang);
+	}
 	
 	/**
 	 * init plugin integrations - on plugins loaded
@@ -715,6 +754,8 @@ class UniteCreatorPluginIntegrations{
 			$this->initRelevanssiIntegrations();
 		
 		$this->initLanguagesIntegration();
+
+		$this->initProcessStickyPosts();
 			
 		//if(function_exists("trp_enable_translatepress"))
 			//$this->initTranslatePressIntegration();

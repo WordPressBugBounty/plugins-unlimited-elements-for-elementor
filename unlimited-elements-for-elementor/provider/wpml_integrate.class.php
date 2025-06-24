@@ -301,5 +301,33 @@ class UniteCreatorWpmlIntegrate{
 		return($arrOutput);
 	}
 	
+	/**
+	 * get sticky posts based on default language
+	 */
+	public function getStickyPostsBasedOnDefaultLanguage($stickyPostDefaultLangOption) {
+		
+		$defaultLang    = $this->getDefaultSiteLanguage();
+		$activeLang     = $this->getActiveLanguage();
+
+		if ($stickyPostDefaultLangOption == true && $activeLang != $defaultLang){
+			do_action('wpml_switch_language', $defaultLang);
+			add_action("ue_after_custom_posts_query", array($this, "setActiveLanguageAfterGetStickyPostsBasedOnDefaultLanguage"));
+		}
+
+		$arrStickyPosts = get_option('sticky_posts', array());
+		
+		return $arrStickyPosts;
+	}
+	
+	
+	/**
+	 * get sticky posts based on default language
+	 */
+	public function setActiveLanguageAfterGetStickyPostsBasedOnDefaultLanguage() {
+		$activeLang     = $this->getActiveLanguage();
+		do_action('wpml_switch_language', $activeLang);
+	}
+
+	
 	
 }

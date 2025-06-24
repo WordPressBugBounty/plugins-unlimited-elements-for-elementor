@@ -309,8 +309,8 @@
 
 .ug-videoplayer .ug-videoplayer-button-close{
 	position:absolute;
-	height:64px;
-	width:64px;
+	height:32px;
+	width:32px;
 	cursor:pointer;
 	z-index:1000;
 	transition-duration: .3s !important;
@@ -318,6 +318,8 @@
 
 .ug-videoplayer .ug-videoplayer-button-close svg{
 	transition-duration: .3s !important;
+	width: 100%;
+	height: 100%;
 }
 
 .ug-videoplayer-button-close-custom{
@@ -329,6 +331,91 @@
 
 .ug-videoplayer .ug-videoplayer-button-close:hover{
 }
+
+.ug-theme-video .ug-thumb-wrapper{
+	cursor:pointer; 
+  text-align:left;
+  transition-duration: all .3s !important;
+}
+
+.ug-theme-video .ug-thumb-wrapper.ug-thumb-over{
+	cursor:pointer;
+}
+
+.ug-theme-video .ug-thumb-wrapper.ug-thumb-selected{
+	cursor:default;
+}
+
+.ug-theme-video .ug-thumb-icon{
+	background-position:center center;
+	background-size:cover;
+  flex-grow:0;
+  flex-shrink:0;
+}
+
+.ug-theme-video.ug-videoskin-bottom .ug-thumb-icon,
+.ug-theme-video.ug-videoskin-top .ug-thumb-icon{
+	position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.ug-theme-video .ug-thumb-icon{
+	width: 50px;
+	height: 40px;
+}
+
+.ug-theme-video.ug-videoskin-bottom .ug-thumb-content,
+.ug-theme-video.ug-videoskin-top .ug-thumb-content{
+	position: absolute;
+  width: 100%;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  transition: all .3s !important;
+}
+
+.ug-theme-video.ug-theme-video .ug-thumb-play-button{
+	display: none;
+}
+
+.ug-theme-video.ug-videoskin-bottom .ug-thumb-play-button,
+.ug-theme-video.ug-videoskin-top .ug-thumb-play-button{
+  display: block;
+	position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  cursor: pointer; 	
+}
+
+.ug-theme-video .ug-thumb-inner{
+	display:flex;
+	gap: 15px;
+}
+
+.ug-theme-video .ug-thumb-title{
+	overflow:hidden;
+	color: #ffffff;
+	font-size: 16px;
+}
+
+.ug-theme-video .ug-thumb-desc{
+	color: #ffffff;
+	font-size: 14px;
+}
+
+.ug-theme-video .ug-strip-panel{
+	z-index: 101;
+	position: relative;
+}
+
+
+
 
 .--------------THUMBS_STRIP------------------{}
 
@@ -743,7 +830,7 @@ img.ug-sepia-effect{
 	max-width:none !important;	
 }
 
-.ug-thumb-wrapper.ug-tile .ug-tile-icon{
+.ug-thumb-wrapper.ug-tile 	{
 	position:absolute;
 	width:38px;
 	height:38px;
@@ -756,20 +843,32 @@ img.ug-sepia-effect{
 	cursor:pointer;
 }
 
+.ug-icon-zoom-custom, 
+.ug-icon-play-custom, 
+.ug-icon-link-custom{
+	transition: all .3s ease !important;
+}
+
+.ug-thumb-wrapper.ug-tile .ug-tile-icon{
+	position:absolute;
+	width:38px;
+	height:38px;
+	z-index:6;
+	top:1px;
+	left:1px;
+	cursor:pointer;
+}
+
 .ug-thumb-wrapper.ug-tile .ug-tile-icon.ug-icon-link{
-	background-image:url('../images/icon-link32.png');	
 }
 
 .ug-thumb-wrapper.ug-tile .ug-tile-icon.ug-icon-zoom{
-	background-image:url('../images/icon-zoom32.png');	
 }
 
 .ug-thumb-wrapper.ug-tile .ug-tile-icon.ug-icon-play{
-	background-image:url('../images/icon-play32.png');	
 }
 
 .ug-thumb-wrapper.ug-tile .ug-tile-icon:hover{
-	background-position:0 -38px;
 }
 
 
@@ -867,24 +966,17 @@ img.ug-sepia-effect{
 	position:absolute;
 	width:50px;
 	height:55px;
-	background-repeat:no-repeat;
-	background-image:url('../images/lightbox-arrow-left.png');
-	background-position:0px 0px;
 	z-index:3;
 	cursor:pointer;
 }
 
 .ug-lightbox .ug-lightbox-arrow-right{
-	background-image:url('../images/lightbox-arrow-right.png');
 }
 
 .ug-lightbox .ug-lightbox-button-close{
 	position:absolute;
 	width:36px;
 	height:36px;
-	background-repeat:no-repeat;
-	background-image:url('../images/lightbox-icon-close.png');
-	background-position:0px 0px;
 	z-index:9999999;
 	cursor:pointer;
 }
@@ -893,21 +985,23 @@ img.ug-sepia-effect{
 .ug-lightbox-compact .ug-lightbox-button-close{
 	width:45px;
 	height:41px;
-	background-image:url('../images/lightbox-icon-close-compact2.png');
 }
 
 
 .ug-lightbox .ug-lightbox-arrow-left.ug-arrow-hover,
 .ug-lightbox .ug-lightbox-arrow-right.ug-arrow-hover{
-	background-position:0px -55px;	
 }
 
 .ug-lightbox .ug-lightbox-button-close.ug-button-hover{
-	background-position:0px -35px;
+}
+
+.ug-lightbox-button-close-custom{
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .ug-lightbox-compact .ug-lightbox-button-close.ug-button-hover{
-	background-position:0px -40px;
 }
 
 .ug-lightbox .ug-lightbox-numbers{
@@ -1063,27 +1157,35 @@ img.ug-sepia-effect{
 }
 
 .ug-button-tile-navigation{
-	width:36px;
-	height:36px;
+	width:32px;
+	height:32px;
 	background-position:top left;
 	cursor:pointer;
 	float:left;
+	display: flex;	
+	justify-content: center;
+	align-items: center;
+}
+
+.ug-button-tile-custom{
+	display: flex;	
+	justify-content: center;
+	align-items: center;
+	transition: all .3s ease !important;
 }
 
 .ug-button-tile-navigation.ug-button-tile-left{
-	background-image:url('../skins/default/tile_button_left.png');
 }
 
 .ug-button-tile-navigation.ug-button-tile-right{
-	background-image:url('../skins/default/tile_button_right.png');
 }
 
 .ug-button-tile-navigation:hover{
-	background-position:bottom left;
 }
 
 .ug-button-tile-navigation.ug-button-disabled{
 	opacity:0.6;
+	cursor: unset;
 }
 
 .ug-button-tile-navigation.ug-button-disabled:hover{
@@ -1091,21 +1193,27 @@ img.ug-sepia-effect{
 }
 
 .ug-button-tile-navigation.ug-button-tile-play{
-	background-image:url('../skins/default/tile_button_play_pause.png');
-	width:35px;
 } 
 
 .ug-button-tile-navigation.ug-button-tile-play.ug-pause-icon{
-	background-position:bottom left;
 } 
 
 .ug-button-tile-navigation.ug-button-tile-play:hover{
-	background-position:top left;
 } 
 
 .ug-button-tile-navigation.ug-button-tile-play.ug-pause-icon:hover{
-	background-position:bottom left;
 } 
+
+.ug-button-tile-play-custom{
+	transition: all .3s ease !important;
+}
+
+.ug-button-tile-pause-icon,
+.ug-button-tile-play-icon{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 
 
 /* --- play button -- */
@@ -1392,6 +1500,9 @@ img.ug-sepia-effect{
 	filter: alpha(opacity = 50);
 }
 
+.ug-strip-arrow-custom{
+	transition: all .3s ease !important;
+}
 
 /* --- Panel Handle Tip -- */
 

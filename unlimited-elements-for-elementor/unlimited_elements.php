@@ -4,15 +4,15 @@
 * Plugin URI: http://unlimited-elements.com
 * Description: Elementor all-in-one addons pack with the best widgets for Elementor, offering 100+ free widgets, templates, and tools to create stunning websites!
 * Author: Unlimited Elements
-* Version: 1.5.145
+* Version: 1.5.146
 * Author URI: http://unlimited-elements.com
 * Text Domain: unlimited-elements-for-elementor
 * Domain Path: /languages
 * Requires PHP: 7.4
 *
-* Tested up to: 6.7.2
-* Elementor tested up to: 3.28.2
-* Elementor Pro tested up to: 3.28.1
+* Tested up to: 6.8.1
+* Elementor tested up to: 3.29.2
+* Elementor Pro tested up to: 3.29.2
 *
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html

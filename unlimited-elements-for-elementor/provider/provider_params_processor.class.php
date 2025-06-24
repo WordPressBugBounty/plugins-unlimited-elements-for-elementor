@@ -128,7 +128,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		return($data);
 	}
-
+	
 
 	/**
 	 * get post data
@@ -1395,10 +1395,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			GlobalsProviderUC::$showPostsQueryDebug = true;
 		
 		$source = UniteFunctionsUC::getVal($value, "{$name}_source");
-
+		
 		$isForWoo = UniteFunctionsUC::getVal($param, "for_woocommerce_products");
 		$isForWoo = UniteFunctionsUC::strToBool($isForWoo);
-
+		
 		//add the include by
 		$arrIncludeBy = UniteFunctionsUC::getVal($value, "{$name}_includeby");
 		if(empty($arrIncludeBy))
@@ -1415,7 +1415,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 		$isRelatedPosts = $source == "related";
 		$relatePostsType = "";
-
+		
 		$addParentType = null;
 		$addParentIDs = null;
 
@@ -1437,19 +1437,30 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if($isForWoo)
 			$postType = "product";
 
-		
 		$filters["posttype"] = $postType;
-
+		
 		$post = null;
 		$category = null;
+
+		$allowPostsBySinglePostAuthor = null;
 
 		if($isRelatedPosts == true){
 
 			$post = get_post();
+			
 			$postType = $post->post_type;
 
-			$filters["posttype"] = $postType;		//rewrite the post type argument
+			$allowPostsBySinglePostAuthor = UniteFunctionsUC::getVal($value, $name."_by_single_post_author");
+			$allowPostsBySinglePostAuthor = UniteFunctionsUC::strToBool($allowPostsBySinglePostAuthor);
 
+			$allowAnyTypes = UniteFunctionsUC::getVal($value, $name."_allow_custom_post_types_in_related_posts");
+			$allowAnyTypes = UniteFunctionsUC::strToBool($allowAnyTypes);
+			
+			if($allowAnyTypes == true)
+				$postType = get_post_types(array('public' => true), 'names');
+			
+			$filters["posttype"] = $postType;		//rewrite the post type argument
+			
 			if($postType == "product" || $relatePostsType == "checkout"){
 
 				$getRelatedProducts = true;
@@ -1457,8 +1468,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 				if($relatePostsType == "checkout")
 					$filters["posttype"] = "product";		//rewrite the post type argument
-
-
+		
 			}else{
 
 				if($showDebugQuery == true){
@@ -1472,7 +1482,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				$strTerms = "";
 
 				$arrRelatedTaxonomies = UniteFunctionsUC::getVal($value, $name."_related_taxonomies");
-
+										
+				
 				foreach($arrTerms as $tax => $terms){
 
 					if($tax == "product_type")
@@ -1783,6 +1794,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		//run custom query if available
 		$args = UniteFunctionsWPUC::getPostsArgs($filters);
 
+		// include related posts by single post author
+		if($allowPostsBySinglePostAuthor == true)
+			$args["author__in"] = $post->post_author;
 		
 		//exclude by authors
 
@@ -1877,7 +1891,6 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		$makePostINOrder = false;
 		$arrQueryBase = null;
-
 
 		foreach($arrIncludeBy as $includeby){
 
@@ -2329,28 +2342,35 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$arrStatuses = $arrStatuses[0];
 
 		$args["post_status"] = $arrStatuses;
-				
+
+
 		//add sticky posts only
 		$arrStickyPosts = array();
+
 		if($getOnlySticky == true){
+
+			/*
+			$stickyPostDefaultLangOption = UniteFunctionsUC::getVal( $value, "{$name}_sticky_post_default_lang" );
+			$stickyPostDefaultLangOption = UniteFunctionsUC::strToBool( $stickyPostDefaultLangOption );
 			
-			$stickyPostsArray =  $this->getStickyPosts($value, $name);
+			$objWPML = new UniteCreatorWpmlIntegrate();
+			$arrStickyPosts = $objWPML->getStickyPostsBasedOnDefaultLanguage($stickyPostDefaultLangOption);
+			*/
 			
-			$stickyPosts =  UniteFunctionsUC::getVal($stickyPostsArray, "posts");
-			$stickyPostsArgs = UniteFunctionsUC::getVal($stickyPostsArray, "args");
+			//for wpml integration
 			
-			if(!empty($stickyPostsArgs)){
-				$args["lang"] = UniteFunctionsUC::getVal($stickyPostsArgs, "lang");
-			}
+			do_action("ue_before_get_only_sticky_posts",$value,$name);
+			
+			$arrStickyPosts = get_option('sticky_posts', array());
 			
 			$args["ignore_sticky_posts"] = true;
-			
-			if(!empty($stickyPosts) && is_array($stickyPosts)){
-				$args["post__in"] = $stickyPosts;
+
+			if(!empty($arrStickyPosts) && is_array($arrStickyPosts)){
+				$args["post__in"] = $arrStickyPosts;
 			}else{
 				$args["post__in"] = array("0");		//no posts at all
 			}
-			
+
 		}
 
 
@@ -2391,11 +2411,18 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 		}
 		
+		//for woocommerce - add visiblity hidden
+		if($isForWoo && $postType == "product"){
+			$args = UniteCreatorWooIntegrate::addExcludeCatalogVisibilityArguments($args);
+		}
+		
 		
 		//update by post and get filters
+		
 		$objFiltersProcess = new UniteCreatorFiltersProcess();
+		
 		$args = $objFiltersProcess->processRequestFilters($args, $isFilterable);
-
+		
 		$args = $this->getPostListData_getCustomQueryFilters($args, $value, $name, $data);
 		
 		HelperUC::addDebug("Posts Query", $args);
@@ -2430,6 +2457,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 		}
 		
+		
 		//remember last args
 		GlobalsProviderUC::$lastQueryArgs = $args;
 		
@@ -2438,16 +2466,16 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 		//for debug
 		//UniteFunctionsWPUC::clearFiltersFunctions("posts_where");
-		
+
 		$query = new WP_Query();
-		
+
 		do_action("ue_before_custom_posts_query", $query);
 		
 		$args["cache_results"] = true;
 		$args["update_post_meta_cache"] = true;
 		
 		$args = apply_filters("ue_modify_posts_query_args", $args, $value, $name);
-		
+
 		//set debug errors
 		if($showDebugQuery == true && $debugType == "show_query"){
 			add_action("wp_error_added",array($this,"showWPErrorLog"),10,4);
@@ -2468,12 +2496,21 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		}
 					
 		$wasSkipRun = false;
-
+		
+		//menu_order interferin in order by, it's adding to the query by default.
+		
+		$isRemoveMenuOrder = false;
+		if(!empty($args['orderby']) && in_array($args['orderby'], array('meta_value', 'meta_value_num')) && !empty($args['meta_key'])){
+			
+			$isRemoveMenuOrder = true;
+			add_filter('posts_orderby', array($this,"removeMenuOrderFieldForOrderByMetaValue"), 999, 2);
+		}
+		
 		if($this->skipPostListQueryRun == false){
-			
+
 			$query->query($args);
-			
 			GlobalsProviderUC::$lastQueryRequest = $query->request;
+
 		}
 		else{
 			
@@ -2485,11 +2522,15 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				
 			$wasSkipRun = true;
 		}
-		
+
 		$objFiltersProcess->afterQueryRun();
 		
+		//remove the menu order removeal filter
+		if($isRemoveMenuOrder == true)
+			remove_filter('posts_orderby', array($this,"removeMenuOrderFieldForOrderByMetaValue"), 999, 2);
+
 		do_action("ue_after_custom_posts_query", $query);
-				
+		
 		//custom posts debug
 
 		if($showDebugQuery == true && $debugType == "show_query"){
@@ -2620,61 +2661,6 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		return($arrPosts);
 	}
 
-	/**
-	 * get Sticky Posts based on language
-	 */
-	private function getStickyPosts($value, $name){
-		
-		$args = array();
-		$stickyPosts = get_option('sticky_posts', array());
-		
-		$isWPMLExists = UniteCreatorWpmlIntegrate::isWpmlExists();
-		
-		if($isWPMLExists == false){
-			
-			return array(
-				'posts' => $stickyPosts,
-				'args' => $args,
-			);
-		}
-
-		$stickyPostDefaultLang = UniteFunctionsUC::getVal($value, "{$name}_sticky_post_default_lang");
-		$stickyPostDefaultLang = UniteFunctionsUC::strToBool($stickyPostDefaultLang);
-		
-		//get default langauge posts
-
-		if($stickyPostDefaultLang == false){
-			return array(
-				'posts' => $stickyPosts,
-				'args' => $args,
-			);
-		}
-		
-		if ($stickyPostDefaultLang == true) {
-			
-			$defaultLang = $this->getDefaultSiteLanguage();
-			$activeLang = $this->getActiveLanguage(); 
-			
-			if($defaultLang == $activeLang){
-				return array(
-					'posts' => $stickyPosts,
-					'args' => $args,
-				);
-			}
-
-			do_action('wpml_switch_language', $defaultLang);
-			$stickyPosts = get_option('sticky_posts', array());
-					
-			do_action('wpml_switch_language', $activeLang);
-			
-			$args["lang"] = $activeLang;
-		}
-		
-		return array(
-			'posts' => $stickyPosts,
-			'args' => $args,
-		);
-	}
 
 	/**
 	 * show wordpress error if available
@@ -3105,8 +3091,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$args["ignore_sticky_posts"] = true;
 
 		$postTypes = get_post_types(array("exclude_from_search"=>false));
-
+		
 		//add elementor_template to any types
+		
 		if(isset($postTypes["e-landing-page"]))
 			$postTypes["elementor_library"] = "elementor_library";
 
@@ -3143,6 +3130,15 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		add_action("pre_get_posts", array($this,"clearTaxQueryForGetPostListData_manualSelection"), 1, 1);
 		
+		$addRemoveMenuFilter = false;
+		
+		if (!empty($args['orderby']) && in_array($args['orderby'], array('meta_value', 'meta_value_num')) && !empty($args['meta_key'])){
+		
+			$addRemoveMenuFilter = true;
+			
+			add_filter('posts_orderby', array($this,"removeMenuOrderFieldForOrderByMetaValue"), 999, 2);
+		}
+		
 		if($this->skipPostListQueryRun == false){
 			$query = new WP_Query($args);
 			
@@ -3164,6 +3160,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		}
 
 		remove_action('pre_get_posts', array($this,"clearTaxQueryForGetPostListData_manualSelection"), 1);
+
+		if($addRemoveMenuFilter == true)
+			remove_filter('posts_orderby', array($this,"removeMenuOrderFieldForOrderByMetaValue"), 999, 2);
 		
 		if($showDebugQuery == true && $debugType == "show_query"){
 			
@@ -3496,6 +3495,26 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	public function clearTaxQueryForGetPostListData_manualSelection($query) {
 		if (isset($query->query_vars['tax_query']))
 			unset($query->query_vars['tax_query']);
+	}
+
+
+	/**
+	 * remove order by menu_order field, it's adding by default and interfering other orders
+	 */
+	public function removeMenuOrderFieldForOrderByMetaValue($orderby, $query) {
+		
+		if(strpos($orderby, "menu_order") === false)
+			return($order);
+		
+		global $wpdb;
+		$order = isset($query->query['order']) && strtoupper($query->query['order']) === 'DESC' ? 'DESC' : 'ASC';
+		if ($query->query['orderby'] === 'meta_value_num') {
+			$orderby = "CAST({$wpdb->postmeta}.meta_value AS DECIMAL) {$order}";
+		} else {
+			$orderby = "{$wpdb->postmeta}.meta_value {$order}";
+		}
+
+		return $orderby;
 	}
 	
 
@@ -4716,6 +4735,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 					$params["child_of"] = $parentID;
 				}
 
+
 				$isWpmlExists = UniteCreatorWpmlIntegrate::isWpmlExists();
 				if($isWpmlExists)
 					$params["suppress_filters"] = false;
@@ -4800,7 +4820,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	 * get terms data
 	 */
 	public function getWPTermsData($value, $name, $processType, $param, $data){
-		
+
 				
 		$postType = UniteFunctionsUC::getVal($value, $name."_posttype","post");
 		$taxonomy =  UniteFunctionsUC::getVal($value, $name."_taxonomy","category");
@@ -4810,7 +4830,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$orderDir =  UniteFunctionsUC::getVal($value, $name."_orderdir","ASC");
 
 		$hideEmpty = UniteFunctionsUC::getVal($value, $name."_hideempty");
-
+		
 		$strExclude = UniteFunctionsUC::getVal($value, $name."_exclude");
 		$excludeWithTree = UniteFunctionsUC::getVal($value, $name."_exclude_tree");
 		$excludeWithTree = UniteFunctionsUC::strToBool($excludeWithTree);
@@ -4877,9 +4897,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		if(is_array($taxonomy) && count($taxonomy) == 1)
 			$taxonomy = $taxonomy[0];
-
-
-
+		
 		//add exclude
 		$arrExcludeSlugs = null;
 
@@ -4890,6 +4908,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$arrIncludeTermIDs = array();
 		$arrIncludeDirectChildrenOfSelectedTermsIDs = array();
 		$includeParentID = null;
+		$includeParentTermIdForAutoChild = null;
 		$isDirectParent = true;
 		
 		$args = array();
@@ -4931,6 +4950,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				break;
 				case "childless":
 
+
 					$args["childless"] = true;
 
 				break;
@@ -4967,15 +4987,15 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 					if(!empty($arrTermIDs))
 						$arrIncludeTermIDs = array_merge($arrIncludeTermIDs, $arrTermIDs);
-
+				
 					if(empty($arrIncludeTermIDs))
 						$arrIncludeTermIDs = array("999999999");
 
 				break;
 				case "auto_terms_main_filter_children":
 					
-					dmp("get terms from main filter");
-					
+					$arrIncludeTermIDs = array("0");
+										
 				break;
 				default:
 					dmp("wrong include by: $includeby");
@@ -5115,13 +5135,22 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 			
 		if(!empty($includeParentID)){
-			
 			$parentKey = "parent";
 			if($isDirectParent == false)
 				$parentKey = "child_of";
 
 			$args[$parentKey] = $includeParentID;
 		}
+
+
+		if(!empty($includeParentTermIdForAutoChild)){
+			
+			unset($args['child_of']);
+			
+			$parentKey = "parent";
+			$args[$parentKey] = $includeParentTermIdForAutoChild;
+		}
+
 
 		$isWpmlExists = UniteCreatorWpmlIntegrate::isWpmlExists();
 		if($isWpmlExists)
@@ -5136,18 +5165,24 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		if($showDebug == true){
 			echo "<div class='uc-div-ajax-debug'>";
-
 			dmp("The terms query is:");
 			dmp($args);
 		}
 
 		$args = $this->getPostListData_getCustomQueryFilters($args, $value, $name, $data, false);
-		
+
+		if($isHide){
+			$args['selected_post_types'] = $postType;
+			add_filter( 'terms_clauses', array($this, "filterTermsByPostTypes"), 10, 3);
+		}
+
 		$term_query = new WP_Term_Query();
 		$arrTermsObjects = $term_query->query( $args );
 
-		if($showDebug == true){
 
+
+
+		if($showDebug == true){
 			dmp("terms found: ".count($arrTermsObjects));
 		}
 
@@ -5198,11 +5233,38 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 		$arrTerms = $this->modifyArrTermsForOutput($arrTerms, $taxonomy, $useCustomFields, $postType);
 
-			
+
+
 		return($arrTerms);
 	}
 
+	/**
+	 * filter remove empty terms for selected post types
+	 */
+	public function filterTermsByPostTypes( $clauses, $taxonomies, $args ) {
+		if ( ! empty( $args['selected_post_types'] ) && is_array( $args['selected_post_types'] ) ) {
+			global $wpdb;
 
+
+			$post_types = $args['selected_post_types'];
+			$post_types_in = "'" . implode( "','", $post_types ) . "'";
+
+			$clauses['where'] .= "
+                AND EXISTS (
+                    SELECT 1
+                    FROM {$wpdb->term_relationships} tr
+                    INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id
+                    WHERE tr.term_taxonomy_id = tt.term_taxonomy_id
+                    AND p.post_type IN ({$post_types_in})
+                    AND p.post_status = 'publish'
+                )
+            ";
+		}
+
+		remove_filter( 'terms_clauses', array($this, "filterTermsByPostTypes"), 10, 3);
+
+		return $clauses;
+	}
 
 	/**
 	 * filter order random taxonomy terms

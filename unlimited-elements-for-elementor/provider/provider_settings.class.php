@@ -2114,6 +2114,23 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 
 		$this->addMultiSelect($name . "_related_taxonomies", $arrTaxonomies, __("Include By Taxonomies", "unlimited-elements-for-elementor"), "", $params);
 
+
+		//----- display posts by author of single post -------
+		$params = array();
+		$params["origtype"] = UniteCreatorDialogParam::PARAM_RADIOBOOLEAN;
+		$params["elementor_condition"] = $arrRelatedOnlyCondition;
+		$this->addRadioBoolean($name . "_by_single_post_author", __("Include By Current Post Author", "unlimited-elements-for-elementor"), false, "Yes", "No", $params);
+		
+
+		//----- allow custom post types in related posts if Include By Taxonomies = post_tag -------
+				
+		$params = array();
+		$params["origtype"] = UniteCreatorDialogParam::PARAM_RADIOBOOLEAN;
+		$params["elementor_condition"] = $arrRelatedOnlyCondition;
+		
+		$this->addRadioBoolean($name . "_allow_custom_post_types_in_related_posts", __("Allow related posts from 'any' post type", "unlimited-elements-for-elementor"), false, "Yes", "No", $params);
+
+		
 		// --------- add exclude by -------------
 		$arrExclude = array();
 

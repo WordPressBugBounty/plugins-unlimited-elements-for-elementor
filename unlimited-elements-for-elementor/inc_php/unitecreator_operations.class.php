@@ -428,47 +428,6 @@ class UCOperations extends UniteElementsBaseUC{
 		dmp($arrCats);
 	}
 
-	/**
-	 * get schema
-	 */
-	public function getArrSchema($arrInputItems, $schemaType, $titleKey, $contentKey){
-
-		switch($schemaType){
-			case 'faq':
-			default:
-
-				$arrItems = array();
-
-				$arrItems['@context'] = "https://schema.org";
-				$arrItems['@type'] = 'FAQPage';
-
-				foreach($arrInputItems as $item){
-					$innerItem = UniteFunctionsUC::getVal($item, "item");
-
-					$title = UniteFunctionsUC::getVal($innerItem, $titleKey);
-					$content = UniteFunctionsUC::getVal($innerItem, $contentKey);
-
-					$title = wp_strip_all_tags($title);
-					$content = wp_strip_all_tags($content);
-
-					$itemArray = array();
-					$itemArray['@type'] = 'Question';
-					$itemArray['name'] = $title;
-
-					$subitemArray = array();
-					$subitemArray['@type'] = 'Answer';
-					$subitemArray['text'] = $content;
-					$itemArray['acceptedAnswer'] = $subitemArray;
-
-					$arrItems['mainEntity'][] = $itemArray;
-				}
-		} //switch
-
-		return ($arrItems);
-	}
-	
-	
-	
 	private function a____________DEBUG____________(){}
 		
 	/**
@@ -653,7 +612,7 @@ class UCOperations extends UniteElementsBaseUC{
 	public function putPostTermsDebug($postID){
 		$strTerms = UniteFunctionsWPUC::getPostTermsTitlesString($postID, true);
 		?>
-		<div>Post Terms: <span style='color:green;'>"<?php echo esc_html($strTerms);?>"</style></div>
+		<div>Post Terms: <span style='color:green;'>"<?php echo esc_html($strTerms);?>"</span></div>
 		<?php
 	}
 	

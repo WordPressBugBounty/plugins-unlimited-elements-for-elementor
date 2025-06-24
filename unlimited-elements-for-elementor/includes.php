@@ -12,7 +12,7 @@ if(!defined('UNLIMITED_ELEMENTS_INC'))
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 if(!defined("UNLIMITED_ELEMENTS_VERSION"))
-	define("UNLIMITED_ELEMENTS_VERSION", "1.5.145");
+	define("UNLIMITED_ELEMENTS_VERSION", "1.5.146");
 
 //disable elementor support for debugging purposes. keep it commented
 //define("UE_DISABLE_ELEMENTOR_SUPPORT", true);
@@ -35,6 +35,7 @@ require_once $folderIncludesMain . 'plugins/unitecreator_plugin_filters.class.ph
 
 require_once $folderIncludesMain . 'unitecreator_globals.class.php';
 require_once $folderIncludesMain . 'unitecreator_operations.class.php';
+require_once $folderIncludesMain . 'unitecreator_schema.class.php';
 require_once GlobalsUC::$pathProvider . 'provider_operations.class.php';
 
 require_once $folderIncludesMain . 'unitecreator_category.class.php';

@@ -428,6 +428,38 @@ class UniteCreatorFiltersProcess{
 		return($arrValues);
 	}
 
+	/**
+	 * get term id from terms string
+	 */
+	private function getTermIDByStrTerms($strTerms){
+		
+		if(empty($strTerms))
+			return(null);
+			
+		$arrTerm = explode(":", $strTerms);
+		
+		if(count($arrTerm) != 2)
+			return(null);
+
+		$taxonomy = $arrTerm[0];
+		$slug = $arrTerm[1];
+		
+		$taxonomy = UniteFunctionsUC::sanitize($taxonomy, UniteFunctionsUC::SANITIZE_TEXT_FIELD);
+		$slug = UniteFunctionsUC::sanitize($slug, UniteFunctionsUC::SANITIZE_TEXT_FIELD);
+		
+		if(empty($slug))
+			return(null);
+			
+		$term = UniteFunctionsWPUC::getTermBySlug($taxonomy, $slug);
+		
+		if(empty($term))
+			return(null);
+			
+		$termID = $term->term_id;
+		
+		return($termID);
+	}
+	
 
 	/**
 	 * parse filters string
@@ -481,7 +513,7 @@ class UniteCreatorFiltersProcess{
 
 		if(!empty($arrTerms))
 			$arrOutput[self::TYPE_TABS] = $arrTerms;
-
+		
 
 		return($arrOutput);
 	}
@@ -645,9 +677,19 @@ class UniteCreatorFiltersProcess{
 		if(!empty($titleStart) && UniteFunctionsUC::isAlphaNumeric($titleStart))
 			$arrOutput["titlestart"] = strtolower($titleStart);
 		
+		//main term
+		
+		$strMainTerm = UniteFunctionsUC::getVal($request, "ucmainterm");
+		
+		if(!empty($strMainTerm)){
+			$mainTermID = $this->getTermIDByStrTerms($strMainTerm);
+			
+			if(!empty($mainTermID))
+				$arrOutput["maintermid"] = $mainTermID;
+		}
 		
 		self::$arrInputFiltersCache = $arrOutput;
-
+			
 		return($arrOutput);
 	}
 
@@ -657,7 +699,7 @@ class UniteCreatorFiltersProcess{
 	 * get filters arguments
 	 */
 	public function getRequestFilters(){
-
+		
 		if(self::$filters !== null)
 			return(self::$filters);
 
@@ -742,7 +784,13 @@ class UniteCreatorFiltersProcess{
 		if(!empty($titleStart))
 			self::$filters["titlestart"] = $titleStart;
 		
+		//main term
+		$mainTermID = UniteFunctionsUC::getVal($arrInputFilters, "maintermid");
+
+		if(!empty($mainTermID))
+			self::$filters["maintermid"] = $mainTermID;
 		
+				
 		return(self::$filters);
 	}
 
@@ -907,7 +955,7 @@ class UniteCreatorFiltersProcess{
 	/**
 	 * process request filters
 	 */
-	public function processRequestFilters($args, $isFilterable, $isMainQuery = false){
+	public function processRequestFilters($args, $isFilterable, $arrFiltersCommands = array()){
 		
 		$this->setShowDebug();
 				
@@ -917,7 +965,7 @@ class UniteCreatorFiltersProcess{
 			return($args);
 
 		$arrFilters = $this->getRequestFilters();
-		
+				
 		$arrMetaQuery = array();
 	
 		//---- set offset and count ----
@@ -932,6 +980,7 @@ class UniteCreatorFiltersProcess{
 		$priceFrom = UniteFunctionsUC::getVal($arrFilters, "price_from");
 		$priceTo = UniteFunctionsUC::getVal($arrFilters, "price_to");
 		$titleStart = UniteFunctionsUC::getVal($arrFilters, "titlestart");
+		$mainTermID = UniteFunctionsUC::getVal($arrFilters, "maintermid");
 		
 		
 		if(!empty($page))
@@ -1066,7 +1115,7 @@ class UniteCreatorFiltersProcess{
                 'type' => 'NUMERIC'
         	);
 		}
-
+		
 
 		//set the meta query
 
@@ -1253,6 +1302,56 @@ class UniteCreatorFiltersProcess{
 	
 	return($arrPostLetters);
 }
+
+	/**
+	 * get alphabet posts count
+	 */
+	public function getAlphabetPostsCount(){
+		
+	  if (self::$isUnderAjax == false) {
+	        return array();
+	    }
+	
+	    // get the last grid request SQL 
+	    $request = $this->getLastGridRequest();
+	    $request = $this->modifySyncPostsRequest($request);
+	
+	    $prefix = UniteProviderFunctionsUC::$tablePrefix;
+	
+	    $sql = "
+	        SELECT 
+	            UPPER(LEFT(p.post_title, 1)) AS first_letter,
+	            COUNT(*) AS post_count
+	        FROM {$prefix}posts AS p
+	        JOIN (
+	            {$request}
+	        ) AS req ON p.id = req.id
+	        WHERE p.post_title != ''
+	        GROUP BY first_letter
+	        ORDER BY first_letter ASC;
+	    ";
+	
+	    $db = HelperUC::getDB();
+	    $response = array();
+			    
+		 try {
+	        $rows = @$db->fetchSql($sql);
+	        if (!empty($rows)) {
+	            foreach ($rows as $row) {
+	                $letter = UniteFunctionsUC::getVal($row, "first_letter");
+	                $count = UniteFunctionsUC::getVal($row, "post_count");
+	                $response[$letter] = $count;
+	            }
+	        }
+	    } catch (Exception $e) {
+	        // fail silently, return empty
+	    }
+    	
+	    if (empty($response))
+	        return array();
+	
+	    return $response;	
+	}
 
 	/**
 	 * return priceRangeMaxValue from Grid

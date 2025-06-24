@@ -144,9 +144,12 @@ class UCFormEntryService{
 		$entries = array();
 
 		foreach($results as $result){
-			$entryFields = $fields[$result["id"]];
+			
+			$entryFields = $fields[$result["id"]] ?? [];
+			
 			$entryFields = $this->formatEntryFields($entryFields);
 			$entryMain = $this->getEntryMainField($entryFields);
+			
 			$entryRead = $result["seen_at"] !== null;
 
 			$entries[] = array_merge($result, array(
@@ -320,6 +323,13 @@ class UCFormEntryService{
 	 */
 	private function getEntryMainField($fields){
 
+		if (empty($fields) || !is_array($fields)) {
+		        return array(
+		            "value" => __("(empty)", "unlimited-elements-for-elementor")
+		        );
+		}
+		
+		
 		$main = null;
 
 		foreach($fields as $field){
@@ -339,10 +349,13 @@ class UCFormEntryService{
 				break;
 			}
 		}
-
-		if($main === null)
+		
+		if($main === null && !empty($fields))
 			$main = reset($fields); // fallback to the first field
-
+		
+		if(empty($main))
+			$main = array();
+		
 		if($main["value"] === "")
 			$main["value"] = __("(empty)", "unlimited-elements-for-elementor");
 

@@ -1,4 +1,4 @@
-//UE Filters Version 1.26
+//UE Filters Version 1.27
 
 function UEDynamicFilters(){
 
@@ -454,7 +454,7 @@ function UEDynamicFilters(){
 
 		//add init after filters
 		var isInitAfter = objFilter.data("initafter");
-
+		
 		if(!isInitAfter)
 			isInitAfter = isSpecialFilterInitAfter(objFilter, objGrid);
 				
@@ -1685,16 +1685,30 @@ function UEDynamicFilters(){
 	 * get slugs string
 	 */
 	function buildTermsQuery_getStrSlugs(objSlugs, isGroup){
-
+		
+		var isDebug = false;
+		
+		if(isDebug == true){
+			trace("get str slugs");
+			trace(objSlugs);
+			trace("is group:" + isGroup);
+		}
+		
 		var strSlugs = "";
 
 		var moreThenOne = false;
 		var isEndSlugFound = false;
-
+		var isOrSlugFound = false;
+		
 		for (var slug in objSlugs){
-
+				
 			if(slug === "__ucand__"){
 				isEndSlugFound = true;
+				continue
+			}
+			
+			if(slug === "__ucor__"){
+				isOrSlugFound = true;
 				continue
 			}
 
@@ -1707,12 +1721,22 @@ function UEDynamicFilters(){
 		}
 
 		//add "and"
-
+		if(isDebug == true){
+			trace("more then one: "+moreThenOne);
+			trace("is end found: "+isEndSlugFound);
+		}
+		
 		var addAnd = (moreThenOne == true && isGroup !== true || isEndSlugFound);
-
+		
+		if(isOrSlugFound === true)
+			addAnd = false;
+		
 		if(addAnd)
 			strSlugs += ".*";
 
+		if(isDebug)
+			trace("str slugs: "+strSlugs);
+		
 		return(strSlugs);
 	}
 
@@ -1722,7 +1746,7 @@ function UEDynamicFilters(){
 	 * ucterms=product_cat~shoes.dress;cat~123.43;
 	 */
 	function buildTermsQuery(arrTerms){
-
+		
 		var isDebug = false;
 
 		var query = "";
@@ -1743,7 +1767,7 @@ function UEDynamicFilters(){
 			if(jQuery.isArray(objTerm) && objTerm.length != 0){
 
 				jQuery.each(objTerm, function(index, groupTerm){
-
+					
 					arrGroupTax = buildTermsQuery_handleTerm(groupTerm, arrGroupTax);
 
 				});
@@ -1769,14 +1793,15 @@ function UEDynamicFilters(){
 			trace("build group");
 			trace(arrGroupTax);
 		}
-
+		
+		
 		//build group slugs
 		jQuery.each(arrGroupTax,function(taxonomy, objSlugs){
-
+			
 			var strSlugs = buildTermsQuery_getStrSlugs(objSlugs, true);
-
+			
 			var strAdd = "|"+strSlugs+"|";
-
+				
 			var objTax = getVal(arrTax, taxonomy);
 			if(!objTax){
 				objTax = {};
@@ -1798,11 +1823,11 @@ function UEDynamicFilters(){
 		//add group to tax
 
 		jQuery.each(arrTax, function(taxonomy, objSlugs){
-
+			
 			var strSlugs = buildTermsQuery_getStrSlugs(objSlugs);
-
+				
 			var strTax = taxonomy + g_options.urlkey_taxsap + strSlugs;
-
+			
 			if(query)
 				query += ";";
 
@@ -2885,6 +2910,21 @@ function UEDynamicFilters(){
 	};	
 
 	/**
+	* get operator term
+	*/
+	function getObjOperatorTerm(operator, dataTerms){
+		var slug = (operator == "and")?"__ucand__":"__ucor__";
+		var firstTerm = dataTerms[0];        
+		var objOperatorTerm = {
+			taxonomy: firstTerm.taxonomy,
+			slug: slug,
+			id:null
+		};
+		
+		return(objOperatorTerm);
+	}
+
+	/**
 	 * get grid ajax options
 	 */
 	function getGridAjaxOptions(objFilters, objGrid, isFiltersInitMode, isLoadMoreMode, params){
@@ -3178,28 +3218,39 @@ function UEDynamicFilters(){
 					//add terms
 					
 					var dataTerms = getVal(filterData,"terms");
-					
-					if(dataTerms && dataTerms.length){
 
-						if(dataTerms.length == 1)		//single term
-							arrTerms.push(dataTerms[0]);
-						else{
+					if(dataTerms && dataTerms.length){	
 
+						var isOperatoeAdded = false;
+
+						if(filterRole == "main"){
 							var operator = getVal(filterData,"operator");
+										
+							if(operator === "and" || operator === "or"){									
+								var objOperatorTerm = getObjOperatorTerm(operator, dataTerms);
 
-							if(operator == "and"){
-
-								var firstTerm = dataTerms[0];
-
-								var objOperatorTerm = {
-										taxonomy: firstTerm.taxonomy,
-										slug: "__ucand__",
-										id:null
-								};
-
-								dataTerms.push(objOperatorTerm);
+								dataTerms.push(objOperatorTerm);	
+						    isOperatoeAdded = true;
 							}
+						}
 
+						if(dataTerms.length == 1){		//single term			
+						  arrTerms.push(dataTerms[0]);
+						}
+						
+						if(dataTerms.length > 1){	//multiple terms
+							//push the end or or operator
+							var operator = getVal(filterData,"operator");
+									
+							if(isOperatoeAdded == false){
+
+								if(operator === "and" || operator === "or"){								
+									var objOperatorTerm = getObjOperatorTerm(operator, dataTerms);
+		
+									dataTerms.push(objOperatorTerm);
+								}
+							}
+							
 							arrTerms.push(dataTerms);	//multiple (grouping)
 						}
 						
@@ -4049,10 +4100,26 @@ function UEDynamicFilters(){
 			var objAjaxOptions = getGridAjaxOptions_simple(objGrid);
 		
 		var arrTerms = getVal(objAjaxOptions, "terms");
-
+	
 		if(jQuery.isArray(arrTerms))
 			arrTerms = arrTerms.flat();
 
+		// Create a new array for filtered items
+		let filteredTerms = [];
+
+		for (let term of arrTerms) {
+				// Skip if the term is an object with slug "__or__", "__and__", or "__ucor__"
+				if (term.slug === "__ucand__" || term.slug === "__ucor__") {
+						continue;
+				}
+
+				// Add the term to the filtered array
+				filteredTerms.push(term);
+		}
+
+		// Assign the filtered array back to arrTerms
+		arrTerms = filteredTerms;
+		
 		var search = getVal(objAjaxOptions, "search");
 
 		if(search)

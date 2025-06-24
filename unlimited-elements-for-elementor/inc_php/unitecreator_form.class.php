@@ -37,15 +37,20 @@ class UniteCreatorForm{
 	const PLACEHOLDER_FORM_FIELDS = "form_fields";
 	const PLACEHOLDER_SITE_NAME = "site_name";
 	const PLACEHOLDER_PAGE_URL = "page_url";
+	const PLACEHOLDER_PAGE_TITLE = "page_title";
 	
 	const TYPE_FILES = "files";
 
+	const FIELD_NAME_HONEYPOT = "ue_extra_field";
+	
 	private static $isFormIncluded = false;    //indicator that the form included once
 
 	private $formSettings;
 	private $formFields;
 	private $formMeta;
-
+	private $lastSpamError;
+	private $recaptchaDebug = null;
+	
 	/**
 	 * add conditions elementor control
 	 */
@@ -197,253 +202,6 @@ class UniteCreatorForm{
 		return $data;
 	}
 
-	/**
-	 * submit form
-	 */
-	public function submitFormFront(){
-				
-		$formData = UniteFunctionsUC::getPostGetVariable("formData", null, UniteFunctionsUC::SANITIZE_NOTHING);
-		$formFiles = UniteFunctionsUC::getFilesVariable("formFiles");
-		$formId = UniteFunctionsUC::getPostGetVariable("formId", null, UniteFunctionsUC::SANITIZE_KEY);
-		$postId = UniteFunctionsUC::getPostGetVariable("postId", null, UniteFunctionsUC::SANITIZE_ID);
-		$templateId = UniteFunctionsUC::getPostGetVariable("templateId", null, UniteFunctionsUC::SANITIZE_ID);
-
-		UniteFunctionsUC::validateNotEmpty($formId, "form id");
-		UniteFunctionsUC::validateNumeric($postId, "post id");
-
-		if(empty($formData) === true)
-			UniteFunctionsUC::throwError("No form data found.");
-
-		$postContent = HelperProviderCoreUC_EL::getElementorContentByPostID($postId);
-
-		if(empty($postContent))
-			UniteFunctionsUC::throwError("Form elementor content not found.");
-
-		$templateContent = null;
-
-		if(empty($templateId) === false){
-			$templateContent = HelperProviderCoreUC_EL::getElementorContentByPostID($templateId);
-
-			if(empty($templateContent) === true)
-				UniteFunctionsUC::throwError("Template elementor content not found.");
-		}
-
-		$addonForm = HelperProviderCoreUC_EL::getAddonWithDataFromContent($postContent, $formId);
-
-		$formSettings = $addonForm->getProcessedMainParamsValues();
-		$formFields = $this->getFieldsData($templateContent ?: $postContent, $formData, $formFiles);
-		
-		$this->doSubmitActions($formSettings, $formFields);
-	}
-	
-	
-	/**
-	 * do submit actions
-	 */
-	private function doSubmitActions($formSettings, $formFields){
-
-		$this->formSettings = $formSettings;
-		$this->formFields = $formFields;
-
-		$data = array();
-		$errors = array();
-		$debugData = array();
-		$debugMessages = array();
-
-		try{
-			$debugMessages[] = "Form has been received.";
-	
-			// Validate form settings
-			$formErrors = $this->validateFormSettings($this->formSettings);
-
-			if(empty($formErrors) === false){
-				$errors = array_merge($errors, $formErrors);
-
-				$formErrors = implode(" ", $formErrors);
-
-				UniteFunctionsUC::throwError("Form settings validation failed ($formErrors).");
-			}
-
-			// Check for spam
-			$isSpam = $this->detectFormSpam();
-
-
-			if($isSpam === true){
-				$spamError = $this->getSpamErrorMessage();
-
-				UniteFunctionsUC::throwError($spamError, self::ERROR_CODE_SPAM);
-			}
-
-			// Validate form fields
-			$fieldsErrors = $this->validateFormFields($this->formFields);
-
-			if(empty($fieldsErrors) === false){
-				
-				$errors = array_merge($errors, $fieldsErrors);
-
-				$validationError = $this->getValidationErrorMessage($fieldsErrors);
-
-				UniteFunctionsUC::throwError($validationError, self::ERROR_CODE_VALIDATION);
-			}
-
-			// Upload form files
-			$filesErrors = $this->uploadFormFiles();
-
-			if(empty($filesErrors) === false){
-				$errors = array_merge($errors, $filesErrors);
-
-				UniteFunctionsUC::throwError("Form upload failed.");
-			}
-
-			// Process form actions
-			$formActions = UniteFunctionsUC::getVal($this->formSettings, "form_actions");
-			$actionsErrors = array();
-
-			foreach($formActions as $action){
-				try{
-					$this->executeFormAction("before_{$action}_action");
-
-					switch($action){
-						case self::ACTION_SAVE:
-							$this->createFormEntry();
-
-							$debugMessages[] = "Form entry has been successfully created.";
-						break;
-
-						case self::ACTION_EMAIL:
-						case self::ACTION_EMAIL2:
-							
-							$emailFields = $this->getEmailFields($action);
-							
-							$debugData[$action] = $emailFields;
-
-							$this->sendEmail($emailFields);
-
-							$emails = implode(", ", $emailFields["to"]);
-
-							$debugMessages[] = "Email has been successfully sent to $emails.";
-						break;
-
-						case self::ACTION_WEBHOOK:
-						case self::ACTION_WEBHOOK2:
-							$webhookFields = $this->getWebhookFields($action);
-
-							$debugData[$action] = $webhookFields;
-
-							$this->sendWebhook($webhookFields);
-
-							$debugMessages[] = "Webhook has been successfully sent to {$webhookFields["url"]}.";
-						break;
-
-						case self::ACTION_REDIRECT:
-							$redirectFields = $this->getRedirectFields();
-
-							$data["redirect"] = $redirectFields["url"];
-							$debugData[$action] = $redirectFields["url"];
-
-							$debugMessages[] = "Redirecting to {$redirectFields["url"]}.";
-						break;
-
-						case self::ACTION_GOOGLE_SHEETS:
-							$spreadsheetFields = $this->getGoogleSheetsFields();
-
-							$debugData[$action] = $spreadsheetFields;
-
-							$this->sendToGoogleSheets($spreadsheetFields);
-
-							$debugMessages[] = "Data has been successfully sent to Google Sheets.";
-						break;
-
-						case self::ACTION_HOOK:
-							
-							$hookFields = $this->getHookFields();
-
-							$debugData[$action] = $hookFields;
-							
-							$customActionName = $hookFields["name"];
-							
-							$this->executeCustomAction($customActionName);
-
-							$debugMessages[] = "Hook: $customActionName has been successfully executed.";
-						break;
-
-						case self::ACTION_MAILPOET:
-
-							$mailPoetMessage = $this->mailPoetService();
-
-							$debugMessages[] = $mailPoetMessage;
-
-							break;
-
-						default:
-							UniteFunctionsUC::throwError("Form action \"$action\" is not implemented.");
-					}
-
-					$this->executeFormAction("after_{$action}_action");
-				}catch(Exception $exception){
-					$errorMessage = "{$this->getActionTitle($action)}: {$exception->getMessage()}";
-					$debugType = UniteFunctionsUC::getVal($this->formSettings, "debug_type");
-
-					if($debugType === "full")
-						$errorMessage .= "<pre>{$exception->getTraceAsString()}</pre>";
-
-					$actionsErrors[] = $errorMessage;
-				}
-			}
-
-			if(empty($actionsErrors) === false){
-				$errors = array_merge($errors, $actionsErrors);
-
-				$actionsErrors = implode(" ", $actionsErrors);
-
-				UniteFunctionsUC::throwError("Form actions failed ($actionsErrors).");
-			}
-
-			$success = true;
-			$message = $this->getFormSuccessMessage();
-		}catch(Exception $exception){
-			
-			
-			$success = false;
-			$message = $this->getFormErrorMessage();
-
-			$preserveMessageErrorCodes = array(
-				self::ERROR_CODE_VALIDATION,
-				self::ERROR_CODE_SPAM,
-			);
-
-			if(in_array($exception->getCode(), $preserveMessageErrorCodes) === true)
-				$message = $exception->getMessage();
-
-				
-			$debugMessages[] = $exception->getMessage();
-		}
-
-		$this->createFormLog($debugMessages);
-
-		$isDebug = UniteFunctionsUC::getVal($this->formSettings, "debug_mode");
-		$isDebug = UniteFunctionsUC::strToBool($isDebug);
-
-		if($isDebug === true){
-			$debugMessage = implode(" ", $debugMessages);
-			$debugType = UniteFunctionsUC::getVal($this->formSettings, "debug_type");
-
-			$data["debug"] = "<p><b>DEBUG:</b> $debugMessage</p>";
-
-			if($debugType === "full"){
-				$debugData["errors"] = $errors;
-				$debugData["fields"] = $this->formFields;
-				$debugData["settings"] = $this->formSettings;
-
-				$debugData = json_encode($debugData, JSON_PRETTY_PRINT);
-				$debugData = esc_html($debugData);
-
-				$data["debug"] .= "<pre>$debugData</pre>";
-			}
-		}
-
-		HelperUC::ajaxResponse($success, $message, $data);
-	}
 
 
 	/**
@@ -804,59 +562,8 @@ class UniteCreatorForm{
 			UniteFunctionsUC::throwError("Unable to create form entry: {$e->getMessage()}");
 		}
 	}
-
-	/**
-	 * detect form spam
-	 */
-	private function detectFormSpam(){
-
-		$antispamSettings = $this->getAntispamSettings();
-
-		// check if anti-spam is enabled
-		if($antispamSettings["enabled"] === false)
-			return false;
-
-		$userIp = UniteFunctionsUC::getUserIp();
-		$currentTime = current_time("timestamp");
-
-		// get blocks
-		$antispamBlocks = $this->getAntispamBlocks();
-		$userBlockTime = UniteFunctionsUC::getVal($antispamBlocks, $userIp, 0);
-
-		// check if the user is blocked
-		if($userBlockTime + $antispamSettings["block_period"] > $currentTime)
-			return true;
-
-		// get submissions
-		$antispamSubmissions = $this->getAntispamSubmissions();
-		$userSubmissions = UniteFunctionsUC::getVal($antispamSubmissions, $userIp, array());
-
-		// check if the user has reached the submissions limit
-		if(count($userSubmissions) >= $antispamSettings["submissions_limit"]){
-			$lastSubmissionTime = end($userSubmissions);
-
-			// check if the user's last submission is within the period
-			if($lastSubmissionTime + $antispamSettings["submissions_period"] > $currentTime){
-				// block the user
-				$antispamBlocks[$userIp] = $currentTime;
-
-				$this->saveAntispamBlocks($antispamBlocks, $antispamSettings["block_period"]);
-
-				return true;
-			}
-
-			// reset the user submissions
-			$userSubmissions = array();
-		}
-
-		// save the user submission
-		$userSubmissions[] = $currentTime;
-		$antispamSubmissions[$userIp] = $userSubmissions;
-
-		$this->saveAntispamSubmissions($antispamSubmissions, $antispamSettings["submissions_period"]);
-
-		return false;
-	}
+	
+	
 
 	/**
 	 * create form log
@@ -901,7 +608,7 @@ class UniteCreatorForm{
 
 		// Process files upload
 		$errors = array();
-
+		
 		foreach($this->formFields as &$field){
 			if($field["type"] !== self::TYPE_FILES)
 				continue;
@@ -939,7 +646,9 @@ class UniteCreatorForm{
 
 			$field["value"] = $this->encodeFilesFieldValue($urls);
 		}
-
+		
+		
+		
 		return $errors;
 	}
 
@@ -1041,6 +750,7 @@ class UniteCreatorForm{
 			self::PLACEHOLDER_EMAIL_FIELD,
 			self::PLACEHOLDER_SITE_NAME,
 			self::PLACEHOLDER_PAGE_URL,
+			self::PLACEHOLDER_PAGE_TITLE,
 		), $formFieldPlaceholders);
 		
 		if($includeFormFields == true)
@@ -1051,6 +761,7 @@ class UniteCreatorForm{
 		
 		//clear placeholders that left
 		$emailMessage = $this->clearPlaceholders($emailMessage);
+		
 		
 		return $emailMessage;
 	}
@@ -1159,7 +870,7 @@ class UniteCreatorForm{
 	private function getRedirectFields(){
 		
 		$url = UniteFunctionsUC::getVal($this->formSettings, "redirect_url");
-		$url = $this->addPlaceholdersToRedirectUrl($url);
+		$url = $this->addFormFieldsValueToRedirectUrl($url);
 		$url = esc_url_raw($url);
 
 		$redirectFields = array(
@@ -1170,11 +881,9 @@ class UniteCreatorForm{
 	}
 
 	/**
-	 * add placeholder of the form fields to redirect url
-	 * vlodimir - why need another function, there is function that replace placeholders already no? 
-	 * replacePlaceholders some of those for example
+	 * add form fields to redirect url
 	 */
-	private function addPlaceholdersToRedirectUrl($url) {
+	private function addFormFieldsValueToRedirectUrl($url) {
 		
 		$hasPlaceholders = preg_match('/\{(.*?)\}/', $url);
 		if (!$hasPlaceholders)
@@ -1352,6 +1061,469 @@ class UniteCreatorForm{
 		return $fields;
 	}
 
+	
+	private function ________SUBMIT_________(){}
+	
+	
+	/**
+	 * submit form
+	 */
+	public function submitFormFront(){
+		
+		$formData = UniteFunctionsUC::getPostGetVariable("formData", null, UniteFunctionsUC::SANITIZE_NOTHING);
+		$formFiles = UniteFunctionsUC::getFilesVariable("formFiles");
+		$formId = UniteFunctionsUC::getPostGetVariable("formId", null, UniteFunctionsUC::SANITIZE_KEY);
+		$postId = UniteFunctionsUC::getPostGetVariable("postId", null, UniteFunctionsUC::SANITIZE_ID);
+		$templateId = UniteFunctionsUC::getPostGetVariable("templateId", null, UniteFunctionsUC::SANITIZE_ID);
+		
+		$recaptchaToken = UniteFunctionsUC::getPostGetVariable("recaptcha_token", "", UniteFunctionsUC::SANITIZE_NOTHING);
+		$honeyPotVal = UniteFunctionsUC::getPostGetVariable("honeypot_val", "", UniteFunctionsUC::SANITIZE_NOTHING);
+				
+		UniteFunctionsUC::validateNotEmpty($formId, "form id");
+		UniteFunctionsUC::validateNumeric($postId, "post id");
+
+		if(empty($formData) === true)
+			UniteFunctionsUC::throwError("No form data found.");
+
+		$postContent = HelperProviderCoreUC_EL::getElementorContentByPostID($postId);
+
+		if(empty($postContent))
+			UniteFunctionsUC::throwError("Form elementor content not found.");
+
+		$templateContent = null;
+
+		if(empty($templateId) === false){
+			$templateContent = HelperProviderCoreUC_EL::getElementorContentByPostID($templateId);
+
+			if(empty($templateContent) === true)
+				UniteFunctionsUC::throwError("Template elementor content not found.");
+		}
+		
+		$addonForm = HelperProviderCoreUC_EL::getAddonWithDataFromContent($postContent, $formId);
+
+		$formSettings = $addonForm->getProcessedMainParamsValues();
+		$formFields = $this->getFieldsData($templateContent ?: $postContent, $formData, $formFiles);
+						
+		if(!empty($recaptchaToken))
+			$formSettings["recaptcha_token"] = $recaptchaToken;
+
+		if(!empty($honeyPotVal))
+			$formSettings["honeypot_value"] = $honeyPotVal;
+		
+			
+		$this->doSubmitActions($formSettings, $formFields);
+	}
+	
+	
+	/**
+	 * do submit actions
+	 */
+	private function doSubmitActions($formSettings, $formFields){
+
+		$this->formSettings = $formSettings;
+		$this->formFields = $formFields;
+		
+		$data = array();
+		$errors = array();
+		$debugData = array();
+		$debugMessages = array();
+		
+		
+		try{
+			$debugMessages[] = "Form has been received.";
+	
+			// Validate form settings
+			$formErrors = $this->validateFormSettings($this->formSettings);
+
+			if(empty($formErrors) === false){
+				$errors = array_merge($errors, $formErrors);
+
+				$formErrors = implode(" ", $formErrors);
+
+				UniteFunctionsUC::throwError("Form settings validation failed ($formErrors).");
+			}
+
+			// Check for spam
+			$isSpam = $this->detectFormSpam();
+			
+			if($isSpam === true){
+				$spamError = $this->getSpamErrorMessage();
+				
+				$saveError = $this->lastSpamError;
+				if(empty($saveError))
+					$saveError = $spamError;
+					
+				$errors[] = $saveError;
+				
+				UniteFunctionsUC::throwError($spamError, self::ERROR_CODE_SPAM);
+			}
+			
+						
+			// Validate form fields
+			$fieldsErrors = $this->validateFormFields($this->formFields);
+			
+			if(empty($fieldsErrors) === false){
+				
+				$errors = array_merge($errors, $fieldsErrors);
+
+				$validationError = $this->getValidationErrorMessage($fieldsErrors);
+
+				UniteFunctionsUC::throwError($validationError, self::ERROR_CODE_VALIDATION);
+			}
+
+			// Upload form files
+			$filesErrors = $this->uploadFormFiles();
+
+			if(empty($filesErrors) === false){
+				$errors = array_merge($errors, $filesErrors);
+
+				UniteFunctionsUC::throwError("Form upload failed.");
+			}
+
+			// Process form actions
+			$formActions = UniteFunctionsUC::getVal($this->formSettings, "form_actions");
+			$actionsErrors = array();
+
+			foreach($formActions as $action){
+				try{
+					$this->executeFormAction("before_{$action}_action");
+
+					switch($action){
+						case self::ACTION_SAVE:
+							$this->createFormEntry();
+
+							$debugMessages[] = "Form entry has been successfully created.";
+						break;
+
+						case self::ACTION_EMAIL:
+						case self::ACTION_EMAIL2:
+							
+							$emailFields = $this->getEmailFields($action);
+							
+							$debugData[$action] = $emailFields;
+
+							$this->sendEmail($emailFields);
+
+							$emails = implode(", ", $emailFields["to"]);
+
+							$debugMessages[] = "Email has been successfully sent to $emails.";
+						break;
+
+						case self::ACTION_WEBHOOK:
+						case self::ACTION_WEBHOOK2:
+							$webhookFields = $this->getWebhookFields($action);
+
+							$debugData[$action] = $webhookFields;
+
+							$this->sendWebhook($webhookFields);
+
+							$debugMessages[] = "Webhook has been successfully sent to {$webhookFields["url"]}.";
+						break;
+
+						case self::ACTION_REDIRECT:
+							$redirectFields = $this->getRedirectFields();
+
+							$data["redirect"] = $redirectFields["url"];
+							$debugData[$action] = $redirectFields["url"];
+
+							$debugMessages[] = "Redirecting to {$redirectFields["url"]}.";
+						break;
+
+						case self::ACTION_GOOGLE_SHEETS:
+							$spreadsheetFields = $this->getGoogleSheetsFields();
+
+							$debugData[$action] = $spreadsheetFields;
+
+							$this->sendToGoogleSheets($spreadsheetFields);
+
+							$debugMessages[] = "Data has been successfully sent to Google Sheets.";
+						break;
+
+						case self::ACTION_HOOK:
+							
+							$hookFields = $this->getHookFields();
+
+							$debugData[$action] = $hookFields;
+							
+							$customActionName = $hookFields["name"];
+							
+							$this->executeCustomAction($customActionName);
+
+							$debugMessages[] = "Hook: $customActionName has been successfully executed.";
+						break;
+
+						case self::ACTION_MAILPOET:
+
+							$mailPoetMessage = $this->mailPoetService();
+
+							$debugMessages[] = $mailPoetMessage;
+
+							break;
+
+						default:
+							UniteFunctionsUC::throwError("Form action \"$action\" is not implemented.");
+					}
+
+					$this->executeFormAction("after_{$action}_action");
+				}catch(Exception $exception){
+					$errorMessage = "{$this->getActionTitle($action)}: {$exception->getMessage()}";
+					$debugType = UniteFunctionsUC::getVal($this->formSettings, "debug_type");
+
+					if($debugType === "full")
+						$errorMessage .= "<pre>{$exception->getTraceAsString()}</pre>";
+
+					$actionsErrors[] = $errorMessage;
+				}
+			}
+
+			if(empty($actionsErrors) === false){
+				
+				$errors = array_merge($errors, $actionsErrors);
+				
+				$actionsErrors = implode(" ", $actionsErrors);
+
+				UniteFunctionsUC::throwError("Form actions failed ($actionsErrors).");
+			}
+
+			$success = true;
+			$message = $this->getFormSuccessMessage();
+		}catch(Exception $exception){
+			
+			$success = false;
+			$message = $this->getFormErrorMessage();
+
+			$preserveMessageErrorCodes = array(
+				self::ERROR_CODE_VALIDATION,
+				self::ERROR_CODE_SPAM,
+			);
+
+			if(in_array($exception->getCode(), $preserveMessageErrorCodes) === true)
+				$message = $exception->getMessage();
+			
+			$errors[] = $exception->getMessage();
+				
+			$debugMessages[] = $exception->getMessage();
+		}
+
+		$this->createFormLog($debugMessages);
+
+		$isDebug = UniteFunctionsUC::getVal($this->formSettings, "debug_mode");
+		$isDebug = UniteFunctionsUC::strToBool($isDebug);
+
+		if($isDebug === true){
+			$debugMessage = implode(" ", $debugMessages);
+			$debugType = UniteFunctionsUC::getVal($this->formSettings, "debug_type");
+
+			$data["debug"] = "<p><b>DEBUG:</b> $debugMessage</p>";
+
+			if($debugType === "full"){
+				$debugData["errors"] = $errors;				
+				$debugData["fields"] = $this->formFields;
+				if(!empty($this->recaptchaDebug))
+					$debugData["recaptcha"] = $this->recaptchaDebug;
+				$debugData["settings"] = $this->formSettings;
+				
+				$debugData = json_encode($debugData, JSON_PRETTY_PRINT);
+				$debugData = esc_html($debugData);
+
+				$data["debug"] .= "<pre>$debugData</pre>";
+			}
+		}
+
+		HelperUC::ajaxResponse($success, $message, $data);
+	}
+	
+	
+	private function ________ANTISPAM_________(){}
+	
+	
+	/**
+	 * gedect from antispam
+	 */
+	private function detectSpamFromAntispam(){
+		
+		$antispamSettings = $this->getAntispamSettings();
+
+		// check if anti-spam is enabled
+		if($antispamSettings["enabled"] === false)
+			return false;
+
+		$userIp = UniteFunctionsUC::getUserIp();
+		$currentTime = current_time("timestamp");
+
+		// get blocks
+		$antispamBlocks = $this->getAntispamBlocks();
+		$userBlockTime = UniteFunctionsUC::getVal($antispamBlocks, $userIp, 0);
+
+		// check if the user is blocked
+		if($userBlockTime + $antispamSettings["block_period"] > $currentTime)
+			return true;
+
+		// get submissions
+		$antispamSubmissions = $this->getAntispamSubmissions();
+		$userSubmissions = UniteFunctionsUC::getVal($antispamSubmissions, $userIp, array());
+
+		// check if the user has reached the submissions limit
+		if(count($userSubmissions) >= $antispamSettings["submissions_limit"]){
+			$lastSubmissionTime = end($userSubmissions);
+
+			// check if the user's last submission is within the period
+			if($lastSubmissionTime + $antispamSettings["submissions_period"] > $currentTime){
+				// block the user
+				$antispamBlocks[$userIp] = $currentTime;
+
+				$this->saveAntispamBlocks($antispamBlocks, $antispamSettings["block_period"]);
+
+				return true;
+			}
+
+			// reset the user submissions
+			$userSubmissions = array();
+		}
+
+		// save the user submission
+		$userSubmissions[] = $currentTime;
+		$antispamSubmissions[$userIp] = $userSubmissions;
+
+		$this->saveAntispamSubmissions($antispamSubmissions, $antispamSettings["submissions_period"]);
+
+		return false;
+	}
+	
+	
+	/**
+	 * detect the honeypot
+	 */
+	private function detectSpamFromHoneypot(){
+		
+		$enableHoneypot = UniteFunctionsUC::getVal($this->formSettings, "enable_honeypot");
+		$enableHoneypot = UniteFunctionsUC::strToBool($enableHoneypot);
+		
+		if($enableHoneypot == false)
+			return(false);
+		
+		$honeyPotValue = UniteFunctionsUC::getVal($this->formSettings, "honeypot_value");
+		
+		if(empty($honeyPotValue))
+			return(false);
+		
+		$this->lastSpamError = __("Honey Pot Value Detected", "unlimited-elements-for-elementor");
+		
+		return(true);
+	}
+	
+	
+	/**
+	 * detect the recaptcha
+	 * todo: Finish this function
+	 */
+	private function detectSpamRecaptcha(){
+		
+		$recaptchaExists = UniteFunctionsUC::getVal($this->formSettings, "add_recaptcha_protection");
+		$recaptchaExists = UniteFunctionsUC::strToBool($recaptchaExists);
+		
+		if($recaptchaExists == false)
+			return(false);
+		
+	    $siteKey = HelperProviderCoreUC_EL::getGeneralSetting("recaptcha_site_key");
+	    $secretKey = HelperProviderCoreUC_EL::getGeneralSetting("recaptcha_secret_key");
+	
+	    if (empty($siteKey) || empty($secretKey))
+	        return false;
+		
+	    $token = UniteFunctionsUC::getVal($this->formSettings, "recaptcha_token");
+	    
+	    //get the trashold
+	    $threshold = UniteFunctionsUC::getVal($this->formSettings, "recaptcha_threshold",0.5);
+	    
+	    if(is_numeric($threshold) == false || $threshold < 0 && $threshold > 1)
+	    	$threshold = 0.5;
+	    
+	    if (empty($token)) {
+	    	
+	    	$this->lastSpamError = __("No recaptcha token recieved","unlimited-elements-for-elementor");
+	    	
+	        return true; // No token -> suspicious!
+	    }
+	    
+	    // Verify token with Google
+	    $args = array(
+	        "body" => array(
+	            "secret" => $secretKey,
+	            "response" => $token,
+	            "remoteip" => UniteFunctionsUC::getUserIp(),
+	        ),
+	        "timeout" => 20,
+	    );
+	    
+	    $url = "https://www.google.com/recaptcha/api/siteverify";
+	    
+	    $response = wp_remote_post($url, $args);
+	    
+	    if (is_wp_error($response)) {
+	    	
+	    	$this->lastSpamError = $response->get_error_message();
+	    	
+	        return true; // Request failed, treat as spam
+	    }
+	
+	    $body = wp_remote_retrieve_body($response);
+	    $result = json_decode($body, true);
+		
+	    $errorPrefix = __("reCAPTCHA error(s):","unlimited-elements-for-elementor");
+	    
+	    $this->recaptchaDebug = array();
+	    $this->recaptchaDebug["threshold"] = $threshold;
+	    $this->recaptchaDebug["result"] = $result;
+	    
+	    
+	    if (empty($result["success"]) || $result["success"] !== true) {
+
+		    if (!empty($result["error-codes"])) {
+	        	$this->lastSpamError =  $errorPrefix . implode(", ", $result["error-codes"]);
+	    	} else {
+	        	$this->lastSpamError =  __("reCAPTCHA verification failed.","unlimited-elements-for-elementor");
+	    	}
+    	    
+	        return true; // Verification failed
+	    }
+	
+	    $score = floatval(UniteFunctionsUC::getVal($result, "score", 0));
+		
+	    if ($score < $threshold) {
+	       	
+	    	$this->lastSpamError = $errorPrefix.__("score too low: $score, the threshold is: $threshold","unlimited-elements-for-elementor");
+	    	
+	        return true; // Score too low, treat as spam
+	    }
+		
+	    return false; // Passed		
+	}
+	
+	
+	/**
+	 * detect form spam
+	 */
+	private function detectFormSpam(){
+		
+		$isHoneypotSpam = $this->detectSpamFromHoneypot();
+		
+		if($isHoneypotSpam == true)
+			return(true);
+		
+		$isRecaptchaSpam = $this->detectSpamRecaptcha();
+		
+		if($isRecaptchaSpam == true)
+			return(true);
+			
+		$isSpam = $this->detectSpamFromAntispam();
+		
+		if($isSpam)
+			return(true);
+		
+		return(false);
+	}
+	
 	private function ________GETTERS_________(){}
 	
 	/**
@@ -1410,7 +1582,7 @@ class UniteCreatorForm{
 	 * get form error message
 	 */
 	private function getFormErrorMessage(){
-
+		
 		$fallback = __("Oops! Something went wrong, please try again later.", "unlimited-elements-for-elementor");
 		$message = $this->getFormMessage("error_message", $fallback);
 		$message = esc_html($message);
@@ -1422,11 +1594,11 @@ class UniteCreatorForm{
 	 * get spam error message
 	 */
 	private function getSpamErrorMessage(){
-
+		
 		$fallback = __("Something went wrong, please try again later.", "unlimited-elements-for-elementor");
 		$message = $this->getFormMessage("spam_error_message", $fallback);
 		$message = esc_html($message);
-
+		
 		return $message;
 	}
 
@@ -1567,6 +1739,9 @@ class UniteCreatorForm{
 				
 			return($urlPage);
 			break;
+			case self::PLACEHOLDER_PAGE_TITLE:
+			    return get_the_title();
+    		break;
 			default:
 				return "";
 		}

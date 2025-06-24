@@ -168,22 +168,47 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			return(self::$objAcfIntegrate);
 		}
 
-
 		public static function a_________POSTS_TYPES________(){}
-
+		
+		/**
+		 * get post type title by post id
+		 */
+		public static function getPostTypeTitleByPost($post){
+			
+			if(is_numeric($post))
+				$post = get_post($post);
+			
+			if(empty($post))
+				return("");
+			
+			$postType = $post->post_type;
+			
+			$typeTitle = self::getPostTypeTitle($postType);
+			
+			return($typeTitle);
+		}
+		
+		
 		/**
 		 *
 		 * return post type title from the post type
 		 */
-		public static function getPostTypeTitle($postType){
-
+		public static function getPostTypeTitle($postType = ""){
+			
+			if(empty($postType))
+				$postType = get_post_type();
+			
 			$objType = get_post_type_object($postType);
-
+			
 			if(empty($objType))
 				return($postType);
-
+			
 			$title = $objType->labels->singular_name;
-
+			
+			if(empty($title))
+				$title = $postType;
+			
+			
 			return($title);
 		}
 
@@ -992,10 +1017,24 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			return($arrTermIDs);
 		}
 		
-		
 		public static function a_______TAXANOMIES_______(){}
 		
-
+		
+		/**
+		 * get term taxonomy name
+		 */
+		public static function getTermTaxonomyName($term){
+						
+			$objTax = get_taxonomy($term->taxonomy);
+			
+			if(empty($objTax))
+				return($term->taxonomy);
+			
+			$taxonomyName = $objTax->labels->singular_name;
+			
+			return($taxonomyName);
+		}
+		
 		/**
 		 *
 		 * get assoc list of the taxonomies
@@ -2596,7 +2635,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$args["s"] = $search;
 
 		$postType = UniteFunctionsUC::getVal($filters, "posttype");
-
+		
 		if(is_array($postType) && count($postType) == 1)
 			$postType = $postType[0];
 
@@ -3857,11 +3896,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 			return (self::$cacheAuthorsShort);
 		}
-
+		
 		$args = array("role__not_in" => array("subscriber", "customer"));
-
+		
 		$arrUsers = get_users($args);
-
+		
 		$arrUsersShort = array();
 
 		$arrNames = array();
