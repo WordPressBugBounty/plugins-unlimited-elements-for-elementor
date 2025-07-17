@@ -888,7 +888,7 @@ class UniteCreatorElementorPagination{
 		
 		$pagination = $this->addHtmlArguments($pagination, $addArgs);
 		
-		s_echo($pagination);
+		uelm_echo($pagination);
 	}
 
 	/**

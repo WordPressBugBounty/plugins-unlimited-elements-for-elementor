@@ -97,7 +97,7 @@ class UniteCreatorParamsEditor{
 		 
 		?>
 			<div id="attr_wrapper_<?php echo esc_attr($this->type) ?>" class="uc-attr-wrapper unite-inputs <?php echo esc_attr($addClass)?>" data-type="<?php echo esc_attr($this->type)?>" <?php 
-				s_echo($style)?> >
+				uelm_echo($style)?> >
 				
 				<?php if($this->hasCats == true):?>
 					<div class="uc-attr-cats-wrapper">

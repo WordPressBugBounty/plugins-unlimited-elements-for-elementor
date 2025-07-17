@@ -508,11 +508,11 @@ class UniteCreatorDialogParamWork{
 
 				<?php if($isTextarea == false):?>
 
-				<input type="text" name="default_value" <?php s_echo($strClass)?> value="">
+				<input type="text" name="default_value" <?php uelm_echo($strClass)?> value="">
 
 				<?php else: ?>
 
-				<textarea name="default_value" <?php s_echo($strClass)?>> </textarea>
+				<textarea name="default_value" <?php uelm_echo($strClass)?>> </textarea>
 
 					<?php if($putTextareaText == true):?>
 
@@ -693,7 +693,7 @@ class UniteCreatorDialogParamWork{
 			<div class="unite-inputs-sap"></div>
 
 			<?php 
-			s_echo($htmlSelect);
+			uelm_echo($htmlSelect);
 			?>
 
 			<div class="unite-inputs-sap-double"></div>
@@ -915,7 +915,7 @@ class UniteCreatorDialogParamWork{
 				<?php esc_attr_e("Posts Filter Options","unlimited-elements-for-elementor")?> :
 		</label>
 		<?php 
-		s_echo($selectFilter);
+		uelm_echo($selectFilter);
 		?>
 
 		<br><br>
@@ -963,7 +963,7 @@ class UniteCreatorDialogParamWork{
 		<?php esc_attr_e("Use For","unlimited-elements-for-elementor")?>:
 
 		<?php 
-		s_echo($htmlSelect);
+		uelm_echo($htmlSelect);
 		?>
 
 		<div class="unite-inputs-sap-double"></div>
@@ -1042,7 +1042,7 @@ class UniteCreatorDialogParamWork{
 			esc_html_e("Widget Type","unlimited-elements-for-elementor");?>:
 
 			<?php 
-			s_echo($htmlSelectRemote); 
+			uelm_echo($htmlSelectRemote); 
 			?>
 
 			<div class="unite-inputs-sap"></div>
@@ -1531,11 +1531,11 @@ class UniteCreatorDialogParamWork{
 
 		if($isSelect == true): ?>
 
-            <li class="<?php s_echo($liClass)?>" data-type="<?php echo esc_attr($paramType)?>" data-value="<?php echo esc_attr($contentID)?>" <?php s_echo($addHtml)?>><?php echo esc_html($title, "unlimited-elements-for-elementor")?></li>
+            <li class="<?php uelm_echo($liClass)?>" data-type="<?php echo esc_attr($paramType)?>" data-value="<?php echo esc_attr($contentID)?>" <?php uelm_echo($addHtml)?>><?php echo esc_html($title, "unlimited-elements-for-elementor")?></li>
 
 		<?php else:	?>
 
-            <a href="javascript:void(0)" data-type="<?php echo esc_attr($paramType)?>" data-contentid="<?php echo esc_attr($contentID)?>" class="<?php echo esc_attr($class)?>" <?php s_echo($addHtml)?>>
+            <a href="javascript:void(0)" data-type="<?php echo esc_attr($paramType)?>" data-contentid="<?php echo esc_attr($contentID)?>" class="<?php echo esc_attr($class)?>" <?php uelm_echo($addHtml)?>>
 				<?php echo esc_html($title, "unlimited-elements-for-elementor")?>
             </a>
 
@@ -2011,7 +2011,7 @@ class UniteCreatorDialogParamWork{
 
 								<!-- <?php echo esc_html($paramType)?> fields -->
 
-								<div id="<?php echo esc_attr($tabContentID)?>" class="uc-tab-content <?php echo esc_attr($addClass)?>" <?php s_echo($addHTML)?> >
+								<div id="<?php echo esc_attr($tabContentID)?>" class="uc-tab-content <?php echo esc_attr($addClass)?>" <?php uelm_echo($addHTML)?> >
 
 									<?php
 									

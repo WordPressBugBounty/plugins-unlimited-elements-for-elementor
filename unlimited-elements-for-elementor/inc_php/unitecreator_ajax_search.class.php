@@ -25,6 +25,7 @@ class UniteCreatorAjaxSeach{
 	 */
 	public function setWherePostParts($where, $wp_query){
 		
+		
 		if (in_array('all', $this->searchPostFields))
 			return ($where);
 
@@ -348,23 +349,24 @@ class UniteCreatorAjaxSeach{
 	 * supress third party filters except of this class ones
 	 */
 	public static function supressThirdPartyFilters(){
-
-
+		
 		//on the enable hooks setting - don't supress hooks
-
+		
 		if(self::$enableThirdPartyHooks === true)
 			return(false);
 
 		global $wp_filter;
-
+		
 		if(self::$customSearchEnabled == false){
-
+			
 			$wp_filter = array();
 			return(false);
 		}
 
-		$arrKeys = array("uc_filter_posts_list");
-
+		//keys to leave
+		$arrKeys = array("uc_filter_posts_list","posts_where");
+		
+		
 		$newFilters = array();
 
 		foreach($arrKeys as $key){
@@ -386,7 +388,7 @@ class UniteCreatorAjaxSeach{
 	public function initCustomAjaxSeach($arrParams){
 		
 		self::$arrCurrentParams = $arrParams;
-		
+				
 		//enable hooks
 		
 		$enableHooks = UniteFunctionsUC::getVal($arrParams, "enable_third_party_hooks");

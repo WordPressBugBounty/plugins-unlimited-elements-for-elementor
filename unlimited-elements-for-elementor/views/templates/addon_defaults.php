@@ -41,9 +41,9 @@ if(!empty($objAddonType->addonView_urlBack))
 		</div>
 
 		<a id="uc_button_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 
-				s_echo( $isPreviewMode?$styleHide:$styleShow ); ?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>
+				uelm_echo( $isPreviewMode?$styleHide:$styleShow ); ?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>
 		<a id="uc_button_close_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 
-				s_echo( $isPreviewMode?$styleShow:$styleHide ); ?>><?php esc_html_e("Hide Preview", "unlimited-elements-for-elementor")?></a>
+				uelm_echo( $isPreviewMode?$styleShow:$styleHide ); ?>><?php esc_html_e("Hide Preview", "unlimited-elements-for-elementor")?></a>
 		<span class="hor_sap10"></span>
 
 		<a id="uc_button_preview_tab" href="javascript:void(0)" class="unite-button-secondary uc-button-cat-sap"><?php esc_html_e("Preview New Tab", "unlimited-elements-for-elementor")?></a>
@@ -74,19 +74,12 @@ if(!empty($objAddonType->addonView_urlBack))
 </form>
 
 </div>
-
-<script type="text/javascript">
-
-	jQuery(document).ready(function(){
-
+<?php
+$script = 'jQuery(document).ready(function(){
 		var objAddonDefaultsView = new UniteCreatorAddonDefaultsAdmin();
 		objAddonDefaultsView.init();
+		' . ($isPreviewMode == true ? 'jQuery("#uc_button_preview").trigger("click");' : '' ) . '
+	});';
+	
+UniteProviderFunctionsUC::printCustomScript($script, true); 
 
-		<?php if($isPreviewMode == true):?>
-		jQuery("#uc_button_preview").trigger("click");
-		<?php endif?>
-
-	});
-
-
-</script>

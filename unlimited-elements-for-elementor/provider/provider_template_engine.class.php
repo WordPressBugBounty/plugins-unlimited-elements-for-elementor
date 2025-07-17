@@ -17,7 +17,7 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 	public function putPostDate($postID, $dateFormat = ""){
 		
 		$date = get_the_date($dateFormat, $postID);
-		s_echo($date);
+		uelm_echo($date);
 	}
 	
 	
@@ -27,7 +27,7 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 	public function putPostMeta($postID, $key){
 		
 		$metaValue = get_post_meta($postID, $key, true);
-		s_echo($metaValue);
+		uelm_echo($metaValue);
 	}
 	
 	/**
@@ -44,7 +44,7 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 			$content = print_r($postMeta, true);
 			$content = str_replace("[", "[ ", $content);
 			$content = str_replace("]", " ]", $content);
-			s_echo($content);
+			uelm_echo($content);
 			echo "</pre>";
 		}
 		
@@ -166,7 +166,7 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 		
 		if(is_string($value) == false)
 			return(true);
-		s_echo($value);
+		uelm_echo($value);
 	}
 	
 	
@@ -178,7 +178,7 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 		
 		$htmlTags = UniteFunctionsWPUC::getTagsHtmlList($postID);
 		
-		s_echo($htmlTags);
+		uelm_echo($htmlTags);
 	}
 	
 	

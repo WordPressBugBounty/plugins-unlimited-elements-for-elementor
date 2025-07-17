@@ -202,7 +202,7 @@ class UniteCreatorManager{
 				<div class="cat_list_wrapper">			 
 					<ul id="list_cats" class="list_cats">
 						<?php 
-						s_echo($htmlCatList);
+						uelm_echo($htmlCatList);
 						?>
 					</ul>					
 				</div>
@@ -334,7 +334,7 @@ class UniteCreatorManager{
 			?>
 			<li>
 				<a href="javascript:void(0)" data-operation="<?php echo esc_attr($operation)?>" <?php 
-				s_echo($class)?>><?php echo esc_html($text)?></a>
+				uelm_echo($class)?>><?php echo esc_html($text)?></a>
 			</li>
 			<?php endforeach?>
 			</ul>
@@ -458,7 +458,7 @@ class UniteCreatorManager{
 									
 									<div id="no_items_text" class="no_items_text" style="display:none;">
 										<?php 
-										s_echo($this->getNoItemsText());
+										uelm_echo($this->getNoItemsText());
 										?>
 									</div>
 									
@@ -516,7 +516,7 @@ class UniteCreatorManager{
 									
 									<select id="select_item_category" disabled="disabled">
 										<?php 
-										s_echo($htmlCatSelect); 
+										uelm_echo($htmlCatSelect); 
 										?>
 									</select>				
 									 
@@ -781,8 +781,8 @@ class UniteCreatorManager{
 		?>
 		
 		<div id="uc_managerw" class="uc-manager-outer <?php echo esc_attr($managerClass)?>" data-managername="<?php echo esc_attr($this->managerName)?>" data-type="<?php echo esc_attr($this->type)?>" <?php 
-				s_echo($htmlPassData)?> <?php 
-				s_echo($this->managerAddHtml)?>>
+				uelm_echo($htmlPassData)?> <?php 
+				uelm_echo($this->managerAddHtml)?>>
 			
 			<?php if($this->hasHeaderLine == true)
 							$this->putHtmlHeaderLine();

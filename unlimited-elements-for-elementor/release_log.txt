@@ -1,4 +1,15 @@
 
+
+
+version 1.5.147:
+
+* Fix - added entity decode for subjects in the forms emails
+* Fix - fixed bug with remove orderby in post selection
+* Fix - some protection of elementor widgets register in case of cache
+* Fix - ajax search with titles only issues
+* Fix - fixed background widgets js code issues
+
+
 version 1.5.146:
 
 * Feature: added option for debug by url in breadcrumbs

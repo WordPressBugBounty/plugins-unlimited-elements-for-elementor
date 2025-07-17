@@ -601,21 +601,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			
 			if(self::$isGlobalJSPut == true)
 				return(false);
+			
+			$script = self::getGlobalJsOutput();
 
-			?>
-			<script type="text/javascript" id="unlimited_elements_admin_globals">
+			UniteProviderFunctionsUC::printCustomScript($script, true);
+			
+			uelm_echo(self::getGlobalDebugDivs());
 
-				<?php 
-				s_echo(self::getGlobalJsOutput());
-				?>
-
-			</script>
-
-			<?php
-				s_echo(self::getGlobalDebugDivs());
-
-				if(method_exists("UniteProviderFunctionsUC", "putMasterHTML"))
-					UniteProviderFunctionsUC::putMasterHTML()
+			if(method_exists("UniteProviderFunctionsUC", "putMasterHTML"))
+				UniteProviderFunctionsUC::putMasterHTML()
 			?>
 
 			<?php
@@ -689,7 +683,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				}
 
 				echo ", ";
-				s_echo($title);
+				uelm_echo($title);
 			}
 
 		}
@@ -769,7 +763,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				$trace = $e->getTraceAsString();
 
 			$html = self::getErrorMessageHtml($message, $trace);
-			s_echo($html);
+			uelm_echo($html);
 		}
 
 		/**
@@ -928,7 +922,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 				$html .= "\n<div class='unite-admin-notice'>{$notice}</div>\n";
 			}
-			s_echo($html);
+			uelm_echo($html);
 
 			//clear admin notices
 
@@ -943,9 +937,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			if(empty($arrNotices))
 				return(false);
 
-			?>
-			<script>
-				jQuery(document).ready(function(){
+			$script = 'jQuery(document).ready(function(){
 					var objHeader = jQuery(".unite_header_wrapper");
 					if(objHeader){
 						<?php foreach($arrNotices as $notice):
@@ -953,10 +945,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 						endforeach;
 						?>
 					}
-				});
-			</script>
-			<?php
-
+				});';
+			UniteProviderFunctionsUC::printCustomScript($script, true);
+			
 		}
 
 		/**
@@ -1242,11 +1233,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 			?>
 			<?php if(!empty($arg2)):?>
-			<?php echo esc_attr($arg1)?>.data("uc-remote-options", <?php s_echo($arg2)?>);
+			<?php echo esc_attr($arg1)?>.data("uc-remote-options", <?php uelm_echo($arg2)?>);
 			<?php endif?>
 
 			<?php echo esc_attr($arg1)?>.trigger("uc-object-ready");
-			jQuery(document).trigger("uc-remote-parent-init", <?php s_echo($strOptions)?>);
+			jQuery(document).trigger("uc-remote-parent-init", <?php uelm_echo($strOptions)?>);
 			<?php
 
 		}
@@ -1276,7 +1267,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 			$strCSS.= "{display:none}";
 
-			s_echo("\n".$strCSS);
+			uelm_echo("\n".$strCSS);
 		}
 
 		/**
@@ -1304,7 +1295,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			<div class="uc-phpino" style="overflow-x:scroll;width:100%;">
 
 			<?php 
-			s_echo($content);
+			uelm_echo($content);
 			?>
 
 			</div>
@@ -1351,7 +1342,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 * put document ready start js
 		 */
 		public static function putDocReadyStartJS($widgetID){
-
+			
+			if(GlobalsProviderUC::$isGutenbergOutput == true):
+			?>
+jQuery(document).ready(function(){
+			<?php 
+			return(false);
+			endif;
+			
+			
 			?>
 jQuery(document).ready(function(){
 function <?php echo esc_attr($widgetID)?>_start(){
@@ -1363,7 +1362,14 @@ function <?php echo esc_attr($widgetID)?>_start(){
 		 * put document ready end js
 		 */
 		public static function putDocReadyEndJS($widgetID){
-
+			
+			if(GlobalsProviderUC::$isGutenbergOutput == true):
+			?>
+});
+			<?php 
+			return(false);
+			endif;
+			
 			?>
 }if(jQuery("#<?php echo esc_attr($widgetID)?>").length) <?php echo esc_attr($widgetID)?>_start();
 	jQuery( document ).on( 'elementor/popup/show', (event, id, objPopup) => {

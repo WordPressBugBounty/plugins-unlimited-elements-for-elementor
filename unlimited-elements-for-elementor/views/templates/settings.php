@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		?>
 		
 			<a id="<?php echo esc_attr($sapID)?>_tablink" data-name="<?php echo esc_attr($sapName)?>" data-contentid="<?php echo esc_attr($sapID)?>" class="<?php echo esc_attr($class)?>" href="javascript:void(0)" onfocus="this.blur()" <?php 
-				s_echo( $style ); ?>> <?php echo esc_html($text)?></a>
+				uelm_echo( $style ); ?>> <?php echo esc_html($text)?></a>
 			
 		<?php endforeach?>
 		
@@ -71,7 +71,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			?>
 			
 			<div id="<?php echo esc_attr($sapID)?>" class="uc-tab-content" <?php 
-				s_echo( $style ); ?> >
+				uelm_echo( $style ); ?> >
 				<?php
 				
 				$objOutput->drawSettings($sapKey);
@@ -94,14 +94,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	
 </div>	
 
-<script type="text/javascript">
-
-	jQuery(document).ready(function(){
-		
+<?php
+$script = 'jQuery(document).ready(function(){
 		var objAdmin = new UniteCreatorAdmin_GeneralSettings();
-		objAdmin.initView("<?php 
-				s_echo( $this->saveAction ); ?>");
-		
-	});
-
-</script>
+		objAdmin.initView("' . ( $this->saveAction ) . '");
+	});';
+	
+UniteProviderFunctionsUC::printCustomScript($script, true); 

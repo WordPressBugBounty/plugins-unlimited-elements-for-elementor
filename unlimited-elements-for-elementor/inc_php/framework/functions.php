@@ -43,33 +43,35 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		}
 		
 	}
-
-	if(!function_exists("s_echo")){
-		function s_echo($str) {
+	
+	if(!function_exists("uelm_echo")){
+		function uelm_echo($str) {
+			if( is_array($str) || is_object($str) ) {
+				return;
+			}
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo($str);
 		}
 	}
 
-	if (!function_exists("s_printf")) {
-		function s_printf($str, ...$params) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			printf($str, ...$params);
-		}
-	}
-
-	if (!function_exists("s_date")) {
+	if (!function_exists("uelm_date")) {
 		
-		function s_date($format, $time = null) {
+		function uelm_date($format, $time = null) {
 			
 			if(empty($time))
 				$time = time();
 			
 			$timezone = new DateTimeZone(date_default_timezone_get());
-			return (new DateTime('@' . $time))->setTimezone($timezone)->format($format);
+
+			$datetime = new DateTime('@' . $time);
+			$datetime->setTimezone($timezone);			
+			$formatted = $datetime->format($format);
+			
+			return $formatted;
 		}
 		
 	}
+
 
 
 

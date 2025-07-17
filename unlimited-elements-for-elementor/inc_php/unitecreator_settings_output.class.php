@@ -179,7 +179,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 
 			<a id="<?php echo esc_attr($id) ?>_button"
 				data-action="<?php echo esc_attr($action) ?>" <?php 
-				s_echo($addHtml) ?>
+				uelm_echo($addHtml) ?>
 				href="javascript:void(0)"
 				class="uc-grid-panel-button <?php echo esc_attr($class) ?>"><?php echo esc_html($label) ?></a>
 
@@ -562,7 +562,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 			<input type="text"
 				id="<?php echo esc_attr($setting["id"]) ?>"
 				name="<?php echo esc_attr($setting["name"]) ?>" <?php 
-				s_echo($class) ?>
+				uelm_echo($class) ?>
 				value="<?php echo esc_attr($value) ?>" 
 				<?php 
 				$this->getDefaultAddHtml($setting);
@@ -573,7 +573,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 			<a href="javascript:void(0)"
 				class="unite-button-secondary unite-button-choose <?php echo esc_attr($buttonAddClass) ?>"><?php esc_html_e("Choose", "unlimited-elements-for-elementor") ?></a>
 			<div class='unite-setting-mp3-error unite-setting-error' <?php 
-				s_echo($errorStyle) ?>><?php esc_html_e("Please select assets path", "unlimited-elements-for-elementor") ?></div>
+				uelm_echo($errorStyle) ?>><?php esc_html_e("Please select assets path", "unlimited-elements-for-elementor") ?></div>
 		</div>
 		<?php
 	}
@@ -1180,7 +1180,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 
 		$html .= "</div>";
 
-		s_echo($html);
+		uelm_echo($html);
 	}
 
 	private function a_______DRAW_ITEMS_PANEL_______(){

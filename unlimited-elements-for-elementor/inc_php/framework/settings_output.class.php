@@ -122,7 +122,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 	 * get default value add html
 	 */
 	protected function getDefaultAddHtml($setting, $implodeArray = false){
-
+		
 		$defaultValue = UniteFunctionsUC::getVal($setting, "default_value");
 
 		if(is_array($defaultValue) || is_object($defaultValue))
@@ -137,7 +137,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 				$value = json_encode($value);
 		}
 
-		echo ' data-default="' . esc_attr($defaultValue) . '" data-initval="' . esc_attr($value) . '" ';
+		uelm_echo(' data-default="' . esc_attr($defaultValue) . '" data-initval="' . esc_attr($value) . '" ');
 
 		$this->getGroupSelectorAddAttr($setting);
 		$this->getSelectorsAddAttr($setting);
@@ -145,7 +145,19 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		$addParams = UniteFunctionsUC::getVal($setting, UniteSettingsUC::PARAM_ADDPARAMS);
 
 		if(!empty($addParams))
-			echo " " . esc_attr($addParams);
+			uelm_echo(" " . $addParams);
+			
+		//add responsive settings
+		$isResponsive = UniteFunctionsUC::getVal($setting, "is_responsive");
+		$isResponsive = UniteFunctionsUC::strToBool($isResponsive);
+		
+		if($isResponsive == true){
+			$repsonsiveID = UniteFunctionsUC::getVal($setting, "responsive_id");
+			$repsonsiveType = UniteFunctionsUC::getVal($setting, "responsive_type");
+			
+			uelm_echo(' data-isresponsive="true" data-responsivetype="'.$repsonsiveType.'" data-responsiveid="'.$repsonsiveID.'" ');
+		}
+		
 	}
 
 
@@ -163,14 +175,6 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		// prevent line break (convert spaces to nbsp)
 		$text = str_replace(" ","&nbsp;",$text);
-
-		/*
-		switch($setting["type"]){
-			case UniteSettingsUC::TYPE_CHECKBOX:
-				$text = "<label for='".$setting["id"]."' style='cursor:pointer;'>$text</label>";
-				break;
-		}
-		*/
 
 		return($text);
 	}
@@ -389,7 +393,6 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 		<div class="unite-setting-link-wrapper">
-
 			<div class="unite-setting-link-field">
 				<input
 					id="<?php echo esc_attr($id); ?>"
@@ -399,7 +402,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 					placeholder="<?php esc_attr_e("Search or enter URL", "unlimited-elements-for-elementor"); ?>"
 					data-settingtype="link"
 					<?php 
-					s_echo($class); ?>
+					uelm_echo($class); ?>
 					<?php $this->getDefaultAddHtml($setting); ?>
 				/>
 				<button
@@ -561,7 +564,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		>
 
 			<div class="unite-setting-image-preview" <?php 
-				s_echo($previewStyle); ?>>
+				uelm_echo($previewStyle); ?>>
 				<div class="unite-setting-image-placeholder">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
 						<path d="M4.281 10.313V0h1.75v10.313h-1.75ZM0 6.03v-1.75h10.313v1.75H0Z" />
@@ -652,7 +655,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		?>
 			<div class="unite-setting-mp3">
 				<input type="text" id="<?php echo esc_attr($setting["id"])?>" name="<?php echo esc_attr($setting["name"])?>" <?php 
-				s_echo( $class )?> value="<?php echo esc_attr($value)?>" 
+				uelm_echo( $class )?> value="<?php echo esc_attr($value)?>" 
 				<?php
 					$this->getDefaultAddHtml($setting);
 					if(!empty($source)) {
@@ -711,7 +714,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 				name="<?php echo esc_attr($name); ?>"
 				value="<?php echo esc_attr($value); ?>"
 				<?php 
-				s_echo($class); ?>
+				uelm_echo($class); ?>
 				<?php 
 					$this->getDefaultAddHtml($setting);
 					if($iconsType) {
@@ -805,7 +808,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 						<?php endif?>
 
 						<div class="unite-addonpicker-button" <?php 
-							s_echo($styleButton)?>>
+							uelm_echo($styleButton)?>>
 							<div class="unite-addonpicker-empty-container">
 								<?php echo esc_html($textSelect)?>
 							</div>
@@ -961,7 +964,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 				<div id="<?php echo esc_attr($setting["id"])?>" data-settingtype="map" <?php 
-				s_echo($strMapData)?> class="unite-settings-mappicker unite-setting-input-object" data-name="<?php echo esc_attr($setting["name"])?>" data-dialogtitle="<?php echo esc_attr($dialogTitle)?>" >
+				uelm_echo($strMapData)?> class="unite-settings-mappicker unite-setting-input-object" data-name="<?php echo esc_attr($setting["name"])?>" data-dialogtitle="<?php echo esc_attr($dialogTitle)?>" >
 					 <?php $objPicker->putPickerInputHtml()?>
 			</div>
 		<?php
@@ -1026,9 +1029,9 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 			<div class="unite-color-picker-wrapper">
 
 				<input type="text" <?php 
-				s_echo($class)?> id="<?php echo esc_attr($setting["id"])?>" <?php 
-				s_echo($style)?> name="<?php echo esc_attr($setting["name"])?>" value="<?php echo esc_attr($bgcolor)?>" <?php 
-				s_echo($disabled)?> 
+				uelm_echo($class)?> id="<?php echo esc_attr($setting["id"])?>" <?php 
+				uelm_echo($style)?> name="<?php echo esc_attr($setting["name"])?>" value="<?php echo esc_attr($bgcolor)?>" <?php 
+				uelm_echo($disabled)?> 
 				<?php 
 				$this->getDefaultAddHtml($setting);
 				?>></input>
@@ -1092,7 +1095,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 					data-value="<?php echo esc_attr($itemValue); ?>"
 				>
 					<?php 
-					s_echo($item["icon"]); 
+					uelm_echo($item["icon"]); 
 					?>
 				</div>
 			<?php endforeach; ?>
@@ -1406,20 +1409,20 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 			data-text-delete="<?php echo esc_attr($deleteButtonText); ?>"
 			data-text-duplicate="<?php echo esc_attr($duplicateButtonText); ?>"
 			<?php 
-				s_echo($strData); ?>
+				uelm_echo($strData); ?>
 		>
 			<div class="unite-repeater-template unite-hidden">
 				<?php $output->draw("settings_item_repeater", false); ?>
 			</div>
 			<div class="unite-repeater-empty" <?php 
-				s_echo($emptyTextAddHtml); ?>>
+				uelm_echo($emptyTextAddHtml); ?>>
 				<?php echo esc_html($emptyText); ?>
 			</div>
 			<div class="unite-repeater-items"></div>
 			<div class="unite-repeater-actions">
 				<button class="unite-button-primary unite-repeater-add" type="button">
 					<?php 
-				s_echo($addItemText); ?>
+				uelm_echo($addItemText); ?>
 				</button>
 			</div>
 		</div>
@@ -1509,13 +1512,13 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 			<input
 				<?php 
-				s_echo($class); ?>
+				uelm_echo($class); ?>
 				id="<?php echo esc_attr($id); ?>"
 				type="<?php echo esc_attr($type); ?>"
 				name="<?php echo esc_attr($name); ?>"
 				value="<?php echo esc_attr($value); ?>"
 				<?php 
-				s_echo($style); ?>
+				uelm_echo($style); ?>
 				<?php 
 				$this->getDefaultAddHtml($setting);
 				if(empty($placeholder) === false) {
@@ -1625,14 +1628,14 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 			<textarea id="<?php echo esc_attr($setting["id"])?>" <?php 
-			s_echo($class);
+			uelm_echo($class);
 			?> name="<?php echo esc_attr($setting["name"])?>" <?php 
-			s_echo($style)?> <?php 
-			s_echo($disabled)?> <?php 
-			s_echo($rows)?> <?php 
-			s_echo($cols)?> 
+			uelm_echo($style)?> <?php 
+			uelm_echo($disabled)?> <?php 
+			uelm_echo($rows)?> <?php 
+			uelm_echo($cols)?> 
 			<?php $this->getDefaultAddHtml($setting); ?> ><?php 
-				s_echo($value)?></textarea>
+				uelm_echo($value)?></textarea>
 		<?php
 		if(!empty($cols))
 			echo "<br>";	//break line on big textareas.
@@ -1686,7 +1689,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 					name="<?php echo esc_attr($name); ?>"
 					value="<?php echo esc_attr($itemValue); ?>"
 					<?php 
-				s_echo($itemAttr); ?>
+				uelm_echo($itemAttr); ?>
 				/>
 				<label
 					class="unite-radio-item-label"
@@ -1743,12 +1746,12 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		?>
 			<input type="checkbox" id="<?php echo esc_attr($settingID)?>" <?php 
-			s_echo($class);?> name="<?php echo esc_attr($setting["name"])?>" <?php 
-			s_echo($checked);?> <?php 
-			s_echo($addHtml);?>/>
+			uelm_echo($class);?> name="<?php echo esc_attr($setting["name"])?>" <?php 
+			uelm_echo($checked);?> <?php 
+			uelm_echo($addHtml);?>/>
 		<?php
 		if(!empty($textNear))
-			s_echo($textNear);
+			uelm_echo($textNear);
 	}
 
 
@@ -1798,17 +1801,18 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 			id="<?php echo esc_attr($id); ?>"
 			name="<?php echo esc_attr($name); ?>"
 			<?php 
-			s_echo($class); ?>
-			<?php 
-				$this->getDefaultAddHtml($setting, true);
-				if($multiple === true)
-					echo " multiple";
+			uelm_echo($class);
 
-				if($disabled === true)
-					echo " disabled";
+			$this->getDefaultAddHtml($setting, true);
+
+			if($multiple === true)
+				echo " multiple";
+
+			if($disabled === true)
+				echo " disabled";
+
+			uelm_echo($args); 
 			?>
-			<?php 
-			s_echo($args); ?>
 		>
 			<?php foreach($items as $itemText => $itemValue): ?>
 				<?php
@@ -1889,7 +1893,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		<span class="settings_addhtml"><?php echo esc_html($addHtml)?></span>
 		<?php endif?>
 		<?php if(!empty($description) && $this->showDescAsTips == false):?>
-		<span class="description"><?php echo esc_attr($description)?></span>
+		<span class="description"><?php uelm_echo($description)?></span>
 		<?php endif?>
 
 		<?php
@@ -1943,8 +1947,9 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 	private function groupSettingsIntoSaps(){
 
 			$arrSaps = $this->settings->getArrSaps();
-			$arrSettings = $this->settings->getArrSettings();
 
+			$arrSettings = $this->settings->getArrSettings();
+			
 			//group settings by saps
 			foreach($arrSettings as $key=>$setting){
 
@@ -1978,7 +1983,6 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		$type = UniteFunctionsUC::getVal($setting, "type");
 
 		$this->addSubSettingsDialog($type);
-
 		?>
 		<div
 			id="<?php echo esc_attr($id); ?>"
@@ -2084,12 +2088,6 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		//get controls
 		$controls = $this->getControlsForJS();
 
-		/*
-		if(!empty($controls["children"])){
-			dmp($controls);exit();
-		}
-		*/
-
 		$addHtml = "";
 		if(!empty($controls)){
 			$strControls = UniteFunctionsUC::jsonEncodeForHtmlData($controls);
@@ -2097,20 +2095,14 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		}
 
 
-		if(!empty($this->addCss)):
-		?>
-			<!-- settings add css -->
-			<style type="text/css">
-				<?php 
-				s_echo($this->addCss)?>
-			</style>
-		<?php
-		endif;
+		if(!empty($this->addCss)) {
+			UniteProviderFunctionsUC::printCustomStyle($this->addCss, true);
+		}
 
 		?>
 		<div id="<?php echo esc_attr($this->wrapperID)?>" data-options="<?php echo esc_attr($strOptions)?>" <?php 
-			s_echo($addHtml);?> autofocus="true" class="unite_settings_wrapper <?php 
-			s_echo($this->settingsMainClass);?> unite-settings unite-inputs">
+			uelm_echo($addHtml);?> autofocus="true" class="unite_settings_wrapper <?php 
+			uelm_echo($this->settingsMainClass);?> unite-settings unite-inputs">
 
 		<?php
 	}
@@ -2242,7 +2234,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 				?>
 				<a href="javascript:void(0)" <?php 
-				s_echo($class);?> data-sapnum="<?php echo esc_attr($key)?>" onfocus="this.blur()"><?php echo esc_html($text)?></a>
+				uelm_echo($class);?> data-sapnum="<?php echo esc_attr($key)?>" onfocus="this.blur()"><?php echo esc_html($text)?></a>
 				<?php
 
 			}
@@ -2258,12 +2250,13 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 	 *
 	 */
 	private function drawSettingsRowByType($setting, $mode){
-
+		// echo '==[drawSettingsRowByType: ' . $setting["type"] . ']<br>'; //debug
 		switch($setting["type"]){
 			case UniteSettingsUC::TYPE_HR:
 				$this->drawHrRow($setting);
 			break;
 			case UniteSettingsUC::TYPE_STATIC_TEXT:
+			case UniteSettingsUC::TYPE_HTML:
 				$this->drawTextRow($setting);
 			break;
 			default:
@@ -2278,8 +2271,9 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 	 */
 	private function drawSettings_settings($filterSapID = null, $mode = null, $arrSettings = null){
 
-		if(is_null($arrSettings))
+		if(is_null($arrSettings)) {
 			$arrSettings = $this->arrSettings;
+		}
 
 		$this->drawSettings_before();
 

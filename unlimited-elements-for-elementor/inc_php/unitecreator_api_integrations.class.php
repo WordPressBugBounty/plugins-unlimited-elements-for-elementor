@@ -851,8 +851,8 @@ class UniteCreatorAPIIntegrations{
 		}
 
 		$range = array(
-			"start" => $startTime ? s_date("c", $startTime) : null,
-			"end" => $endTime ? s_date("c", $endTime) : null,
+			"start" => $startTime ? uelm_date("c", $startTime) : null,
+			"end" => $endTime ? uelm_date("c", $endTime) : null,
 		);
 
 		return $range;

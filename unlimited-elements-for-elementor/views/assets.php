@@ -24,13 +24,13 @@ $objAssets->initByKey("assets_manager");
 	
 </div>
 
-<script type="text/javascript">
-	jQuery(document).ready(function(){
+<?php
+
+	$script = 'jQuery(document).ready(function(){
 	
 		var objAdmin = new UniteCreatorAdmin();
 		objAdmin.initAssetsManagerView();
 	
-	});
+	});';
 
-</script>
-<?php 
+	UniteProviderFunctionsUC::printCustomScript($script, true); 

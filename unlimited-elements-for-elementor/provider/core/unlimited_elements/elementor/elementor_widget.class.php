@@ -2410,6 +2410,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
     	$arrOutput = array();
 
     	foreach($arrCats as $cat){
+    		
     		$catID = UniteFunctionsUC::getVal($cat, "id");
     		unset($cat["id"]);
 
@@ -2420,15 +2421,15 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     	foreach($params as $param){
 
-    		$catID = UniteFunctionsUC::getVal($param, "__attr_catid__");
-
+    		$catID = UniteFunctionsUC::getVal($param, GlobalsUC::ATTR_CATID);
+			
     		if(empty($catID))
     			$catID = "cat_general_general";
 
     		if(array_key_exists($catID, $arrOutput) == false)
     			$catID = "cat_general_general";
 
-    		unset($param["__attr_catid__"]);
+    		unset($param[GlobalsUC::ATTR_CATID]);
 
     		$sectionCounter = 0;
 
@@ -2471,7 +2472,6 @@ class UniteCreatorElementorWidget extends Widget_Base {
      */
     protected function addFreeVersionCTAControl(){
 
-
     	if(GlobalsUC::$isProVersion == true)
     		return(false);
 
@@ -2483,9 +2483,9 @@ class UniteCreatorElementorWidget extends Widget_Base {
     	$urlBuy = GlobalsUnlimitedElements::$insideNotificationUrl;
 
     	$text = GlobalsUnlimitedElements::$insideNotificationText;
-
+		
     	$isDarkMode = UniteCreatorElementorIntegrate::isElementorPanelDarkMode();
-
+		
     	$addClass = "";
     	if($isDarkMode == true)
     		$addClass = " uc-dark-mode";
@@ -2574,7 +2574,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
          foreach($arrCatsAndParams as $catID => $arrCat){
 
          	$isGeneralSection = ($catID == "cat_general_general");
-
+			
          	$catTitle = UniteFunctionsUC::getVal($arrCat, "title");
          	$catTab = UniteFunctionsUC::getVal($arrCat, "tab");
 
@@ -3874,7 +3874,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     	$addonName = $this->get_name();
 
-    	s_echo("<span style='color:red'> $addonName widget not exists</span>");
+    	uelm_echo("<span style='color:red'> $addonName widget not exists</span>");
     }
 
 
@@ -3978,6 +3978,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 	    	}
 		
 	    	GlobalsProviderUC::$renderPlatform = GlobalsProviderUC::RENDER_PLATFORM_ELEMENTOR;
+	    	GlobalsProviderUC::$isGutenbergOutput = false;
 	    	
 	    	GlobalsUnlimitedElements::$currentRenderingWidget = $this;
 			
@@ -3997,7 +3998,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 	        $addonTitle = $objAddon->getTitle();
 
 	        if(GlobalsProviderUC::$isUnderNoWidgetsToDisplay == true){
-	        	s_echo("<!-- skip widget output: {$addonTitle} -->\n");
+	        	uelm_echo("<!-- skip widget output: {$addonTitle} -->\n");
 	        	return(false);
 	        }
 
@@ -4132,12 +4133,12 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
 	        $htmlOutput = $output->getHtmlBody($scriptsHardCoded, $putCssIncludesInBody,true,$params);
 			
-			s_echo($htmlOutput);
+			uelm_echo($htmlOutput);
 
 	        $htmlExtra = $this->getExtraWidgetHTML($arrValues, $objAddon);
 
 	        if(!empty($htmlExtra))
-				s_echo($htmlExtra);
+				uelm_echo($htmlExtra);
 
     	}catch(Exception $e){
 
@@ -4158,13 +4159,13 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     	if(UniteCreatorElementorIntegrate::$isSaveBuilderMode == true){
 
-    		s_echo("skip render: ".$this->get_name());
+    		uelm_echo("skip render: ".$this->get_name());
     		return(false);
     	}
 
 
     	if($this->isNoMemory == true){
-    		s_echo( "no memory to render ".$this->isNoMemory_addonName." widget. <br> Please increase memory_limit in php.ini");
+    		uelm_echo( "no memory to render ".$this->isNoMemory_addonName." widget. <br> Please increase memory_limit in php.ini");
     		return(false);
     	}
 
@@ -4183,7 +4184,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
     			$this->ucRenderByAddon($objAddon);
 
     		}catch(Exception $e){
-    			s_echo( "error render widget: $addonName");
+    			uelm_echo( "error render widget: $addonName");
     			HelperHtmlUC::outputException($e);
     		}
 

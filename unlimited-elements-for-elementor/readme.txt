@@ -3,7 +3,7 @@ Contributors: unitecms, valiano, iritmega, amitkeren, axmusic, freemius
 Donate link: http://unlimited-elements.com/
 Tags: elementor, elementor addons, elementor templates, elementor widgets, widgets for elementor
 Requires at least: 3.5
-Tested up to: 6.7
+Tested up to: 6.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Stable tag: 1.0
@@ -938,6 +938,42 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+
+version 1.5.147 - 2025-07-17 =
+
+Plugin Changes:
+
+* Fix - added entity decode for subjects in the forms emails
+* Fix - fixed bug with remove orderby in post selection
+* Fix - some protection of elementor widgets register in case of cache
+* Fix - ajax search with titles only issues
+* Fix - fixed background widgets js code issues
+
+Widgets Changes:
+
+* Feature: Animated Floating Elements Background (Pro) - Added Starting Point option, allowing users to define the initial position or item displayed when the widget loads
+* Feature: Job Listing (Pro) - Added Remote Connect option, also added Fallback Image option to display a default image when the item image is missing.
+* Feature: Post Carousel (Free) - Added Show Full Post Content option, allowing users to display the complete content of a post instead of just an excerpt.
+* Feature: Job Listing (Pro) - Added new styling options for Job Info Items, including Border Radius, Padding, Background Color, Background Color on Hover, Border, and Border on Hover for enhanced visual customization.
+* Feature: Content Box Overlay (Free) - Enabled Image size/resolution selection. Introduced Transition Duration, Title HTML Tag, Icon, and Show Title condition and debug option: &quot;Preview Hidden Content&quot; to assist during styling. Also added Icon, and badge option.
+* Feature: Animated Border Icon Box (Free) - Added Title Condition and Title HTML Tag option. Enabled SVG Icon Upload and introduced &quot;Enable Full Box Link&quot; option. Also introduced a new Layout tab and reorganized related options for clarity. Added Badge Option and moved Title Border settings to the new Separator tab, along with new Border Width and Separator Gap controls.
+* Change: Post Grid (Free) - Added 9 new options in the &quot;Image Object Position&quot; setting to allow precise image alignment: top left, top center, top right, center left, center center, center right, bottom left, bottom center, and bottom right.
+* Change: Content Box Overlay (Free) - Added new styling options, Height, Image Fit, Image Position, Image CSS Filter, Title Spacing, and Separator line styles. Improved overall widget functionality and optimized CSS loading based on conditions, and removed unused CSS for better optimization.
+* Change: Animated Border Icon Box (Free) - Added a dedicated Icon tab in styles, including controls for Icon Size, Color, Shadow, and Gap. Also added a separate Icon Gap setting. Removed  old typography option, and added styling options for the Title. Restructured HTML and CSS, removing unused elements for improved performance.
+* Change: Tabs Filter (Pro) - Added CSS rule to remove text decoration from the tab item link element, enhancing the overall visual clarity.
+* Fix: Repeater Table (Pro) - Fixed issue where CSV and JSON sources for the table were not working with the widget, ensuring proper data loading and display.
+* Fix: Alphabet Filter (Pro) - Fixed issue where enabling the Post Count option triggered an alert displaying an error, ensuring smooth functionality.
+* Fix: Morph Background Slider (Pro) - Fixed Issue when Transition Direction option were not working as expected.
+* Fix: Liquid Full Screen Menu (Pro) - Fixed issue where the Menu was causing horizontal scrolling when resizing the window, ensuring proper responsive behavior.
+* Fix: Testimonial Carousel (Free) - Added aditional check of Masonry Layout Items position and corection in case of misalignment.
+* Fix: Post Grid (Free) - Fixed an issue where, when the List View option was enabled and the layout was switched to list view, post items were not full width as expected. Instead, they were displaying at inconsistent. This update ensures that all post items properly stretch to full width in list view mode for a consistent and cleaner layout.
+* Fix: Underline Link Hover Effect (Pro) - Fixed issue where the transition duration was not applied to the text element, ensuring smooth and consistent animations
+* Other: Select Dropdown Filter (Free) - Added additional instruction for the Select First option, providing clearer guidance on its usage and behavior.
+* Other: Tabs Filter (Pro) - Added additional instruction for the Select First option, providing clearer guidance on its usage and behavior.
+* Release: Flag Icons (Free) - New Widget: Flag Icons. Easily add country flag icons to your Elementor designs � perfect for highlighting international destinations, events, or global content!
+
+
+
 version 1.5.146 - 2025-06-24 =
 
 Plugin Changes:
@@ -1054,33 +1090,6 @@ Widget Changes:
 * Fix: Mega Slider (Pro) - Protected styling from theme overrides.
 * Fix: Compact Gallery (Free) - Updated Navigation Icon options for consistency.
 
-
-
-version 1.5.145 - 2025-04-20 =
-
-Plugin Changes:
-
-* Fix: fixed the translate before time notice
-* Fix: removed the get_breadcrumbs function to avoid php collisions
-* Fix: fixed some small security issue with testtermids
-* Feature: updated the widgets gallery code to use svg icons
-
-Widgets Changes:
-
-* Feature: Remote Item Navigation (Pro) - Added a dedicated block of styling options for the Hover State of Items, allowing more control over hover effects and appearance.
-* Feature: Loop Carousel (Pro) - Added a new &quot;Layout&quot; option, allowing users to select between Carousel or Marquee layouts for better flexibility.
-* Feature: Glare Button Effect (Free) - Added new typography, text color, button border, box shadow, and text shadow options.
-* Feature: Thumbnail Gallery (Free) - Added Title and Description Typography option, enabling users to customize the font, size, weight, and other typography settings.
-* Feature: Text Rotator (Free) - Added new Text Shadow option for all text elements within the widget. This option allows adding shadow effects to any text element.
-* Feature: Payment Method Icons (Free) - Added two new layout options, &quot;Carousel&quot; and &quot;Marquee,&quot; and also improved widget performance.
-* Feature: Scroll Accordion (Pro) - Added Active styling options for Title Text Color and Background Color of the title
-* Feature: Event List (Pro) - Added Calendar Date option for cases when Date Type is set to Text Field.
-* Feature: Liquid Full Screen Menu (Pro) - Added new Active Styling options for the Hamburger Element, allowing for more customization.
-* Feature: Woo Product Carousel (Free) - Added Button Add to Cart (Variable Products) styling options, for better product presentation.
-* Feature: Mega Slider (Pro) - Improved Animation Duration option to ensure compatibility with all Animation Types.
-* Feature: Line Chart (Free) - Added styling options for the X and Y axis titles and values for better customization.
-* Feature: Post Grid (Free) - Added a new option called &quot;Show Post Type Name,&quot; which allows displaying the post type name within the widget.
-* Feature: Fullscreen Menu (Free) - Created a new option called &quot;Expand All After Page Load&quot; which allows all sections or items to be expanded automatically when the page finishes loading
 
 
 [See changelog for all versions.](https://unlimited-elements.com/change-log/)

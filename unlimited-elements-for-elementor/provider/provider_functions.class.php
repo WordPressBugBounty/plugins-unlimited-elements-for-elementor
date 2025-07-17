@@ -11,6 +11,7 @@ class UniteProviderFunctionsUC{
 	public static $tablePosts = null;
 	public static $tablePostMeta = null;
 	public static $counterScripts = 0;
+	public static $counterStyles = 0;
 
 
 	/**
@@ -273,7 +274,8 @@ class UniteProviderFunctionsUC{
 	 * handle meanwhile inactive
 	 */
 	public static function printCustomScript($script, $hardCoded = false, $isModule = false, $handle = null, $isPutOnce = false){
-
+		
+		
 		self::$counterScripts++;
 
 		if(empty($handle))
@@ -289,16 +291,18 @@ class UniteProviderFunctionsUC{
 
 			$handle .= "_". UniteFunctionsUC::getRandomString(5, true);
 		}
-
+				
 		if($hardCoded == false)
 			self::$arrScripts[$handle] = $script;
 		else{
+			 
 			if($isModule == true)
-				s_echo( "<script type='module' id='{$handle}'>{$script}</script>" );
+				uelm_echo( "<script type='module' id='{$handle}'>{$script}</script>" );
 			else
-				s_echo( "<script type='text/javascript' id='{$handle}'>{$script}</script>" );
-
+				uelm_echo( "<script type='text/javascript' id='{$handle}'>{$script}</script>" );
+			
 		}
+				
 	}
 
 
@@ -306,12 +310,12 @@ class UniteProviderFunctionsUC{
 	 * print custom style
 	 */
 	public static function printCustomStyle($style, $hardCoded = false){
-
+		
 		if($hardCoded == false)
 			self::$arrStyles[] = $style;
 		else
-			s_echo( "<style type='text/css'>{$style}</style>");
-
+			uelm_echo( "<style type='text/css'>{$style}</style>");
+		
 	}
 
 

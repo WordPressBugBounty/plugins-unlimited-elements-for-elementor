@@ -155,16 +155,11 @@ class UnlimitedAddonsMigraterUC{
 	 * put style
 	 */
 	public static function putHtmlStyle(){
-		?>
-		<style>
-			
-			.uc-importer-text{
+		$css = '.uc-importer-text{
 				font-size:18px;
-			}
-			
-		</style>
-		
-		<?php 
+			}';
+
+		UniteProviderFunctionsUC::printCustomStyle($css, true); 
 	}
 	
 		
@@ -191,7 +186,7 @@ class UnlimitedAddonsMigraterUC{
 				<br><br>
 				
 				<?php 
-				s_echo( $ucStandAloneErrorMessage);
+				uelm_echo( $ucStandAloneErrorMessage);
 				?>
 				
 			</div>

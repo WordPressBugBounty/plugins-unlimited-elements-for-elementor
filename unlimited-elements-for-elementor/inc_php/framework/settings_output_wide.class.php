@@ -82,26 +82,26 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				
 				?>
 				<tr <?php 
-				s_echo($rowClass)?> valign="top">
+				uelm_echo($rowClass)?> valign="top">
 				
 				<?php if(empty($addSettingText)):?>
 					
-					<th <?php s_echo($textStyle)?> scope="row" <?php s_echo($textWidth) ?>>
+					<th <?php uelm_echo($textStyle)?> scope="row" <?php uelm_echo($textWidth) ?>>
 						<?php if($this->showDescAsTips == true): ?>
 					    	<span class='setting_text' title="<?php echo esc_attr($description)?>"><?php echo esc_attr($text)?></span>
 					    <?php else:?>
-					    	<?php s_echo($text);?>
+					    	<?php uelm_echo($text);?>
 					    <?php endif?>
 					</th>
 					
 				<?php endif?>
 				
 				<td <?php 
-				s_echo($cellStyle)?> <?php 
-				s_echo($tdSettingAdd)?>>
+				uelm_echo($cellStyle)?> <?php 
+				uelm_echo($tdSettingAdd)?>>
 					
 					<span id="<?php 
-				s_echo($setting["id_row"])?>">
+				uelm_echo($setting["id_row"])?>">
 						
 						<?php if(!empty($addSettingText)):?>
 						<span class='setting_onecell_text'><?php echo esc_html($text)?></span>
@@ -130,26 +130,26 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			?>
 			<?php else:	?>
 				<tr id="<?php echo esc_attr($setting["id_row"])?>"  <?php 
-				s_echo($rowClass)?> valign="top">
+				uelm_echo($rowClass)?> valign="top">
 					
 					<?php if($drawTh == true):?>
 					
 					<th <?php 
-				s_echo($textStyle)?> scope="row" <?php 
-				s_echo($textWidth) ?>>
+				uelm_echo($textStyle)?> scope="row" <?php 
+				uelm_echo($textWidth) ?>>
 						<?php if($this->showDescAsTips == true): ?>
 					    	<span class='setting_text' title="<?php echo esc_attr($description)?>"><?php echo esc_attr($text);?></span>
 					    <?php else:?>
 					    	<?php 
-								s_echo($text);?>
+								uelm_echo($text);?>
 					    <?php endif?>
 					</th>
 					
 					<?php endif?>
 					
 					<td <?php 
-				s_echo($cellStyle)?> <?php 
-				s_echo($tdHtmlAdd)?>>
+				uelm_echo($cellStyle)?> <?php 
+				uelm_echo($tdHtmlAdd)?>>
 						<?php 
 							$this->drawInputs($setting);
 							$this->drawInputAdditions($setting);
@@ -188,7 +188,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			<tr id="<?php echo esc_attr($setting["id_row"])?>">
 				<td colspan="4" align="left" style="text-align:left;">
 					 <hr <?php 
-				s_echo($class); ?> /> 
+				uelm_echo($class); ?> /> 
 				</td>
 			</tr>
 			<?php 
@@ -227,17 +227,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			
 			?>
 				<tr id="<?php echo esc_attr($setting["id_row"])?>" <?php 
-				s_echo($rowClass)?>  valign="top">
+				uelm_echo($rowClass)?>  valign="top">
 					<?php if(!empty($label)):?>
 					<th>
 						<?php echo esc_attr($label)?>
 					</th>
 					<?php endif?>
 					<td <?php 
-				s_echo($tdHtmlAdd)?> <?php 
-				s_echo($cellStyle)?>>
+				uelm_echo($tdHtmlAdd)?> <?php 
+				uelm_echo($cellStyle)?>>
 						<span class="unite-settings-static-text<?php echo esc_attr($classAdd)?>"><?php 
-						s_echo($setting["text"]); ?></span>
+						uelm_echo($setting["text"]); ?></span>
 					</td>
 				</tr>
 			<?php 
@@ -263,4 +263,3 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		
 	
 	}
-?>

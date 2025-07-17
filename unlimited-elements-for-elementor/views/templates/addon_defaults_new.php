@@ -43,10 +43,11 @@ $addonsListUrl = HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_ADDONS_ELEM
 	<?php require HelperUC::getPathTemplate("addon_preview"); ?>
 
 </div>
+<?php
 
-<script>
-	jQuery(document).ready(function () {
+$script = 'jQuery(document).ready(function () {
 		var objView = new UniteCreatorAddonDefaultsAdmin();
 		objView.init();
-	});
-</script>
+	});';
+
+UniteProviderFunctionsUC::printCustomScript($script, true); 

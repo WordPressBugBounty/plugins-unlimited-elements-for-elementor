@@ -101,12 +101,13 @@ class UCAdminNoticeBannerBuilder extends UCAdminNoticeBuilderAbstract{
 		$html = "";
 		
 		//add css
-		if(!empty($this->css))
-			$html .= "
-			<style>
-				".$this->css."
-			</style>
-		";
+
+		if(!empty($this->css)) {
+
+			UniteProviderFunctionsUC::printCustomStyle($this->css, true);	
+
+		}
+
 			
 		$html .= '<div class="' . esc_attr($class) . '">';
 		$html .= '<a class="uc-notice-link" href="' . esc_url($this->linkUrl) . '" target="' . esc_attr($this->linkTarget) . '" >';

@@ -2701,11 +2701,12 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params = array();
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_GALLERY;
 		$params["elementor_condition"] = $conditionGallery;
-
+		$params["label_block"] = true;
+		
 		$galleryDefaults = HelperProviderUC::getArrDynamicGalleryDefaults();
 
-		$this->addTextBox($name."_gallery", $galleryDefaults, __("Choose Images","unlimited-elements-for-elementor"), $params);
-
+		$this->add($name."_gallery", $galleryDefaults, __("Choose Images","unlimited-elements-for-elementor"), 'gallery', $params);
+		
 		//============
 
 		$conditionPost = array($name."_source" => "posts");

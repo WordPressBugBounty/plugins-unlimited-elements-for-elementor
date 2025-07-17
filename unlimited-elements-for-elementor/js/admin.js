@@ -1516,11 +1516,11 @@ function UniteAdminUC(){
 	/**
 	 * open "add image" dialog
 	 */
-	this.openAddImageDialog = function(title, onInsert, isMultiple, source){
+	this.openAddImageDialog = function(title, onInsert, isMultiple, source, type = 'image'){
 
 		g_providerAdmin.setParent(t);	//for convert to relative
 
-		g_providerAdmin.openAddImageDialog(title, onInsert, isMultiple, source);
+		g_providerAdmin.openAddImageDialog(title, onInsert, isMultiple, source, type);
 
 	};
 

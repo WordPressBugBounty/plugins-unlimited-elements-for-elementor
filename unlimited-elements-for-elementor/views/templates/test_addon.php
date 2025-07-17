@@ -43,16 +43,16 @@ if(!empty($objAddonType->addonView_urlBack))
 		<a class="unite-button-secondary uc-button-cat-sap" href="<?php echo esc_url($urlBack)?>"><?php echo esc_html($textBackTo);?></a>
 
 		<a id="uc_button_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 
-				s_echo( $isPreviewMode?$styleHide:$styleShow ); ?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>
+				uelm_echo( $isPreviewMode?$styleHide:$styleShow ); ?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>
 		<a id="uc_button_close_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 
-				s_echo( $isPreviewMode?$styleShow:$styleHide ); ?>><?php esc_html_e("Hide Preview", "unlimited-elements-for-elementor")?></a>
+				uelm_echo( $isPreviewMode?$styleShow:$styleHide ); ?>><?php esc_html_e("Hide Preview", "unlimited-elements-for-elementor")?></a>
 
 		<a id="uc_button_preview_tab" href="javascript:void(0)" class="unite-button-secondary uc-button-cat-sap"><?php esc_html_e("Preview New Tab", "unlimited-elements-for-elementor")?></a>
 
 		<a id="uc_button_testaddon_new" href="<?php echo esc_url($urlTestAddonNew); ?>" class="unite-button-secondary uc-button-cat-sap"><?php esc_html_e("Test Widget New", "unlimited-elements-for-elementor")?></a>
 
 		<span id="uc_testaddon_slot1" class="uc-testaddon-slot" <?php 
-				s_echo( $slot1AddHtml ); ?>>
+				uelm_echo( $slot1AddHtml ); ?>>
 			<a id="uc_testaddon_button_restore" href="javascript:void(0)" class="unite-button-secondary"><?php esc_html_e("Restore Data", "unlimited-elements-for-elementor")?></a>
 			<span id="uc_testaddon_loader_restore" class="loader-text" style="display:none"><?php esc_html_e("loading...", "unlimited-elements-for-elementor")?></span>
 			<a id="uc_testaddon_button_delete" href="javascript:void(0)" class="unite-button-secondary"><?php esc_html_e("Delete Data", "unlimited-elements-for-elementor")?></a>
@@ -84,18 +84,12 @@ if(!empty($objAddonType->addonView_urlBack))
 
 </div>
 
-<script type="text/javascript">
+<?php
 
-	jQuery(document).ready(function(){
-
+$script = 'jQuery(document).ready(function(){
 		var objTestAddonView = new UniteCreatorTestAddon();
 		objTestAddonView.init();
+		' . ($isPreviewMode == true ? 'jQuery("#uc_button_preview").trigger("click");' : '') . '
+	});';
 
-		<?php if($isPreviewMode == true):?>
-		jQuery("#uc_button_preview").trigger("click");
-		<?php endif?>
-
-	});
-
-
-</script>
+UniteProviderFunctionsUC::printCustomScript($script, true); 

@@ -177,8 +177,8 @@ class UniteCreatorGutenbergIntegrate{
 	 */
 	public function renderBlock($attributes){
 		
-		GlobalsProviderUC::$renderPlatform = GlobalsProviderUC::RENDER_PLATFORM_GUTENBERG;
-		
+		GlobalsProviderUC::setGutenbergPlatform();
+				
 		$data = array(
 			'id' => $attributes['_id'],
 			'root_id' => $attributes['_rootId'],
@@ -270,6 +270,9 @@ class UniteCreatorGutenbergIntegrate{
 		else 
 			$arrRecords = UniteFunctionsUC::getVal($arrData, "bg_addons");
 		
+		if(!is_array($arrRecords)) {
+			$arrRecords = array();
+		}
 		foreach($arrRecords as $addonName => $record){
 			
 			$addon = new UniteCreatorAddon();

@@ -256,7 +256,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	 * for this function there is cache get
 	 */
 	public function initByName($name, $checkCache = true){
-
+				
 		try{
 			//try to get from cache
 			if($checkCache == true && array_key_exists($name, self::$arrCacheRecords) == true)
@@ -265,6 +265,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 				$record = $this->db->fetchSingle(GlobalsUC::$table_addons, array("name" => $name));
 
 			$this->initByDBRecord($record);
+			
 		}catch(Exception $e){
 			UniteFunctionsUC::throwError("Widget with name:<b> {$name} </b> not found");
 		}
@@ -279,6 +280,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 		if($type == GlobalsUC::ADDON_TYPE_REGULAR_ADDON)
 			$type = "";
 
+			
 		try{
 			$name = $alias;
 
@@ -292,17 +294,19 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 					$name = str_replace($doubleType, $type, $name);
 				}
 			}
-
+						
 			//try to get from cache
 			if($checkCache == true && array_key_exists($name, self::$arrCacheRecords) == true)
 				$record = self::$arrCacheRecords[$name];
 			else{
 				$record = $this->db->fetchSingle(GlobalsUC::$table_addons, array("alias" => $alias, "addontype" => $type));
 			}
-
+			
+			
 			$this->initByDBRecord($record);
+
 		}catch(Exception $e){
-			UniteFunctionsUC::throwError("Widget with name:<b> {$alias} </b> not found");
+			UniteFunctionsUC::throwError("Widget with alias:<b> {$alias} </b> not found");
 		}
 	}
 	
@@ -313,10 +317,12 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 		
 		UniteFunctionsUC::validateNotEmpty($blockName,"block name");
 
-		if(strpos($blockName, GlobalsUnlimitedElements::PLUGIN_NAME) === false)
+		$prefix = GlobalsUnlimitedElements::PLUGIN_NAME."/"."ue-";
+		
+		if(strpos($blockName, $prefix) === false)
 			UniteFunctionsUC::throwError("Wrong block found: $blockName");
 		
-		$alias = str_replace(GlobalsUC::PLUGIN_NAME."/","",$blockName);
+		$alias = str_replace($prefix,"",$blockName);
 		
 		$alias = str_replace("-", "_", $alias);
 		
@@ -3678,5 +3684,3 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	}
 
 }
-
-?>

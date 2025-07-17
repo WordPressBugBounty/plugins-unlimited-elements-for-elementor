@@ -26,17 +26,31 @@ function UniteProviderAdminUC(){
 			isMultiple = false;
 
 		// Media Library params
-		var frame = wp.media({
+		let options = {
 			//frame:      'post',
             //state:      'insert',
 			title : title,
 			multiple : isMultiple,
-			library : { type : type},
+			library : { type : ( type == 'svg' ? 'image/svg+xml' : type ) },
 			button : { text : 'Insert' }
-		});
+		}
+
+		var frame = wp.media(options);		
+
+		// if SVG only
+		if (type == 'svg') {
+			frame.on('open', function() {
+				setTimeout(() => {
+					const fileInputs = document.querySelectorAll('.media-frame input[type="file"]');
+					fileInputs.forEach(input => {
+						input.setAttribute('accept', '.svg');
+					});
+				}, 300);
+			});
+		}
 
 		// Runs on select
-		frame.on('select',function(){
+		frame.on('select', function(){
 			var objSettings = frame.state().get('selection').first().toJSON();
 
 			var selection = frame.state().get('selection');
@@ -65,9 +79,9 @@ function UniteProviderAdminUC(){
 	/**
 	 * open new image dialog
 	 */
-	function openNewImageDialog(title, onInsert, isMultiple){
+	function openNewImageDialog(title, onInsert, isMultiple, type = 'image'){
 
-		openNewMediaDialog(title, onInsert, isMultiple, "image");
+		openNewMediaDialog(title, onInsert, isMultiple, type);
 
 	}
 
@@ -179,7 +193,7 @@ function UniteProviderAdminUC(){
 	/**
 	 * open "add image" dialog
 	 */
-	this.openAddImageDialog = function(title, onInsert, isMultiple, source){
+	this.openAddImageDialog = function(title, onInsert, isMultiple, source, type = 'image'){
 
 		if(source == "addon"){
 			openAddonImageSelectDialog(title, onInsert);
@@ -187,7 +201,7 @@ function UniteProviderAdminUC(){
 		}
 
 		if(typeof wp != "undefined" && typeof wp.media != "undefined")
-			openNewImageDialog(title,onInsert,isMultiple);
+			openNewImageDialog(title,onInsert,isMultiple, type);
 		else{
 			openOldImageDialog(title,onInsert);
 		}

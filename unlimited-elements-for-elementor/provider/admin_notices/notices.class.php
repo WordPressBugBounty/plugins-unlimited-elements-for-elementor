@@ -48,7 +48,7 @@ abstract class UCAdminNotices{
 
 			if($isDebug === true){
 				$noticeHtml = $notice->getHtml();
-				s_echo($noticeHtml);
+				uelm_echo($noticeHtml);
 
 				continue;
 			}
@@ -65,7 +65,7 @@ abstract class UCAdminNotices{
 
 			$noticeHtml = $notice->getHtml();
 
-			s_echo($noticeHtml);
+			uelm_echo($noticeHtml);
 		}
 	}
 

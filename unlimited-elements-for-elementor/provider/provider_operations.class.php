@@ -174,18 +174,25 @@ class ProviderOperationsUC extends UCOperations{
 
 		$isSingleTax = true;
 
-		if(!empty($taxonomy)){
-			$query["taxonomy"] = $taxonomy;
-		}
+		if(empty($taxonomy)){ 
+			
+			$taxonomy = get_taxonomies([], 'names');
+			
 
-		if(is_array($taxonomy) && count($taxonomy) > 1)
+		} 
+
+		$query["taxonomy"] = $taxonomy;
+
+		if(is_array($taxonomy) && is_countable($taxonomy) && count($taxonomy) > 1)
 			$isSingleTax = false;
 
 		$response = get_terms($query);
 		
 		//try to get some taxonomies
-		if(empty($response) && count($search) == 1){
+		if(empty($response) && (is_array($search) && !empty($search) || (is_string($search) && trim($search) !== ''))){
+
 			unset($query["search"]);
+			
 			$response = get_terms($query);
 		}
 

@@ -122,7 +122,7 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 
 		<i>
 		<?php 
-		s_echo($bottomText);
+		uelm_echo($bottomText);
 		?>
 		</i>
 
@@ -742,7 +742,7 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 			<?php esc_attr_e("Date / Time Mode", "unlimited-elements-for-elementor")?>:
 
 			<?php
-			s_echo($htmlSelect);
+			uelm_echo($htmlSelect);
 			?>
 
 		</div>
@@ -912,7 +912,7 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 			<div class="vert_sap5"></div>
 
 			<?php 
-			s_echo($htmlSelect);
+			uelm_echo($htmlSelect);
 			?>
 
 			<div class="vert_sap10"></div>
@@ -955,7 +955,7 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 			<div class="vert_sap5"></div>
 
 			<?php 
-			s_echo($htmlSelectTypes);
+			uelm_echo($htmlSelectTypes);
 			?>
 
 			<div class="vert_sap30"></div>
@@ -1198,7 +1198,7 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 		<div class="unite-inputs-sap"></div>
 
 		<div class="unite-inputs-label">
-			<?php s_echo (esc_attr($title) . __(" Default Values", "unlimited-elements-for-elementor") )?>:
+			<?php uelm_echo(esc_attr($title) . __(" Default Values", "unlimited-elements-for-elementor") )?>:
 		</div>
 
 		<div class="unite-inputs-sap"></div>

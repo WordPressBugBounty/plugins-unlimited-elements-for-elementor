@@ -948,7 +948,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 		$htmlCatList = $this->getCatList($catID, null, $params);
 
 		$htmlAddons = $this->getCatAddonsHtml($catID, $catTitle, $isweb, $params);
-
+		
 		$response = array();
 		$response["htmlItems"] = $htmlAddons;
 		$response["htmlCats"] = $htmlCatList;
@@ -1113,13 +1113,17 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 						<input type="hidden" name="action" value="<?php echo esc_attr($this->pluginName)?>_ajax_action">
 						<input type="hidden" name="client_action" value="import_addons">
 
-						<?php if(!empty($nonce)):?>
+						<?php 
+						if(!empty($nonce)) {
+							?>
 							<input type="hidden" name="nonce" value="<?php echo esc_attr($nonce)?>">
-						<?php endif?>
-						<script type="text/javascript">
-							if(typeof Dropzone != "undefined")
-								Dropzone.autoDiscover = false;
-						</script>
+							<?php 
+						}
+
+						$script = 'if (typeof Dropzone !== "undefined") { Dropzone.autoDiscover = false; }';
+						UniteProviderFunctionsUC::printCustomScript($script, true);
+
+						?>
 					</form>
 						<div class="unite-inputs-sap-double"></div>
 
@@ -1531,7 +1535,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 					<?php if(!empty($warningText)):?>
 					<div class="uc-dialog-preview-template__right-warning-message">
 						<?php 
-						s_echo($warningText);
+						uelm_echo($warningText);
 						?>
 					</div>
 					<?php endif?> 
@@ -1998,7 +2002,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 			>
 
 			<?php 
-			s_echo($htmlSelect); 
+			uelm_echo($htmlSelect); 
 			?>
 
 		</div>
@@ -2054,7 +2058,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 			<?php if(!empty($this->headerLineText)):?>
 			<div class="uc-manager-header-text">
 				<?php 
-				s_echo($this->headerLineText);
+				uelm_echo($this->headerLineText);
 				?>
 			</div>
 			<?php endif?>

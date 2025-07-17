@@ -38,7 +38,7 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 			
 			$content = ob_get_contents();
 			ob_end_clean();
-			s_echo($content);
+			uelm_echo($content);
 		}
 		
 		$isJsonOutput = UniteFunctionsUC::getGetVar("json","",UniteFunctionsUC::SANITIZE_KEY);
@@ -48,7 +48,7 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 			header('Content-Type: application/json');
 		
 		ini_set("display_errors","off");
-		s_echo($json);
+		uelm_echo($json);
 		exit();
 	}
 	
@@ -93,5 +93,3 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 	
 	
 }
-
-?>

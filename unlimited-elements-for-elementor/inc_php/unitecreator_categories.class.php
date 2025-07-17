@@ -1040,5 +1040,3 @@ class UniteCreatorCategoriesWork extends UniteElementsBaseUC{
 	}
 	
 }
-
-?>

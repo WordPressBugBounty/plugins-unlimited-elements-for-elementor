@@ -1091,7 +1091,7 @@ class UniteCreatorBrowserWork extends HtmlOutputBaseUC{
 		$html .= self::TAB."<div id=\"{$id}\" class=\"uc-browser-wrapper{$addClass}\" {$addHtml} style='display:none'>".self::BR;
 		
 		if($putMode == true){
-			s_echo($html);
+			uelm_echo($html);
 			$html = "";
 		}
 				
@@ -1100,7 +1100,7 @@ class UniteCreatorBrowserWork extends HtmlOutputBaseUC{
 		$html .= self::TAB."</div>"; //wrapper
 		
 		if($putMode == true)
-			s_echo($html);
+			uelm_echo($html);
 		else
 			return($html);
 	}
@@ -1162,7 +1162,7 @@ class UniteCreatorBrowserWork extends HtmlOutputBaseUC{
 			if($getHTML == true)
 				return($html);
 			else
-				s_echo($html);
+				uelm_echo($html);
 			
 		}catch(Exception $e){
 			

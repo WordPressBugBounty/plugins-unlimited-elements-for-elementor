@@ -102,11 +102,21 @@ function UniteAddonPreviewAdmin() {
 	 * load settings
 	 */
 	function loadSettings(onSuccess) {
-		
+
 		g_ucAdmin.setAjaxLoaderID("uc_settings_loader");
-				
-		g_ucAdmin.ajaxRequest("get_addon_settings_html", { id: g_addonID }, function (response) {
-			
+
+		const urlParams = new URLSearchParams(window.location.search);
+		const isTestFreeVersion = urlParams.get("testfreeversion") === "true";
+
+		const requestData = {
+			id: g_addonID
+		};
+
+		if (isTestFreeVersion) {
+			requestData.testfreeversion = true;
+		}
+
+		g_ucAdmin.ajaxRequest("get_addon_settings_html", requestData, function (response) {
 			initSettingsByHtml(response.html);
 
 			if (typeof onSuccess === "function")

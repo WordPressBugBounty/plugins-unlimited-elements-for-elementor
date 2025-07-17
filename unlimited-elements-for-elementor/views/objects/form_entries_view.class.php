@@ -593,12 +593,10 @@ class UCFormEntriesView extends WP_List_Table{
 
 		$filename = "form-entries-" . current_time("mysql") . ".csv";
 		$headers = array_merge($fieldHeaders, $entryHeaders);
-		
+
 		UniteFunctionsUC::downloadCsv($filename, $headers, $rows);
 	}
-	
-	
-	
+
 	/**
 	 * Prepares the list of items.
 	 *
@@ -738,8 +736,8 @@ class UCFormEntriesView extends WP_List_Table{
 		}
  
 		$range = array(
-			"start" => s_date("Y-m-d H:i:s", $startTime),
-			"end" => s_date("Y-m-d H:i:s", $endTime),
+			"start" => uelm_date("Y-m-d H:i:s", $startTime),
+			"end" => uelm_date("Y-m-d H:i:s", $endTime),
 		);
 
 		return $range;

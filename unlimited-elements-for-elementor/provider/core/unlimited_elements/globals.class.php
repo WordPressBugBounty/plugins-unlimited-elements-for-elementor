@@ -18,6 +18,8 @@ class GlobalsUnlimitedElements{
 	
 	public static $isGutenbergOnly = false;
 	
+	public static $gutenbergArrFilterCats = array("Loop Builder");
+	
 	public static $showAdminNotices = false;		//show the banner
 	public static $debugAdminNotices = false;
 	
@@ -40,7 +42,7 @@ class GlobalsUnlimitedElements{
 	public static $enableLimitProFunctionality = true;	//enable limit pro options in elementor
 	
 	public static $enableEditProOptions = false;	 //set to enable edit pro options
-	
+		
 	//public static $insideNotificationText = "🖤 Black Friday Sale! <br> Don’t Miss Out on the <br> BIGGEST SALE of the Year! 🎉<br> <a style='text-decoration:underline;' href='https://unlimited-elements.com/pricing/' target='_blank'>Get Deal Now!</a> ";
 	public static $insideNotificationText = "Unlock Access To All Pro Widgets and Features.  <a href='https://unlimited-elements.com/pricing/' target='_blank'>Upgrade Now</a> ";
 	public static $insideNotificationUrl = "https://unlimited-elements.com/pricing/";
@@ -163,7 +165,6 @@ class GlobalsUnlimitedElements{
 			self::$isGutenbergOnly = true;
 			self::$enableGutenbergSupport = true;
 			self::$enableElementorSupport = false;
-			
 		}
 
 		//debug functions

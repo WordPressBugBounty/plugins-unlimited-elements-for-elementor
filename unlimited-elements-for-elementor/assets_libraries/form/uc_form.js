@@ -197,7 +197,8 @@ function UnlimitedElementsForm(){
   */
   function getResult(expr, objError, objCalcInput) {    
     //if space just erase it    
-    expr = expr.replace(/\s+/g, "");    
+    expr = expr.replace(/\s+/g, "");  
+    
     //replace inputs name with its values
     expr = replaceNamesWithValues(expr, objError, objCalcInput);
     
@@ -409,7 +410,7 @@ function UnlimitedElementsForm(){
         uniqueArray.push(value);        
       }      
     });
-    // console.log(uniqueArray)
+    
     return uniqueArray;
   }
   
@@ -538,6 +539,9 @@ function UnlimitedElementsForm(){
       parentsArray.forEach(function(id, index){        
         var parentId = id;
         var objParentCalcInput = jQuery("#"+parentId).find("[data-calc-mode='true']");
+
+        if(!objParentCalcInput || objParentCalcInput.length == 0)
+          objParentCalcInput = jQuery("#"+parentId).find("[data-calc-mode='1']");
         
         objParentsArray.push(objParentCalcInput);        
       });
@@ -787,11 +791,11 @@ function UnlimitedElementsForm(){
     var classError = "ue-error";
     
     var conditions = conditionArray.visibility_conditions;
-    var conditionsNum = conditions.length;
     
-    if(conditionsNum == 0)
+    if(!conditions || conditions.length == 0)
       return(false);
     
+    var conditionsNum = conditions.length;
     var totalVisibilityCondition;
     
     //create val to contain all the names for errors catching purposes
@@ -868,7 +872,8 @@ function UnlimitedElementsForm(){
   * init the form
   */
   t.init = function(){    
-    //if no calc mode inpu found on page - do nothing
+    
+    //if no calc mode inpu found on page - do nothing  
     if(!g_objCalcInputs.length)
       return(false);
     
@@ -941,7 +946,7 @@ function UnlimitedElementsForm(){
     elementorElementSelector = ".elementor-element";
     
     //objects
-    g_objCalcInputs = jQuery(ueInputFieldSelector+'[data-calc-mode="true"]');
+    g_objCalcInputs = jQuery(ueInputFieldSelector+'[data-calc-mode="true"], '+ueInputFieldSelector+'[data-calc-mode="1"]');
     
     //helpers
     g_allowedSymbols = /Math\.[a-zA-Z]+|\d+(?:\.\d+)?|[-+*/().,]+/g;
@@ -952,7 +957,10 @@ function UnlimitedElementsForm(){
 
 var g_ucUnlimitedForms = new UnlimitedElementsForm();
 
-g_ucUnlimitedForms.init();
+setTimeout(function(){
+g_ucUnlimitedForms.init();	
+}, 2000);
+
 
 jQuery( document ).on( 'elementor/popup/show', (event, id, objPopup) => {  
   var g_ucUnlimitedForms = new UnlimitedElementsForm();

@@ -24,6 +24,8 @@ class GlobalsProviderUC{
 	const RENDER_PLATFORM_GUTENBERG = "gutenberg";
 	
 	public static $renderPlatform = null;
+	public static $isGutenbergOutput = false;
+	public static $widgetText = "";
 	
 	public static $arrJSHandlesModules = array();
 	
@@ -105,7 +107,20 @@ class GlobalsProviderUC{
 	 */
 	public static function initGlobals(){
 		
+		self::$widgetText = "widget";
+		
 		self::$arrFilterPostTypes = UniteFunctionsUC::arrayToAssoc(self::$arrFilterPostTypes);
+		
+	}
+	
+	/**
+	 * set gutenberg platform options
+	 */
+	public static function setGutenbergPlatform(){
+		
+		self::$widgetText = "block";
+		self::$renderPlatform = self::RENDER_PLATFORM_GUTENBERG;
+		self::$isGutenbergOutput = true;
 		
 	}
 	

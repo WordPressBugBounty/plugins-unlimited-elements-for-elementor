@@ -595,9 +595,9 @@ class UniteCreatorForm{
 
 		// Create upload folder
 		$folderName = self::FOLDER_NAME . "/"
-			. s_date("Y") . "/"
-			. s_date("m") . "/"
-			. s_date("d") . "/";
+			. uelm_date("Y") . "/"
+			. uelm_date("m") . "/"
+			. uelm_date("d") . "/";
 
 		$folderPath = GlobalsUC::$path_images . $folderName;
 
@@ -605,7 +605,8 @@ class UniteCreatorForm{
 
 		if($created === false)
 			UniteFunctionsUC::throwError("Unable to create upload folder: $folderPath");
-
+		
+		
 		// Process files upload
 		$errors = array();
 		
@@ -614,19 +615,53 @@ class UniteCreatorForm{
 				continue;
 
 			$urls = array();
-
-			foreach($field["value"] as $file){
+			
+			$fieldValue = UniteFunctionsUC::getVal($field, "value");
+			
+			foreach($fieldValue as $file){
+				
 				$fileName = wp_unique_filename($folderPath, $file["name"]);
 				$filePath = $folderPath . "/" . $fileName;
 
+				$filePath = rtrim($folderPath, '/') . "/" . $fileName;
+				
+				// Ensure the target directory exists and is writable
+				$targetDir = dirname($filePath);
+				if ( !is_dir($targetDir) ) {
+					wp_mkdir_p($targetDir);
+				}
+				
+				if ( !is_writable($targetDir) ) {
+					$errors[] = "Target directory is not writable: " . $targetDir;
+					continue;
+				}
+				
 				$moved = false;
 				$uploaded_file = wp_handle_upload( $file );
-				if ( isset( $uploaded_file['file'] ) ) {
-					UniteFunctionsUC::move( $uploaded_file['file'], $filePath, true );
+				
+				//error handling
+				$error = UniteFunctionsUC::getVal($uploaded_file, "error");
+				
+				if(!empty($error)){
+					
+					//tru to move the file different way
+					if ( isset($file['tmp_name']) && is_uploaded_file($file['tmp_name']) ) {
+						$moved = move_uploaded_file($file['tmp_name'], $filePath);
+					}
+					
+					if($moved == false)
+						$errors[] = "Direct upload failed: Unable to move " . $file['tmp_name'] . " to " . $filePath;
+						
+					continue;
+				}
+				
+				$uploadedFile = UniteFunctionsUC::getVal($uploaded_file, "file");
+				
+				if ( !empty($uploadedFile)) {
+					UniteFunctionsUC::move( $uploadedFile, $filePath, true );
 					$moved = true;
 				}
-				// $moved = move_uploaded_file($file["tmp_name"], $filePath);
-
+				
 				if($moved === false){
 					$errors[] = "Unable to move uploaded file: $filePath";
 
@@ -1790,6 +1825,8 @@ class UniteCreatorForm{
 		
 		$subject = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("subject", $action));
 		$subject = $this->replaceTitlePlaceholders($subject);
+		
+		$subject = html_entity_decode($subject, ENT_QUOTES | ENT_HTML5);
 		
 		$message = UniteFunctionsUC::getVal($this->formSettings, $this->getFieldKey("message", $action));
 		$message = $this->prepareEmailMessageField($message);

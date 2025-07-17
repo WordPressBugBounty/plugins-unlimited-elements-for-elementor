@@ -74,15 +74,14 @@ function UEDynamicFilters(){
 		class_widget_wrapper:"elementor-widget",
 		class_widget_container:"elementor-widget-container",
 		current_postid:null,
-		ucpage_url:null
+		ucpage_url:null,
 	};
 
 	var g_options = {
 		is_cache_enabled:true,
-		urlkey_taxsap:"~"
+		urlkey_taxsap:"~",
 	};
-
-
+	
 	/**
 	 * console log some string
 	 */
@@ -394,7 +393,13 @@ function UEDynamicFilters(){
 	 * add filter object to grid
 	 */
 	function bindFilterToGrid(objGrid, objFilter){
-
+		
+		if(g_showDebug){
+			trace("bind filter to grid");
+			
+			trace(objFilter);
+		}
+		
 		var arrFilters = objGrid.data("filters");
 		var objTypes = objGrid.data("filter_types");
 
@@ -457,7 +462,12 @@ function UEDynamicFilters(){
 		
 		if(!isInitAfter)
 			isInitAfter = isSpecialFilterInitAfter(objFilter, objGrid);
-				
+		
+		if(g_showDebug){
+			trace("init after: "+isInitAfter);
+		}
+		
+		
 		if(isInitAfter === true)
 			addFilterToInitAfter(objFilter, objGrid);
 		
@@ -674,9 +684,15 @@ function UEDynamicFilters(){
 
 		var objParent = objElement.parent();
 		
+		if(g_showDebug == true){
+			trace("Show Error Message for: ");
+			trace(objElement);
+			trace(error);
+		}
+		
 		var objError = objParent.find(".uc-filers-error-message");
 		if(objError.length == 0){
-			objParent.append("<div class='uc-filers-error-message' style='color:red;position:absolute;top:-24px;left:0px;background-color:rgba(230, 230, 230, 0.8);padding:3px;font-size:12px;'></div>");
+			objParent.append("<div class='uc-filers-error-message' style='color:red;position:absolute;top:-24px;left:0px;background-color:rgba(230, 230, 230, 0.8);padding:3px;font-size:12px;border:5px solid white;'></div>");
 			var objError = objParent.find(".uc-filers-error-message");
 			objParent.css("border","1px solid red !important");
 		}
@@ -2008,9 +2024,9 @@ function UEDynamicFilters(){
 		//if init filters mode, and no items response - don't set
 		if(response.hasOwnProperty("html_items") == false)
 			return(false);
-
+		
 		var htmlItems = getVal(response, "html_items");
-
+				
 		var htmlItems2 = null;
 
 		if(objItemsWrapper2)
@@ -2020,7 +2036,7 @@ function UEDynamicFilters(){
 		var gridID = objGrid.attr("id");
 
 		htmlItems = replaceAll(htmlItems, "%uc_widget_id%", gridID);
-
+		
 		if(htmlItems2)
 			htmlItems2 = replaceAll(htmlItems2, "%uc_widget_id%", gridID);
 
@@ -2101,7 +2117,7 @@ function UEDynamicFilters(){
 				objItemsWrapper.append(htmlItems2);
 
 		}else{
-
+						
 			objItemsWrapper.html(htmlItems);
 
 			if(objItemsWrapper2 && objItemsWrapper2.length)
@@ -3803,15 +3819,15 @@ function UEDynamicFilters(){
 
 		//bind grid to filter
 		objFilter.data("grid", objGrid);
-
+		
 		//bind filter to grid
 		bindFilterToGrid(objGrid, objFilter);
-
+		
+		
 		//set data var
 		if(g_showDebug == true)
 			objFilter.attr("data-showdebug", true);
-
-
+		
 		switch(type){
 			case g_types.TERMS_LIST:
 				initTermsRelatedFilter(objFilter);

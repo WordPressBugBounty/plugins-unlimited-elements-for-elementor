@@ -327,6 +327,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$isEnabled = UniteFunctionsUC::getGetVar($getvar,"",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
 			$isEnabled = UniteFunctionsUC::strToBool($isEnabled);
 
+			if($isEnabled == false) {
+				$data = UniteFunctionsUC::getPostGetVariable("data", "", UniteFunctionsUC::SANITIZE_NOTHING);
+				if(empty($data))
+					return(false);
+				$isEnabled = UniteFunctionsUC::getVal($data, $getvar);
+				$isEnabled = UniteFunctionsUC::strToBool($isEnabled);
+			}
+
 			if($isEnabled == false)
 				return(false);
 
@@ -1544,7 +1552,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		$html = $objOutput->getHtmlBody();
 		$objOutput->processIncludes();
 
-		s_echo($html);
+		uelm_echo($html);
 	}
 
 	/**
@@ -1813,13 +1821,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		$htmlCssIncludes = UniteCreatorOutput::$bufferCssIncludes;
 
 		echo "\n";
-		s_echo($htmlCssIncludes);
+		uelm_echo($htmlCssIncludes);
 
 		$css = UniteCreatorOutput::$bufferBodyCss;
 		if(!empty($css)){
 			echo "\n<style type='text/css'> \n";
 			echo "\n/* Unlimited Elements Css */ \n\n";
-			s_echo($css . "\n");
+			uelm_echo($css . "\n");
 			echo "</style>\n";
 		}
 
@@ -1846,7 +1854,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$typeTitle = $objLayouts->getLayoutTypeTitle($layoutType);
 			$message = esc_html__("Template part", "unlimited-elements-for-elementor") . ": " . $typeTitle . esc_html__(" not found. Please create one in template parts page", "unlimited-elements-for-elementor");
 			$html = HelperHtmlUC::getErrorMessageHtml($message);
-			s_echo($html);
+			uelm_echo($html);
 
 			return (false);
 		}
@@ -1944,5 +1952,3 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 //init the operations
 HelperUC::$operations = new UCOperations();
-
-?>

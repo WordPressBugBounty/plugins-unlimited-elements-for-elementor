@@ -651,7 +651,9 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 		$urlRedirect = HelperUC::getViewUrl_Default();
 
 		dmp("addons installed, redirecting...");
-		s_echo( "<script>location.href='$urlRedirect'</script>");
+
+		wp_redirect($urlRedirect);
+		
 		exit();
 	}
 
@@ -774,7 +776,7 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 			print_head_scripts();
 
 			if(!empty($htmlCustomCssStyles))
-				s_echo("\n" . $htmlCustomCssStyles); 
+				uelm_echo("\n" . $htmlCustomCssStyles); 
 
 			$view = self::$view;
 
@@ -784,10 +786,10 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 
 		<body class="uc-blank-preview uc-view-<?php echo esc_attr($view) ?>">
 		<?php
-		s_echo($htmlBody);
+		uelm_echo($htmlBody);
 		?>
 		<?php
-		s_echo($htmlJSScripts);
+		uelm_echo($htmlJSScripts);
 
 		if($superClear == true)
 			print_footer_scripts();

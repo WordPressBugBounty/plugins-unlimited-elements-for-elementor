@@ -192,7 +192,7 @@ class UniteCreatorAddonValidator{
 	protected function isHasNonValidHtml(){
 		
 		$html = $this->objAddon->getHtml();
-				
+		
 		$arrErrors = UniteFunctionsUC::validateHTML($html);
 		
 		dmp($arrErrors);
@@ -208,27 +208,9 @@ class UniteCreatorAddonValidator{
 	 */
 	protected function validateRegularAddon(){
 		
-		//check if missing default image
-		/*
-		$isMissingDefaluts = $this->isAddonMissingDefaults();
-		if($isMissingDefaluts == true)
-			$this->arrMessages[] = __("Missing Default Items!","unlimited-elements-for-elementor");
-		
-		//check if missing default url
-		$isMissingDefalutImage = $this->isAddonMissingImageUrl();
-		if($isMissingDefalutImage == true)
-			$this->arrMessages[] = __("Missing Default Image!","unlimited-elements-for-elementor");
-		*/
-		
 		$hasNonExistingIncludes = $this->isHasNonExistingIncludes();
 		if($hasNonExistingIncludes == true)
 			$this->arrMessages[] = __("Not existing include file!","unlimited-elements-for-elementor");
-		
-		/*
-		$htmlNotValid = $this->isHasNonValidHtml();
-		if($htmlNotValid == true)
-			$this->arrMessages[] = __("Not valid HTML!", "unlimited-elements-for-elementor");
-		*/
 		
 		$this->validateExtraValidations();
 		

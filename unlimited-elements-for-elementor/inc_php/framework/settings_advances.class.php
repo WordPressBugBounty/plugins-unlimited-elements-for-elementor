@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 	// advanced settings class. adds some advanced features
 	class UniteSettingsAdvancedUC extends UniteSettingsUC{
-
+		
 		const TYPE_CONTENT = "content";
-
-
+		
+		
 		/**
 		 * add boolean true/false select with custom names
 		 */
@@ -259,8 +259,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			if(empty($defaultValue))
 				$defaultValue = "custom";
 
-			//$this->add($name, $defaultValue, $text, self::TYPE_CONTENT, $arrParams);
-
 			$arrOptions = array();
 			$arrOptions["Custom"] = "custom";
 
@@ -282,18 +280,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				switch($option){
 					case "custom":
 
-					    /*
-						$params = array(
-								UniteSettingsUC::PARAM_CLASSADD=>"unite-content-title");
-
-						$this->addTextBox($name."_title", "", __("&nbsp;Title","unlimited-elements-for-elementor"), $params);
-
-						$params = array(
-								UniteSettingsUC::PARAM_CLASSADD=>"unite-content-intro");
-
-						$this->addTextArea($name."_intro", "", __("&nbsp;Custom Intro","unlimited-elements-for-elementor"), $params);
-						*/
-
 						$params = array(
 								UniteSettingsUC::PARAM_CLASSADD=>"unite-content-content");
 
@@ -303,13 +289,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 						  $value = UniteFunctionsUC::getVal($defaultValue, $name."_content");
 
 						$this->addEditor($name."_content", $value, __("&nbsp;Custom Content","unlimited-elements-for-elementor"), $params);
-
-						/*
-						$params = array(
-								UniteSettingsUC::PARAM_CLASSADD=>"unite-content-link");
-
-						$this->addTextBox($name."_link", "", __("&nbsp;Link","unlimited-elements-for-elementor"), $params);
-						*/
 
 					break;
 					default:
@@ -325,5 +304,3 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 	}
-
-?>

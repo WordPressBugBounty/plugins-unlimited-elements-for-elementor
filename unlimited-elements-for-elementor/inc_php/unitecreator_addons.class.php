@@ -490,6 +490,33 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 			"root_id" => $rootId,
 		);
 		
+		$scriptsHardCoded = false;
+		
+		$isInFooter = HelperProviderCoreUC_EL::getGeneralSetting("js_in_footer");
+		$isInFooter = UniteFunctionsUC::strToBool($isInFooter);
+		
+		$isBG = $objAddon->isBackground();
+		
+		if ($isInFooter == false)
+			$scriptsHardCoded = true;
+		
+		if(GlobalsProviderUC::$isInsideEditor == true)
+			$scriptsHardCoded = true;
+		
+		if(GlobalsProviderUC::$isUnderAjaxDynamicTemplate == true)
+			$scriptsHardCoded = true;
+
+		//output hard coded for background addons
+		if($isBG == true)
+			$scriptsHardCoded = true;
+			
+        $cssFilesPlace = HelperProviderCoreUC_EL::getGeneralSetting("css_includes_to");
+		if(GlobalsProviderUC::$isInsideEditor == true)
+			$cssFilesPlace = "body";
+	        
+		$putCssIncludesInBody = ($cssFilesPlace == "body") ? true : false;
+		
+        
 		$cacheOutput = false;
 		if(GlobalsProviderUC::$isInsideEditor == true)
 			$cacheOutput = true;
@@ -502,6 +529,10 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 		$objOutput->setProcessType(UniteCreatorParamsProcessor::PROCESS_TYPE_OUTPUT_BACK);
 		$objOutput->checkOutputDebug($objAddon);
 		$objOutput->initByAddon($objAddon);
+
+        if($cssFilesPlace == "footer")
+        	$output->processIncludes("css");
+		
 		
 		$htmlBefore = null;
 		
@@ -510,8 +541,7 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 			ob_end_clean();
 		}
 		
-		$html = $objOutput->getHtmlBody(true, false, true, $params);
-		
+		$html = $objOutput->getHtmlBody($scriptsHardCoded, $putCssIncludesInBody, true, $params);
 		
 		if(!empty($htmlBefore)){
 			$html = $htmlBefore.$html;
@@ -529,7 +559,8 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 
 		return $arr;
 	}
-
+	
+	
 	/**
 	 * check addon global variables
 	 */
@@ -541,8 +572,10 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 			GlobalsProviderUC::$isInsideEditor = true;
 		
 		$platform = UniteFunctionsUC::getVal($addonData, "platform");
+		
 		if($platform == "gutenberg")
-			GlobalsProviderUC::$renderPlatform = GlobalsProviderUC::RENDER_PLATFORM_GUTENBERG;
+			GlobalsProviderUC::setGutenbergPlatform();
+		
 		
 	}
 	
@@ -1312,7 +1345,7 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 
 			$errorMessage = HelperUC::getHtmlErrorMessage($message, GlobalsUC::$SHOW_TRACE_FRONT);
 
-			s_echo ($errorMessage);
+			uelm_echo($errorMessage);
 		}
 
 		exit();
@@ -1721,8 +1754,9 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 			$position = $objAddon->getParamPosition($paramName, $isMain);
 
 		//clear category data
-		unset($paramData["__attr_catid__"]);
-
+		unset($paramData[GlobalsUC::ATTR_CATID]);
+		
+		
 		//update addons
 
 		foreach($targetAddonIDs as $addonID){

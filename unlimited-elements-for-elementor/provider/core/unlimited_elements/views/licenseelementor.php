@@ -188,7 +188,7 @@ class UnlimitedElementsLicenceView extends UniteCreatorActivationView{
 		
 		<h2 class="<?php echo esc_attr($class)?>">
 			<?php 
-			s_echo($message);
+			uelm_echo($message);
 			?>
 		</h2>
 		<?php 

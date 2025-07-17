@@ -125,7 +125,7 @@ class UniteCreatorObjectsListView extends UniteElementsBaseUC{
 		
 		?>
 			<div id="uc_table_objects_wrapper" data-options="<?php 
-				s_echo( $strOptions ) ?>">
+				uelm_echo( $strOptions ) ?>">
 			
 				<?php if(empty($this->arrObjects)): ?>
 				<div>
@@ -213,20 +213,14 @@ class UniteCreatorObjectsListView extends UniteElementsBaseUC{
 	 * put scripts
 	 */
 	protected function putHtml_scripts(){
-		
-		?>
-		<script type="text/javascript">
-		
-			jQuery(document).ready(function(){
-				
+
+		$script = 'jQuery(document).ready(function(){
 				var objAdmin = new UniteCreatorAdmin_ObjectsList();
 				objAdmin.initObjectsListView();
-				
-			});
-		
-		</script>
-		
-		<?php 
+			});';
+
+		UniteProviderFunctionsUC::printCustomScript($script, true); 
+
 	}
 	
 	

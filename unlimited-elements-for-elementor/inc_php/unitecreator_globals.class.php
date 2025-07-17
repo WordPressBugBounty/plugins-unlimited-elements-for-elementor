@@ -101,6 +101,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		const VERSION_ELEMENTOR = "elementor";
 		const VERSION_GUTENBERG = "gutenberg";
 		
+		const ATTR_CATID = "__attr_catid__";
+		
 		public static $permisison_add = false;
 		public static $blankWindowMode = false;
 

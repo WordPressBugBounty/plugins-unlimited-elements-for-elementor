@@ -225,7 +225,7 @@ try{
 			<hr>
 		
 		<?php 
-			s_echo( $e->getMessage() );
+			uelm_echo( $e->getMessage() );
 		?>
 			<hr>
 			

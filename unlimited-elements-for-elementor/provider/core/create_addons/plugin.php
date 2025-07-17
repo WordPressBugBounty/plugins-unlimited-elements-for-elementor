@@ -126,7 +126,7 @@ class AddonLibraryCreatorPluginUC extends UniteCreatorPluginBase{
 		?>
 	 		
 	 		<a data-action="export_addon" type="button" class="unite-button-secondary button-disabled uc-button-item uc-single-item"><?php 
-				s_echo($textExport)?></a>
+				uelm_echo($textExport)?></a>
 		
 		<?php 
 	}

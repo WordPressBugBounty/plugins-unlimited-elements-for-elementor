@@ -107,6 +107,28 @@ class UniteCreatorWebAPI extends UniteCreatorWebAPIWork{
 		return($arrCatalogAddonsNew);
 	}
 	
+	/**
+	 * 
+	 * Enter description here ...
+	 * @param unknown_type $arrCatalogItems
+	 */
+	private function filterCategories($arrCatalogItems){
+		
+		if(GlobalsUnlimitedElements::$isGutenbergOnly == false)
+			return($arrCatalogItems);
+		
+		if(empty(GlobalsUnlimitedElements::$gutenbergArrFilterCats))
+			return($arrCatalogItems);
+			
+		foreach(GlobalsUnlimitedElements::$gutenbergArrFilterCats as $cat){
+			if(isset($arrCatalogItems[$cat]))
+				unset($arrCatalogItems[$cat]);
+		}
+		
+		
+		return($arrCatalogItems);
+	}
+	
 	
 	/**
 	 * get catalog array by addons type
@@ -114,12 +136,14 @@ class UniteCreatorWebAPI extends UniteCreatorWebAPIWork{
 	public function getCatalogArray($objAddonsType){
 		
 		$arrCatalogItems = parent::getCatalogArray($objAddonsType);
-				
+		
 		if($objAddonsType->isLayout == true)
 			return($arrCatalogItems);
-			
+		
 		$arrCatalogItems = $this->filterCatalogAddons($arrCatalogItems);
-				
+		
+		$arrCatalogItems = $this->filterCategories($arrCatalogItems);
+		
 		return($arrCatalogItems);
 	}
 	

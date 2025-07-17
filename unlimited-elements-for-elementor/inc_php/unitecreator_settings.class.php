@@ -1005,8 +1005,27 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 	 * Test addon settings - inside addon use and gutenberg.
 	 * Not for elementor
 	 */
-	private function a__________TEST_ADDON_SETTINGS_________(){}
+	private function a__________SETTINGS_OUTPUT_GUTENBERG_TEST_ADDON_________(){}
 
+	/**
+	 * add free version 
+	 */
+	private function addFreeVersionInsideNotification(){
+		
+    	$text = GlobalsUnlimitedElements::$insideNotificationText;
+		
+    	$urlBuy = GlobalsUnlimitedElements::$insideNotificationUrl;
+    	
+		$text = str_replace( "[url_buy]", $urlBuy, $text );
+	    
+		$html = "<div class='uc-settings-cta-notification'>{$text}</div>";
+		
+		GlobalsUnlimitedElements::$insideNotificationText;
+		
+		$this->addStaticHTML($html);
+		
+	}
+	
 	/**
 	 * check and add images sizes chooser - for image input
 	 */
@@ -1522,7 +1541,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 
     	foreach($params as $param){
 
-    		$catID = UniteFunctionsUC::getVal($param, "__attr_catid__");
+    		$catID = UniteFunctionsUC::getVal($param, GlobalsUC::ATTR_CATID);
 
     		if(empty($catID))
     			$catID = "cat_general_general";
@@ -1530,7 +1549,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
     		if(array_key_exists($catID, $arrOutput) == false)
     			$catID = "cat_general_general";
 
-    		unset($param["__attr_catid__"]);
+    		unset($param[GlobalsUC::ATTR_CATID]);
 
     		$sectionCounter = 0;
 
@@ -1539,7 +1558,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 
     			//set category title
     			$catTitle = __("General", "unlimited-elements-for-elementor");
-
+				
     			if($catID != "cat_general_general"){
     				$sectionCounter++;
     				$catTitle = __("Section ","unlimited-elements-for-elementor") . $sectionCounter;
@@ -1700,6 +1719,48 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 	}
 
 	/**
+	 * mark general tab
+	 */
+	private function markGeneralTab($arrParamsWithCats){
+		
+		if(empty($arrParamsWithCats))
+			return($arrParamsWithCats);
+					
+		foreach($arrParamsWithCats as $catID => &$cat){
+	
+			$tab = UniteFunctionsUC::getVal($cat, "tab");
+			
+			if($tab != self::TAB_CONTENT)
+				continue;
+			
+			if($catID == self::CAT_GENERAL){
+				
+				$cat["is_general"] = true;
+				
+				return($arrParamsWithCats);
+			}
+			
+		}
+		
+		//if not found - set the first one
+		$isFirst = true;
+		foreach($arrParamsWithCats as $catID => &$cat){
+	
+			$tab = UniteFunctionsUC::getVal($cat, "tab");
+			
+			if($tab != self::TAB_CONTENT)
+				continue;
+			
+			$cat["is_general"] = true;
+			
+			return($arrParamsWithCats);
+		}
+		
+		
+		return($arrParamsWithCats);
+	}
+	
+	/**
 	 * add settings by creator params - works for single widget only (not for elementor)
 	 */
 	public function initByCreatorParams($arrParams, $arrCats = array()){
@@ -1714,20 +1775,25 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 
 		// put params with cats
 		$arrParamsWithCats = $this->sortParamsByCats($arrCats, $arrParams);
-
+						
 		if(empty($arrParamsWithCats) === true)
 			return;
-
+		
+		$arrParamsWithCats = $this->markGeneralTab($arrParamsWithCats);
+				
 		$listingParam = null;
 		$postsListParam = null;
 			
 		$addPagination = false;
-		
+				
 		foreach($arrParamsWithCats as $catID => $arrCat){
+			
 			$title = UniteFunctionsUC::getVal($arrCat, "title");
 			$tab = UniteFunctionsUC::getVal($arrCat, "tab");
 			$arrParams = UniteFunctionsUC::getVal($arrCat, "params");
-
+			
+			$isGeneralCategory = UniteFunctionsUC::getVal($arrCat, "is_general");
+			
 			$this->addSap($title, $catID, $tab);
 
 			$sapParams = $arrCat;
@@ -1736,7 +1802,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 			unset($sapParams["params"]);
 
 			$this->addByCreatorParam_handleConditions($sapParams, true);
-
+		
 			foreach($arrParams as $param){
 				$type = UniteFunctionsUC::getVal($param, "type");
 				
@@ -1776,6 +1842,11 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 				if($isSkip == false)
 					$this->addByCreatorParam($param);
 				
+			}//foreach params
+			
+			if($isGeneralCategory == true && GlobalsUC::$isProVersion == false){
+				
+				$this->addFreeVersionInsideNotification();
 			}
 		}
 		
@@ -1806,7 +1877,6 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 				
 	          	if($enablePagination == true)
 					$this->addPaginationAndFilteringSection($listingParam);
-				
 			}
 			
 		}

@@ -17,7 +17,6 @@
       value="true"
     />
 
-
     <field name="css_includes_to"
       type="list"
       default="body"
@@ -26,7 +25,6 @@
       <option value="body" text="Body Before Widget HTML" />
       <option value="footer" text="Footer" />
     </field>
-
 
     <field name="enable_import_export"
       type="boolean"

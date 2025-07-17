@@ -192,26 +192,6 @@ class UniteZipUC{
 	private function a_MAKEZIP_CUSTOM(){}
 
 	/**
-	 * add empty dir to custom zip
-	 */
-	/*
-	private function addEmptyZipToCustomZip($path, $rel_path){
-
-		if(is_dir($path) == false)
-			UniteFunctionsUC::throwError("Can't add directory to zip: $path");
-
-		$time = filemtime($path);
-
-		$file = array();
-		$file["data"] = "";
-		$file["name"] = $rel_path;
-		$file["time"] = $time;
-
-		$this->_addToZIPFile($file, $this->contents, $this->ctrldir);
-	}
-	*/
-
-	/**
 	 * add some file to custom zip
 	 */
 	private function addFileToCustomZip($path, $rel_path){

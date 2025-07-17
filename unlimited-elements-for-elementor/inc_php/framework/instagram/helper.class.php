@@ -452,7 +452,7 @@ class HelperInstaUC{
 		if(is_numeric($stamp) == false)
 			return("");
 
-		$dateText = s_date("d F Y, H:i", $stamp);
+		$dateText = uelm_date("d F Y, H:i", $stamp);
 
 		return($dateText);
 	}

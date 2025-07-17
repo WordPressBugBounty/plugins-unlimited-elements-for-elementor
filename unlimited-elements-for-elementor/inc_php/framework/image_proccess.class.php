@@ -148,7 +148,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				$ext = "jpeg";
 			
 			$numExpires = 31536000;	//one year
-			$strExpires = @s_date('D, d M Y H:i:s',time()+$numExpires);
+			$strExpires = @uelm_date('D, d M Y H:i:s',time()+$numExpires);
 			
 			$contents = UniteFunctionsUC::fileGetContents($filepath);
 			$filesize = strlen($contents);
@@ -158,7 +158,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			header("Content-Type: image/$ext");
 			header("Content-Length: $filesize");
 			
-			s_echo($contents);
+			uelm_echo($contents);
 			exit();
 		}
 		
@@ -594,5 +594,3 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		}
 		
 	}
-
-?>

@@ -19,7 +19,7 @@ class HelperProviderUC{
 			return (false);
 
 		$isActivated = $uefe_fs->is_paying();
-
+				
 		return ($isActivated);
 	}
 
@@ -1406,15 +1406,13 @@ class HelperProviderUC{
 
 	    $arrStyles = UniteProviderFunctionsUC::getCustomStyles();
 	    if(!empty($arrStyles)){
-	        echo "\n<!--   Unlimited Elements Styles  --> \n";
 
-	        echo "<style type='text/css' id='unlimited-elements-styles'>";
-
+			$css = '';
 	        foreach ($arrStyles as $style) {
-				s_echo( $style . "\n");
+				$css .= $style . "\n";
 	        }
 
-	        echo "</style>\n";
+	        UniteProviderFunctionsUC::printCustomStyle($css, true);
 	    }
 
 	}
@@ -1439,7 +1437,7 @@ class HelperProviderUC{
 			$arrHtml = UniteProviderFunctionsUC::getInlineHtml();
 			if(!empty($arrHtml)){
 				foreach($arrHtml as $html){
-					s_echo($html);
+					uelm_echo($html);
 				}
 			}
 
@@ -1456,7 +1454,7 @@ class HelperProviderUC{
 			$version = UNLIMITED_ELEMENTS_VERSION;
 
 			if(!empty($arrScrips)){
-				s_echo( "\n<!--   Unlimited Elements $version Scripts --> \n" );
+				uelm_echo( "\n<!--   Unlimited Elements $version Scripts --> \n" );
 
 				$arrScriptsOutput = array();
 				$arrModulesOutput = array();
@@ -1480,7 +1478,7 @@ class HelperProviderUC{
 						echo "<script type='text/javascript' id='unlimited-elements-scripts'>\n";
 
 							foreach ($arrScriptsOutput as $script){
-								s_echo($script."\n");
+								uelm_echo($script."\n");
 							}
 
 						echo "</script>\n";
@@ -1489,9 +1487,9 @@ class HelperProviderUC{
 
 						foreach ($arrScriptsOutput as $handle => $script){
 
-							s_echo( "\n<script type='text/javascript' id='{$handle}'>\n");
+							uelm_echo( "\n<script type='text/javascript' id='{$handle}'>\n");
 							
-							s_echo($script."\n");
+							uelm_echo($script."\n");
 
 							echo "</script>\n";
 						}
@@ -1508,7 +1506,7 @@ class HelperProviderUC{
 					foreach($arrModulesOutput as $script){
 
 						echo "<script type='module'>\n";
-						s_echo($script."\n");
+						uelm_echo($script."\n");
 						echo "</script>\n";
 
 					}
@@ -1866,7 +1864,7 @@ class HelperProviderUC{
 			if(strpos($sql, "wp_postmeta") !== false)
 				$color = "red";
 
-			s_echo( "<div style='padding:10px;border-bottom:1px solid lightgray;color:$color'> $numQuery: {$sql} </div>");
+			uelm_echo( "<div style='padding:10px;border-bottom:1px solid lightgray;color:$color'> $numQuery: {$sql} </div>");
 
 			if($showTrace){
 				echo "<div>";

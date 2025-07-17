@@ -627,7 +627,7 @@ private function addFieldsMappingSettings($objSettings, $name, $paramsItems) {
 
 		$html = HelperHtmlUC::getDebugWarningMessageHtml($message);
 		
-		s_echo($html);
+		uelm_echo($html);
 		
 	}
 	

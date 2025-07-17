@@ -227,7 +227,7 @@ class UCOperations extends UniteElementsBaseUC{
 	 * put error mesage from the module
 	 */
 	public function putModuleErrorMessage($message, $trace = ""){
-		s_echo(self::getErrorMessageHtml($message, $trace));
+		uelm_echo(self::getErrorMessageHtml($message, $trace));
 	}
 
 	/**
@@ -497,7 +497,7 @@ class UCOperations extends UniteElementsBaseUC{
 		if($showCustomFields == true)
 			$fieldsTitle = "Custom";
 		
-		s_echo("<br>{$fieldsTitle} fields for post: <b>$postTitle </b>, post id: $postID <br>");
+		uelm_echo("<br>{$fieldsTitle} fields for post: <b>$postTitle </b>, post id: $postID <br>");
 
 		dmp($htmlFields);
 	}
@@ -528,7 +528,7 @@ class UCOperations extends UniteElementsBaseUC{
 
 		$fieldsTitle = "Meta";
 
-		s_echo("<br>{$fieldsTitle} fields for term: <b>$name </b>, term id: $termID <br>");
+		uelm_echo("<br>{$fieldsTitle} fields for term: <b>$name </b>, term id: $termID <br>");
 
 		dmp($htmlFields);
 	}
@@ -767,7 +767,7 @@ class UCOperations extends UniteElementsBaseUC{
 		//--- check same date
 
 		if($startDate["year"] . $startDate["mon"] . $startDate["mday"] == $endDate["year"] . $endDate["mon"] . $endDate["mday"]){
-			$displayDate = s_date('j M Y', $endTimeStamp);
+			$displayDate = uelm_date('j M Y', $endTimeStamp);
 
 			return ($displayDate);
 		}
@@ -775,7 +775,7 @@ class UCOperations extends UniteElementsBaseUC{
 		//--- check different years
 
 		if($startDate["year"] != $endDate["year"]){
-			$displayDate = s_date('j M Y', $startTimeStamp) . " - " . s_date('j M Y', $endTimeStamp);
+			$displayDate = uelm_date('j M Y', $startTimeStamp) . " - " . uelm_date('j M Y', $endTimeStamp);
 
 			return ($displayDate);
 		}
@@ -784,10 +784,10 @@ class UCOperations extends UniteElementsBaseUC{
 
 		// diff days in the same month
 		if($startDate["mon"] == $endDate["mon"])
-			$displayDate = s_date('j', $startTimeStamp) . "-" . s_date('j M Y', $endTimeStamp);
+			$displayDate = uelm_date('j', $startTimeStamp) . "-" . uelm_date('j M Y', $endTimeStamp);
 
 		// diff months
-		$displayDate = s_date('j M', $startTimeStamp) . " - " . s_date('j M Y', $endTimeStamp);
+		$displayDate = uelm_date('j M', $startTimeStamp) . " - " . uelm_date('j M Y', $endTimeStamp);
 
 		return $displayDate;
 	}
@@ -1123,5 +1123,3 @@ class UCOperations extends UniteElementsBaseUC{
 	}
 
 }
-
-?>

@@ -201,7 +201,7 @@ class UniteCreatorMappickerView{
 				<div class="uc-mappicker-overlay-black"></div>
 				<div class="uc-mappicker-overlay-text">
 					<?php esc_html_e("For edit the map, please enter your google map API Key in", "unlimited-elements-for-elementor")?> <?php 
-				s_echo( $linkGeneralSettings )?>.
+				uelm_echo( $linkGeneralSettings )?>.
 					<br>
 					<br>
 					You can create your API key in <a href="https://developers.google.com/maps/documentation/javascript/" target="_blank">google map developes page</a>
@@ -219,7 +219,7 @@ class UniteCreatorMappickerView{
 					<div class="unite-right-panel">
 
 						<div id="uc_mappicker_mapwrapper" <?php 
-				s_echo( $addHtml )?> class="uc-mappicker-wrapper">
+				uelm_echo( $addHtml )?> class="uc-mappicker-wrapper">
 							<div id="uc_mappicker_map" ></div>
 						</div>
 					</div>
@@ -514,7 +514,7 @@ class UniteCreatorMappickerView{
 
 		<style type="text/css">
 			<?php 
-			s_echo( $css );
+			uelm_echo( $css );
 			?>
 		</style>
 		<div id="<?php echo esc_attr($mapID)?>"></div>
@@ -525,7 +525,7 @@ class UniteCreatorMappickerView{
 				g_ucGoogleMapLoaded = true;
 
 				var strOptions = '<?php 
-					s_echo( $jsonOptions );
+					uelm_echo( $jsonOptions );
 					?>';
 				var mapOptions = JSON.parse(strOptions);
 				mapOptions.center.lat = Number(mapOptions.center.lat);
@@ -534,29 +534,29 @@ class UniteCreatorMappickerView{
 
 				<?php if($style):?>
 				var strStyles = '<?php 
-				s_echo( $style )?>';
+				uelm_echo( $style )?>';
 				mapOptions.styles = JSON.parse(strStyles);
 				<?php endif?>
 
 				<?php if($mapTypeID):?>
 				mapOptions.mapTypeId = "<?php 
-				s_echo( $mapTypeID );?>";
+				uelm_echo( $mapTypeID );?>";
 				<?php endif?>
 
 				var map = new google.maps.Map(document.getElementById("<?php 
-				s_echo( $mapID );?>"), mapOptions);
+				uelm_echo( $mapID );?>"), mapOptions);
 
 				<?php if($putMarker):?>
 				marker = new google.maps.Marker({
 					position:{
 						lat: <?php 
-				s_echo( $markerLat ); ?>,
+				uelm_echo( $markerLat ); ?>,
 						lng: <?php 
-				s_echo( $markerLng );?>
+				uelm_echo( $markerLng );?>
 					},
 					map:map
 				<?php if($markerIcon):?>,icon:"<?php 
-				s_echo( $markerIcon ); ?>"<?php endif?>
+				uelm_echo( $markerIcon ); ?>"<?php endif?>
 				});
 				<?php endif?>
 			}
@@ -569,7 +569,7 @@ class UniteCreatorMappickerView{
 
 				var tag = document.createElement('script');
 				tag.src = "<?php 
-				s_echo( $url ); ?>";
+				uelm_echo( $url ); ?>";
 				var firstScriptTag = document.getElementsByTagName('script')[0];
 				firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 				g_ucGoogleMapLoading = true;
@@ -577,15 +577,15 @@ class UniteCreatorMappickerView{
 			}else{	//just run function
 				if(typeof g_ucGoogleMapLoaded != "undefined" && g_ucGoogleMapLoaded == true)
 					<?php 
-				s_echo( $functionName ); ?>();
+				uelm_echo( $functionName ); ?>();
 				else
 					g_interval_<?php 
-				s_echo( $mapID ); ?> = setInterval(function(){
+				uelm_echo( $mapID ); ?> = setInterval(function(){
 						if(typeof g_ucGoogleMapLoaded != "undefined" && g_ucGoogleMapLoaded == true){
 							clearInterval(g_interval_<?php 
-				s_echo( $mapID ); ?>);
+				uelm_echo( $mapID ); ?>);
 							<?php 
-				s_echo( $functionName ); ?>();
+				uelm_echo( $functionName ); ?>();
 						}
 					},200);
 

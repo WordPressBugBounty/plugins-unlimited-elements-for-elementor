@@ -540,7 +540,6 @@ function UniteCreatorElementorEditorAdmin(){
 		if(type == "elementor_template")
 			postType = "elementor_template";
 		
-		
 		//get terms
 		var action = "get_posts_list_forselect";
 		

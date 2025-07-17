@@ -240,7 +240,7 @@ class UniteCreatorAddonRevisioner{
 		$todayStartTime = strtotime('today', $currentTime);
 		$todayEndTime = strtotime('tomorrow', $todayStartTime) - 1;
 
-		$date = s_date('Y-m-d H:i:s', $time);
+		$date = uelm_date('Y-m-d H:i:s', $time);
 		$isToday = ($time >= $todayStartTime && $time <= $todayEndTime);
 
 		$revision = array(

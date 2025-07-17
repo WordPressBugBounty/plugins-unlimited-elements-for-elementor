@@ -263,5 +263,3 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		
 		
 	}
-
-?>

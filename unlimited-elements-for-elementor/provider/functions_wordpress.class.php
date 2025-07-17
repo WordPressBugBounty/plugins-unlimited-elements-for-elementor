@@ -3896,11 +3896,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 			return (self::$cacheAuthorsShort);
 		}
-		
+
 		$args = array("role__not_in" => array("subscriber", "customer"));
-		
+
 		$arrUsers = get_users($args);
-		
+
 		$arrUsersShort = array();
 
 		$arrNames = array();
@@ -4371,6 +4371,57 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		
 		
 	}
+	
+	private static $moduleHandles = array();
+	
+	public static function filterScriptTagForModule($tag, $handle){
+			
+		if (in_array($handle, self::$moduleHandles, true)) {
+			return str_replace('<script ', '<script type="module" ', $tag);
+		}
+			
+		return $tag;
+	}
+	
+	/**
+	 * output script
+	 */
+	public static function putCustomScript($handle, $script, $isModule = false){
+
+		if (empty($script) || !is_string($script)) {
+			return;
+		}
+	
+		// Register and enqueue dummy script
+		wp_register_script($handle, '', array(), null, true);
+		wp_add_inline_script($handle, $script);
+		wp_enqueue_script($handle);
+	
+		// Add the handle to static list of module scripts
+		if ($isModule) {
+			self::$moduleHandles[] = $handle;
+	
+			static $filterAdded = false;
+			if (!$filterAdded) {
+				$filterAdded = true;
+	
+				add_filter('script_loader_tag', array(__CLASS__, 'filterScriptTagForModule'), 10, 2);
+			}
+		}
+			
+		
+	}
+	
+	/**
+	 * put custom style
+	 */
+	public static function putCustomStyle($handle, $style){
+		
+		wp_register_style($handle, false);
+		wp_enqueue_style($handle);
+		wp_add_inline_style($handle, $style);
+	}
+	
 	
 	public static function a___________OTHER_FUNCTIONS__________(){}
 		

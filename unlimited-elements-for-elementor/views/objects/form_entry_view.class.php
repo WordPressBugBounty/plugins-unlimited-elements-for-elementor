@@ -140,7 +140,7 @@ class UCFormEntryView{
 												switch($field["type"]){
 													case UniteCreatorForm::TYPE_FILES:
 														$form = new UniteCreatorForm();
-														s_echo( $form->getFilesFieldLinksHtml($field["value"], "<br />", true) );
+														uelm_echo( $form->getFilesFieldLinksHtml($field["value"], "<br />", true) );
 													break;
 
 													default:
@@ -181,9 +181,9 @@ class UCFormEntryView{
 			</div>
 			<br class="clear" />
 		</div>
+		<?php
 
-		<style>
-			#post-body-content .postbox .postbox-header {
+		$css = '#post-body-content .postbox .postbox-header {
 				border-bottom: none;
 			}
 
@@ -205,9 +205,9 @@ class UCFormEntryView{
 				width: 150px;
 				background: #f6f7f7;
 				font-weight: bold;
-			}
-		</style>
-		<?php
+			}';
+
+		UniteProviderFunctionsUC::printCustomStyle($css, true);
 	}
 
 	/**

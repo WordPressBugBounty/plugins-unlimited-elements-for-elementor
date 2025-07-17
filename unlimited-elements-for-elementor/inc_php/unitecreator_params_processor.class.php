@@ -1451,20 +1451,6 @@ class UniteCreatorParamsProcessorWork{
 		if($this->isOutputProcessType($processType) == false)
 			return(null);
 
-		//set default values
-		/*
-		if(empty($value) || !isset($value["{$name}_menutype"])){
-
-			$arrMenus = UniteFunctionJoomlaUC::getArrMenus();
-			$firstMenu = UniteFunctionsUC::getFirstNotEmptyKey($arrMenus);
-
-			$value = array();
-			$value["{$name}_menutype"] = $firstMenu;
-			$value["{$name}_show_submenu"] = true;
-
-		}
-		*/
-
 		if(is_array($value) == false)
 			return($messageEmpty);
 
@@ -1710,7 +1696,7 @@ class UniteCreatorParamsProcessorWork{
 			$stamp = $value;
 			
 			$data[$name."_stamp"] = $value;
-			$data[$name] = s_date($formatFullDate, $stamp);
+			$data[$name] = uelm_date($formatFullDate, $stamp);
 	
 			if($isDebug == true){
 				dmp("get time2");

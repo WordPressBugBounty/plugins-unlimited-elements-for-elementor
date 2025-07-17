@@ -125,7 +125,13 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 		$type = UniteFunctionsUC::getVal($setting, "type");
 		$text = UniteFunctionsUC::getVal($setting, "text");
 		$description = UniteFunctionsUC::getVal($setting, "description");
-
+		
+		//make sure all tags in place
+		$descErrors = UniteFunctionsUC::validateHTML($description);
+		
+		if(!empty($descErrors))
+			$description = wp_strip_all_tags($description);
+		
 		$toDrawText = true;
 
 		$attribsText = UniteFunctionsUC::getVal($setting, "attrib_text");
@@ -137,7 +143,7 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 
 		if($labelBlock === false)
 			$baseClass .= " unite-inline-setting";
-
+		
 		$isResponsive = UniteFunctionsUC::getVal($setting, "is_responsive");
 		$isResponsive = UniteFunctionsUC::strToBool($isResponsive);
 		$responsiveId = UniteFunctionsUC::getVal($setting, "responsive_id");
@@ -145,7 +151,7 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 
 		if($isResponsive === true)
 			$addAttr .= " data-responsive-id=\"$responsiveId\" data-responsive-type=\"$responsiveType\"";
-
+		
 		$tabsId = UniteFunctionsUC::getVal($setting, "tabs_id");
 		$tabsValue = UniteFunctionsUC::getVal($setting, "tabs_value");
 
@@ -153,14 +159,14 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 			$addAttr .= " data-tabs-id=\"$tabsId\" data-tabs-value=\"$tabsValue\"";
 
 		$rowClass = $this->drawSettingRow_getRowClass($setting, $baseClass);
-
+		
 		?>
 		<li
 			id="<?php echo esc_attr($id); ?>_row"
 			<?php 
-				s_echo($rowClass); ?>
+				uelm_echo($rowClass); ?>
 			<?php 
-				s_echo($addAttr); ?>
+				uelm_echo($addAttr); ?>
 			data-name="<?php echo esc_attr($name); ?>"
 			data-type="<?php echo esc_attr($type); ?>"
 		>
@@ -170,7 +176,8 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 				<?php if($toDrawText === true): ?>
 					<div class="unite-setting-text-wrapper">
 						<div id="<?php echo esc_attr($id); ?>_text" class='unite-setting-text' <?php 
-				s_echo($attribsText); ?>>
+							uelm_echo($attribsText); 
+							 ?>>
 							<?php echo esc_html($text); ?>
 						</div>
 						<?php if($isResponsive === true): ?>
@@ -181,7 +188,7 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 
 				<?php if(!empty($addHtmlBefore)): ?>
 					<div class="unite-setting-addhtmlbefore"><?php 
-				s_echo($addHtmlBefore); ?></div>
+				uelm_echo($addHtmlBefore); ?></div>
 				<?php endif; ?>
 
 				<div class="unite-setting-input">
@@ -193,7 +200,7 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 			<?php if(!empty($description)): ?>
 				<div class="unite-setting-helper">
 					<?php 
-					s_echo($description); 
+					uelm_echo($description); 
 					?>
 				</div>
 			<?php endif; ?>
@@ -208,6 +215,8 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 	 */
 	protected function drawTextRow($setting){
 
+		$type = UniteFunctionsUC::getVal($setting, "type");
+		
 		$id = UniteFunctionsUC::getVal($setting, "id");
 		$label = UniteFunctionsUC::getVal($setting, "label");
 		$text = UniteFunctionsUC::getVal($setting, "text");
@@ -219,10 +228,10 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 			$classAdd .= " unite-settings-static-text__heading";
 
 		$rowClass = $this->drawSettingRow_getRowClass($setting);
-
+		
 		?>
 		<li id="<?php echo esc_attr($id) ?>_row" <?php 
-				s_echo($rowClass); ?>>
+				uelm_echo($rowClass); ?>>
 
 			<?php if(empty($label) === false): ?>
 				<span class="unite-settings-text-label">
@@ -231,7 +240,11 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 			<?php endif ?>
 
 			<span class="unite-settings-static-text<?php echo esc_attr($classAdd); ?>">
+				<?php if($type == UniteCreatorSettings::TYPE_HTML):?>
+				<?php uelm_echo($text) ?>
+				<?php else:?>
 				<?php echo esc_html($text); ?>
+				<?php endif?>				
 			</span>
 
 		</li>
@@ -320,7 +333,7 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 
 		?>
 		<li id="<?php echo esc_attr($id) ?>_row" <?php 
-				s_echo($rowClass) ?>>
+				uelm_echo($rowClass) ?>>
 			<hr id="<?php echo esc_attr($id) ?>">
 		</li>
 		<?php

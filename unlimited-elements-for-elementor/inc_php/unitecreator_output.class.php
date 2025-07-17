@@ -42,6 +42,7 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 	private $isGutenberg = false;
 	private $isBackground = false;
 	private $isGutenbergBackground = false;
+	private static $isGutenbergGlobalCssAdded = false;
 	
 	private static $arrScriptsHandles = array();
 
@@ -54,7 +55,7 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 	public static $isBufferingCssActive = false;
 	public static $bufferBodyCss;
 	public static $bufferCssIncludes;
-
+	
 	private static $arrGeneratedIDs = array();
 		
 	private $htmlDebug = "";
@@ -1188,15 +1189,37 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 	/**
 	 * process params css selector
 	 */
-	private function processParamsCSSSelector($params){
+	private function processParamsCSSSelector($params, $paramsCats = array()){
 
-		$styles = "";
+		$styles = '';
 
+		$displayCats = array();
+		foreach($paramsCats as $cat) {
+			
+			$catID = UniteFunctionsUC::getVal($cat, "id");
+			
+			if(empty($catID))
+				continue;
+			
+			$displayCats[$catID] = UEParamsManager::isParamPassesConditions($params, $cat);
+		}
+		
 		foreach($params as $param){
+			
 			$passed = UEParamsManager::isParamPassesConditions($params, $param);
 
 			if($passed === false)
 				continue;
+
+			// param's cat disabled
+			$catID = UniteFunctionsUC::getVal($param, GlobalsUC::ATTR_CATID);
+			
+			$isDisplayCat = UniteFunctionsUC::getVal($displayCats, $catID);
+			$isDisplayCat == UniteFunctionsUC::strToBool($isDisplayCat);
+			
+			if(!empty($catID) && $isDisplayCat == false) {
+				continue;
+			}
 
 			$style = $this->processParamCSSSelector($param);
 
@@ -1269,8 +1292,10 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 
 		$mainParams = $this->addon->getParams();
 
+		$paramsCats = $this->addon->getParamsCats();
+
 		if(empty($mainParams) === false)
-			$styles .= $this->processParamsCSSSelector($mainParams);
+			$styles .= $this->processParamsCSSSelector($mainParams, $paramsCats);
 
 		$styles .= $this->processItemsSelectors();
 
@@ -1443,13 +1468,13 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 	public function putPreviewHtml(){
 
 		$output = $this->getPreviewHtml();
-		s_echo($output["head"]);
+		uelm_echo($output["head"]);
 
 		//$this->putPreviewHtml_headerAdd();
-		s_echo($output["after_head"]);
+		uelm_echo($output["after_head"]);
 
 		$this->putPreviewHtml_footerAdd();
-		s_echo($output["end"]);
+		uelm_echo($output["end"]);
 	}
 
 	private function a________DYNAMIC___________(){}
@@ -1833,7 +1858,7 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 		$this->htmlDebug = $html;
 	}
 
-	private function a________GUTENBERG_BACKGROUND___________(){}
+	private function a________GUTENBERG_BACKGROUND_AND_ADDITIONS___________(){}
 	
 	/**
 	 * modify js for gutenberg background output
@@ -1934,6 +1959,22 @@ $css
 		$html .= "<div class='uc-background-editor-placeholder'>{$text} <b>{$addonTitle}</b>. $text2</div>";
 		
 		return($html);
+	}
+	
+	/**
+	 * add gutenberg global css
+	 */
+	private function addGutenbergGlobalCss($css){
+		
+		if(self::$isGutenbergGlobalCssAdded == true)
+			return($css);
+		
+		self::$isGutenbergGlobalCssAdded = true;
+		
+		$css .= "/* Gutenberg Global */\n";
+		$css .= ".ue-widget-root {position:relative;}";
+				
+		return($css);
 	}
 	
 	private function a________GENERAL___________(){}
@@ -2064,7 +2105,8 @@ $css
 
 		return($outputHandle);
 	}
-
+	
+	
 	/**
 	 * place output by shortcode
 	 */
@@ -2077,7 +2119,7 @@ $css
 			$scriptHardCoded = true;
 
 		$title = $this->addon->getTitle(true);
-
+		
 		$isOutputComments = HelperProviderCoreUC_EL::getGeneralSetting("output_wrapping_comments");
 		$isOutputComments = UniteFunctionsUC::strToBool($isOutputComments);
 
@@ -2093,15 +2135,20 @@ $css
 			$js = $this->objTemplate->getRenderedHtml(self::TEMPLATE_JS);
 			
 			$arrData = $this->getConstantData();
-						
+
+			//gutenberg styles
+			
+			if($this->isGutenberg == true)
+				$css = $this->addGutenbergGlobalCss($css);
+			
 			if($this->isGutenbergBackground){
 				$params["wrap_js_timeout"] = false;
 				
 				$js = $this->modifyGutenbergBGJS($js);
 				
 				$css = $this->modifyGutenbergBGCSS($css);
+				
 			}
-			
 			
 			//fetch selectors (add google font includes on the way)
 			$isAddSelectors = UniteFunctionsUC::getVal($params, "add_selectors_css");
@@ -2132,10 +2179,13 @@ $css
 				else
 					$output .= "\n" . $htmlIncludes;
 			}
-						
+			
 			//add css
 			if(!empty($css)){
-				$css = "/* widget: $title */" . self::BR2 . $css . self::BR2;
+				
+				$widgetText = GlobalsProviderUC::$widgetText;
+				
+				$css = "/* {$widgetText}: $title */" . self::BR2 . $css . self::BR2;
 
 				if(self::$isBufferingCssActive == true){
 					//add css to buffer
@@ -2154,6 +2204,7 @@ $css
 			//add css selectors
 			if($isAddSelectors == true){
 				$selectorsStyleID = "selectors_css_" . $this->generatedID;
+
 				$output .= "\n<style id=\"$selectorsStyleID\" name=\"uc_selectors_css\">$cssSelectors</style>";
 			}
 
@@ -2165,8 +2216,8 @@ $css
 
 			if($isAddSelectors == true)
 				$addWrapper = true;
-				
-				
+			
+			
 			if($addWrapper == true){
 
 				$id = $this->getWidgetWrapperID();
@@ -2212,7 +2263,7 @@ $css
 				$addonName = $this->addon->getAlias();
 
 				$handle = $this->getScriptHandle("ue_script_" . $addonName);
-
+			
 				if($scriptHardCoded == false){
 					UniteProviderFunctionsUC::printCustomScript($js, false, $isJSAsModule, $handle);
 				}else{
@@ -2813,5 +2864,3 @@ $css
 
 
 }
-
-?>

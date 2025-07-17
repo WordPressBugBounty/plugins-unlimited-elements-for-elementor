@@ -15,27 +15,30 @@ if($isChangelogImportDisabled){
 	echo '<div class="error"><p>'.esc_attr_e( "The import operation disabled in the general settings.", "unlimited-elements-for-elementor" ).'</p></div>';
 	return false;
 }
-?>
-<script type="text/javascript">
-    jQuery(document).ready(function($) {
-        jQuery('#changelog-import-form').on('submit', function(e) {
-            var confirmation = confirm("<?php esc_attr_e("This operation will delete all your old change log records, and put the new ones. Continue?", "unlimited-elements-for-elementor"); ?>");
+
+$script = 'jQuery(document).ready(function($) {
+        jQuery(\'#changelog-import-form\').on(\'submit\', function(e) {
+            var confirmation = confirm("' . esc_attr_e("This operation will delete all your old change log records, and put the new ones. Continue?", "unlimited-elements-for-elementor") .'");
             if (!confirmation) {
                 e.preventDefault();
             }
         });
-    });
-</script>
+    });';
+
+UniteProviderFunctionsUC::printCustomScript($script, true); 
+
+
+?>
 <div class="wrap">
     <?php if($error_message): ?>
         <div class="error"><p><?php 
-			s_echo( $error_message ); ?></p></div>
+			uelm_echo( $error_message ); ?></p></div>
         <?php delete_transient('uc_changelog_import_error'); ?>
     <?php endif; ?>
 
 	<?php if($success_message): ?>
         <div class="updated"><p><?php 
-			s_echo( $success_message ); ?></p></div>
+			uelm_echo( $success_message ); ?></p></div>
 		<?php delete_transient('uc_changelog_import_success'); ?>
 	<?php endif; ?>
 

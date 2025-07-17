@@ -110,7 +110,7 @@ class UniteCreatorBreadcrumbs {
         	if(self::$showDebug == true)
     			dmp("---- Date -----");
 
-            $items = array_merge($items, $this->getBreadcrumbs_date());
+            $items = array_merge($items, $this->getBreadcrumbuelm_date());
 
         }
 
@@ -482,7 +482,7 @@ class UniteCreatorBreadcrumbs {
      *
      * @return array Breadcrumb items
      */
-    private function getBreadcrumbs_date() {
+    private function getBreadcrumbuelm_date() {
         $items = array();
 
         if(is_year()) {

@@ -1,5 +1,7 @@
 "use strict";
 
+var uelm_currentTabActive = null;
+
 function UniteSettingsUC(){
 
 	var g_arrControls = {};
@@ -10,7 +12,9 @@ function UniteSettingsUC(){
 	var g_colorPicker, g_colorPickerWrapper, g_iconsHash={};
 	var g_objParent = null, g_objWrapper = null, g_objSapTabs = null;
 	var g_objProvider = new UniteProviderAdminUC();
-
+	
+	var g_debug = false;
+	
 	var g_vars = {
 		NOT_UPDATE_OPTION: "unite_settings_no_update_value",
 		keyupTrashold: 500,
@@ -152,7 +156,7 @@ function UniteSettingsUC(){
 	
 		var selectors = "input, textarea, select, .unite-setting-inline-editor, .unite-setting-input-object";
 		var selectorNot = "input[type='button'], input[type='range'], input[type='search'], .unite-responsive-picker, .unite-units-picker";
-	
+		
 		if (g_temp.disableExcludeSelector !== true)
 			selectorNot += ", .unite-settings-exclude *";
 	
@@ -176,6 +180,7 @@ function UniteSettingsUC(){
 		const objInputs = g_objParent.find(selectors).not(selectorNot);
 	
 		_objInputCache.set(cacheKey, objInputs);
+		
 		return objInputs;
 		// return g_objParent.find(selectors).not(selectorNot);
 	}
@@ -199,7 +204,6 @@ function UniteSettingsUC(){
 	function getInputBasicType(objInput){
 
 		if(!objInput){
-			console.trace();
 			throw new Error("empty input, can't get basic type");
 		}
 
@@ -394,7 +398,8 @@ function UniteSettingsUC(){
 				value = getLinkInputValue(objInput);
 			break;
 			case "post":
-				value = getPostPickerValue(objInput);
+			case "post_ids":
+				value = getPostIdsPickerValue(objInput);
 			break;
 			default:
 				//custom settings
@@ -533,7 +538,7 @@ function UniteSettingsUC(){
 			case "password":
 				if (!name)
 					return;
-
+				
 				defaultValue = objInput.data(dataname);
 
 				if (typeof defaultValue === "object")
@@ -549,9 +554,11 @@ function UniteSettingsUC(){
 				}
 
 				objInput.val(defaultValue);
-
+				
 				if (isSelect === true)
 					objInput.trigger("change.select2");
+				else
+					checkUpdateResponsivePlaceholders(objInput);
 			break;
 			case "hidden":
 				defaultValue = objInput.data(dataname);
@@ -644,13 +651,9 @@ function UniteSettingsUC(){
 				setLinkInputValue(objInput, defaultValue);
 			break;
 			case "post":
-				defaultValue = objInput.data(dataname);
-
-				setPostPickerValue(objInput, defaultValue);
-			break;
 			case "post_ids":
 				defaultValue = objInput.data(dataname);
-
+				
 				setPostIdsPickerValue(objInput, defaultValue);
 			break;
 			case "items":
@@ -831,8 +834,6 @@ function UniteSettingsUC(){
 				setLinkInputValue(objInput, value);
 			break;
 			case "post":
-				setPostPickerValue(objInput, value);
-			break;
 			case "post_ids":
 				setPostIdsPickerValue(objInput, value);
 			break;
@@ -1002,14 +1003,15 @@ function UniteSettingsUC(){
 	};
 
 	/**
-	 * switch the responsive type
+	 * switch the responsive type set every row - corresponding responsive type
 	 */
 	this.setResponsiveType = function (type) {
+		
 		var validTypes = getResponsiveTypes();
 
 		if (jQuery.inArray(type, validTypes) === -1)
 			throw new Error("Invalid responsive type: " + type);
-
+ 		
 		g_objWrapper.find(".unite-setting-row[data-responsive-type]")
 			.addClass("unite-responsive-hidden")
 			.filter("[data-responsive-type=\"" + type + "\"]")
@@ -1116,6 +1118,10 @@ function UniteSettingsUC(){
 	 * set range slider value
 	 */
 	function setRangeSliderValue(objWrapper, value) {
+		if (!value || typeof value["size"] === 'undefined') {
+			return;
+		}
+
 		objWrapper.find(".unite-setting-range-input")
 			.val(value["size"])
 			.trigger("input");
@@ -1129,63 +1135,76 @@ function UniteSettingsUC(){
 	/**
 	 * init select2
 	 */
-    function initSelect2(objInput, options) {
-        if (!objInput || !objInput[0]) {
-            console.error("Invalid objInput element:", objInput);
-            return;
-        }
-    
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    observer.disconnect();
-    
-                    const dropdownParent = objInput.closest(".unite-setting-input, .unite-inputs").length 
-                        ? objInput.closest(".unite-setting-input, .unite-inputs") 
-                        : jQuery("body");
-    
-                    const settings = jQuery.extend({
-                        dropdownParent,
-                        closeOnSelect: true,
-                        minimumResultsForSearch: 10,
-                        templateResult: prepareTemplate,
-                        templateSelection: prepareTemplate,
-                    }, options);
-    
-                    objInput
-                        .select2(settings)
-                        .on("change", () => {
-                            appendPlusButton();
-                            t.onSettingChange(null, objInput);
-                        })
-                        .on("select2:closing", () => {
-                            jQuery(".select2-dropdown").find(".uc-tip").trigger("mouseleave");
-                        });
-    
-                    appendPlusButton();
-    
-                    function appendPlusButton() {
-                        const objOptions = objInput.find("option");
-                        const objSelectedOptions = objOptions.filter(":selected");
-    
-                        if (settings.ajax || objOptions.length === objSelectedOptions.length) return;
-    
-                        objInput
-                            .next(".select2")
-                            .find(".select2-search--inline")
-                            .before('<li class="select2-selection__choice select2-selection__uc-plus-button">+</li>');
-                    }
-    
-                    function prepareTemplate(data) {
-                        const content = jQuery(data.element).data("content");
-                        return content ? jQuery(content) : data.text;
-                    }
-                }
-            });
-        }, { threshold: 0.1 });
-    
-        observer.observe(objInput[0]);
-    }
+    function initSelect2(objInput, options = {}) {
+
+		if (!objInput || !objInput[0]) {
+			return;
+		}
+		
+		function prepareTemplate(data) {
+			const content = jQuery(data.element).data("content");
+			return content ? jQuery(content) : data.text;
+		}
+		
+		function appendPlusButton(input, settings) {
+			if (settings.ajax) return;
+
+			const options = input[0].options;
+			let selectedCount = 0;
+
+			for (let i = 0; i < options.length; i++) {
+				if (options[i].selected) selectedCount++;
+			}
+
+			if (options.length === selectedCount) return;
+
+			const $search = input.next(".select2").find(".select2-search--inline");
+			if (!$search.find(".select2-selection__uc-plus-button").length) {
+				$search.before('<li class="select2-selection__choice select2-selection__uc-plus-button">+</li>');
+			}
+		}
+
+		const observer = new IntersectionObserver((entries, observer) => {
+			for (const entry of entries) {
+				if (!entry.isIntersecting) continue;
+
+				observer.disconnect();
+
+				const $dropdownParent = objInput.closest(".unite-setting-input, .unite-inputs");
+				const dropdownParent = $dropdownParent.length ? $dropdownParent : jQuery("body");
+
+				const defaults = {
+					dropdownParent,
+					closeOnSelect: true,
+					minimumResultsForSearch: 10,
+				};
+				if (!options.templateResult) defaults.templateResult = prepareTemplate;
+				if (!options.templateSelection) defaults.templateSelection = prepareTemplate;
+
+				const settings = jQuery.extend({}, defaults, options);
+
+				objInput
+					.select2(settings)
+					.on("change", () => {
+						appendPlusButton(objInput, settings);
+						if (typeof t?.onSettingChange === "function") {
+							t.onSettingChange(null, objInput);
+						}
+					})
+					.on("select2:closing", () => {
+						jQuery(".select2-dropdown .uc-tip").trigger("mouseleave");
+					});
+
+				if (settings.selectedValue !== undefined) {
+					objInput.val(settings.selectedValue).trigger("change.select2");
+				}
+
+				appendPlusButton(objInput, settings);
+			}
+		}); 
+
+		observer.observe(objInput[0]);
+	}
 
 	function _______MULTI_SELECT_____(){}
 
@@ -1590,7 +1609,11 @@ function UniteSettingsUC(){
 	 * set image input value
 	 */
 	function setImageInputValue(objWrapper, value) {
-		
+
+		if (!value || typeof value !== 'object' && typeof value !== 'string') {
+			return;
+		}
+
 		if (typeof value === "string")
 			value = { url: value };
 
@@ -1602,7 +1625,7 @@ function UniteSettingsUC(){
 		objWrapper.find(".unite-setting-image-url").val(value.url).trigger("input");
 		objWrapper.find(".unite-setting-image-size").val(value.size);
 	}
-	
+		
 	
 
 	function _______GALLERY_____(){}
@@ -1663,6 +1686,9 @@ function UniteSettingsUC(){
 		};
 
 		if (images.length > 0) {
+			if(typeof images == 'string') {
+				images = JSON.parse(images);
+			}
 			var ids = images.map(function (image) {
 				return image.id;
 			});
@@ -1727,7 +1753,11 @@ function UniteSettingsUC(){
 		objHeader.text(title.replace("%d", count));
 
 		if(!Array.isArray(values)) {
-			values = JSON.parse(values);
+			try {
+			  values = JSON.parse(values);
+			} catch (e) {
+			  values = [];
+			}
 		}
 		var html = values
 			.slice(0, 7) // max 7 images
@@ -1918,14 +1948,21 @@ function UniteSettingsUC(){
 			var objContents = objAccordions.filter("[data-tab='" + id + "']");
 			objContents.show();
 			
-			if (objContents.filter(".unite-active").length === 0)
-				objContents.filter(":first").find(".unite-postbox-title").trigger("click");
+			if (objContents.filter(".unite-active").length === 0) {
+				if( uelm_currentTabActive !== null ) {
+					jQuery('#' + uelm_currentTabActive).find(".unite-postbox-title").trigger("click");
+				} else {
+					objContents.filter(":first").find(".unite-postbox-title").trigger("click");
+				}
+			}
 		});
 
 		objAccordionTitles.on("click", function () {
 			
 			var objRoot = jQuery(this).closest(".unite-postbox");
 			var tab = objRoot.data("tab");
+
+			uelm_currentTabActive = objRoot.attr('id');
 
 			objAccordions.filter("[data-tab='" + tab + "']")
 				.not(objRoot)
@@ -2227,7 +2264,7 @@ function UniteSettingsUC(){
 					.data("image-id", imageId)
 					.val(imageUrl)
 					.trigger("input");
-			}, false);
+			}, false, null, 'svg');
 		});
 
 		objPickerButtonLibrary.on("click", function () {
@@ -2769,11 +2806,16 @@ function UniteSettingsUC(){
 	 * set dimentions value
 	 */
 	function setDimentionsValue(objWrapper, value) {
+
+		if (!value || typeof value !== 'object') {
+			value = {}; 
+		}
+
 		objWrapper.find(".unite-dimentions-field-input").each(function () {
 			var objInput = jQuery(this);
 			var key = objInput.data("key");
 
-			objInput.val(value[key]);
+			objInput.val(value[key] ?? ""); 
 		});
 
 		objWrapper.find(".unite-dimentions-link").each(function () {
@@ -2787,79 +2829,7 @@ function UniteSettingsUC(){
 
 		initDimentions_updateInputPlaceholders(objWrapper);
 
-		setUnitsPickerValue(objWrapper, value["unit"]);
-	}
-
-
-	function ______POST_PICKER____(){}
-
-	/**
-	 * init post picker
-	 */
-	function initPostPicker(objWrapper, data, selectedValue) {
-		var objSelect = objWrapper.find(".unite-setting-post-picker");
-		var selectedPostId = objSelect.data("selected-post-id");
-		var selectedPostTitle = objSelect.data("selected-post-title");
-
-		if (!data)
-			data = [];
-
-		if (selectedPostId && selectedPostTitle) {
-			data.push({
-				id: selectedPostId,
-				text: selectedPostTitle,
-			});
-		}
-
-		initSelect2(objSelect, {
-			allowClear: true,
-			data: data, 
-			minimumInputLength: 1,
-			placeholder: objSelect.data("placeholder"),
-			ajax: {
-				url: g_ucAdmin.getUrlAjax("get_posts_list_forselect"),
-				dataType: "json",
-				data: function (params) {
-					params.q = params.term;
-
-					return params;
-				},
-			}
-		});
-
-		if (selectedValue)
-			objSelect.val(selectedValue).trigger("change.select2");
-
-		objSelect.on("change", function () {
-			t.onSettingChange(null, objWrapper);
-		});
-	}
-
-	/**
-	 * get post picker value
-	 */
-	function getPostPickerValue(objWrapper) {
-		return objWrapper.find(".unite-setting-post-picker").val();
-	}
-
-	/**
-	 * set post picker value
-	 */
-	function setPostPickerValue(objWrapper, value) {
-		value = value || [];
-
-		if (jQuery.isArray(value) === false)
-			value = [value];
-
-		if (value.length === 0) {
-			initPostPicker(objWrapper);
-
-			return;
-		}
-
-		g_ucAdmin.ajaxRequest("get_select2_post_titles", { post_ids: value }).then(function (response) {
-			initPostPicker(objWrapper, response.select2_data, value);
-		});
+		setUnitsPickerValue(objWrapper, value["unit"] ?? "");
 	}
 
 
@@ -2894,6 +2864,7 @@ function UniteSettingsUC(){
 			minimumInputLength: 1,
 			multiple: multiple === true,
 			placeholder: objInput.data("placeholdertext"),
+			selectedValue: selectedValue,
 			ajax: {
 				url: g_ucAdmin.getUrlAjax(action),
 				dataType: "json",
@@ -2907,9 +2878,6 @@ function UniteSettingsUC(){
 				},
 			},
 		});
-
-		if (selectedValue)
-			objInput.val(selectedValue).trigger("change.select2");
 	}
 
 	/**
@@ -2938,6 +2906,17 @@ function UniteSettingsUC(){
 		g_ucAdmin.ajaxRequest(action, { post_ids: value }).then(function (response) {
 			initPostIdsPicker(objInput, response.select2_data, value);
 		});
+	}
+
+	/**
+	 * get post picker value
+	 */
+	function getPostIdsPickerValue(objWrapper) {
+		let value = objWrapper.val();
+		if (value != null) {
+			return value;
+		}
+		return objWrapper.find(".unite-setting-post-picker").val();
 	}
 
 
@@ -3876,14 +3855,16 @@ function UniteSettingsUC(){
 	 * init responsive picker
 	 */
 	function initResponsivePicker() {
+		
 		g_objWrapper.find(".unite-responsive-picker").each(function () {
+			
 			var objPicker = jQuery(this);
 
 			objPicker.on("change", function () {
 				var type = objPicker.val();
 
 				t.setResponsiveType(type);
-
+				
 				triggerEvent(t.events.RESPONSIVE_TYPE_CHANGE, [type]);
 			});
 
@@ -3909,6 +3890,111 @@ function UniteSettingsUC(){
 		return objElement.closest(".unite-setting-row").data("responsive-type") || "desktop";
 	}
 
+	/**
+	*  helper: get sibling list item and its input + value
+	*/
+	function getResponsiveInputValue(direction, fromItem, type) {
+		
+		var objSiblingItem = fromItem[direction]('[data-responsive-type="' + type + '"]');
+
+		if (!objSiblingItem || objSiblingItem.length == 0) 
+			return null;
+
+		var objSiblingInput = objSiblingItem.find("input");
+		var value = objSiblingInput.val();
+
+		return { obj: objSiblingInput, value: value };
+	}
+
+	
+	/**
+	 * check and update responsive placeholder
+	 */
+	function checkUpdateResponsivePlaceholders(objInput) {
+		var isInput = objInput[0].tagName === 'INPUT';
+
+		if (!objInput || objInput.length == 0)
+			return false;
+
+		if (isInput == false)
+			return false;
+
+		if (objInput.data("isresponsive") == false)
+			return false;
+
+		// Find related input objects and update placeholders
+		var objParentListItem = objInput.closest('[data-responsive-type]');
+
+		if (!objParentListItem || objParentListItem.length == 0)
+			return false;
+
+		var parentListItemType = objParentListItem.data("responsive-type");
+		var desktop, tablet, mobile;
+
+		switch (parentListItemType) {
+			case "desktop":
+				desktop = { obj: objInput, value: objInput.val() };				
+				tablet = getResponsiveInputValue("next", objParentListItem, "tablet");
+				
+				if (!tablet)
+					return false;
+				
+				if (!tablet.value)
+					tablet.obj.attr("placeholder", desktop.value);
+				
+				// Rename: tablet container parent list item
+				var objParentListItemTablet = tablet.obj.closest('[data-responsive-type="tablet"]');
+				mobile = getResponsiveInputValue("next", objParentListItemTablet, "mobile");
+
+				if (!mobile)
+					return false;
+				
+				if (!mobile.value) {
+					mobile.obj.attr("placeholder", tablet.value || desktop.value);
+				}				
+			break;		
+			case "tablet":
+				tablet = { obj: objInput, value: objInput.val() };				
+				desktop = getResponsiveInputValue("prev", objParentListItem, "desktop");
+
+				if (!desktop)
+					return false;
+				
+				if (!tablet.value)
+					tablet.obj.attr("placeholder", desktop.value);
+
+				mobile = getResponsiveInputValue("next", objParentListItem, "mobile");
+
+				if (!mobile)
+					return false;
+				
+				if (!mobile.value) {
+					mobile.obj.attr("placeholder", tablet.value || desktop.value);
+				}
+			break;			
+			case "mobile":				
+				mobile = { obj: objInput, value: objInput.val() };				
+				tablet = getResponsiveInputValue("prev", objParentListItem, "tablet");
+
+				if (!tablet)
+					return false;
+				
+				if (!mobile.value)
+					mobile.obj.attr("placeholder", tablet.value);
+				
+				// Rename: tablet container parent list item for mobile case
+				var objParentListItemTablet = tablet.obj.closest('[data-responsive-type="tablet"]');
+				desktop = getResponsiveInputValue("prev", objParentListItemTablet, "desktop");
+
+				if (!desktop)
+					return false;
+				
+				if (!tablet.value) {
+					mobile.obj.attr("placeholder", desktop.value);
+				}
+			break;
+		}
+	}
 
 	function _______UNITS_PICKER_____(){}
 
@@ -4337,6 +4423,7 @@ function UniteSettingsUC(){
 	 * set on responsive type change event
 	 */
 	this.setEventOnResponsiveTypeChange = function (handler) {
+		
 		t.onEvent(t.events.RESPONSIVE_TYPE_CHANGE, handler);
 	};
 
@@ -4353,7 +4440,7 @@ function UniteSettingsUC(){
 			return(false);
 
 		var arrPlaceholderGroup = objInput.data("placeholder_group");
-
+ 
 		if(!arrPlaceholderGroup)
 			return(false);
 
@@ -4389,6 +4476,7 @@ function UniteSettingsUC(){
 	 * run on setting change
 	 */
 	this.onSettingChange = function (event, objInput, isInstantChange) {
+		
 		if (t.isTriggerChangeDisabled() === true)
 			return;
 
@@ -4445,7 +4533,9 @@ function UniteSettingsUC(){
 		}
         
 		var name = getInputName(objInput);
-
+		 
+		checkUpdateResponsivePlaceholders(objInput);
+		
 		triggerEvent(eventName, {
 			name: name,
 			value: value,
@@ -4546,7 +4636,13 @@ function UniteSettingsUC(){
         }        
 
         const initialize = () => {
-
+        
+        if(g_debug == true){
+	        trace("Init Setting");
+	        trace(type);
+	        trace(objInput);
+        }
+        
 		//init by type
 		switch (type) {
 			case "color":
@@ -4581,8 +4677,6 @@ function UniteSettingsUC(){
 				initAddonPicker(objInput);
 			break;
 			case "post":
-				initPostPicker(objInput);
-			break;
 			case "post_ids":
 				initPostIdsPicker(objInput);
 			break;
@@ -4712,7 +4806,7 @@ function UniteSettingsUC(){
 			var objInput = t.getInputByName(key);
 			if(!objInput)
 				return(true);
-
+			
 			objInput.attr("placeholder", value);
 			objInput.trigger("placeholder_change");
 		});

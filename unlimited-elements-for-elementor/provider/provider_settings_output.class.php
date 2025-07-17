@@ -51,10 +51,26 @@ class UniteSettingsOutputUC extends UniteSettingsOutputUCWork{
 		$name = UniteFunctionsUC::getVal($setting, "name");
 		$value = UniteFunctionsUC::getVal($setting, "value");
 		$placeholder = UniteFunctionsUC::getVal($setting, "placeholder");
-
-		if(empty($placeholder) === true)
-			$placeholder = __("Please enter post title", "unlimited-elements-for-elementor");
-
+		
+		$dataType = UniteFunctionsUC::getVal($setting, "post_select_type","post");
+		
+		if(empty($placeholder) === true){
+			
+			switch($dataType){
+				default:
+				case "post":
+					$placeholder = __("All Posts", "unlimited-elements-for-elementor");
+				break;
+				case "term":
+					$placeholder = __("All Terms", "unlimited-elements-for-elementor");
+				break;
+				case "user":
+					$placeholder = __("All Users", "unlimited-elements-for-elementor");
+				break;
+			}
+			
+		}
+		
 		$selectedPostId = "";
 		$selectedPostTitle = "";
 
@@ -75,12 +91,15 @@ class UniteSettingsOutputUC extends UniteSettingsOutputUCWork{
 			id="<?php echo esc_attr($id); ?>"
 			class="unite-settings-postpicker-wrapper unite-setting-input-object unite-settings-exclude"
 			data-settingtype="post"
+			data-datatype="<?php echo esc_attr($dataType)?>"
+			data-placeholdertext="<?php echo esc_attr($placeholder)?>"
+			
 			data-name="<?php echo esc_attr($name); ?>"
 			<?php $this->getDefaultAddHtml($setting); ?>
 		>
 			<select
 				<?php  
-				s_echo($class); ?>
+				uelm_echo($class); ?>
 				data-placeholder="<?php echo esc_attr($placeholder); ?>"
 				data-selected-post-id="<?php echo esc_attr($selectedPostId); ?>"
 				data-selected-post-title="<?php echo esc_attr($selectedPostTitle); ?>"

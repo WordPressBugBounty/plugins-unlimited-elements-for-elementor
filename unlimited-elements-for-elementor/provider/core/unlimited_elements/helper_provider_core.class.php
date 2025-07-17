@@ -1002,7 +1002,9 @@ class HelperProviderCoreUC_EL{
 			dmp($text);
 
 			if(self::$isInfiniteLoopCode == false){
-				s_echo( "<script>alert('" . $text . "')</script>" );
+
+				$script = "alert('" . $text . "');";
+				UniteProviderFunctionsUC::printCustomScript($script, true);
 			}
 
 			self::$isInfiniteLoopCode = true;
@@ -1019,7 +1021,7 @@ class HelperProviderCoreUC_EL{
 		if($mode == "no_ue_widgets")
 			GlobalsProviderUC::$isUnderNoWidgetsToDisplay = false;
 
-		s_echo($output);
+		uelm_echo($output);
 	}
 
 
@@ -1265,7 +1267,7 @@ class HelperProviderCoreUC_EL{
 
 		$htmlTemplate = do_shortcode($htmlTemplate);
 
-		s_echo($htmlTemplate);
+		uelm_echo($htmlTemplate);
 
 		GlobalsUnlimitedElements::$renderingDynamicData = null;
 
@@ -1434,7 +1436,7 @@ class HelperProviderCoreUC_EL{
 
 
   		if(empty($strStyle))
-  			return(false);
+  			return(false); 
 
 
   		//output the style
@@ -1443,7 +1445,7 @@ class HelperProviderCoreUC_EL{
   		$strOutput .= $strStyle;
   		$strOutput .= "</style>";
 
-		s_echo($strOutput);
+		uelm_echo($strOutput);
 	}
 
 

@@ -1646,17 +1646,17 @@ class UniteFunctionsUC{
 						$str = mb_strcut($html, $position, $tagPosition - $position);
 
 						if ($printedLength + mb_strlen($str) > $maxLength){
-							s_echo(mb_strcut($str, 0, $maxLength - $printedLength));
+							uelm_echo(mb_strcut($str, 0, $maxLength - $printedLength));
 							$printedLength = $maxLength;
 							break;
 						}
 
-						s_echo($str);
+						uelm_echo($str);
 						$printedLength += mb_strlen($str);
 
 						if ($tag[0] == '&'){
 								// Handle the entity.
-								s_echo($tag);
+								uelm_echo($tag);
 								$printedLength++;
 						}
 						else{
@@ -1667,15 +1667,15 @@ class UniteFunctionsUC{
 
 										$openingTag = array_pop($tags);
 										assert($openingTag == $tagName); // check that tags are properly nested.
-										s_echo($tag);
+										uelm_echo($tag);
 								}
 								else if ($tag[mb_strlen($tag) - 2] == '/'){
 										// Self-closing tag.
-										s_echo($tag);
+										uelm_echo($tag);
 								}
 								else{
 										// Opening tag.
-										s_echo($tag);
+										uelm_echo($tag);
 										$tags[] = $tagName;
 								}
 						}
@@ -1686,7 +1686,7 @@ class UniteFunctionsUC{
 
 				// Print any remaining text.
 				if ($printedLength < $maxLength && $position < mb_strlen($html)) {
-					s_echo(mb_strcut($html, $position, $maxLength - $printedLength));
+					uelm_echo(mb_strcut($html, $position, $maxLength - $printedLength));
 				}
 
 				// Close any open tags.
@@ -2520,7 +2520,7 @@ class UniteFunctionsUC{
 		 * check if the html is valid
 		 */
 		public static function isHTMLValid($html){
-
+		
 			if(empty($html))
 				return(true);
 
@@ -2528,11 +2528,10 @@ class UniteFunctionsUC{
 				return(true);
 
 			$dom = new DOMDocument();
-		$dom->loadHTML($html);
+			$dom->loadHTML($html);
 
 			$isValid = $dom->validate();
-
-
+			
 			return($isValid);
 		}
 
@@ -2541,7 +2540,7 @@ class UniteFunctionsUC{
 		 * check if html valid, get errors list
 		 */
 	public static function validateHTML($string){
-
+	
 			$start = strpos($string, '<');
 			$end = strrpos($string, '>', $start);
 
@@ -3470,7 +3469,7 @@ class UniteFunctionsUC{
 	//---------------------------------------------------------------------------------------------------
 	// convert timestamp to time string
 	public static function timestamp2Time($stamp){
-		$strTime = s_date("H:i",$stamp);
+		$strTime = uelm_date("H:i",$stamp);
 		return($strTime);
 	}
 	
@@ -3483,9 +3482,9 @@ class UniteFunctionsUC{
 		$dateString = "d M Y, H:i";
 		
 		if(empty($stamp))
-			$strDateTime = s_date($dateString);
+			$strDateTime = uelm_date($dateString);
 		else
-			$strDateTime = s_date("d M Y, H:i",$stamp);
+			$strDateTime = uelm_date("d M Y, H:i",$stamp);
 		
 		return($strDateTime);
 	}
@@ -3497,7 +3496,7 @@ class UniteFunctionsUC{
 		if(empty($stamp))
 			return("");
 
-		$strDate = s_date("d M Y",$stamp);	//27 Jun 2009
+		$strDate = uelm_date("d M Y",$stamp);	//27 Jun 2009
 		return($strDate);
 	}
 	
@@ -3893,7 +3892,7 @@ class UniteFunctionsUC{
 		header("Content-Length: $filesize");
 		header("Content-Type: $mimeType");
 
-		s_echo($contents);
+		uelm_echo($contents);
 		exit;
 	}
 
@@ -3908,7 +3907,7 @@ class UniteFunctionsUC{
 		header("Content-Length: $filesize");
 		header("Content-Type: text/plain");
 
-		s_echo($text);
+		uelm_echo($text);
 		exit;
 	}
 
@@ -3924,7 +3923,7 @@ class UniteFunctionsUC{
 		header("Content-Length: $filesize");
 		header("Content-Type: application/json");
 
-		s_echo($text);
+		uelm_echo($text);
 		exit;
 	}
 
@@ -3940,8 +3939,8 @@ class UniteFunctionsUC{
 		header("Content-Type: application/octet-stream");
 		header("Content-Type: text/csv");
 
-		s_echo(chr(0xEF) . chr(0xBB) . chr(0xBF));
-		s_echo(implode(',', $headers) . "\n");
+		uelm_echo(chr(0xEF) . chr(0xBB) . chr(0xBF));
+		uelm_echo(implode(',', $headers) . "\n");
 		foreach ($rows as $row) {
 			$fields = array();
 			foreach ($headers as $key => $header) {
@@ -3957,7 +3956,7 @@ class UniteFunctionsUC{
 	            $fields[] = $value;
 	            
 			}
-			s_echo(implode(',', $fields) . "\n");
+			uelm_echo(implode(',', $fields) . "\n");
 		}
 
 		exit;
@@ -3980,7 +3979,7 @@ class UniteFunctionsUC{
 		header('Cache-Control: must-revalidate');
 		header('Pragma: public');
 		header('Content-Length: ' . filesize($filepath));
-		s_echo(self::fileGetContents($filepath));
+		uelm_echo(self::fileGetContents($filepath));
 		exit();
 	}
 

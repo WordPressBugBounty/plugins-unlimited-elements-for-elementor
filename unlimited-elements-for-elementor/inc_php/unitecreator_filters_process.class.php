@@ -674,9 +674,14 @@ class UniteCreatorFiltersProcess{
 			
 		$titleStart = UniteFunctionsUC::getVal($request, "titlestart");
 		
-		if(!empty($titleStart) && UniteFunctionsUC::isAlphaNumeric($titleStart))
+		//validation
+		if(!empty($titleStart)){
+			if(!UniteFunctionsUC::isAlphaNumeric($titleStart))
+				UniteFunctionsUC::throwError("Wrong title start: \"$titleStart\", please check the alphabit filter, should be some letter only");
+			
 			$arrOutput["titlestart"] = strtolower($titleStart);
-		
+		}
+				
 		//main term
 		
 		$strMainTerm = UniteFunctionsUC::getVal($request, "ucmainterm");
@@ -1085,10 +1090,7 @@ class UniteCreatorFiltersProcess{
 
 		//supress all filters
 		if(self::$isUnderAjaxSearch == true){
-			
-			if(UniteCreatorAjaxSeach::$enableThirdPartyHooks == false)
-				$args["suppress_filters"] = true;
-			
+						
 			//delete all filters in case of ajax search
 			
 			UniteCreatorAjaxSeach::supressThirdPartyFilters();
@@ -1702,7 +1704,7 @@ class UniteCreatorFiltersProcess{
 			
 			$htmlDebug = $objOutput->getHtmlDebug();
 			
-			s_echo($htmlDebug);
+			uelm_echo($htmlDebug);
 			dmp("End Here");
 			exit();
 		}

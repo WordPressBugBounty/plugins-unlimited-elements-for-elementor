@@ -183,6 +183,14 @@ class UniteCreatorElementorIntegrate{
 	 */
 	private function registerWidgets_addons($arrAddons, $isRecords = false){
 		
+	    //small fix - the register can't work with the caching
+	    if(is_admin()){
+    	    $cachLength = ob_get_length();
+    	    if($cachLength)
+    	       ob_end_clean();
+	    }
+		
+		
 		if(self::$isWidgetsRegistered == true)
 			return(false);
 
@@ -676,7 +684,7 @@ class UniteCreatorElementorIntegrate{
 		<div class="unlimited-elements-background-overlay<?php echo esc_attr($addClass)?>" data-forid="<?php echo esc_attr($elementID)?>" data-location="<?php echo esc_attr($location);?>" style="display:none">
 			<template>
 			<?php 
-			s_echo($html);
+			uelm_echo($html);
 			?>
 			</template>
 		</div>

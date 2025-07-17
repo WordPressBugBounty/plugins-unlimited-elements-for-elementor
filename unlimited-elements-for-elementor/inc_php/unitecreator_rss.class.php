@@ -367,7 +367,7 @@ class UniteCreatorRSS{
 						if (!empty($date_time)){
 							
 							$niceArr['publish_date_original'] = $value;
-							$niceArr[$key] = s_date($dateFormat, $date_time);							
+							$niceArr[$key] = uelm_date($dateFormat, $date_time);							
 						}
 					}
 				}
@@ -391,9 +391,9 @@ class UniteCreatorRSS{
 			} else {
 				$timestamp = UniteFunctionsUC::date2Timestamp($value);
 				if (!empty($timestamp)) {
-					$formatedDate = s_date($dateFormat, $timestamp);
+					$formatedDate = uelm_date($dateFormat, $timestamp);
 					if (empty($formatedDate)) {
-						$formatedDate = s_date('d/m/Y H:i:s', $timestamp);
+						$formatedDate = uelm_date('d/m/Y H:i:s', $timestamp);
 					}
 
 					$niceArr[$key] = $formatedDate;
@@ -439,7 +439,7 @@ class UniteCreatorRSS{
                 continue;
             }
 
-            if ($subArray['__attr_catid__'] != $catIdValue) {
+            if ($subArray[GlobalsUC::ATTR_CATID] != $catIdValue) {
                 continue;
             }
 
@@ -473,7 +473,7 @@ class UniteCreatorRSS{
             return;
         }
 		
-        $rssKeyArr = $this->filterByTypeAndCatId($params, UniteCreatorDialogParam::PARAM_TEXTFIELD, $catValue['__attr_catid__']);
+        $rssKeyArr = $this->filterByTypeAndCatId($params, UniteCreatorDialogParam::PARAM_TEXTFIELD, $catValue[GlobalsUC::ATTR_CATID]);
 		
         
         $isAutoDetect = UniteFunctionsUC::getVal($data, "auto_detect_keys");

@@ -77,17 +77,6 @@ class UniteCreatorActions{
 
 		GlobalsUC::$ajaxAction = $action;
 
-
-		//check front actions
-		switch($action){
-			/*
-			case "get_filters_data":
-				$this->onAjaxFrontAction();
-				exit();
-			break;
-			*/
-		}
-
 		$operations = new ProviderOperationsUC();
 		$addons = new UniteCreatorAddons();
 		$assets = new UniteCreatorAssetsWork();

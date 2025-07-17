@@ -547,19 +547,13 @@ class UniteCreatorLayoutsView{
 
 
 	</div>
-
-<script type="text/javascript">
-
-	jQuery(document).ready(function(){
-
-		var objAdmin = new UniteCreatorAdmin_LayoutsList();
-		objAdmin.initObjectsListView();
-
-	});
-
-</script>
-
 	<?php
+
+		$script = 'jQuery(document).ready(function(){
+			var objAdmin = new UniteCreatorAdmin_LayoutsList();
+			objAdmin.initObjectsListView();
+		});';
+		UniteProviderFunctionsUC::printCustomScript($script, true); 
 
 	}
 

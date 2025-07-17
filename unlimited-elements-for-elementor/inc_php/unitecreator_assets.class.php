@@ -1231,10 +1231,12 @@ class UniteCreatorAssets{
 						<input type="hidden" name="nonce" value="<?php echo esc_attr($nonce); ?>">
 						<?php endif?>
 					</form>
-					<script type="text/javascript">
-						if(typeof Dropzone != "undefined")
-							Dropzone.autoDiscover = false;
-					</script>
+					<?php
+
+					$script = 'if (typeof Dropzone !== "undefined") { Dropzone.autoDiscover = false; }';
+					UniteProviderFunctionsUC::printCustomScript($script, true);
+
+					?>
 					
 				</div>
 				
@@ -1518,8 +1520,8 @@ class UniteCreatorAssets{
 				$htmlError = HelperUC::getHtmlErrorMessage($message,$trace, "Assets Manager Error: ");
 				?>
 				<div 
-					<?php s_echo($id); ?> data-pathkey="<?php echo esc_attr($this->pathKey); ?>" class="uc-assets-wrapper" 
-					<?php s_echo($wrapperStyle); ?> data-isbrowser="<?php echo esc_attr($this->isBrowerMode); ?>" data-path="<?php echo esc_attr($activePathData); ?>" data-startpath="<?php echo esc_attr($startPathData); ?>" data-options="<?php echo esc_attr($jsonOptions)?>">
+					<?php uelm_echo($id); ?> data-pathkey="<?php echo esc_attr($this->pathKey); ?>" class="uc-assets-wrapper" 
+					<?php uelm_echo($wrapperStyle); ?> data-isbrowser="<?php echo esc_attr($this->isBrowerMode); ?>" data-path="<?php echo esc_attr($activePathData); ?>" data-startpath="<?php echo esc_attr($startPathData); ?>" data-options="<?php echo esc_attr($jsonOptions)?>">
 				<div class='uc-assets-startup-error'>
 					<?php 
 					echo esc_html($htmlError);
@@ -1533,8 +1535,8 @@ class UniteCreatorAssets{
 				
 			?>
 				<div <?php 
-				s_echo($id);?>data-pathkey="<?php echo esc_attr($this->pathKey);?>" class="uc-assets-wrapper" <?php 
-				s_echo($wrapperStyle);?> data-isbrowser="<?php echo esc_attr($this->isBrowerMode);?>" data-path="<?php echo esc_attr($activePathData);?>" data-startpath="<?php echo esc_attr($startPathData); ?>" data-options="<?php echo esc_attr($jsonOptions);?>">
+				uelm_echo($id);?>data-pathkey="<?php echo esc_attr($this->pathKey);?>" class="uc-assets-wrapper" <?php 
+				uelm_echo($wrapperStyle);?> data-isbrowser="<?php echo esc_attr($this->isBrowerMode);?>" data-path="<?php echo esc_attr($activePathData);?>" data-startpath="<?php echo esc_attr($startPathData); ?>" data-options="<?php echo esc_attr($jsonOptions);?>">
 					
 					<?php 
 					try{
@@ -1558,9 +1560,9 @@ class UniteCreatorAssets{
 					
 					<?php 
 					if($wrapperOnly == false)
-						s_echo($this->getHtmlDir($path, true));
+						uelm_echo($this->getHtmlDir($path, true));
 					else
-						s_echo($this->getEmptyHtmlDirList());
+						uelm_echo($this->getEmptyHtmlDirList());
 						
 					?>
 				
@@ -1598,5 +1600,3 @@ class UniteCreatorAssets{
 	}
 	
 }
-
-?>

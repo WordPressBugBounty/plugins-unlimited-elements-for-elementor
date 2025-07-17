@@ -27,7 +27,7 @@ UniteProviderFunctionsUC::setAdminPageTitle($adminPageTitle);
 	<div class="title_line">
 		<div class="title_line_text">
 			<?php 
-			s_echo( $headerTitle ); ?>
+			uelm_echo( $headerTitle ); ?>
 		</div>
 		<?php if(isset($headerAddHtml)): ?>
 			<div class="title_line_add_html"><?php echo esc_html($headerAddHtml); ?></div>

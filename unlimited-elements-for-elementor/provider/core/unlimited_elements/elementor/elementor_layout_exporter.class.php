@@ -811,7 +811,7 @@ class UniteCreatorLayoutsExporterElementor extends UniteCreatorLayoutsExporter{
 		$post = get_post($template_id);
 		
 		if(empty($post)){
-			$date = s_date("Y-m-d");
+			$date = uelm_date("Y-m-d");
 			$name = "elementor-{$template_id}-{$date}";
 			return($name);
 		}
@@ -880,7 +880,7 @@ class UniteCreatorLayoutsExporterElementor extends UniteCreatorLayoutsExporter{
 		
 				
 		return [
-			'name' => 'elementor-' . $templateID . '-' . s_date( 'Y-m-d' ) . '.json',
+			'name' => 'elementor-' . $templateID . '-' . uelm_date( 'Y-m-d' ) . '.json',
 			'content' => wp_json_encode( $export_data ),
 		];
 	}

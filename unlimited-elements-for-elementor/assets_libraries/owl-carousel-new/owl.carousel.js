@@ -1,5 +1,5 @@
 /**
-* Owl Carousel v2.3.8 - UE22
+* Owl Carousel v2.3.8 - UE23
 * Copyright 2013-2018 David Deutsch
 * Licensed under: SEE LICENSE IN https://github.com/OwlCarousel2/OwlCarousel2/blob/master/LICENSE
 */
@@ -825,9 +825,14 @@
       carouselHandlers.onResize()
       
     },this.settings.delayBeforeLoad);
+
+    var _this = this;
     
     //protection agains lasy load       
     this.$stage.children().each(function(){	
+      
+      if(_this.settings.lazyLoad == true)
+        return(false);
       
       var objChild = jQuery(this);          
       var objChildImg = objChild.find('img');

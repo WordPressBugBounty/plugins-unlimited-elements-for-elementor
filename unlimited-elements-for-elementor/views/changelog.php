@@ -356,15 +356,16 @@ class UCChangelogView extends WP_List_Table{
 		$urlViewImport = HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_CHANGELOG_IMPORT);
 		$isChangelogImportDisabled = HelperProviderUC::isAddonChangelogImportDisabled();
 
-		?>
-        <script>
-            jQuery(document).ready(function (){
-               jQuery('.migrate-button').click(function(){
+		$script = 'jQuery(document).ready(function (){
+               jQuery(\'.migrate-button\').click(function(){
                   jQuery(this).hide();
-                  jQuery('.import-button, .export-button').show();
+                  jQuery(\'.import-button, .export-button\').show();
                });
-            });
-        </script>
+            });';
+
+		UniteProviderFunctionsUC::printCustomScript($script, true); 
+		
+		?>
 
 		<div class="alignleft actions">
 			<?php $this->displayFilterSelect(self::FILTER_ADDON, __("Filter by Widget", "unlimited-elements-for-elementor"), __("All Widgets", "unlimited-elements-for-elementor"), $addons, $selectedAddon); ?>
@@ -440,7 +441,8 @@ class UCChangelogView extends WP_List_Table{
 			"feature"=>1,
 			"change"=>2,
 			"fix"=>3,
-			"other"=>4
+			"other"=>4,
+			"release"=>5
 		);
 
 		$type1 = UniteFunctionsUC::getVal($item1, "type");
@@ -840,9 +842,7 @@ class UCChangelogView extends WP_List_Table{
 		HelperUC::addScript("select2.full.min", "select2_js","js/select2");
 		HelperUC::addStyle("select2", "select2_css","js/select2");
 
-		?>
-		<script>
-			jQuery(document).ready(function () {
+		$script = 'jQuery(document).ready(function () {
 				jQuery(".uc-filter-select select").each(function () {
 					var objSelect = jQuery(this);
 
@@ -851,9 +851,10 @@ class UCChangelogView extends WP_List_Table{
 						minimumResultsForSearch: 10,
 					});
 				});
-			});
-		</script>
-		<?php
+			});';
+
+		UniteProviderFunctionsUC::printCustomScript($script, true); 
+		
 	}
 
 	/**
@@ -866,7 +867,7 @@ class UCChangelogView extends WP_List_Table{
 		$types = $this->service->getTypes();
 
 		?>
-		<script id="uc-inline-edit-template" type="text/html">
+		<template id="uc-inline-edit-template">
 			<form class="uc-inline-edit-form" method="get">
 				<div class="uc-inline-edit-form-error">
 					<div class="uc-inline-edit-form-error-title"></div>
@@ -894,7 +895,7 @@ class UCChangelogView extends WP_List_Table{
 					</button>
 				</div>
 			</form>
-		</script>
+		</template>
 		<?php
 	}
 
@@ -904,10 +905,7 @@ class UCChangelogView extends WP_List_Table{
 	 * @return void
 	 */
 	private function displayEditStyle(){
-
-		?>
-		<style>
-			.uc-inline-edit-form {
+		$css = '.uc-inline-edit-form {
 				display: flex;
 				flex-direction: column;
 				max-width: 320px;
@@ -938,9 +936,9 @@ class UCChangelogView extends WP_List_Table{
 
 			.uc-inline-edit-form-actions button + button {
 				margin-left: 8px;
-			}
-		</style>
-		<?php
+			}';
+		
+		UniteProviderFunctionsUC::printCustomStyle($css, true);
 	}
 
 	/**
@@ -949,9 +947,8 @@ class UCChangelogView extends WP_List_Table{
 	 * @return void
 	 */
 	private function displayEditScript(){
-
+		ob_start();
 		?>
-		<script>
 			jQuery(document).ready(function () {
 				jQuery(document).on("click", ".uc-inline-edit-form-cancel", function (event) {
 					event.preventDefault();
@@ -1015,8 +1012,11 @@ class UCChangelogView extends WP_List_Table{
 					objTable.find("tr").show();
 				}
 			});
-		</script>
 		<?php
+		$script = ob_get_clean();
+
+		UniteProviderFunctionsUC::printCustomScript($script, true); 
+		
 	}
 
 }

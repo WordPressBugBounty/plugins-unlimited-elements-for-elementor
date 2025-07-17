@@ -947,7 +947,7 @@
          * @param string $key
          * @param string $slug
          */
-        function fs_echo( $key, $slug = 'freemius' ) {
+        function fuelm_echo( $key, $slug = 'freemius' ) {
             echo fs_text( $key, $slug );
         }
 
@@ -1246,7 +1246,7 @@
          * @param string $key
          * @param string $slug
          */
-        function fs_esc_js_echo( $key, $slug ) {
+        function fs_esc_juelm_echo( $key, $slug ) {
             echo esc_js( fs_text( $key, $slug ) );
         }
     }

@@ -1161,13 +1161,13 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			case "this_day":
 
 				if(!empty($metaField)){
-					$afterMeta = s_date($metaFormat);
-					$beforeMeta = s_date($metaFormat);
+					$afterMeta = uelm_date($metaFormat);
+					$beforeMeta = uelm_date($metaFormat);
 				}else{
 
-					$year = s_date("Y");
-					$month = s_date("m");
-					$day = s_date("d");
+					$year = uelm_date("Y");
+					$month = uelm_date("m");
+					$day = uelm_date("d");
 
 					$arrDateQuery['inclusive'] = true;
 				}
@@ -1190,7 +1190,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			case "past_from_today":
 
 				if(!empty($metaField)){
-					$beforeMeta = s_date($metaFormat);
+					$beforeMeta = uelm_date($metaFormat);
 				}else{
 
 					$before = "tomorrow";
@@ -1202,7 +1202,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			case "past_from_yesterday":
 
 				if(!empty($metaField)){
-					$beforeMeta = s_date($metaFormat,strtotime('-1 day'));
+					$beforeMeta = uelm_date($metaFormat,strtotime('-1 day'));
 				}else{
 
 					$before = "today";
@@ -1235,12 +1235,12 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 				if(!empty($metaField)){
 
-					$afterMeta = s_date('Ym01');
-					$beforeMeta = s_date('Ymt');
+					$afterMeta = uelm_date('Ym01');
+					$beforeMeta = uelm_date('Ymt');
 
 				}else{
-					$year = s_date("Y");
-					$month = s_date("m");
+					$year = uelm_date("Y");
+					$month = uelm_date("m");
 				}
 
 			break;
@@ -1248,21 +1248,21 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 				if(!empty($metaField)){
 
-					$afterMeta = s_date($metaFormat,strtotime('first day of +1 month'));
-					$beforeMeta = s_date($metaFormat,strtotime('last day of +1 month'));
+					$afterMeta = uelm_date($metaFormat,strtotime('first day of +1 month'));
+					$beforeMeta = uelm_date($metaFormat,strtotime('last day of +1 month'));
 				}else{
 
 					$time = strtotime('first day of +1 month');
 
-					$year = s_date("Y",$time);
-					$month = s_date("m",$time);
+					$year = uelm_date("Y",$time);
+					$month = uelm_date("m",$time);
 				}
 
 			break;
 			case "future":
 
 				if(!empty($metaField)){
-					$afterMeta = s_date($metaFormat);
+					$afterMeta = uelm_date($metaFormat);
 				}else{
 
 					$after = "today";
@@ -1275,7 +1275,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 				if(!empty($metaField)){
 
-					$afterMeta = s_date($metaFormat,strtotime('+1 day'));
+					$afterMeta = uelm_date($metaFormat,strtotime('+1 day'));
 				}else{
 
 					$after = "today";
@@ -1299,7 +1299,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if(!empty($metaField)){
 
 			if(!empty($after) && empty($afterMeta)){
-				$afterMeta = s_date($metaFormat, strtotime($after));
+				$afterMeta = uelm_date($metaFormat, strtotime($after));
 			}
 
 			if(!empty($afterMeta))
@@ -1310,7 +1310,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
         		);
 
 			if(!empty($before) && empty($beforeMeta))
-				$beforeMeta = s_date($metaFormat, strtotime($before));
+				$beforeMeta = uelm_date($metaFormat, strtotime($before));
 
 			if(!empty($beforeMeta))
 				$arrMetaQuery[] = array(
@@ -2497,14 +2497,6 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 					
 		$wasSkipRun = false;
 		
-		//menu_order interferin in order by, it's adding to the query by default.
-		
-		$isRemoveMenuOrder = false;
-		if(!empty($args['orderby']) && in_array($args['orderby'], array('meta_value', 'meta_value_num')) && !empty($args['meta_key'])){
-			
-			$isRemoveMenuOrder = true;
-			add_filter('posts_orderby', array($this,"removeMenuOrderFieldForOrderByMetaValue"), 999, 2);
-		}
 		
 		if($this->skipPostListQueryRun == false){
 
@@ -2525,10 +2517,6 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		$objFiltersProcess->afterQueryRun();
 		
-		//remove the menu order removeal filter
-		if($isRemoveMenuOrder == true)
-			remove_filter('posts_orderby', array($this,"removeMenuOrderFieldForOrderByMetaValue"), 999, 2);
-
 		do_action("ue_after_custom_posts_query", $query);
 		
 		//custom posts debug
@@ -3130,14 +3118,6 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		add_action("pre_get_posts", array($this,"clearTaxQueryForGetPostListData_manualSelection"), 1, 1);
 		
-		$addRemoveMenuFilter = false;
-		
-		if (!empty($args['orderby']) && in_array($args['orderby'], array('meta_value', 'meta_value_num')) && !empty($args['meta_key'])){
-		
-			$addRemoveMenuFilter = true;
-			
-			add_filter('posts_orderby', array($this,"removeMenuOrderFieldForOrderByMetaValue"), 999, 2);
-		}
 		
 		if($this->skipPostListQueryRun == false){
 			$query = new WP_Query($args);
@@ -3161,8 +3141,6 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		remove_action('pre_get_posts', array($this,"clearTaxQueryForGetPostListData_manualSelection"), 1);
 
-		if($addRemoveMenuFilter == true)
-			remove_filter('posts_orderby', array($this,"removeMenuOrderFieldForOrderByMetaValue"), 999, 2);
 		
 		if($showDebugQuery == true && $debugType == "show_query"){
 			
@@ -3496,28 +3474,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if (isset($query->query_vars['tax_query']))
 			unset($query->query_vars['tax_query']);
 	}
-
-
-	/**
-	 * remove order by menu_order field, it's adding by default and interfering other orders
-	 */
-	public function removeMenuOrderFieldForOrderByMetaValue($orderby, $query) {
-		
-		if(strpos($orderby, "menu_order") === false)
-			return($order);
-		
-		global $wpdb;
-		$order = isset($query->query['order']) && strtoupper($query->query['order']) === 'DESC' ? 'DESC' : 'ASC';
-		if ($query->query['orderby'] === 'meta_value_num') {
-			$orderby = "CAST({$wpdb->postmeta}.meta_value AS DECIMAL) {$order}";
-		} else {
-			$orderby = "{$wpdb->postmeta}.meta_value {$order}";
-		}
-
-		return $orderby;
-	}
 	
-
+	
 	protected function z_______________DYNAMIC_LOOP_GALLERY____________(){}
 
 	/**
@@ -4049,6 +4007,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 		if(empty($arrItems))
 			$arrItems = array();
+		
+		if(!is_array($arrItems)) {
+			$arrItems = json_decode($arrItems, true);
+		}
 
 		$output = array();
 		foreach($arrItems as $index => $item){
@@ -5055,7 +5017,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			$metaKey = "";
 			if($orderBy == "meta_value" || $orderBy == "meta_value_num"){
-
+				
 				$metaKey = UniteFunctionsUC::getVal($value, $name."_orderby_meta_key");
 				$metaKey = trim($metaKey);
 
@@ -5270,7 +5232,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	 * filter order random taxonomy terms
 	 */
 	public function randomOrderTaxonomyTerms($clauses) {
-
+		
 		$clauses["orderby"] = "ORDER BY RAND()";
 		
 		remove_filter( 'terms_clauses', array($this, "randomOrderTaxonomyTerms"), 1, 1);

@@ -178,9 +178,9 @@ class UniteCreatorTemplateEngineWork{
 		$htmlItem = do_shortcode($htmlItem);
 
 		if(!empty($sap) && $index !== 0)
-			s_echo($sap);
+			uelm_echo($sap);
 
-		s_echo($htmlItem);
+		uelm_echo($htmlItem);
 
 		if($newLine)
 			echo "\n";
@@ -365,7 +365,7 @@ class UniteCreatorTemplateEngineWork{
 		//json encode
 		$jsonItems = UniteFunctionsUC::jsonEncodeForClientSide($arrItems);
 
-		s_echo($jsonItems);
+		uelm_echo($jsonItems);
 	}
 
 	/**
@@ -383,7 +383,7 @@ class UniteCreatorTemplateEngineWork{
 
 		$jsonAttr = UniteFunctionsUC::jsonEncodeForClientSide($arrAttr);
 
-		s_echo($jsonAttr);
+		uelm_echo($jsonAttr);
 	}
 
 
@@ -476,7 +476,7 @@ class UniteCreatorTemplateEngineWork{
 		if(empty($css))
 			return(false);
 
-		s_echo($css);
+		uelm_echo($css);
 	}
 
 
@@ -644,7 +644,7 @@ class UniteCreatorTemplateEngineWork{
 		if(empty($value))
 			$value = $default;
 
-		s_echo($value);
+		uelm_echo($value);
 	}
 
 
@@ -915,7 +915,7 @@ class UniteCreatorTemplateEngineWork{
 
 		$encoded = json_encode($var);
 
-		s_echo($encoded);
+		uelm_echo($encoded);
 	}
 
 	/**
@@ -926,7 +926,7 @@ class UniteCreatorTemplateEngineWork{
 		$strJson = json_encode($var);
 		$strJson = htmlspecialchars($strJson);
 
-		s_echo($strJson);
+		uelm_echo($strJson);
 	}
 
 
@@ -1180,7 +1180,7 @@ class UniteCreatorTemplateEngineWork{
 			case "put_date_range":
 
 				$dateRange = HelperUC::$operations->getDateRangeString($arg1, $arg2, $arg3);
-				s_echo($dateRange);
+				uelm_echo($dateRange);
 
 			break;
 			case "get_general_setting":
@@ -1236,7 +1236,7 @@ class UniteCreatorTemplateEngineWork{
 			case "put_unite_gallery_item":
 				
 				$htmlItem = UniteCreatorUniteGallery::getUniteGalleryHtmlItem($arg1);
-				s_echo($htmlItem);
+				uelm_echo($htmlItem);
 
 			break;
 			case "set":		//set and remember
@@ -1369,7 +1369,7 @@ class UniteCreatorTemplateEngineWork{
 				$this->returnSavedPost();
 
 				$content = HelperProviderCoreUC_EL::getPostContent($arg1, $arg2);
-				s_echo($content);
+				uelm_echo($content);
 			break;
 			case "get_num_comments":
 
@@ -1485,14 +1485,14 @@ class UniteCreatorTemplateEngineWork{
 			case "render":		//render twig template
 
 				$html = $this->getRenderedHtml($arg1, GlobalsProviderUC::$isUnderItem);
-				s_echo($html);
+				uelm_echo($html);
 
 			break;
 			case "put_post_link":	//by id
 
 				if(!empty($arg1)){
 					$link = get_permalink($arg1);
-					s_echo($link);
+					uelm_echo($link);
 				}
 
 			break;
@@ -1516,7 +1516,7 @@ class UniteCreatorTemplateEngineWork{
 				if(empty($obj))
 					return(false);
 
-				s_echo($obj->labels->singular_name);
+				uelm_echo($obj->labels->singular_name);
 
 			break;
 			case "put_post_terms_string":
@@ -1526,7 +1526,7 @@ class UniteCreatorTemplateEngineWork{
 
 				$strTermsNames = UniteFunctionsWPUC::getPostTermsTitlesString($arg1, true);
 
-				s_echo($strTermsNames);
+				uelm_echo($strTermsNames);
 			break;
 			case "get_sort_filter_data":
 
@@ -1569,7 +1569,7 @@ class UniteCreatorTemplateEngineWork{
 
 				$jsonData = UniteFunctionsUC::jsonEncodeForClientSide($arrData);
 
-				s_echo($jsonData);
+				uelm_echo($jsonData);
 			break;
 			case "validate_submit_button":
 
@@ -1601,6 +1601,7 @@ class UniteCreatorTemplateEngineWork{
 			break;
 			case "get_alphabet":
 
+				require_once GlobalsUC::$pathFramework."alphabet_array.class.php";
 				require_once GlobalsUC::$pathFramework."alphabet.class.php";
 				
 				$objAlphabet = new UELanguageAlphabets();
@@ -1611,6 +1612,7 @@ class UniteCreatorTemplateEngineWork{
 			break;
 			case "get_alphabet_new":
 				
+				require_once GlobalsUC::$pathFramework."alphabet_array.class.php";
 				require_once GlobalsUC::$pathFramework."alphabet.class.php";
 				
 				$objAlphabet = new UELanguageAlphabets();

@@ -31,6 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		const TYPE_RADIO = "radio";
 		const TYPE_TEXTAREA = "textarea";
 		const TYPE_STATIC_TEXT = "statictext";
+		const TYPE_HTML = "html";
 		const TYPE_HR = "hr";
 		const TYPE_CUSTOM = "custom";
 		const TYPE_CONTROL = "control";
@@ -89,8 +90,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 		const TAB_CONTENT = "content";
 		const TAB_STYLE = "style";
-
-
+		
+		const CAT_GENERAL = "cat_general_general";
+		
+		
 		//view defaults:
 		protected $settingsType = null;
 		protected $idPrefix;
@@ -206,7 +209,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 * get settings array
 		 */
 		public function getArrSettings(){
-
 			return $this->arrSettings;
 		}
 
@@ -889,6 +891,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 * add static text
 		 */
 		public function addStaticText($text,$name="",$params=array()){
+			
 			$setting = array();
 			$setting["type"] = self::TYPE_STATIC_TEXT;
 
@@ -927,6 +930,20 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 		}
 
+		/**
+		 * add html setting
+		 */
+		public function addStaticHTML($html,$name="",$arrParams=array()){
+			
+			if(empty($name)){
+				
+			  $this->HRIdCounter++;
+			  $name = "html".$this->HRIdCounter;
+			}
+			
+			$this->add($name,"",$html,self::TYPE_HTML,$arrParams);
+		}
+		
 
 		/**
 		 * add select setting
@@ -1490,12 +1507,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				$visibility = (string)UniteFunctionsUC::getVal($attribs, "visibility");
 
 				$isForceShow = false;
-
-				/*
-				 * //demo for show setting
-				if($sapName == "my_setting" && defined("UC_ENABLE_COPYPASTE"))
-					$isForceShow = true;
-				*/
 
 				if($visibility == "dev" && GlobalsUC::$inDev == false && $isForceShow == false)
 					continue;
@@ -2072,5 +2083,3 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 	}
-
-?>

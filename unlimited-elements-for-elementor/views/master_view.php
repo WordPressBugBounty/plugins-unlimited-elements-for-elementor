@@ -45,11 +45,13 @@ switch($view){
 
 ?>
 
-<?php HelperHtmlUC::putGlobalsHtmlOutput(); ?>
+<?php 
+HelperHtmlUC::putGlobalsHtmlOutput(); 
 
-<script type="text/javascript">
-	var g_view = "<?php echo esc_attr(self::$view); ?>";
-</script>
+$script = 'var g_view = "' . esc_attr(self::$view) . '";';
+UniteProviderFunctionsUC::printCustomScript($script, true); 
+
+?>
 
 <?php HelperHtmlUC::putInternalAdminNotices() ?>
 
@@ -65,7 +67,7 @@ switch($view){
 		?>
 
 		<?php 
-		s_echo( $htmlView ); 
+		uelm_echo( $htmlView ); 
 		?>
 		<?php
 

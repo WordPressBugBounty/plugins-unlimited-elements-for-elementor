@@ -167,20 +167,18 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				$message = $e->getMessage();
 				$message = esc_html($message);
 
-				s_echo("<div id='uc_view_error_message'> <br><br>View ($view) Error: <b>".$message."</b>");
+				uelm_echo("<div id='uc_view_error_message'> <br><br>View ($view) Error: <b>".$message."</b>");
 				
 				if(GlobalsUC::$SHOW_TRACE == true)
-					dmp($e->getTraceAsString());
+					dmp($e->getTraceAsString()); 
 				echo "</div>";
-				?>
-				<script>
-					jQuery(document).ready(function(){
+
+				$script = 'jQuery(document).ready(function(){
 						var htmlError = jQuery("#uc_view_error_message").html();
-						jQuery("#viewWrapper").append("Duplicating Error Here: <br> <div style='padding-left:20px;padding-right:20px;'>"+htmlError+"</div><br><br>");
-					});
-				</script>
-				<?php 
-				
+						jQuery("#viewWrapper").append("Duplicating Error Here: <br> <div style=\'padding-left:20px;padding-right:20px;\'>"+htmlError+"</div><br><br>");
+					});';
+
+				UniteProviderFunctionsUC::printCustomScript($script);
 			}
 		}
 		
@@ -194,7 +192,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			try{
 				require self::$path_plugin."settings/$settingsFile.php";
 			}catch (Exception $e){
-				s_echo("<br><br>Settings ($settingsFile) Error: <b>".$e->getMessage()."</b>");
+				uelm_echo("<br><br>Settings ($settingsFile) Error: <b>".$e->getMessage()."</b>");
 				dmp($e->getTraceAsString());
 			}
 		}
@@ -215,5 +213,3 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		}
  	
  }
- 
- ?>

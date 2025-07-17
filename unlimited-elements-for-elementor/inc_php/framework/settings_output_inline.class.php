@@ -51,10 +51,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			?>
 				
 				<div id="<?php echo esc_attr($setting["id_row"])?>" <?php 
-					s_echo($rowClass)?>>
+					uelm_echo($rowClass)?>>
 					
 					<div class="unite-setting-text" <?php 
-						s_echo($textStyle)?> >
+						uelm_echo($textStyle)?> >
 						<?php if($this->showDescAsTips == true): ?>
 					    	<span class='setting_text' title="<?php echo esc_attr($description)?>"><?php echo esc_attr($text)?></span>
 					    <?php else:?>
@@ -62,7 +62,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 					    <?php endif?>
 					</div>
 					<div class="unite-setting-content" <?php 
-						s_echo($cellStyle)?>>
+						uelm_echo($cellStyle)?>>
 						<?php 
 							$this->drawInputs($setting);
 							$this->drawInputAdditions($setting);
@@ -83,4 +83,3 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		
 	
 	}
-?>

@@ -438,6 +438,29 @@
 	display: inline-block;
 }
 
+.uc-settings-cta-notification {
+	background-color:#fef8ee;
+	border-left:2px solid #f0b848;
+	padding:10px;
+	line-height:1.4em;
+	color:#393e44;
+}
+
+.uc-settings-cta-notification.uc-dark-mode{
+	color:#ffffff;
+	background-color:#393e44;
+	border-left:2px solid #d5c5a6;
+	
+}
+
+.uc-settings-cta-notification.uc-dark-mode a{
+	color:#ffffff;
+}
+
+.uc-settings-cta-notification.uc-dark-mode a:hover{
+	color:blue;
+}
+
 .----------------TABLE_ATTRIBUTES------------- {
 }
 

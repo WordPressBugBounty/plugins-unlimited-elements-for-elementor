@@ -10,7 +10,8 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorAddonChangelog{
-
+	
+	const TYPE_RELEASE = "release";
 	const TYPE_CHANGE = "change";
 	const TYPE_FEATURE = "feature";
 	const TYPE_FIX = "fix";
@@ -36,6 +37,7 @@ class UniteCreatorAddonChangelog{
 	public function getTypes(){
 
 		$types = array(
+			self::TYPE_RELEASE => $this->getTypeTitle(self::TYPE_RELEASE),
 			self::TYPE_CHANGE => $this->getTypeTitle(self::TYPE_CHANGE),
 			self::TYPE_FEATURE => $this->getTypeTitle(self::TYPE_FEATURE),
 			self::TYPE_FIX => $this->getTypeTitle(self::TYPE_FIX),
@@ -266,6 +268,7 @@ class UniteCreatorAddonChangelog{
 	private function getTypeTitle($type){
 
 		$titles = array(
+			self::TYPE_RELEASE => __("Release", "unlimited-elements-for-elementor"),
 			self::TYPE_CHANGE => __("Change", "unlimited-elements-for-elementor"),
 			self::TYPE_FEATURE => __("Feature", "unlimited-elements-for-elementor"),
 			self::TYPE_FIX => __("Fix", "unlimited-elements-for-elementor"),

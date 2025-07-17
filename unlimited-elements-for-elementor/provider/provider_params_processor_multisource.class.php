@@ -456,7 +456,7 @@ class UniteCreatetorParamsProcessorMultisource{
 
 		$css = "border:1px solid gray;background-color:lightgray;padding:10px;";
 
-		s_echo("<div style='{$css}'>");
+		uelm_echo("<div style='{$css}'>");
 			dmp($json);
 		echo "</div>";
 
@@ -469,7 +469,7 @@ class UniteCreatetorParamsProcessorMultisource{
 
 		$css = "border:1px solid gray;background-color:lightgray;padding:10px;;margin-top:20px;margin-bottom:20px;";
 
-		s_echo("<div style='{$css}'>");
+		uelm_echo("<div style='{$css}'>");
 			dmp($csv);
 		echo "</div>";
 

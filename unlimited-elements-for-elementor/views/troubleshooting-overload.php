@@ -31,7 +31,7 @@ echo esc_attr(strlen($strData));
 <div style="height:300px;overflow:auto;border:1px solid black;padding:5px;">
 
 <?php 
-s_echo( $strData );
+uelm_echo( $strData );
 ?>
 
 </div>

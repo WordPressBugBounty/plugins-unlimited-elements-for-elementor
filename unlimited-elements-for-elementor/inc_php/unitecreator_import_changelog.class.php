@@ -48,7 +48,7 @@ class UniteCreatorImportExportChangelog{
 			UniteFunctionsUC::downloadJson($filename, $content);
 
 		if($typeExport == 'export-json')
-			s_echo($content);
+			uelm_echo($content);
 		
 	}
 
