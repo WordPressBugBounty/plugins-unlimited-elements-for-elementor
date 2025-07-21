@@ -1,4 +1,7 @@
 
+version 1.5.148:
+
+* Fix - elementor rtl issues fix
 
 
 version 1.5.147:

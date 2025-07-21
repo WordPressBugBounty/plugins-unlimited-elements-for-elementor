@@ -378,6 +378,8 @@ class ProviderOperationsUC extends UCOperations{
 			$postTitle = $post["post_title"];
 			$postType = $post["post_type"];
 
+			$postTitle = wp_strip_all_tags($postTitle);
+			
 			$postTypeTitle = UniteFunctionsUC::getVal($arrTypesAssoc, $postType);
 
 			if(empty($postTypeTitle))

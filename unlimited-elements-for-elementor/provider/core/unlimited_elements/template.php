@@ -192,10 +192,9 @@ class UCEmptyTemplate{
 			<button id="debug_button_next">Next</button>
 			
 		</div>
-		<?php
+		
+		<script type="text/javasctipt">
 
-		ob_start();
-		?>
 			function trace(str){
 				console.log(str);
 			}
@@ -289,9 +288,10 @@ class UCEmptyTemplate{
 				setTemplateIndex();
 				
 			});
-		<?
-		$script = ob_get_clean();
-		UniteProviderFunctionsUC::printCustomScript($script, true); 
+		
+		</script>
+			
+		<?php 
 	
 		return(true);
 	}
@@ -575,3 +575,4 @@ class UCEmptyTemplate{
 }
 
 new UCEmptyTemplate();
+

@@ -183,14 +183,6 @@ class UniteCreatorElementorIntegrate{
 	 */
 	private function registerWidgets_addons($arrAddons, $isRecords = false){
 		
-	    //small fix - the register can't work with the caching
-	    if(is_admin()){
-    	    $cachLength = ob_get_length();
-    	    if($cachLength)
-    	       ob_end_clean();
-	    }
-		
-		
 		if(self::$isWidgetsRegistered == true)
 			return(false);
 

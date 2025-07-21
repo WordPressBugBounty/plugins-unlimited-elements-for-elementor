@@ -510,7 +510,8 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 		if($isBG == true)
 			$scriptsHardCoded = true;
 			
-        $cssFilesPlace = HelperProviderCoreUC_EL::getGeneralSetting("css_includes_to");
+        $cssFilesPlace = "body";
+        
 		if(GlobalsProviderUC::$isInsideEditor == true)
 			$cssFilesPlace = "body";
 	        

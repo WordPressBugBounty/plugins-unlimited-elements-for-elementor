@@ -939,6 +939,11 @@ The choice depends on your design preferences. If you want complete control, go 
 == Changelog ==
 
 
+version 1.5.148 - 2025-07-21 =
+
+* Fix - elementor rtl issues fix
+
+
 version 1.5.147 - 2025-07-17 =
 
 Plugin Changes:

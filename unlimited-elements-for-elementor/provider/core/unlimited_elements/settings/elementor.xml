@@ -17,15 +17,6 @@
       value="true"
     />
 
-    <field name="css_includes_to"
-      type="list"
-      default="body"
-      label="		Include Css Files To"
-      description="Choose where to include css files">
-      <option value="body" text="Body Before Widget HTML" />
-      <option value="footer" text="Footer" />
-    </field>
-
     <field name="enable_import_export"
       type="boolean"
       default="true"

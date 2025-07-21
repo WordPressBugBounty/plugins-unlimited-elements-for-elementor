@@ -4085,7 +4085,8 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
 	        $output->initByAddon($objAddon);
 
-	        $cssFilesPlace = HelperProviderCoreUC_EL::getGeneralSetting("css_includes_to");
+	        $cssFilesPlace = "body";
+	        
 			if($isEditMode == true)
 				$cssFilesPlace = "body";
 
