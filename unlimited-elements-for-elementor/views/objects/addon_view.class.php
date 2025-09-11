@@ -2143,6 +2143,25 @@ class UniteCreatorAddonView{
 		<?php
 	}
 
+	private function putProInvitePopup() {
+		?>
+		<div class="uelm-pro-message-popup">
+			<div class="content">
+				<h2>
+				  <?php echo esc_html__("The edit block functionality", "unlimited-elements-for-elementor"); ?><br>
+				  <?php echo esc_html__("available in PRO Version Only", "unlimited-elements-for-elementor"); ?>
+				</h2>
+				<p><?php echo esc_html__('Unlock Access To All Pro Blocks and Features.', "unlimited-elements-for-elementor"); ?></p>
+				<p>
+                    <a href="<?php echo GlobalsUC::$url_buy_platform?>" 
+                    target="_blank" 
+                    class="unite-button-primary"><?php echo esc_html__('Upgrade Now', "unlimited-elements-for-elementor"); ?></a>
+                </p>
+			</div>
+		</div>
+		<?php
+	}
+
 
 	/**
 	 * put html
@@ -2169,6 +2188,10 @@ class UniteCreatorAddonView{
 		$this->putJs();
 		
 		$this->putDialogs();
+
+		if(GlobalsUnlimitedElements::$enableEditWidget == false) {
+			$this->putProInvitePopup();
+		}
 		
 		?>
 		</div>

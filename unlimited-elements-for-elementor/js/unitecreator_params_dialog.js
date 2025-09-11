@@ -209,12 +209,9 @@ function UniteCreatorParamsDialog(){
 	 * get input type
 	 */
 	function getInputType(objInput){
-
+		
 		var inputType = g_ucAdmin.getInputType(objInput);
-
-		if(objInput.hasClass("select2-hidden-accessible"))
-			inputType = "select2";
-
+		
 		return(inputType);
 	}
 

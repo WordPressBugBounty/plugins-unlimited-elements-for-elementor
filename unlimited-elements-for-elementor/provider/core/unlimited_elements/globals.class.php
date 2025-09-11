@@ -18,6 +18,8 @@ class GlobalsUnlimitedElements{
 	
 	public static $isGutenbergOnly = false;
 	
+	public static $enableEditWidget = true;
+	
 	public static $gutenbergArrFilterCats = array("Loop Builder");
 	
 	public static $showAdminNotices = false;		//show the banner
@@ -42,10 +44,11 @@ class GlobalsUnlimitedElements{
 	public static $enableLimitProFunctionality = true;	//enable limit pro options in elementor
 	
 	public static $enableEditProOptions = false;	 //set to enable edit pro options
-		
+	
 	//public static $insideNotificationText = "🖤 Black Friday Sale! <br> Don’t Miss Out on the <br> BIGGEST SALE of the Year! 🎉<br> <a style='text-decoration:underline;' href='https://unlimited-elements.com/pricing/' target='_blank'>Get Deal Now!</a> ";
 	public static $insideNotificationText = "Unlock Access To All Pro Widgets and Features.  <a href='https://unlimited-elements.com/pricing/' target='_blank'>Upgrade Now</a> ";
 	public static $insideNotificationUrl = "https://unlimited-elements.com/pricing/";
+	
 	
 
 	const PLUGIN_NAME = "unlimitedelements";
@@ -146,7 +149,6 @@ class GlobalsUnlimitedElements{
 			self::$enableGutenbergSupport = true;
 		}
 		
-		
 		$serverName = UniteFunctionsUC::getVal($_SERVER, "SERVER_NAME");
 		
 		if($serverName == "work.unlimited-elements.com"){
@@ -155,10 +157,11 @@ class GlobalsUnlimitedElements{
 
 		if(defined("UE_DISABLE_ELEMENTOR_SUPPORT")){
 			self::$enableElementorSupport = false;
-			
+		
 			if(self::$enableElementorSupport == false && self::$enableGutenbergSupport == true)
 				self::$isGutenbergOnly = true;
 		}
+		
 		
 		if(is_dir($pathElementor) == false && is_dir($pathGutenberg) == true){
 			
@@ -166,11 +169,11 @@ class GlobalsUnlimitedElements{
 			self::$enableGutenbergSupport = true;
 			self::$enableElementorSupport = false;
 		}
-
+		
 		//debug functions
 		if(GlobalsUC::$is_admin == true && HelperUC::hasPermissionsFromQuery("show_debug_function"))
 			GlobalsProviderUC::$showDebugFunction = true;
-		
+
 	}
 
 	
@@ -183,7 +186,6 @@ class GlobalsUnlimitedElements{
 
 		self::$urlPluginGutenberg = self::$urlPlugin."gutenberg/";
 		
-		
 		if(self::$isGutenbergOnly == true){
 			
 			self::$pluginTitleCurrent = self::PLUGIN_TITLE_GUTENBERG;
@@ -194,6 +196,14 @@ class GlobalsUnlimitedElements{
 
 		if(self::$enableLimitProFunctionality == false)
 			self::$enableEditProOptions = false;	
+		
+		//disable widget edit from the library and the block advanced options
+		
+		if(self::$isGutenbergOnly == true && GlobalsUC::$isProVersion == false)
+			self::$enableEditWidget = false;
+		
+		if(self::$isGutenbergOnly == true)
+			GlobalsUC::$url_buy_platform = GlobalsUC::URL_BUY."?platform=wordpress";
 		
 	}
 	

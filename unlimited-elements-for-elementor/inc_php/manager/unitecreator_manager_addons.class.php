@@ -25,7 +25,8 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 	protected $enablePreview = true, $enableViewThumbnail = false, $enableMakeScreenshots = false;
 	protected $enableDescriptionField = true, $enableEditGroup = false, $enableCopy = false;
 	protected $enableActions = true;	//enable add/edit actions
-
+	protected $enableEditAddon = true;
+	
 	protected $textAddAddon, $textSingle, $textPlural, $textSingleLower, $textPluralLower;
 
 	private $filterActive = "";
@@ -154,15 +155,14 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 			UniteFunctionsUC::throwError("DB Tables don't installed. Please refresh the page.");
 		}
 
-
 		$this->type = self::TYPE_ADDONS;
 		$this->viewType = self::VIEW_TYPE_THUMB;
 		$this->defaultFilterCatalog = self::FILTER_CATALOG_INSTALLED;
-
-		$this->urlBuy = GlobalsUC::URL_BUY;
+		
+		$this->urlBuy = GlobalsUC::$url_buy_platform;
 		$this->hasCats = true;
-
-		if(emptY($this->filterAddonType))
+		
+		if(empty($this->filterAddonType))
 			$this->setAddonType($addonType);
 
 		$this->objBrowser = new UniteCreatorBrowser();
@@ -253,7 +253,11 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 		//layout permissions
 		if($this->objAddonType->isLayout == true)
 			$this->initByAddonType_layout();
-
+		else{
+			
+			if(GlobalsUnlimitedElements::$enableEditWidget == false)
+				$this->enableEditAddon = false;
+		}
 
 		$single = $this->objAddonType->textSingle;
 		$plural = 	$this->objAddonType->textPlural;
@@ -858,11 +862,20 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 			$textDuplicate = __("Duplicate ", "unlimited-elements-for-elementor").$this->textSingle;
 
 			$htmlItem .= "<div class=\"uc-item-actions\">";
-
-			$htmlItem .= "	<a href='javascript:void(0)' class='uc-item-action uc-item-action-edit uc-tip' onfocus='this.blur()' data-action='{$actionEdit}' title='{$textEdit}' ><img src='{$urlIconEdit}'></a>";
+			
+			if($this->enableEditAddon == true){
+				
+				$htmlItem .= "	<a href='javascript:void(0)' class='uc-item-action uc-item-action-edit uc-tip' onfocus='this.blur()' data-action='{$actionEdit}' title='{$textEdit}' ><img src='{$urlIconEdit}'></a>";
+				
+			} else {
+								
+				$textEdit .= __(" (Pro Version Only)", "unlimited-elements-for-elementor");
+				
+				$htmlItem .= "	<a href='javascript:void(0)' class='uc-item-action uc-item-action-edit uc-tip uc-disabled' data-action='{$actionEdit}' title='{$textEdit}' ><img src='{$urlIconEdit}'></a>";
+			}
 
 			$textViewDemo = __("View ", "unlimited-elements-for-elementor").$this->textSingle.__(" Demo and Help", "unlimited-elements-for-elementor");
-
+			
 			if($isGroup == false){
 
 				//preview widget
@@ -872,6 +885,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 					$htmlItem .= "	<a href='javascript:void(0)' class='uc-item-action uc-item-action-preview uc-tip' onfocus='this.blur()' data-action='preview_addon' title='$textPreview'><img src='{$urlIconPreview}'></a>";
 
 				$htmlItem .= "	<a href='javascript:void(0)' class='uc-item-action uc-item-action-duplicate uc-tip' onfocus='this.blur()' data-action='duplicate_item' title='$textDuplicate'><img src='{$urlIconDuplicate}'></a>";
+
 			}
 
 			$htmlItem .= "	<a href='javascript:void(0)' class='uc-item-action uc-item-action-menu' onfocus='this.blur()' data-action='open_menu'><img src='{$urlIconMenu}'></a>";
@@ -948,7 +962,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 		$htmlCatList = $this->getCatList($catID, null, $params);
 
 		$htmlAddons = $this->getCatAddonsHtml($catID, $catTitle, $isweb, $params);
-		
+
 		$response = array();
 		$response["htmlItems"] = $htmlAddons;
 		$response["htmlCats"] = $htmlCatList;
@@ -1528,7 +1542,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 
 						<br><br>
 
-						<a href="<?php echo esc_url(GlobalsUC::URL_BUY)?>" class="unite-button-primary" target="_blank">Buy Unlimited Elements PRO</a>
+						<a href="<?php echo esc_url(GlobalsUC::$url_buy_platform)?>" class="unite-button-primary" target="_blank">Buy Unlimited Elements PRO</a>
 
 					</div>
 
@@ -1556,31 +1570,33 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 
 		$arrMenuItem = array();
 
-		if($this->isLayouts == false){
-			$arrMenuItem["edit_addon"] = esc_html__("Edit ","unlimited-elements-for-elementor").$this->textSingle;
-			$arrMenuItem["edit_addon_blank"] = esc_html__("Edit In New Tab","unlimited-elements-for-elementor");
-		}else{
-			$arrMenuItem["edit_addon_blank"] = esc_html__("Edit ","unlimited-elements-for-elementor").$this->textSingle;
-		}
 
-		if($this->enableEditGroup)
-			$arrMenuItem["edit_layout_group"] = esc_html__("Edit Template Kit","unlimited-elements-for-elementor");
+			if($this->isLayouts == false){
+				
+				if($this->enableEditAddon == true){
+					$arrMenuItem["edit_addon"] = esc_html__("Edit ","unlimited-elements-for-elementor").$this->textSingle;
+					$arrMenuItem["edit_addon_blank"] = esc_html__("Edit In New Tab","unlimited-elements-for-elementor");
+				}
+			}else{
+				$arrMenuItem["edit_addon_blank"] = esc_html__("Edit ","unlimited-elements-for-elementor").$this->textSingle;
+			}
+		
+			if($this->enableEditGroup)
+				$arrMenuItem["edit_layout_group"] = esc_html__("Edit Template Kit","unlimited-elements-for-elementor");
+			
+			if($this->enablePreview == true)
+				$arrMenuItem["preview_addon"] = esc_html__("Preview","unlimited-elements-for-elementor");
 
-		if($this->enablePreview == true)
-			$arrMenuItem["preview_addon"] = esc_html__("Preview","unlimited-elements-for-elementor");
+			if($this->enableViewThumbnail)
+				$arrMenuItem["preview_thumb"] = esc_html__("View Thumbnail","unlimited-elements-for-elementor");
 
-		if($this->enableViewThumbnail)
-			$arrMenuItem["preview_thumb"] = esc_html__("View Thumbnail","unlimited-elements-for-elementor");
+			if($this->enableMakeScreenshots)
+				$arrMenuItem["make_screenshots"] = esc_html__("Make Thumbnail","unlimited-elements-for-elementor");
 
-		if($this->enableMakeScreenshots)
-			$arrMenuItem["make_screenshots"] = esc_html__("Make Thumbnail","unlimited-elements-for-elementor");
+			$arrMenuItem["quick_edit"] = esc_html__("Quick Edit","unlimited-elements-for-elementor");
 
-
-		$arrMenuItem["quick_edit"] = esc_html__("Quick Edit","unlimited-elements-for-elementor");
-
-		if($this->enableCopy == true)
-			$arrMenuItem["copy"] = esc_html__("Copy","unlimited-elements-for-elementor");
-
+			if($this->enableCopy == true)
+				$arrMenuItem["copy"] = esc_html__("Copy","unlimited-elements-for-elementor");			
 
 		$arrMenuItem["remove_item"] = esc_html__("Delete","unlimited-elements-for-elementor");
 
@@ -2410,8 +2426,11 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 	protected function getMenuSingleItemActions(){
 
 		$arrMenuItem = array();
-		$arrMenuItem["edit_addon_blank"] = esc_html__("Edit In New Tab","unlimited-elements-for-elementor");
-
+		
+		if($this->enableEditAddon == true) {
+			$arrMenuItem["edit_addon_blank"] = esc_html__("Edit In New Tab","unlimited-elements-for-elementor");
+		}
+		
 		if($this->enableEditGroup)
 			$arrMenuItem["edit_layout_group"] = esc_html__("Edit Template Kit","unlimited-elements-for-elementor");
 

@@ -14,7 +14,6 @@ class UniteCreatorAjaxSeach{
 	public static $enableThirdPartyHooks = false;
 
 	private $searchInMeta = false;
-	private $searchMetaSku = false;
 	private $searchInTerms = false;
 	private $strTerms = false;
 	private $searchPostFields = array();
@@ -24,7 +23,6 @@ class UniteCreatorAjaxSeach{
 	 * set post parts where clause
 	 */
 	public function setWherePostParts($where, $wp_query){
-		
 		
 		if (in_array('all', $this->searchPostFields))
 			return ($where);
@@ -57,7 +55,7 @@ class UniteCreatorAjaxSeach{
 	    $where = preg_replace('/\(\s+OR\s+/', '(', $where);
 	
 	    $where = trim($where);		
-			    
+		
 		if(GlobalsProviderUC::$showPostsQueryDebug == true){
 			
 			dmp("Mat the search for those fields: ");
@@ -99,9 +97,9 @@ class UniteCreatorAjaxSeach{
 			
 		}
 		
-
 		//search in meta
 		if($this->searchInMeta == true && $addCount > 0){
+			
 			$arrPosts = $this->getPostsByMeta($arrPosts, $args, $addCount);
 			$addCount = $maxItems - count($arrPosts);
 			
@@ -145,11 +143,7 @@ class UniteCreatorAjaxSeach{
 
 		$search = $args["s"];
 		unset($args["s"]);
-		
-		if($this->searchMetaSku == true){
-			$metaKeySku = "_sku";
-			$this->searchMetaKey = ($this->searchMetaKey) ? $this->searchMetaKey.','.$metaKeySku : $metaKeySku;
-		}
+				
 		
 		if(empty($this->searchMetaKey))
 			return($arrPosts);
@@ -225,7 +219,6 @@ class UniteCreatorAjaxSeach{
 		else
 			$arrTaxNames = $arrAllTaxNames;
 
-
 		if(empty($arrTaxNames)){
 
 			if(GlobalsProviderUC::$showPostsQueryDebug == true) {
@@ -238,8 +231,8 @@ class UniteCreatorAjaxSeach{
 
 			return($arrPosts);
 		}
-
-
+		
+		
 		$arrTermsSearch = array();
 		$arrTermsSearch["taxonomy"] = $arrTaxNames;
 		$arrTermsSearch["search"] = $search;
@@ -402,7 +395,17 @@ class UniteCreatorAjaxSeach{
 		//search by meta fields
 		$searchInMeta = UniteFunctionsUC::getVal($arrParams, "search_in_meta");
 		$searchInMeta = UniteFunctionsUC::strToBool($searchInMeta);
+		
 		$searchMetaKey = UniteFunctionsUC::getVal($arrParams, "searchin_meta_name");
+
+		$searchMetaSku = UniteFunctionsUC::getVal($arrParams, "search_by_sku");
+		$searchMetaSku = UniteFunctionsUC::strToBool($searchMetaSku);
+		
+		if($searchMetaSku == true){
+			$searchInMeta = true;
+			$searchMetaKey = "_sku";
+		}
+		
 		if($searchInMeta == true){
 			$applyModifyFilter = true;
 			self::$customSearchEnabled = true;
@@ -410,15 +413,7 @@ class UniteCreatorAjaxSeach{
 			$this->searchMetaKey = $searchMetaKey;
 		}
 
-		//search by meta field SKU
-		$searchMetaSku = UniteFunctionsUC::getVal($arrParams, "search_by_sku");
-		$searchMetaSku = UniteFunctionsUC::strToBool($searchMetaSku);
-		if($searchMetaSku == true){
-			self::$customSearchEnabled = true;
-			$this->searchInMeta = true;
-			$this->searchMetaSku = $searchMetaSku;
-		}
-	
+		
 		//search by terms
 		$searchInTerms = UniteFunctionsUC::getVal($arrParams, "search_in_terms");
 		$searchInTerms = UniteFunctionsUC::strToBool($searchInTerms);
@@ -447,6 +442,7 @@ class UniteCreatorAjaxSeach{
 		if(empty($arrSearchPostFields) && $applyModifyFilter == true){
 			GlobalsProviderUC::$skipRunPostQueryOnce = true;			
 		}
+		
 		
 		if($applyModifyFilter == true){
 			UniteProviderFunctionsUC::addFilter("uc_filter_posts_list", array($this,"onPostsResponse"),10,3);

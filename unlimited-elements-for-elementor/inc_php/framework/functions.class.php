@@ -1844,12 +1844,19 @@ class UniteFunctionsUC{
 
 		if(is_string($str) == false)
 			return($str);
-
+		
 		//try to json decode
 		$arrJson = self::jsonDecode($str);
 		if(!empty($arrJson) && is_array($arrJson))
 			return($arrJson);
-
+		
+		//try to strip slashes
+		$strStripped = stripslashes($str);
+		$arrJson = self::jsonDecode($strStripped);
+		if(!empty($arrJson) && is_array($arrJson))
+			return($arrJson);
+		
+			
 		return($str);
 	}
 
@@ -2666,9 +2673,12 @@ class UniteFunctionsUC{
      */
 	public static function sanitizeHTMLRemoveJS($html) {
 		
+		if(empty($html))
+			return("");
+		
 	    // Remove <script> tags completely
         $html = preg_replace('#<script[^>]*?>.*?</script>#is', '', $html);
-
+	
         // Remove all event handlers that start with 'javascript:'
         $html = preg_replace('/\s*on\w+\s*=\s*["\']?\s*javascript\s*:[^"\'>]*["\']?/i', '', $html);
 
@@ -4246,6 +4256,34 @@ class UniteFunctionsUC{
 	}
 	
 	/*** End File System functions ***/
+	
+	/**
+     * HTML-minifyer
+    */
+	public static function minifyHTML($html) {
+		// skip <pre>, <code>, <textarea>
+		preg_match_all('#<(pre|code|textarea)\b[^>]*>.*?</\1>#si', $html, $matches);
+		$placeholders = [];
+		foreach ($matches[0] as $i => $block) {
+			$placeholder = "___HTML_BLOCK_" . $i . "___";
+			$placeholders[$placeholder] = $block;
+			$html = str_replace($block, $placeholder, $html);
+		}
+
+		// minifying
+		$html = preg_replace('/\>[^\S ]+/s', '>', $html);
+		$html = preg_replace('/[^\S ]+\</s', '<', $html);
+		$html = preg_replace('/(\s)+/s', ' ', $html);
+		$html = preg_replace('/[\r\n\t]+/s', '', $html);
+		$html = trim($html);
+
+		// return textarea
+		foreach ($placeholders as $placeholder => $block) {
+			$html = str_replace($placeholder, $block, $html);
+		}
+
+		return $html;
+	}
 	
 
 }

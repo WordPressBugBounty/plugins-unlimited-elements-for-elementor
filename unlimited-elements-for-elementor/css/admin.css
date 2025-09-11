@@ -735,6 +735,10 @@ ul.unite-list-hor li input {
 	border-color: var(--ue-color-gray-lightest);
 }
 
+.uc-disabled {
+	cursor: not-allowed;
+}
+
 
 #-------------CONTEXT_MENU--------------- {}
 
@@ -1266,6 +1270,7 @@ ul.unite-context-menu li a:focus {
 	display: flex;
 	align-items: center;
 	max-width: var(--ue-input-max-width);
+	overflow:hidden;
 }
 
 .unite-inputs .unite-setting-tabs-item {
@@ -1371,6 +1376,9 @@ ul.unite-context-menu li a:focus {
 	max-width: var(--ue-input-max-width);
 }
 
+.unite-inputs .unite-settings-postpicker-wrapper .select2-container {
+	width:auto!important;
+}
 
 #----------ICON-PICKER---------------- {}
 
@@ -2026,6 +2034,10 @@ ul.unite-context-menu li a:focus {
 
 .unite-setting-repeater .unite-repeater-item-title:hover {
 	color: var(--ue-color-primary);
+}
+
+.unite-setting-repeater .unite-repeater-item-title-placeholder {
+	color: var(--ue-color-gray-light);
 }
 
 .unite-setting-repeater .unite-repeater-item-actions {
@@ -3255,4 +3267,54 @@ table.unite_table_settings_wide .setting_onecell_text {
 .uc-scroll-li-column{
 	max-height: 375px;
 	overflow-y: auto;
+}
+
+/* Pro Version Invite Popup */
+.uelm-pro-message-popup {
+	position:absolute;
+	top:40px;
+	left:0;
+	right:0;
+	bottom:0;
+	background-color:rgb(9, 9, 9, 0.3);
+	display:flex;
+	align-items:flex-start;
+	justify-content:center;
+	padding-top: 80px; 
+	z-index:100;
+}
+
+.uelm-pro-message-popup .content {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 6px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+	padding: 20px;
+	max-width: 480px;
+	margin: 0 auto;
+	position: relative;
+	font-family: sans-serif;
+}
+
+.uelm-pro-message-popup .content h2 {
+	margin-top: 0;
+	margin-bottom: 15px;
+	font-size: 20px;
+	color: #23282d;
+	line-height:23px;
+}
+
+.uelm-pro-message-popup .content p {
+	margin-bottom: 20px;
+	font-size: 14px;
+	color: #444;
+}
+
+#----------RTL---------------- {}
+.rtl .unite-settings-sidebar select {
+    padding-left: 12px;
+    padding-right: 24px; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }

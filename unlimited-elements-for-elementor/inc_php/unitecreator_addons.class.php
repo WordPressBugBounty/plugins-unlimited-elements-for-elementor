@@ -434,8 +434,8 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 	/**
 	 * get number of addons by category
 	 */
-	public function getNumAddons($catID = null, $filterActive = null, UniteCreatorAddonType $objTypeName = null){
-
+	public function getNumAddons($catID = null, $filterActive = null, $objTypeName = null){
+		
 		$tableAddons = GlobalsUC::$table_addons;
 		$addonType = $objTypeName->typeName;
 
@@ -646,6 +646,8 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 		GlobalsProviderUC::$activeAddonForSettings = $objAddon;
 		
 		$html = $objAddon->getHtmlConfig(false, true);
+		
+		$html = UniteFunctionsUC::minifyHTML($html);
 		
 		return ($html);
 	}

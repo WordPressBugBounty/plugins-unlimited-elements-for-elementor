@@ -77,16 +77,35 @@ class UniteCreatorTestAddonNewView{
 				<button id="uc_testaddon_button_check" class="unite-button-secondary">
 					<?php esc_html_e("Check", "unlimited-elements-for-elementor"); ?>
 				</button>
+				<button id="uc_testaddon_button_edit" onclick="location.href='<?php echo esc_url($addonEditUrl); ?>'; return false;" class="unite-button-secondary uc-disabled">
+					<?php esc_html_e("Edit", "unlimited-elements-for-elementor")?>
+				</button>
 
 			</div>
 			<div class="uc-preview-addon-actions-secondary">
+				
+				<?php if(GlobalsUnlimitedElements::$enableEditWidget == true):?>
 				<a class="unite-button-secondary" href="<?php echo esc_url($addonEditUrl); ?>">
-					<?php esc_html_e("Edit Widget", "unlimited-elements-for-elementor"); ?>
+					
+						<?php if(GlobalsUnlimitedElements::$isGutenbergOnly == true):?>
+						<?php esc_html_e("Edit Block", "unlimited-elements-for-elementor"); ?>
+						<?php else:?>
+						<?php esc_html_e("Edit Widget", "unlimited-elements-for-elementor"); ?>				
+						<?php endif?>
+						
 				</a>
+				<?php endif?>
+				
 				<a class="unite-button-secondary" href="<?php echo esc_url($addonsListUrl); ?>">
+					<?php if(GlobalsUnlimitedElements::$isGutenbergOnly == true):?>
+					<?php esc_html_e("Back to Blocks", "unlimited-elements-for-elementor"); ?>
+					<?php else:?>
 					<?php esc_html_e("Back to Widgets", "unlimited-elements-for-elementor"); ?>
+					<?php endif?>
+					
 				</a>
 			</div>
+			
 		</div>
 
 		<?php require HelperUC::getPathTemplate("addon_preview"); ?>

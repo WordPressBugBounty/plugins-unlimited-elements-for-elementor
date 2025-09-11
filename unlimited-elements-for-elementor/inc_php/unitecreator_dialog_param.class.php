@@ -1963,7 +1963,7 @@ class UniteCreatorDialogParamWork{
 	
 							<div class='uc-dialog-param-pro-message'>
 								<?php esc_attr_e("This attribute is available only in the .","unlimited-elements-for-elementor");?>
-								<a href="<?php echo esc_url(GlobalsUC::URL_BUY)?>" target="_blank">
+								<a href="<?php echo esc_url(GlobalsUC::$url_buy_platform)?>" target="_blank">
 									<?php esc_attr_e("Buy PRO version","unlimited-elements-for-elementor")?>
 								</a>
 								<br>

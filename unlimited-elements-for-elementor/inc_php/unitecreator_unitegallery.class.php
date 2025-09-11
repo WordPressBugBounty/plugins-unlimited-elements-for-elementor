@@ -732,6 +732,9 @@ class UniteCreatorUniteGallery{
 			$title = UniteFunctionsUC::sanitize($title, UniteFunctionsUC::SANITIZE_ATTR);
 			$description = UniteFunctionsUC::sanitize($description, UniteFunctionsUC::SANITIZE_ATTR);
 			
+			$image = UniteFunctionsUC::sanitize($image, UniteFunctionsUC::SANITIZE_URL);
+			$thumb = UniteFunctionsUC::sanitize($thumb, UniteFunctionsUC::SANITIZE_URL);
+			
 			$html .= $nl."<img alt=\"{$title}\"";
 			$html .= $nl."   src=\"$thumb\"";
 			

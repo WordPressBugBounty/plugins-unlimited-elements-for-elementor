@@ -44,7 +44,7 @@ class UniteCreatorBrowserWork extends HtmlOutputBaseUC{
 		$this->webAPI = new UniteCreatorWebAPI();
 		$this->textBuy = esc_html__("Buy PRO", "unlimited-elements-for-elementor");
 		$this->textHoverProAddon = esc_html__("This addon is available<br>for Blox PRO users only.", "unlimited-elements-for-elementor");
-		$this->urlBuy = GlobalsUC::URL_BUY;
+		$this->urlBuy = GlobalsUC::$url_buy_platform;
 		
 		self::$serial++;
 		$this->prefix = UniteFunctionsUC::getRandomString(5).self::$serial;

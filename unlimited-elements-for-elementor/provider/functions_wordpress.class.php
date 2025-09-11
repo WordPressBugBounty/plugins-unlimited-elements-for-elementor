@@ -1835,7 +1835,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 * including acf
 		 */
 		public static function getPostCustomFields($postID, $addPrefixes = true, $imageSize = null){
-
+			
 			$prefix = null;
 			if($addPrefixes == true)
 				$prefix = "cf_";
@@ -1847,7 +1847,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 				$objAcf = self::getObjAcfIntegrate();
 				$arrCustomFields = $objAcf->getAcfFields($postID, "post", $addPrefixes, $imageSize);
-
+				
 				//if emtpy - get from regular meta
 				if(empty($arrCustomFields))
 					$arrCustomFields = self::getPostMeta($postID, false, $prefix);

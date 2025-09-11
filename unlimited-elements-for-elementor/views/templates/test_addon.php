@@ -34,12 +34,13 @@ if(!empty($objAddonType->addonView_urlBack))
 ?>
 
 <div id="uc_testaddon_wrapper" class="uc-testaddon-wrapper">
- 
+
 <?php if($this->showToolbar):?>
 
 <div class="uc-testaddon-panel">
 
 		<a href="<?php echo esc_url($urlEditAddon)?>" class="unite-button-secondary" ><?php echo esc_attr($textEditThis)?></a>
+
 		<a class="unite-button-secondary uc-button-cat-sap" href="<?php echo esc_url($urlBack)?>"><?php echo esc_html($textBackTo);?></a>
 
 		<a id="uc_button_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 

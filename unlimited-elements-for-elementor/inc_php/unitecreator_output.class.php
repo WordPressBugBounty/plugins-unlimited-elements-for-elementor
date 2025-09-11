@@ -1054,7 +1054,9 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 		if(array_key_exists("size", $value) === true
 			&& array_key_exists("unit", $value) === true)
 			return $this->prepareCSSSelectorSliderCSS($selectorValue, $value);
-
+		
+		return "";
+		
 		UniteFunctionsUC::throwError(__FUNCTION__ . " Error: Value processing is not implemented (" . json_encode($value) . ")");
 	}
 
@@ -1973,6 +1975,7 @@ $css
 		
 		$css .= "/* Gutenberg Global */\n";
 		$css .= ".ue-widget-root {position:relative;}";
+		$css .= 'html .wp-block:has(.ue-widget-root) {margin-top: 0; margin-bottom:0;}';
 				
 		return($css);
 	}
@@ -2043,6 +2046,7 @@ $css
 	 */
 	public function getHtmlItems(){
 
+
 		$keyTemplate = "uc_template_items_special";
 		$htmlTemplate = "{{put_items()}}";
 
@@ -2105,8 +2109,7 @@ $css
 
 		return($outputHandle);
 	}
-	
-	
+
 	/**
 	 * place output by shortcode
 	 */
@@ -2119,7 +2122,7 @@ $css
 			$scriptHardCoded = true;
 
 		$title = $this->addon->getTitle(true);
-		
+
 		$isOutputComments = HelperProviderCoreUC_EL::getGeneralSetting("output_wrapping_comments");
 		$isOutputComments = UniteFunctionsUC::strToBool($isOutputComments);
 
@@ -2149,6 +2152,7 @@ $css
 				$css = $this->modifyGutenbergBGCSS($css);
 				
 			}
+
 			
 			//fetch selectors (add google font includes on the way)
 			$isAddSelectors = UniteFunctionsUC::getVal($params, "add_selectors_css");
@@ -2263,7 +2267,7 @@ $css
 				$addonName = $this->addon->getAlias();
 
 				$handle = $this->getScriptHandle("ue_script_" . $addonName);
-			
+
 				if($scriptHardCoded == false){
 					UniteProviderFunctionsUC::printCustomScript($js, false, $isJSAsModule, $handle);
 				}else{

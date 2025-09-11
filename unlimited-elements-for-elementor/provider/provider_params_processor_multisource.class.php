@@ -106,7 +106,7 @@ class UniteCreatetorParamsProcessorMultisource{
 		//add the filters to output data
 		$filteringAttributes = UniteFunctionsUC::getVal($dataResponse, "uc_filtering_attributes");
 		$filteringAddClass = UniteFunctionsUC::getVal($dataResponse, "uc_filtering_addclass");
-
+		
 		if(!empty($filteringAttributes)){
 			$this->addData["uc_filtering_attributes"] = $filteringAttributes;
 			$this->addData["uc_filtering_addclass"] = $filteringAddClass;
@@ -123,7 +123,7 @@ class UniteCreatetorParamsProcessorMultisource{
 
 		foreach($arrPosts as $post){
 			$postItem = $this->objProcessor->getPostDataByObj($post, null, null, array("skip_images" => true));
-
+			
 			$arrPostItems[] = $postItem;
 		}
 
@@ -995,7 +995,7 @@ class UniteCreatetorParamsProcessorMultisource{
 	 * show debug
 	 */
 	private function showDebug_input($source, $arrData){
-
+		
 		if($this->showDataType == "output")
 			return(false);
 
@@ -1099,7 +1099,9 @@ class UniteCreatetorParamsProcessorMultisource{
 
 				$value = UniteFunctionsUC::getVal($itemParam, "default_value");
 				$paramType = UniteFunctionsUC::getVal($itemParam, "type");
-
+				
+				$objectID = "";
+				
 				//set from items defaults
 				switch($this->itemsType){
 					case self::SOURCE_PRODUCTS:
@@ -1109,11 +1111,17 @@ class UniteCreatetorParamsProcessorMultisource{
 
 						if($paramType === UniteCreatorDialogParam::PARAM_IMAGE)
 							$value = UniteFunctionsUC::getVal($dataItem, "image");
+
+						$objectID = UniteFunctionsUC::getVal($dataItem, "id");
+						
 					break;
 					case self::SOURCE_TERMS:
 					case self::SOURCE_USERS:
 						if($paramName === "title")
 							$value = UniteFunctionsUC::getVal($dataItem, "name");
+						
+						$objectID = UniteFunctionsUC::getVal($dataItem, "id");
+						
 					break;
 					case self::SOURCE_MENU:
 						if($paramName === "title")
@@ -1133,8 +1141,12 @@ class UniteCreatetorParamsProcessorMultisource{
 					$value = $this->arrDefaults[$paramName];
 
 				$item[$paramName] = $value;
-
+				
 				$item = $this->objProcessor->getProcessedParamData($item, $value, $itemParam, UniteCreatorParamsProcessorWork::PROCESS_TYPE_OUTPUT);
+				
+				$item["object_type"] = $this->itemsType;
+				$item["object_id"] = $objectID;
+				
 			}
 
 			//modify demo fields
@@ -1295,7 +1307,7 @@ class UniteCreatetorParamsProcessorMultisource{
 		}
 
 		$arrItems = $this->getItems($itemsSource, $arrData);
-		
+				
 		$data[$name] = $arrItems;
 
 		if($this->showDebugData === true)

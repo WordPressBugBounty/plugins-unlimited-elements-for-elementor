@@ -11,6 +11,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 	
 	const SELECTOR_PLACEHOLDER = "{{selector}}";
 	
+	
 	/**
 	 * add settings provider types
 	 */
@@ -263,17 +264,11 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$this->addPostIDSelect($name."_exclude_authors", __("Exclude Users", "unlimited-elements-for-elementor"), $arrConditionCustom, "users");
 
 
-		//---- include users -----
+		//---- include users new -----
+		
+		$this->addPostIDSelect($name."_include_authors", __("Include Users", "unlimited-elements-for-elementor"), $arrConditionManual, "users");		
 
-		$params = array();
-		$params["origtype"] = UniteCreatorDialogParam::PARAM_DROPDOWN;
-		$params["is_multiple"] = true;
-		$params["placeholder"] = __("Select one or more users", "unlimited-elements-for-elementor");
-		$params["elementor_condition"] = $arrConditionManual;
-
-		$this->addMultiSelect($name."_include_authors", $arrAuthorsFlipped, __("Select Specific Users", "unlimited-elements-for-elementor"), "", $params);
-
-
+		
 		//---- hr before max users -----
 
 		$params = array();
@@ -2357,7 +2352,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_HR;
 
 		$this->addHr($name . "_hr_after_order_dir", $params);
-
+		
 		//allow to modify settings by third party plugins
 		do_action("ue_modify_post_list_settings", $this, $name);
 

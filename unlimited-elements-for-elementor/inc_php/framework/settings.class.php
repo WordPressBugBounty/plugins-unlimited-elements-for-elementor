@@ -60,6 +60,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		const TYPE_GALLERY = "gallery";
 		const TYPE_TABS = "tabs";
 		const TYPE_GROUP_SELECTOR = "group_selector";
+		const TYPE_DATETIME = "date_time";
 
 
 		//------------------------------------------------------------
@@ -692,6 +693,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		public function addTextBox($name, $defaultValue = "", $text = "", $arrParams = array()){
 
 			$this->add($name, $defaultValue, $text, self::TYPE_TEXT, $arrParams);
+		}
+
+		/**
+		 * add datetime box
+		 */
+		public function addDateTime($name, $defaultValue = "", $value = "", $arrParams = array()){
+
+			$this->add($name, $defaultValue, $value, self::TYPE_DATETIME, $arrParams);
 		}
 
 		/**

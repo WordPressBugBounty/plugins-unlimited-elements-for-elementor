@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 //---------------------------------------------------------------------------------------------------------------------	
 	
 	if(!function_exists("dmp")){
-		function dmp($str){
-			
+		function dmp($str){ 
+						
 			echo "<div align='left' style='direction:ltr;color:black;'>";
 			echo "<pre>";
 			print_r($str);

@@ -321,22 +321,39 @@ class UniteCreatorManager{
 			<ul id="<?php echo esc_attr($menuID)?>" class="unite-context-menu" data-type="<?php echo esc_attr($menuType)?>" style="display:none">
 			<?php foreach($arrMenu as $operation=>$text):
 				$class = "";
+				$disabled = false;
+				$title = false;
 				if(is_array($text)){
 					$arr = $text;
 					$text = $arr["text"];
 					$class = UniteFunctionsUC::getVal($arr, "class");
+					$disabled = UniteFunctionsUC::getVal($arr, "disabled");
+					$title = UniteFunctionsUC::getVal($arr, "title");
 				}
 				
-				if(!empty($class)){
+				if(!empty($class)) {
 					$class = esc_attr($class);
 					$class = "class='$class'";
 				}
-			?>
-			<li>
-				<a href="javascript:void(0)" data-operation="<?php echo esc_attr($operation)?>" <?php 
-				uelm_echo($class)?>><?php echo esc_html($text)?></a>
-			</li>
-			<?php endforeach?>
+
+				if(!empty($title)) {
+					$title = esc_attr($title);
+					$title = "title='$title'";
+				}
+
+				if(!$disabled) {
+					$operation = esc_attr($operation);
+					$operation = "data-operation='$operation'";
+				}
+				?>
+				<li>
+					<a href="javascript:void(0)" 
+						<?php uelm_echo($operation)?> 
+						<?php uelm_echo($class)?>
+						<?php uelm_echo($title)?>
+					><?php echo esc_html($text)?></a>
+				</li>					
+				<?php endforeach?>
 			</ul>
 		
 		<?php 
@@ -435,13 +452,17 @@ class UniteCreatorManager{
 		?>
 						<div class="items_wrapper unselectable">
 						 	
-						 	<?php if($this->enableActions == true):?>	
-						 	<div id="manager_buttons" class="manager_buttons">
-						 		
-						 		<?php $this->putItemsButtons()?>
-						 		
-						 	</div>
-						 	<?php endif?>
+						 	<?php 
+							if($this->enableActions == true):
+								?>	
+								<div id="manager_buttons" class="manager_buttons">
+									
+									<?php $this->putItemsButtons()?>
+									
+								</div>
+								<?php 
+							endif
+							?>
 						 	
 						 	<?php $this->putHtmlAfterButtons()?>
 						 	

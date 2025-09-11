@@ -154,7 +154,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		public static $url_ajax_full;
 		public static $url_ajax_front;
 		public static $url_default_addon_icon;
-
+		public static $url_buy_platform;
+		
 		public static $urlPlugin;
 		public static $urlPluginImages;
 
@@ -188,7 +189,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		public static $arrViewAliases = array();
 		public static $arrDatasetTypes = array();		
 		public static $objActiveAddonForAssets = null;
-		public static $isProVersion = false;
+		public static $isProVersion = false;		
 		public static $isAdminRTL = false;
 		public static $enableInsideWidgetFreeVersionNotifiaction = true;
 		public static $colorPickerType = "spectrum";
@@ -215,7 +216,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				self::$current_protocol = "https://";
 
 			self::$current_host = UniteFunctionsUC::getVal($_SERVER, "HTTP_HOST");
-
+			
 			//add https:// prefix
 			if(strpos(self::$current_host, "https://") === false && strpos(self::$current_host, "http://") === false)
 				self::$current_host = self::$current_protocol.self::$current_host;
@@ -232,10 +233,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			self::$pathSettings = self::$pathPlugin."settings/";
 			self::$pathPro = self::$pathPlugin."pro/";
 			self::$pathFramework = self::$pathPlugin."inc_php/framework/";
-
+			
+			self::$url_buy_platform = self::URL_BUY;
+			
 			if(file_exists(self::$pathPro))
 				self::$isProVersion = true;
-
+			
 			if(defined("UC_TEST_FREE_VERSION"))
 				self::$isProVersion = false;
 

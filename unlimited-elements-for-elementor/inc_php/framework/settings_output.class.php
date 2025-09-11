@@ -215,11 +215,12 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		$class = "";
 
-		if($isHidden === true){
-			if($type === UniteSettingsUC::TYPE_HIDDEN)
+		if($isHidden === true) {
+			if($type === UniteSettingsUC::TYPE_HIDDEN) {
 				$class = "unite-hidden"; // just hide
-			else
+			} else {
 				$class = "unite-setting-hidden"; // exclude from values/selectors
+			}
 		}
 
 		return $class;
@@ -535,10 +536,10 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		if(empty($previewStyle) === false)
 			$previewStyle = "style=\"$previewStyle\"";
 
-		$urlName = UniteFunctionsUC::getVal($setting, "url_name");
 		// translators: %s is a string
 		$urlTitle = sprintf(__("%s URL", "unlimited-elements-for-elementor"), $title);
-		$urlValue = $imageUrl;
+		$urlName = UniteFunctionsUC::getVal($setting, "url_name");
+        $urlValue = $imageUrl;
 
 		$sizes = UniteFunctionsWPUC::getArrThumbSizes();
 		$sizeName = UniteFunctionsUC::getVal($setting, "size_name");
@@ -552,6 +553,10 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 			class="unite-setting-image unite-setting-input-object unite-settings-exclude"
 			data-settingtype="image"
 			data-name="<?php echo esc_attr($name); ?>"
+            data-urlname="<?php echo esc_attr($urlName); ?>"
+            data-urlvalue="<?php echo esc_attr($urlValue); ?>"
+            data-sizename="<?php echo esc_attr($sizeName); ?>"
+            data-sizevalue="<?php echo esc_attr($sizeValue); ?>"
 			<?php 
 			$this->getDefaultAddHtml($setting);
 			if(empty($source) === false) {
@@ -562,7 +567,9 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 			}
 			?>
 		>
-
+            <?php
+            /*
+            ?>
 			<div class="unite-setting-image-preview" <?php 
 				uelm_echo($previewStyle); ?>>
 				<div class="unite-setting-image-placeholder">
@@ -631,9 +638,11 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 					</div>
 				</div>
 			</div>
-
-		</div>
-		<?php
+            <?php
+            */
+            ?>
+        </div>
+        <?php
 	}
 
 	/**
@@ -1179,6 +1188,9 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 			case UniteSettingsUC::TYPE_TEXT:
 				$this->drawTextInput($setting);
 			break;
+			case UniteSettingsUC::TYPE_DATETIME:
+				$this->drawDateTimeInput($setting);
+			break;
 			case UniteSettingsUC::TYPE_COLOR:
 				$this->drawColorPickerInput($setting);
 			break;
@@ -1305,7 +1317,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		if(empty($units) === false)
 			$wrapperClass .= " with-units";
-
+		
 		?>
 		<div
 			id="<?php echo esc_attr($id); ?>"
@@ -1317,7 +1329,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 			<?php if($showSlider === true): ?>
 				<div
-					class="unite-setting-range-slider"
+					class="unite-setting-range-slider t1"
 					data-value="<?php echo esc_attr($value); ?>"
 					data-min="<?php echo esc_attr($min); ?>"
 					data-max="<?php echo esc_attr($max); ?>"
@@ -1442,6 +1454,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		$defaultUnit = reset($units);
 		$selectedUnit = $selectedUnit ?: $defaultUnit;
 
+		/*
 		?>
 		<select
 			class="unite-units-picker"
@@ -1457,6 +1470,14 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 				</option>
 			<?php endforeach; ?>
 		</select>
+		<?php
+		*/
+		?>
+		<select 
+            class="unite-units-picker" 
+            <?php echo count($units) === 1 ? "disabled" : ""; ?> 
+            data-value="<?php echo esc_attr($selectedUnit); ?>" 
+        ></select>
 		<?php
 	}
 
@@ -1552,6 +1573,93 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 	}
 
 	/**
+	 * draw datetime input
+	 */
+	protected function drawDateTimeInput($setting) {
+		
+		$id = UniteFunctionsUC::getVal($setting, "id");
+		$name = UniteFunctionsUC::getVal($setting, "name");
+		$value = UniteFunctionsUC::getVal($setting, "value");
+		$placeholder = UniteFunctionsUC::getVal($setting, "placeholder");
+		$style = UniteFunctionsUC::getVal($setting, "style");
+		$disabled = UniteFunctionsUC::getVal($setting, "disabled");
+		$readonly = UniteFunctionsUC::getVal($setting, "readonly");
+		$unit = UniteFunctionsUC::getVal($setting, "unit");
+		$units = UniteFunctionsUC::getVal($setting, "units");
+		$step = UniteFunctionsUC::getVal($setting, "step");
+		$typeNumber = UniteFunctionsUC::getVal($setting, "type_number");
+		$typeNumber = UniteFunctionsUC::strToBool($typeNumber);
+		$typePassword = UniteFunctionsUC::getVal($setting, "ispassword");
+		$typePassword = UniteFunctionsUC::strToBool($typePassword);
+
+		if(is_array($value) === true)
+			$value = json_encode($value);
+
+		if(empty($style) === false)
+			$style = "style='" . esc_attr($style) . "'";
+
+		$wrapperClass = "";
+		$defaultClass = self::INPUT_CLASS_NORMAL;
+
+		if(empty($unit) === false && empty($units) === true)
+			$units = array($unit);
+
+		if(empty($units) === false){
+			$wrapperClass .= " with-units";
+			$defaultClass = self::INPUT_CLASS_NUMBER;
+			$typeNumber = true;
+		}
+
+		// $type = "datetime-local";
+		$type = 'text';
+
+		$class = $this->getInputClassAttr($setting, $defaultClass . ' flatpickr');
+
+		?>
+		<div class="unite-input-wrapper <?php echo esc_attr($wrapperClass); ?> class2">
+
+			<input
+				<?php 
+				uelm_echo($class); ?>
+				id="<?php echo esc_attr($id); ?>"
+				type="<?php echo esc_attr($type); ?>"
+				name="<?php echo esc_attr($name); ?>"
+				value="<?php echo esc_attr($value); ?>"
+				<?php 
+				uelm_echo($style); ?>
+				<?php 
+				$this->getDefaultAddHtml($setting);
+				if(empty($placeholder) === false) {
+					echo " placeholder=\"" . esc_attr($placeholder) . "\"";
+				}
+	
+				if(empty($disabled) === false) {
+					echo " disabled";
+				}
+	
+				if(empty($readonly) === false) {
+					echo " readonly";
+				}
+				if($typeNumber === true
+					&& empty($step) === false
+					&& is_numeric($step) === true
+				) {
+					echo " step=\"" . esc_attr($step) . "\"";
+				}
+				?>
+			/>
+
+			<?php if(empty($units) === false): ?>
+				<div class="unite-input-units">
+					<?php $this->drawUnitsPicker($units, $unit); ?>
+				</div>
+			<?php endif; ?>
+
+		</div>
+		<?php
+	}
+
+	/**
 	 * draw hidden input
 	 */
 	protected function drawHiddenInput($setting){
@@ -1579,7 +1687,9 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		$name = $setting["name"];
 		$id = $setting["id"];
 		$value = $setting["value"];
+		$title = $setting["title"] ?? false;
 		$href = "#";
+		$class = (isset($setting["class"]) ? $setting["class"] : "unite-button-secondary");
 		$gotoView = UniteFunctionsUC::getVal($setting, "gotoview");
 
 		if(!empty($gotoView))
@@ -1594,7 +1704,10 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		?>
 		<a id="<?php echo esc_attr($id)?>" href="<?php echo esc_url($href)?>" name="<?php echo esc_attr($name)?>" <?php 
 		echo ( $isNewWindow ? 'target="_blank"' : '' );
-		?> class="unite-button-secondary"><?php echo esc_html($value)?></a>
+		if($title) {
+			echo ' title="' . esc_html($title) . '"';
+		}
+		?> class="<?php echo esc_html($class) ?>"><?php echo esc_html($value)?></a>
 		<?php
 
 	}
@@ -1913,11 +2026,13 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		$options["saps_type"] = $this->sapsType;
 		$options["id_prefix"] = $idPrefix;
 
+        /*
 		//add google fonts
 		$fontData = HelperUC::getFontPanelData();
 		$googleFonts = UniteFunctionsUC::getVal($fontData, "arrGoogleFonts");
 
 		$options["google_fonts"] = $googleFonts;
+        */
 
 		return($options);
 	}

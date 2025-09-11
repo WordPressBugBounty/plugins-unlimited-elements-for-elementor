@@ -872,7 +872,7 @@ function UniteAdminUC(){
 	 * get input type (from jquery object)
 	 */
 	this.getInputType = function(objInput){
-
+		
 		if(objInput.is("input[type='text']"))
 			return("text");
 
@@ -893,25 +893,28 @@ function UniteAdminUC(){
 
 		if(objInput.is("input[type='number']"))
 			return("text");
-
+		
+		if(objInput.is("input[type='search']"))
+			return("text");
+		
 
 		//get type by data
 		var inputType = objInput.data("inputtype");
 		if(inputType)
 			return(inputType);
 
-
 		//output exception
 		var inputName = objInput.prop("name");
 		if(!inputName)
 			inputName = objInput[0].tagname;
-
+		
 		trace(objInput);
 		console.trace();
 
 		throw new Error("Undefined input: " + inputName);
 	}
-
+	
+	
 	/**
 	 * check if the input is simple input
 	 */
@@ -1333,13 +1336,15 @@ function UniteAdminUC(){
 	/**
 	 * convert to relative url
 	 */
-	this.urlToRelative = function(url, urlBase){
+	this.urlToRelative = function(url, urlBase) {
 
-		if(!urlBase)
-			var urlBase = g_urlBaseUC;
+		if (!urlBase)
+			urlBase = g_urlBaseUC;
 
-		url = url.replace(urlBase, "");
-		return(url);
+		if (typeof url !== 'string')
+			return '';
+
+		return url.replace(urlBase, '');
 	};
 
 

@@ -1500,7 +1500,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 			case UniteCreatorDialogParam::PARAM_DATETIME:
 				$extra["placeholder"] = "YYYY-mm-dd HH:ii";
 
-				$this->addTextBox($name, $value, $title, $extra);
+				$this->addDateTime($name, $value, $title, $extra);
 			break;
 			default:
 				$isAdded = $this->addSettingsProvider($type, $name, $value, $title, $extra);
@@ -1600,14 +1600,20 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 
     	if(UniteProviderAdminUC::$isUserHasCapability == false)
     		return(false);
-
+		
     	$addonID =  $this->currentAddon->getID();
 		
     	$urlEditAddon = HelperUC::getViewUrl_EditAddon($addonID, "", "tab=uc_tablink_html");
 
     	$arrParams = array();
-    	$arrParams["url"] = $urlEditAddon;
-    	$arrParams["newwindow"] = true;
+		$arrParams["url"] = $urlEditAddon;
+		$arrParams["newwindow"] = true;
+		if(GlobalsUnlimitedElements::$enableEditWidget == false) {
+			$arrParams["title"] = "Available only in PRO Version";
+			$arrParams["class"] = "unite-button-secondary uc-disabled";			
+		} else {
+			$arrParams["class"] = "unite-button-secondary";	
+		}
 
     	$this->addButton("html_button_gotoaddon", __("Edit Widget HTML","unlimited-elements-for-elementor"), self::PARAM_NOTEXT, $arrParams);
 
@@ -1660,11 +1666,11 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 
 		$this->addControl("show_widget_debug_data", "widget_debug_data_type", "show", "true");
 		
-       if(self::$addEditWidgetHTML === null){
-	    	self::$addEditWidgetHTML = HelperProviderCoreUC_EL::getGeneralSetting("show_edit_html_button");
-	    	self::$addEditWidgetHTML = UniteFunctionsUC::strToBool(self::$addEditWidgetHTML);
-       }
-	   
+		if(self::$addEditWidgetHTML === null){
+				self::$addEditWidgetHTML = HelperProviderCoreUC_EL::getGeneralSetting("show_edit_html_button");
+				self::$addEditWidgetHTML = UniteFunctionsUC::strToBool(self::$addEditWidgetHTML);
+		}
+	
 		if(self::$addEditWidgetHTML === true)
 			$this->addEditWidgetButton();
 		

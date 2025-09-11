@@ -81,7 +81,7 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 	 * draw responsive picker
 	 */
 	private function drawResponsivePicker($selectedType){
-
+        /*
 		$devices = array(
 			"desktop" => array(
 				"title" => __("Desktop", "unlimited-elements-for-elementor"),
@@ -110,6 +110,8 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 			<?php endforeach; ?>
 		</select>
 		<?php
+        */
+        ?><select class="unite-responsive-picker"></select><?php
 	}
 
 	/**
@@ -155,8 +157,10 @@ class UniteSettingsOutputSidebarUC extends UniteCreatorSettingsOutput{
 		$tabsId = UniteFunctionsUC::getVal($setting, "tabs_id");
 		$tabsValue = UniteFunctionsUC::getVal($setting, "tabs_value");
 
-		if (empty($tabsId) === false && empty($tabsValue) === false)
-			$addAttr .= " data-tabs-id=\"$tabsId\" data-tabs-value=\"$tabsValue\"";
+		if (empty($tabsId) === false && empty($tabsValue) === false) {
+            $addAttr .= " data-tabs-id=\"$tabsId\" data-tabs-value=\"$tabsValue\"";
+            $baseClass .= ' unite-tabs-hidden';
+        }
 
 		$rowClass = $this->drawSettingRow_getRowClass($setting, $baseClass);
 		

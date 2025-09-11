@@ -95,6 +95,10 @@ class UniteCreatorAdmin extends UniteBaseAdminClassUC{
 		//remove third party script if exists
 		UniteFunctionsWPUC::findAndRemoveInclude("selectWoo.full.min");
 		
+		//flatpickr
+		HelperUC::addScript("flatpickr", "flatpickr_js", "js/flatpickr");
+		HelperUC::addStyle("flatpickr", "flatpickr_css", "js/flatpickr");
+		
 		//include dropzone
 		switch ($viewForIncludes){
 			case GlobalsUC::VIEW_EDIT_ADDON:
@@ -104,13 +108,6 @@ class UniteCreatorAdmin extends UniteBaseAdminClassUC{
 
 				//clear third party includes
 				UniteFunctionsWPUC::findAndRemoveInclude("dropzone.min");
-
-				/*
-				UniteFunctionsWPUC::findAndRemoveInclude("ue_select2_js");
-				UniteFunctionsWPUC::findAndRemoveInclude("ue_select2_css", false);
-
-				//UniteFunctionsWPUC::printRegisteredIncludes();	//print scripts
-				*/
 
 				//dropzone
 				HelperUC::addScript("dropzone", "dropzone_js","js/dropzone");

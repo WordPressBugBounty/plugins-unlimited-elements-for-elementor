@@ -206,7 +206,7 @@ if($showBFBanner == true){
 						<li class="ue-feature"><?php echo esc_html__("Easy Chat for Any Question", "unlimited-elements-for-elementor"); ?></li>
 						<li class="ue-feature"><?php echo esc_html__("Animated Backgrounds & Premium Templates", "unlimited-elements-for-elementor"); ?></li>
 					</ul>
-					<a class="ue-content-btn ue-flex-center ue-pro-cta-btn" href="<?php echo esc_url(GlobalsUC::URL_BUY); ?>" target="_blank">
+					<a class="ue-content-btn ue-flex-center ue-pro-cta-btn" href="<?php echo esc_url(GlobalsUC::$url_buy_platform); ?>" target="_blank">
 						<?php echo esc_html__("Get Unlimited Elements Premium", "unlimited-elements-for-elementor"); ?>
 					</a>
 				</div>
@@ -225,7 +225,7 @@ if($showBFBanner == true){
 		
 			<?php if($showBFBanner == true):?>
 			<div class="ue-content-card ue-dashboard-banner">
-				<a class="ue-dashboard-banner__link" href="<?php echo esc_url(GlobalsUC::URL_BUY)?>">
+				<a class="ue-dashboard-banner__link" href="<?php echo esc_url(GlobalsUC::$url_buy_platform)?>">
 					<img class="ue-dashboard-banner__image" src="<?php echo esc_url($urlBannerImage);?>" target="_blank">
 				</a>
 			</div>
@@ -242,7 +242,7 @@ if($showBFBanner == true){
 					</div>
 					<div class="ue-content-title ue-cta-title">Get Unlimited Elements Pro</div>
 					<div class="ue-cta-desc">Unlock access to all our premium widgets and features.</div>
-					<a href="<?php echo esc_url(GlobalsUC::URL_BUY)?>"
+					<a href="<?php echo esc_url(GlobalsUC::$url_buy_platform)?>"
 						target="_blank"
 						class="ue-content-btn ue-flex-center ue-pro-cta-btn">Get Unlimited Elements Pro</a>
 					<ul class="ue-cta-features-list">

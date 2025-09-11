@@ -454,7 +454,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			foreach($arr as $key=>$value){
 
 				$isArray = is_array($value);
-
+				
 				if($isArray == true){
 					$html .= "$key:";
 					$html .= "<pre style='padding-left:60px;font-size:12px;'>";
@@ -483,7 +483,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 * put debug box
 		 */
 		public static function putHtmlDataDebugBox($data){
-			
+						
 			self::putHtmlDataDebugBox_start();
 			
 			if(is_array($data))

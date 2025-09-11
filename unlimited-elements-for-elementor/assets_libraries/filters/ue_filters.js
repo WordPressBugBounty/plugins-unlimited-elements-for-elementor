@@ -725,7 +725,7 @@ function UEDynamicFilters(){
 	 * get active filter items, if no items - return 0
 	 */
 	function getGridActiveFilterItems(objGrid){
-
+		
 		var arrActiveItems = objGrid.data("active_filters_items");
 
 		if(!arrActiveItems)
@@ -2904,7 +2904,7 @@ function UEDynamicFilters(){
 		
 		if(!objFilters)
 			return(null);
-				
+		
 		var objAjaxOptions = getGridAjaxOptions(objFilters, objGrid, false,false,{getonly:true});
 
 		if(!objAjaxOptions)
@@ -3652,8 +3652,9 @@ function UEDynamicFilters(){
 		output["url_replace"] = urlReplace;
 		output["terms"] = arrTerms;
 		output["search"] = search;
+		output["title_start"] = title_start;
 		output["filters_string"] = urlFilterString;
-
+		
 		if(g_showDebug == true){
 
 			trace("output: ");
@@ -4121,8 +4122,8 @@ function UEDynamicFilters(){
 			arrTerms = arrTerms.flat();
 
 		// Create a new array for filtered items
-		let filteredTerms = [];
-
+		var filteredTerms = [];
+		
 		for (let term of arrTerms) {
 				// Skip if the term is an object with slug "__or__", "__and__", or "__ucor__"
 				if (term.slug === "__ucand__" || term.slug === "__ucor__") {
@@ -4153,6 +4154,24 @@ function UEDynamicFilters(){
 
 			arrTerms.push(objSearch);
 		}
+		
+		//title start
+		var titleStart = getVal(objAjaxOptions, "title_start");
+		
+		if(titleStart){
+			
+			var objTitleStart = {
+					type:"titlestart",
+					"key": "titlestart|"+titleStart,
+					"title": titleStart
+				};
+
+			if(!arrTerms)
+				var arrTerms = [];
+
+			arrTerms.push(objTitleStart);
+		}
+			
 		
 		objGrid.data("active_filters_items", arrTerms);
 		objGrid.trigger(g_vars.EVENT_UPDATE_ACTIVE_FILTER_ITEMS, [arrTerms]);

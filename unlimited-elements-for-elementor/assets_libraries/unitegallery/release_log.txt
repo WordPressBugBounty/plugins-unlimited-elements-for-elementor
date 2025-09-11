@@ -1,3 +1,12 @@
+ 
+
+version 1.7.86
+
+done some sanitize for titles agains xss attacks
+
+version 1.7.85
+
+added some more icons in tiles gallery mode
 
 version 1.7.84
 

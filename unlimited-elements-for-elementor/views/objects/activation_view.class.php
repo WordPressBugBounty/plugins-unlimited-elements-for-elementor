@@ -33,7 +33,7 @@ class UniteCreatorActivationView extends UniteElementsBaseUC{
 	 */
 	public function __construct(){
 
-		$this->urlPricing = GlobalsUC::URL_BUY;
+		$this->urlPricing = GlobalsUC::$url_buy_platform;
 		$this->urlSupport = GlobalsUC::URL_SUPPORT;
 
 		$this->textActivate = esc_html__("Activate Blox Pro", "unlimited-elements-for-elementor");

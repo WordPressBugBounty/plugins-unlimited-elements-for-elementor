@@ -1023,7 +1023,7 @@ class HelperProviderUC{
 
 					return(null);
 				}
-
+		
 				$termID = wp_get_term_taxonomy_parent_id($termID);
 
 				if(empty($termID)){
@@ -1063,7 +1063,7 @@ class HelperProviderUC{
 
 			$arrCustomFields = UniteFunctionsWPUC::getPostCustomFields($postID, false);
 		}
-
+		
 		//------ load from term
 
 		if(!empty($termID)){
@@ -1075,6 +1075,7 @@ class HelperProviderUC{
 			$arrCustomFields = UniteFunctionsWPUC::getUserCustomFields($userID, false);
 					
 		
+			
 		//show debug meta text
 
 		if($showDebugMeta == true){
@@ -1197,7 +1198,7 @@ class HelperProviderUC{
 		if($showDebugData == true)
 			self::getRepeaterItems_printDebugValues($arrRepeaterItems);
 		
-		
+					
 		return($arrRepeaterItems);
 	}
 	

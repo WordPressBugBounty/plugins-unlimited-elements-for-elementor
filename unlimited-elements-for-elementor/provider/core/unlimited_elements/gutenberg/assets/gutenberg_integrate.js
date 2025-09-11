@@ -220,6 +220,21 @@ var uelm_WidgetSettingsCacheFlags = [];
 			var widgetCacheKey = props.attributes._id + '_settings'; 
 
 			debug('loadSettingsContent: ' + widgetCacheKey);
+			debug(props);
+
+			/*
+				for (var index in g_gutenbergParsedBlocks) {
+					var block = g_gutenbergParsedBlocks[index];
+
+					if (block._rootId === props.attributes._rootId) {
+						setWidgetContent(block.html);
+						
+						delete g_gutenbergParsedBlocks[index];
+
+						return;
+					}
+				}
+*/
 
 			if ( uelm_WidgetSettingsCache[widgetCacheKey] && uelm_WidgetSettingsCacheFlags[widgetCacheKey] ) {
 
@@ -252,69 +267,68 @@ var uelm_WidgetSettingsCacheFlags = [];
 				debug('save widget settings cache: ' + widgetCacheKey);
 
 				uelm_WidgetSettingsCache[widgetCacheKey] = html;
-				
+				uelm_WidgetSettingsCacheFlags[widgetCacheKey] = true;
 				setSettingsContent(html);
 			});
 		};
 
 		var loadWidgetContent = function () {
 
-			var widgetCacheKey = props.attributes._id; 
+    var widgetCacheKey = props.attributes._id; 
 
-			if ( uelm_WidgetSettingsCache[widgetCacheKey] && uelm_WidgetSettingsCacheFlags[widgetCacheKey] ) {
-				debug('init widget from cache');
-				
-				uelm_WidgetSettingsCacheFlags[widgetCacheKey] = false;
-				
-				initWidget( uelm_WidgetSettingsCache[widgetCacheKey] );
-				
-				return;
-			} else {
-				debug(uelm_WidgetSettingsCache);
-			}
-			
-			if (!widgetContent) {
-				// load existing widgets from the page
-				for (var index in g_gutenbergParsedBlocks) {
-					var block = g_gutenbergParsedBlocks[index];
+    if ( uelm_WidgetSettingsCache[widgetCacheKey] && uelm_WidgetSettingsCacheFlags[widgetCacheKey] ) {
+        debug('init widget from cache');
+        
+        uelm_WidgetSettingsCacheFlags[widgetCacheKey] = false;
+        
+        initWidget( uelm_WidgetSettingsCache[widgetCacheKey] );
+        
+        return;
+    } else {
+        debug(uelm_WidgetSettingsCache);
+    }
+    
+    if (!widgetContent) {
+        // load existing widgets from the page
+        for (var index in g_gutenbergParsedBlocks) {
+            var block = g_gutenbergParsedBlocks[index];
 
-					if (block.name === props.name) {
-						setWidgetContent(block.html);
-						
-						delete g_gutenbergParsedBlocks[index];
+            if (block.name === props.name) {
+                setWidgetContent(block.html);
+                
+                delete g_gutenbergParsedBlocks[index];
 
-						return;
-					}
-				}
-			}
+                return;
+            }
+        }
+    }
 
-			var settings = getSettings();
+    // ⬇Before there was: if (!settings) return; — REMOVE IT
+    var settings = getSettings(); // may be null for a new block
 
-			if (!settings)
-				return; // wait for the settings
-			
-			if (widgetRequestRef.current !== null)
-				widgetRequestRef.current.abort();
+    if (widgetRequestRef.current !== null)
+        widgetRequestRef.current.abort();
 
-			var loaderElement = jQuery(widgetLoaderRef.current);
+    var loaderElement = jQuery(widgetLoaderRef.current);
 
-			loaderElement.show();
-			
-			widgetRequestRef.current = g_ucAdmin.ajaxRequest("get_addon_output_data", {
-				id: props.attributes._id,
-				root_id: props.attributes._rootId,
-				platform: "gutenberg",
-				source: "editor",
-				settings: settings,
-				selectors: true,
-			}, function (response) {
-				debug('save widget cache: ' + widgetCacheKey);
-				uelm_WidgetSettingsCache[widgetCacheKey] = response;
-				initWidget(response);
-			}).always(function () {
-				loaderElement.hide();
-			});
-		};
+    loaderElement.show();
+    
+    widgetRequestRef.current = g_ucAdmin.ajaxRequest("get_addon_output_data", {
+        id: props.attributes._id,
+        root_id: props.attributes._rootId,
+        platform: "gutenberg",
+        source: "editor",
+        settings: settings || null,  // important: send null if there are no settings
+        selectors: true,
+    }, function (response) {
+        debug('save widget cache: ' + widgetCacheKey);
+        uelm_WidgetSettingsCache[widgetCacheKey] = response;
+        uelm_WidgetSettingsCacheFlags[widgetCacheKey] = true;
+        initWidget(response);
+    }).always(function () {
+        loaderElement.hide();
+    });
+};
 
 		var initWidget = function (response) {
 			var html = g_ucAdmin.getVal(response, "html");
@@ -326,18 +340,31 @@ var uelm_WidgetSettingsCacheFlags = [];
 			});
 		};
 
-		we.useEffect(function () {
-			// load the settings on the block mount
-			loadSettingsContent();
+we.useEffect(function () {
+    // ⬇️ FIRST output the widget with defaults
+    loadWidgetContent();
 
-			// remove loaded styles from the page
-			jQuery("#unlimited-elements-styles").remove();
-			
-			return function () {
-				// destroy the settings on the block unmount
-				ucSettings.destroy();
-			};
-		}, []);
+    // remove loaded styles from the page
+    jQuery("#unlimited-elements-styles").remove();
+    
+    return function () {
+        // destroy the settings on the block unmount
+        ucSettings.destroy();
+    };
+}, []);
+
+// When the widget’s HTML appears — load the settings if they aren’t loaded yet
+we.useEffect(function () {
+    if (!widgetContent) return;
+
+    // Insert the HTML manually (as you had it before)
+    jQuery(widgetRef.current).html(widgetContent);
+
+    // If settingsContent is still missing — load it
+    if (!settingsContent) {
+        loadSettingsContent();
+    }
+}, [widgetContent]);
 
 		we.useEffect(function () {
 			// settings are visible if:
@@ -369,14 +396,6 @@ var uelm_WidgetSettingsCacheFlags = [];
 
 			initSettings();
 		}, [settingsContent]);
-
-		we.useEffect(function () {
-			if (!widgetContent)
-				return;
-
-			// insert the widget html manually for the inline script to work
-			jQuery(widgetRef.current).html(widgetContent);
-		}, [widgetContent]);
 
 		we.useEffect(function () {
 			loadWidgetContent();

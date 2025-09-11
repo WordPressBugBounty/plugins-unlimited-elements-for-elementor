@@ -224,7 +224,7 @@ class UniteCreatorSchema {
 		if(empty($arrSchema)) 
 			return;
 		
-		$jsonItems = json_encode($arrSchema);
+		$jsonItems = json_encode($arrSchema, JSON_UNESCAPED_UNICODE);
 		
 		if($jsonItems === false)
 			return(false);
@@ -738,7 +738,7 @@ private function addFieldsMappingSettings($objSettings, $name, $paramsItems) {
 private function schemaFaq($items, $title = "") {
     $schema = array(
         '@context' => self::SCHEMA_ORG_SITE,
-        '@type' => 'FAQ',
+        '@type' => 'FAQPage',
     );
     if (!empty($title)) $schema['name'] = $title;
 

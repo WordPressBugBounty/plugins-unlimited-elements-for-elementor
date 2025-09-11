@@ -19,12 +19,15 @@ class UniteCreatorAcfIntegrate{
 	const TYPE_USER = "user";
 	const TYPE_REPEATER = "repeater";
 	const TYPE_GALLERY = "gallery";
+	const TYPE_TAXONOMY = "taxonomy";	
+	
 	const PREFIX = "cf_";
 	
 	const SHOW_DEBUG_FIELDS = false;
 	const DEBUG_UNKNOWN_TYPE = false;
 
 	private $outputImageSize = null;
+	private $arrFieldsTypes = array();
 	
 	
 		/**
@@ -281,21 +284,25 @@ class UniteCreatorAcfIntegrate{
 		private function getDataType($data, $key){
 			
 			$type = null;
-			
+						
 			//image and application types
+			
+			$fieldType = UniteFunctionsUC::getVal($this->arrFieldsTypes, $key);
+			
+			if($fieldType == "taxonomy")
+				return(self::TYPE_TAXONOMY);
 			
 			if(is_array($data)){
 				$type = UniteFunctionsUC::getVal($data, "type");
 				
 				if(!empty($type))
 					return($type);
-				
+									
 				if(isset($data[0])){
 					
 					$item = $data[0];
 					
 					$itemType = gettype($item);
-					
 					
 					if($item instanceof WP_Post)
 						return(self::TYPE_POSTS_LIST);
@@ -429,6 +436,71 @@ class UniteCreatorAcfIntegrate{
 		}
 		
 		/**
+		 * get taxonomy field
+		 */
+		private function getTaxonomyField($data) {
+					
+			if (empty($data) || !is_array($data)) {
+				return $data;
+			}
+		
+			$isIDsArray = UniteFunctionsUC::isValidIDsArray($data);
+		
+			if (!$isIDsArray) {
+				return $data;
+			}
+		
+			$termIDs = array();
+			foreach ($data as $term) {
+				if ($term instanceof WP_Term) {
+					$termIDs[] = $term->term_id;
+				} elseif (is_array($term) && isset($term['term_id'])) {
+					$termIDs[] = (int) $term['term_id'];
+				} elseif (is_numeric($term)) {
+					$termIDs[] = (int) $term;
+				}
+			}
+		
+			$termIDs = array_unique(array_filter($termIDs));
+		
+			if (empty($termIDs)) {
+				return array();
+			}
+		
+			$terms = get_terms(array(
+				'include' => $termIDs,
+				'hide_empty' => false,
+				'fields' => 'all',
+			));
+		
+			if (is_wp_error($terms) || empty($terms)) {
+				return array();
+			}
+		
+			$termsAssoc = array();
+			foreach ($terms as $termObj) {
+				$termsAssoc[$termObj->term_id] = array(
+					'id'          => $termObj->term_id,
+					'name'        => $termObj->name,
+					'slug'        => $termObj->slug,
+					'description' => $termObj->description,
+					'taxonomy'    => $termObj->taxonomy,
+					'link'        => get_term_link($termObj),
+				);
+			}
+		
+			$output = array();
+			foreach ($termIDs as $termID) {
+				if (isset($termsAssoc[$termID])) {
+					$output[] = $termsAssoc[$termID];
+				}
+			}
+		
+			return $output;
+		}
+		
+		
+		/**
 		 * get acf type
 		 */
 		private function addAcfValues($arrValues, $key, $data){
@@ -445,7 +517,8 @@ class UniteCreatorAcfIntegrate{
 			}
 			
 			$type = $this->getDataType($data, $key);
-						
+
+			
 			switch($type){
 				case "simple":		//simple type like string or boolean
 					
@@ -502,6 +575,11 @@ class UniteCreatorAcfIntegrate{
 					$userData = $this->getUserData($data, $key);
 					$arrValues = array_merge($arrValues, $userData);
 					
+				break;
+				case self::TYPE_TAXONOMY:		//taxonomies repeater
+					
+					$arrValues[$key] = $this->getTaxonomyField($data);
+										
 				break;
 				case self::TYPE_REPEATER:
 					
@@ -666,18 +744,46 @@ class UniteCreatorAcfIntegrate{
 			
 		}
 		
+		
+		/**
+		 * remember field types from objects
+		 */
+		private function rememberFieldTypesFields($arrObjects){
+		    if(empty($arrObjects) || !is_array($arrObjects))
+		        return;
+		
+		    foreach($arrObjects as $key => $arrObject){
+		        if(!is_array($arrObject))
+		            continue;
+		
+		        $type = UniteFunctionsUC::getVal($arrObject, "type");
+		
+		        if(empty($type))
+		            continue;
+				
+		        $this->arrFieldsTypes[$key] = $type;
+		    }
+		}
+
+
 		/**
 		 * get fields data
 		 */
 		private function getAcfFieldsData($postID, $objName = "post"){
 			
+			$this->arrFieldsTypes = array();		
+			
 			switch($objName){
 				case "post":
 					
 					$arrData = get_fields($postID);
-										
+					
+					$arrObjects = get_field_objects($postID);
+					
+					$this->rememberFieldTypesFields($arrObjects);
+					
 					$arrData = $this->modifyFieldsData($arrData);
-										
+						
 				break;
 				case "term":
 					
@@ -742,8 +848,6 @@ class UniteCreatorAcfIntegrate{
 		 */
 		public function getAcfFields($postID, $objName = "post", $addPrefix = true, $imageSize = null){
 			
-			
-			
 			$isActive = self::isAcfActive();
 			
 			if($isActive == false)
@@ -753,7 +857,7 @@ class UniteCreatorAcfIntegrate{
 				$this->outputImageSize = $imageSize;
 			
 			$arrData = $this->getAcfFieldsData($postID, $objName);
-						
+			
 			$arrDataOutput = array();
 			foreach($arrData as $key => $value){
 				

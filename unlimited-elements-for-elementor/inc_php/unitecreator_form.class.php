@@ -172,15 +172,17 @@ class UniteCreatorForm{
 
 			// get saved settings from layout
 			$fieldSettings = HelperProviderCoreUC_EL::getAddonValuesWithDataFromContent($arrContent, $fieldId);
-
+			
 			// @TODO: get array of the uc_items and extract text of the selected value
 			$fieldText = "";
 
 			if($fieldType === self::TYPE_FILES){
 				$fieldValue = UniteFunctionsUC::getVal($arrFiles, $fieldId, array());
 				$fieldParams["allowed_types"] = $this->prepareFilesFieldAllowedTypes($fieldSettings);
+			}else{
+				$fieldValue = $this->prettifyFieldValue($fieldType, $fieldValue);
 			}
-
+			
 			// get values that we'll use in the form
 			// note: not all the fields will have a name/title
 			$name = UniteFunctionsUC::getVal($fieldSettings, "field_name");
@@ -701,7 +703,7 @@ class UniteCreatorForm{
 				$emailFields["headers"],
 				$emailFields["attachments"]
 			);
-
+			
 			if($isSent === false){
 				$emails = implode(", ", $emailFields["to"]);
 	
@@ -728,88 +730,6 @@ class UniteCreatorForm{
 		return $emailAddresses;
 	}
 
-	/**
-	 * get form fields replaces
-	 */
-	private function getFieldsReplaces($includeAllFields = false){
-		
-		$formFieldsReplace = array();
-		
-		$formFieldReplaces = array();
-
-		foreach($this->formFields as $field){
-			$title = $this->getFieldTitle($field);
-			$name = $field["name"];
-			$value = $field["text"] ?: $field["value"];
-
-			if($field["type"] === self::TYPE_FILES)
-				$value = $this->getFilesFieldLinksHtml($value);
-
-			$formFieldsReplace[] = "$title: $value";
-
-			if(empty($name) === false){
-				$placeholder = self::PLACEHOLDER_FORM_FIELDS . "." . $name;
-
-				$formFieldPlaceholders[] = $placeholder;
-				$formFieldReplaces[$placeholder] = $value;
-			}
-		}
-
-		$formFieldsReplace = implode("<br />", $formFieldsReplace);
-
-		$emailReplaces = array_merge(array(
-			self::PLACEHOLDER_FORM_FIELDS => $formFieldsReplace,
-		), $formFieldReplaces);
-		
-		
-		return(array($formFieldPlaceholders, $emailReplaces));
-	}
-	
-	/**
-	 * prepare email message field
-	 */
-	private function prepareEmailMessageField($emailMessage,$includeFormFields = true){
-
-		$formFieldPlaceholders = array();
-		
-		$arrResponse = $this->getFieldsReplaces($includeFormFields);
-		
-		$formFieldPlaceholders = $arrResponse[0];
-		$emailReplaces = $arrResponse[1];
-		
-		if(empty($formFieldPlaceholders))
-			$formFieldPlaceholders = array();
-		
-		$emailPlaceholders = array_merge(array(
-			self::PLACEHOLDER_ADMIN_EMAIL,
-			self::PLACEHOLDER_EMAIL_FIELD,
-			self::PLACEHOLDER_SITE_NAME,
-			self::PLACEHOLDER_PAGE_URL,
-			self::PLACEHOLDER_PAGE_TITLE,
-		), $formFieldPlaceholders);
-		
-		if($includeFormFields == true)
-			$emailPlaceholders[] = self::PLACEHOLDER_FORM_FIELDS;
-		
-		$emailMessage = $this->replacePlaceholders($emailMessage, $emailPlaceholders, $emailReplaces);
-		$emailMessage = preg_replace("/(\r\n|\r|\n)/", "<br />", $emailMessage); // nl2br
-		
-		//clear placeholders that left
-		$emailMessage = $this->clearPlaceholders($emailMessage);
-		
-		
-		return $emailMessage;
-	}
-	
-	/**
-	 * replace title placeholders
-	 */
-	private function replaceTitlePlaceholders($fromName){
-		
-		$fromName = $this->prepareEmailMessageField($fromName, false);
-		
-		return($fromName);
-	}
 	
 	
 	/**
@@ -1097,6 +1017,115 @@ class UniteCreatorForm{
 	}
 
 	
+	private function ________REPLACE_MESSAGE_________(){}
+	
+	/**
+	 * make the value prettier, if it's json response
+	 */
+	private function prettifyFieldValue($fieldType, $fieldValue){
+		
+		if($fieldType == self::TYPE_FILES)
+			return($fieldValue);
+		
+		$decodedValue = UniteFunctionsUC::maybeJsonDecode($fieldValue);
+
+		if (is_array($decodedValue) == false)
+			return($fieldValue);
+			
+		$pretty = array();
+		
+		foreach ($decodedValue as $key => $value) {
+			$pretty[] = "$key: $value";
+		}
+		
+		return implode("\n<br>", $pretty);
+	}
+	
+	
+	/**
+	 * get form fields replaces
+	 */
+	private function getFieldsReplaces($includeAllFields = false){
+		
+		$formFieldsReplace = array();
+		
+		$formFieldReplaces = array();
+
+		foreach($this->formFields as $field){
+			$title = $this->getFieldTitle($field);
+			$name = $field["name"];
+			$value = $field["text"] ?: $field["value"];
+
+			if($field["type"] === self::TYPE_FILES)
+				$value = $this->getFilesFieldLinksHtml($value);
+			
+			$formFieldsReplace[] = "$title: $value";
+
+			if(empty($name) === false){
+				$placeholder = self::PLACEHOLDER_FORM_FIELDS . "." . $name;
+
+				$formFieldPlaceholders[] = $placeholder;
+				$formFieldReplaces[$placeholder] = $value;
+			}
+		}
+		
+		$formFieldsReplace = implode("<br />", $formFieldsReplace);
+
+		$emailReplaces = array_merge(array(
+			self::PLACEHOLDER_FORM_FIELDS => $formFieldsReplace,
+		), $formFieldReplaces);
+		
+		
+		return(array($formFieldPlaceholders, $emailReplaces));
+	}
+	
+	/**
+	 * prepare email message field
+	 */
+	private function prepareEmailMessageField($emailMessage,$includeFormFields = true){
+
+		$formFieldPlaceholders = array();
+		
+		$arrResponse = $this->getFieldsReplaces($includeFormFields);
+		
+		$formFieldPlaceholders = $arrResponse[0];
+		$emailReplaces = $arrResponse[1];
+		
+		if(empty($formFieldPlaceholders))
+			$formFieldPlaceholders = array();
+		
+		$emailPlaceholders = array_merge(array(
+			self::PLACEHOLDER_ADMIN_EMAIL,
+			self::PLACEHOLDER_EMAIL_FIELD,
+			self::PLACEHOLDER_SITE_NAME,
+			self::PLACEHOLDER_PAGE_URL,
+			self::PLACEHOLDER_PAGE_TITLE,
+		), $formFieldPlaceholders);
+		
+		if($includeFormFields == true)
+			$emailPlaceholders[] = self::PLACEHOLDER_FORM_FIELDS;
+		
+		$emailMessage = $this->replacePlaceholders($emailMessage, $emailPlaceholders, $emailReplaces);
+		$emailMessage = preg_replace("/(\r\n|\r|\n)/", "<br />", $emailMessage); // nl2br
+		
+		//clear placeholders that left
+		$emailMessage = $this->clearPlaceholders($emailMessage);
+		
+		
+		return $emailMessage;
+	}
+	
+	/**
+	 * replace title placeholders
+	 */
+	private function replaceTitlePlaceholders($fromName){
+		
+		$fromName = $this->prepareEmailMessageField($fromName, false);
+		
+		return($fromName);
+	}
+	
+	
 	private function ________SUBMIT_________(){}
 	
 	
@@ -1119,9 +1148,9 @@ class UniteCreatorForm{
 
 		if(empty($formData) === true)
 			UniteFunctionsUC::throwError("No form data found.");
-
+		
 		$postContent = HelperProviderCoreUC_EL::getElementorContentByPostID($postId);
-
+		
 		if(empty($postContent))
 			UniteFunctionsUC::throwError("Form elementor content not found.");
 
@@ -1138,7 +1167,7 @@ class UniteCreatorForm{
 
 		$formSettings = $addonForm->getProcessedMainParamsValues();
 		$formFields = $this->getFieldsData($templateContent ?: $postContent, $formData, $formFiles);
-						
+		
 		if(!empty($recaptchaToken))
 			$formSettings["recaptcha_token"] = $recaptchaToken;
 
@@ -1996,7 +2025,7 @@ class UniteCreatorForm{
 		$blockPeriod = HelperProviderCoreUC_EL::getGeneralSetting("form_antispam_block_period");
 		$blockPeriod = empty($blockPeriod) === false ? intval($blockPeriod) : 180; // default is 180 minutes
 		$blockPeriod = max($blockPeriod * 60, 60); // minimum is 60 seconds
-
+		
 		$settings = array(
 			"enabled" => $enabled,
 			"submissions_limit" => $submissionsLimit,

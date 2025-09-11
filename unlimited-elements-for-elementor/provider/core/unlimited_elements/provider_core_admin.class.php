@@ -110,9 +110,9 @@ class UniteProviderCoreAdminUC_Elementor extends UniteProviderAdminUC{
 			$this->addSubMenuPage(GlobalsUnlimitedElements::VIEW_DASHBOARD, __('Home', "unlimited-elements-for-elementor"), "adminPages");
 		}
 		
-		if($verFlags[GlobalsUC::VERSION_ELEMENTOR] && $verFlags[GlobalsUC::VERSION_GUTENBERG]) { 
+		if(GlobalsUnlimitedElements::$enableElementorSupport && GlobalsUnlimitedElements::$enableGutenbergSupport) { 
 			$widgetsTitle = __('Widgets and Blocks', "unlimited-elements-for-elementor");
-		} elseif($verFlags[GlobalsUC::VERSION_GUTENBERG]) {
+		} elseif(GlobalsUnlimitedElements::$enableGutenbergSupport) {
 			$widgetsTitle = __('Blocks', "unlimited-elements-for-elementor");
 		} else {
 			$widgetsTitle = __('Widgets', "unlimited-elements-for-elementor");
@@ -120,14 +120,14 @@ class UniteProviderCoreAdminUC_Elementor extends UniteProviderAdminUC{
 		
 		$this->addSubMenuPage(GlobalsUnlimitedElements::VIEW_ADDONS_ELEMENTOR, $widgetsTitle, "adminPages");
 				
-		if($verFlags[GlobalsUC::VERSION_ELEMENTOR] && $verFlags[GlobalsUC::VERSION_GUTENBERG]) { 
+		if(GlobalsUnlimitedElements::$enableElementorSupport && GlobalsUnlimitedElements::$enableGutenbergSupport) { 
 			$bgWidgetsTitle = __('Background Widgets and Blocks', "unlimited-elements-for-elementor");
-		} elseif($verFlags[GlobalsUC::VERSION_GUTENBERG]) {
-			$bgWidgetsTitle = __('Background Blocks', "unlimited-elements-for-elementor");
-		} else {
+		} elseif(GlobalsUnlimitedElements::$enableElementorSupport == true) {
 			$bgWidgetsTitle = __('Background Widgets', "unlimited-elements-for-elementor");
-		}	
-
+		} else {
+			$bgWidgetsTitle = __('Background Blocks', "unlimited-elements-for-elementor");
+		}
+		
 		if(HelperProviderUC::isBackgroundsEnabled() === true)
 			$this->addSubMenuPage(GlobalsUnlimitedElements::VIEW_BACKGROUNDS, $bgWidgetsTitle, "adminPages");
 

@@ -1,4 +1,18 @@
 
+
+version 1.5.149:
+
+* Feature - acf fields now get taxonomies array
+* Feature - changed users list to all users
+* Feature - added object_id to multisource item fields
+* Fix - added alphabet filter to active filtered items
+* Fix - fixed search by sku in woo ajax search
+* Fix - fixed email likert form field saving and sending
+* Fix - fixed form file field upload
+* Fix - fixed post list stuck when insert on editor
+* Fix - done some protection for the galleries against mallicious code
+
+
 version 1.5.148:
 
 * Fix - elementor rtl issues fix
