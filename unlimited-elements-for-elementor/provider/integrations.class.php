@@ -603,6 +603,30 @@ class UniteCreatorPluginIntegrations{
 		
 	}
 	
+	private function ___________SHORT_PIXEL_________(){}
+	
+	
+	/**
+	 * disable short pixel optimization for this page
+	 */
+	public static function disableShortPixel(){
+		
+		if(!defined("SHORTPIXEL_API"))
+			return(false);
+						
+		if(!defined("DONOTCDN"))
+			define("DONOTCDN",true);
+		
+		add_filter('shortpixel/image/filecheck', '__return_false');
+		
+		add_filter( 'shortpixel/plugin/init', function( $init ) {
+			
+		    return false;
+		}, 10, 1 );
+		
+	}
+	
+	
 	private function ___________LANGUAGES_________(){}
 
 	
@@ -631,7 +655,7 @@ class UniteCreatorPluginIntegrations{
 	}
 	
 	private function ___________GENERAL_INIT_INTEGRATIONS_________(){}
-		
+
 	
 	/**
 	 * modify post query integrations
@@ -756,7 +780,7 @@ class UniteCreatorPluginIntegrations{
 		$this->initLanguagesIntegration();
 
 		$this->initProcessStickyPosts();
-			
+		
 		//if(function_exists("trp_enable_translatepress"))
 			//$this->initTranslatePressIntegration();
 			

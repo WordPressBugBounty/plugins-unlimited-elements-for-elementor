@@ -355,6 +355,8 @@ class UCChangelogView extends WP_List_Table{
 
 		$urlViewImport = HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_CHANGELOG_IMPORT);
 		$isChangelogImportDisabled = HelperProviderUC::isAddonChangelogImportDisabled();
+		
+		$urlRequestsLog = HelperUC::getViewUrl("requests-log");
 
 		$script = 'jQuery(document).ready(function (){
                jQuery(\'.migrate-button\').click(function(){
@@ -386,6 +388,10 @@ class UCChangelogView extends WP_List_Table{
         <div class="alignright export-button" style="margin-left: 8px; display: none" >
 			<?php submit_button(__("Export Changelog", "unlimited-elements-for-elementor"), "primary", self::ACTION_EXPORT_JSON, false, array("id" => "export-json-submit")); ?>
         </div>
+
+		<div class="alignright" style="margin-left: 8px;" >
+			<a class="button" href="<?php echo esc_url($urlRequestsLog); ?>"><?php esc_attr_e("View Requests Log", "unlimited-elements-for-elementor"); ?></a>
+		</div>
 
 		<div class="alignright" style="margin-left: 8px;" >
 			<?php submit_button(__("Export", "unlimited-elements-for-elementor"), "primary", self::ACTION_EXPORT, false, array("id" => "export-submit")); ?>
@@ -714,6 +720,9 @@ class UCChangelogView extends WP_List_Table{
 		global $wpdb;
 
 		$where = "1 = 1";
+		
+		// Exclude request log types
+		$where .= $wpdb->prepare(" AND type != %s", array(UniteCreatorAddonChangelog::TYPE_REQUEST));
 
 		$id = UniteFunctionsUC::getVal($filters, self::FILTER_ID, null);
 

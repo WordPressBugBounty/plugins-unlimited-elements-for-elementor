@@ -10,13 +10,15 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UCAdminNoticeBFBanner extends UCAdminNoticeAbstract{
-
+	
+	private $showFullHtmlVesion = false;
+	
 	/**
 	 * get the notice identifier
 	 */
 	public function getId(){
 		
-		return 'black_friday_24';
+		return 'black_friday_25a';
 	}
 	
 	/**
@@ -81,6 +83,12 @@ class UCAdminNoticeBFBanner extends UCAdminNoticeAbstract{
 			    cursor: pointer;
 			    transition: background 0.3s ease;			
 			}
+						
+			
+		";
+		
+		
+		$cssFullVersion = "
 			
 			.uc-bf-banner__small{
 				width:100%;
@@ -100,14 +108,16 @@ class UCAdminNoticeBFBanner extends UCAdminNoticeAbstract{
 				.uc-black-friday-banner{
 					height:auto;
 				}
-				
 			}
-			
-			
 		";
+		
+		if($this->showFullHtmlVesion == true)
+			$css .= $cssFullVersion;
+		
 		
 		return($css);
 	}
+	
 	
 	/**
 	 * get inside html
@@ -132,8 +142,9 @@ class UCAdminNoticeBFBanner extends UCAdminNoticeAbstract{
 		
 		$htmlButton = "<div class='uc-bf-banner__button'>Get Deal Now!</div>";
 		
-		$html = "
+		$fullVersionHtml = "
 			<div class='uc-bf-banner__inside'>
+				
 				 <div class='uc-bf-banner__inner uc-bf-banner__left-group'>
 					{$htmlLogoWhite}
 					{$htmlHeaderImage}
@@ -144,8 +155,14 @@ class UCAdminNoticeBFBanner extends UCAdminNoticeAbstract{
 					{$htmlButton}
 				 </div>
 			</div>
+		";
+		
+		$html = "
 			<img class='uc-bf-banner__small' src='{$urlSmallImage}'>
 		";
+		
+		if($this->showFullHtmlVesion == true)
+			$html = $fullVersionHtml.$html;
 		
 		return($html);
 	}
@@ -207,6 +224,8 @@ class UCAdminNoticeBFBanner extends UCAdminNoticeAbstract{
 	 * initialize the notice
 	 */
 	protected function init(){
+		
+		//$this->showFullHtmlVesion = true;
 		
 		$this->freeOnly();		
 		$this->setLocation(self::LOCATION_EVERYWHERE);

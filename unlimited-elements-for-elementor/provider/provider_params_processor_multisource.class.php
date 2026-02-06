@@ -122,11 +122,12 @@ class UniteCreatetorParamsProcessorMultisource{
 		$arrPostItems = array();
 
 		foreach($arrPosts as $post){
+			
 			$postItem = $this->objProcessor->getPostDataByObj($post, null, null, array("skip_images" => true));
 			
 			$arrPostItems[] = $postItem;
 		}
-
+		
 		return $arrPostItems;
 	}
 
@@ -486,7 +487,7 @@ class UniteCreatetorParamsProcessorMultisource{
 	private function getFields(){
 
 		$arrFields = array();
-
+		
 		foreach($this->arrValues as $key => $value){
 			$prefix = $this->nameParam . "_field_source_";
 

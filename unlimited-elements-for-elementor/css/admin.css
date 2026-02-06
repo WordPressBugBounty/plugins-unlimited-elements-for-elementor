@@ -1314,7 +1314,14 @@ ul.unite-context-menu li a:focus {
 	color: var(--ue-color-primary);
 }
 
+/*
 .unite-inputs .unite-setting-tabs-item-input:checked + .unite-setting-tabs-item-label {
+	background-color: var(--ue-color-light);
+	color: var(--ue-color-dark);
+}
+*/
+
+.unite-inputs .unite-setting-tabs-item-label-checked {
 	background-color: var(--ue-color-light);
 	color: var(--ue-color-dark);
 }

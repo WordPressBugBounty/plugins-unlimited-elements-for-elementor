@@ -121,7 +121,7 @@ class UniteCreatorAjaxSeach{
 			}
 			
 		}
-
+		
 		if (GlobalsProviderUC::$showPostsQueryDebug == true ) {
 			
 			//print total posts

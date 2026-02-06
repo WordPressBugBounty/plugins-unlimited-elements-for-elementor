@@ -167,6 +167,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		public static $is_admin;
 		public static $isLocal;		//if website located in localhost
 		public static $is_admin_debug_mode = false;
+		public static $isDebug = false;		//general debug for any puprose, for admin permissions only		
 		public static $isDOUBLYSupported = true;
 		public static $is_ssl;
 		public static $path_base;
@@ -337,6 +338,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$isTestFree = HelperUC::hasPermissionsFromQuery("testfreeversion");
 			if($isTestFree == true)
 				GlobalsUC::$isProVersion = false;
+			
+			//general debug
+			$isGeneralDebug = HelperUC::hasPermissionsFromQuery("ucdebug");
+			if($isGeneralDebug == true)
+				GlobalsUC::$isDebug = true;
 			
 		}
 

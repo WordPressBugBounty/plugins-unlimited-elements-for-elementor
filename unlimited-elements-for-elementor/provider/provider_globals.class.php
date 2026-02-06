@@ -31,6 +31,8 @@ class GlobalsProviderUC{
 	
 	public static $activeAddonForSettings = null;
 	public static $lastPostQuery = null;
+	public static $lastNumPosts = null;
+	
 	public static $lastPostQuery_page = null;
 	public static $lastPostQuery_offset = null;
 	public static $lastPostQuery_type = null;
@@ -43,7 +45,10 @@ class GlobalsProviderUC{
 	public static $isUnderAjaxSearch = false;
 	public static $isUnderRenderPostItem = false;
 	public static $isUnderItem = false;
+	
 	public static $lastItemParams = array();
+	public static $lastWidgetParams = array();
+	
 	public static $lastObjectID = null;
 	public static $isUnderDynamicTemplateLoop = false;
 	public static $isUnderNoWidgetsToDisplay = false;
@@ -54,6 +59,7 @@ class GlobalsProviderUC{
 	
 	
 	public static $arrTestTermIDs = null;	//test term id's for render taxonomies under ajax
+	public static $arrTestAuthorIDs = null;	//test author id's for render authors under ajax
 	
 	public static $disablePostContentFiltering = false;
 	

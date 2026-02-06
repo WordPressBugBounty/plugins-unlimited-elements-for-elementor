@@ -42,7 +42,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     private function a_______INIT______(){}
 
-
+	
     /**
      * set the addon
      */
@@ -83,15 +83,14 @@ class UniteCreatorElementorWidget extends Widget_Base {
 		}
 
 		$options = $this->objAddon->getOptions();
-
-
+		
 		/*
 		$isPostListExists = $this->objAddon->isParamTypeExists(UniteCreatorDialogParam::PARAM_POSTS_LIST);
 
 		if($isPostListExists == true)
 			return(GlobalsUnlimitedElements::LINK_HELP_POSTSLIST);
 		*/
-
+	
 		return(null);
 	}
 
@@ -114,7 +113,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     }
 
-
+	
     /**
      * init by addon
      */
@@ -326,8 +325,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     	if($this->isNoMemory == true)
     		return($this->isNoMemory_addonName. "(no memory)");
-
-
+		
     	if($this->isConsolidated)
     		$title = $this->objCat->getTitle();
     	else
@@ -344,23 +342,21 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     	if($this->isNoMemory == true)
     		return(array());
-
-
+		
     	if($this->isConsolidated == true){
 
     		$arrHandles = array();
     		foreach($this->arrAddons as $objAddon)
     			$arrHandles = $this->ucGetAddonDepents($objAddon, $arrHandles);
-
     	}
     	else
     		$arrHandles = $this->ucGetAddonDepents($objAddon);
-
+		
     	$arrHandles = array_values($arrHandles);
 
     	return($arrHandles);
     }
-
+	
     private function a___________ADD_CONTROLS__________(){}
 
 
@@ -476,7 +472,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     }
 
-
+	
     /**
      * modify default items data, to make in elementor way
      */
@@ -493,7 +489,8 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     	return $arrItemsData;
     }
-
+	
+    
     /**
      * modify items controls
      * add !important for better css generation, sometimes it's before the 
@@ -564,11 +561,11 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     	$titleField = $this->objAddon->getOption("items_title_field");
     	$titleField = trim($titleField);
-
+	
 
     	if(!empty($itemsTitle))
     		$itemsLabel = $itemsTitle;
-
+	
     	 if($this->isBGWidget == false){
 
 	    	//add multisource condition
@@ -584,14 +581,12 @@ class UniteCreatorElementorWidget extends Widget_Base {
 	    		$arrSection["condition"] = $condition;
 	    	}
 
-
 	        $this->start_controls_section('section_items', $arrSection);
-
     	 }
-
+		
           //add heading label text
           if(!empty($itemsHeading)){
-
+	
 			$this->add_control(
 				'uc_item_section_heading10',
 				array(
@@ -1075,7 +1070,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     		break;
     		default:
-
+		
     			$addonTitle = $this->objAddon->getTitle();
 
     			dmp("param not found in widget: $addonTitle");
@@ -1774,7 +1769,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
     				$arrControl["title_field"] = $titleField;
 
     			$arrParamsItems = $settingsItems->getSettingsCreatorFormat();
-
+				
     			foreach($arrParamsItems as $itemParam)
     				$this->addElementorParamUC($itemParam, $repeater);
 
@@ -2061,7 +2056,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     			foreach($arrChildParams as $childParam)
     				$this->addElementorParamUC($childParam, $objControls);
-
+				
     		break;
     		case UniteCreatorDialogParam::PARAM_TYPOGRAPHY:
     			$this->addTypographyByParamUC($param);
@@ -2073,7 +2068,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
     			//add regular control
 
     			$arrControl = $this->getControlArrayUC($param);
-
+								
     			$type = UniteFunctionsUC::getVal($param, "type");
 
 				if(self::DEBUG_CONTROLS && $this->isBGWidget == false){
@@ -2315,15 +2310,44 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     	return($params);
     }
-
+	
+    /**
+     * add schema controls
+     */
+    private function addSchemaControlsGlobal(){
+    	
+    	// get schema settings only 
+    	// add those settings into the controls 
+    	//$arrParamsItems = $settingsItems->getSettingsCreatorFormat();
+    	
+    	$objSettings = new UniteCreatorSettings();
+    	$objSchema = new UniteCreatorSchema();
+    	$objSchema->setObjAddon($this->objAddon);
+    	
+    	$objSchema->addSchemaMultipleSettings($objSettings);
+		
+		$arrSchemaParams = $objSettings->getSettingsCreatorFormat();
+		
+    	$this->start_controls_section("unlimited_schema", array(
+    		"label"=>__("Schema", 'unlimited-elements-for-elementor'),
+    		"tab"=>"general"));
+		
+    	foreach($arrSchemaParams as $param)
+    		$this->addElementorParamUC($param);
+    	
+    	$this->end_controls_section();
+    	
+    }
+    
+    
     /**
      * add pagination controls
      */
     protected function addPaginationControls($postListParam = null){
-
+		
     	$objPagination = new UniteCreatorElementorPagination();
     	$objPagination->addElementorSectionControls($this, $postListParam);
-
+		
     }
 
     /**
@@ -2334,7 +2358,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
     	$this->start_controls_section("unlimited_advanced_features", array(
     		"label"=>__("Advanced", 'unlimited-elements-for-elementor'),
     		"tab"=>"general"));
-
+	
        //update button if loaded from ajax
 		
        if(UniteCreatorElementorIntegrate::$enableEditHTMLButton === null){
@@ -2372,7 +2396,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 			$debugTypeOptions["post_titles"] = __( 'Posts Titles', 'unlimited-elements-for-elementor' );
 			$debugTypeOptions["post_meta"] = __( 'Posts Titles and Meta', 'unlimited-elements-for-elementor' );
 		}
-
+		
 		$debugTypeOptions["current_post_data"] = __( 'Current Post Data', 'unlimited-elements-for-elementor' );
 		$debugTypeOptions["settings_values"] = __( 'Show Settings Values', 'unlimited-elements-for-elementor' );
 
@@ -2788,14 +2812,18 @@ class UniteCreatorElementorWidget extends Widget_Base {
           if($isFontsEnabled == true)
           		$this->addFontControlsUC();
 
-
+		
           //add pagination section if needed
 
           if($hasPostsList == true){
+          	
           		$this->addPaginationControls($postListParam);
-
+				
+          		if(GlobalsUnlimitedElements::$enableSchema == true)
+          			$this->addSchemaControlsGlobal();
+          
           }else if($hasListing == true){
-
+		
           	$enablePagination = UniteFunctionsUC::getVal($listingParam, "enable_pagination");
           	$enablePagination = UniteFunctionsUC::strToBool($enablePagination);
 
@@ -2811,6 +2839,10 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
           	if($enablePagination == true)
           		$this->addPaginationControls($listingParam);
+
+          	if(GlobalsUnlimitedElements::$enableSchema == true)
+          		$this->addSchemaControlsGlobal();
+          	
           }
 
           $showMore = false;
@@ -2819,7 +2851,8 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
           //add debug controls
           $this->addAdvancedSectionControls($showMore, $isItemsEnabled);
-
+		  
+          
 
 		if(self::DEBUG_CONTROLS && $this->isBGWidget == false){
 
@@ -3159,8 +3192,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 	        $isFontsEnabled = $objAddon->isFontsPanelEnabled();
 	    	$isItemsEnabled = $objAddon->isHasItems();
 	        $itemsType = $objAddon->getItemsType();
-
-
+	
    			$meta_addonsParams[$addonName] = array();
 
    			//add gallery param
@@ -3789,7 +3821,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
     protected function modifyValuesBySwitchers($arrValues, $objAddon){
 
     	$paramsSwitchers = $objAddon->getParams(UniteCreatorDialogParam::PARAM_RADIOBOOLEAN);
-
+		
     	if(empty($paramsSwitchers))
     		return($arrValues);
 
@@ -4157,7 +4189,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
      * render the HTML
      */
     protected function render() {
-
+				
     	if(UniteCreatorElementorIntegrate::$isSaveBuilderMode == true){
 
     		uelm_echo("skip render: ".$this->get_name());

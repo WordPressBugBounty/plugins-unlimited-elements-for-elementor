@@ -319,19 +319,34 @@ class UniteCreatorRSS{
         $firstRssElement = UniteFunctionsUC::getArrFirstValue($arrRss);
 		
         $hasImageKey = $this->hasImageKey($firstRssElement);
-        
-        if($hasImageKey == false)
+                
+        if($hasImageKey == true)
         	return($arrRss);
+           	 	  
+        $isAddedImage = true;
         	
         foreach ($arrRss as $rssKey => $rssItem) {
         	
              $imageLink = $this->getFirstImageLinkFromContent($rssItem);
-
-           	 if(!empty($imageLink))
+		
+           	 if(!empty($imageLink)){
+           	 	  
+           	 	  $isAddedImage = true;
+           	 	  
                   $arrRss[$rssKey]['image_url'] = $imageLink;
-             
+           	 }
+           	 
 		}
-
+		
+		//add image key to others
+		if($isAddedImage == true){
+        	foreach ($arrRss as $rssKey => $rssItem) {
+        		if(array_key_exists("image_url", $arrRss[$rssKey]) == false)
+        			$arrRss[$rssKey]["image_url"] = "";
+        	}
+		}
+		
+		
 		return($arrRss);
 	}
 
@@ -474,7 +489,6 @@ class UniteCreatorRSS{
         }
 		
         $rssKeyArr = $this->filterByTypeAndCatId($params, UniteCreatorDialogParam::PARAM_TEXTFIELD, $catValue[GlobalsUC::ATTR_CATID]);
-		
         
         $isAutoDetect = UniteFunctionsUC::getVal($data, "auto_detect_keys");
         $isAutoDetect = UniteFunctionsUC::strToBool($isAutoDetect);
@@ -486,6 +500,7 @@ class UniteCreatorRSS{
             dmp('--- Fields Keys ---');
         }
 
+        
         foreach ($rssKeyArr as $keyValue) {
         	
             $keyName = $keyValue['name'];
@@ -502,9 +517,9 @@ class UniteCreatorRSS{
                 $keys[$keyName] = $defaultKey;
             	                
             } else {
-            	            	
+            	      	
                 $autoKey = $this->autoDetectKeys($keyName, $firstRssElement);
-				
+
                 if (!empty($autoKey)) {
             		            		
                 	$isAutoKey = true;
@@ -514,10 +529,11 @@ class UniteCreatorRSS{
                 } else if($keyName == 'image_key') {
                     
                 	$searchImageKey = $this->searchForImageKey($firstRssElement);
-
-                    if (!empty($searchImageKey))
+                	
+                    if (!empty($searchImageKey)){
                         $keys[$keyName] = $searchImageKey;
-                       
+                                                
+                    }
                 }
             }
 
@@ -528,8 +544,9 @@ class UniteCreatorRSS{
             	
             	$autoText = $isAutoKey?" <span style='color:grey;'>[auto detect]</span>":"";
             	
-                if(!array_key_exists($keyName, $keys))
+                if(!array_key_exists($keyName, $keys)){
                     dmp("{$title}: <span style='color:darkred;'>not detected, please select a custom one</span>");
+                }
                  else if (array_key_exists($keys[$keyName], $firstRssElement))
                     dmp("{$title}: <b>$key</b> {$autoText}");
                  else 
@@ -555,7 +572,7 @@ class UniteCreatorRSS{
         	$keys["date_key_original"] = "publish";
         else
         	$keys["date_key_original"] = "publish_date";
-        
+                
         
         return $keys;
     }
@@ -569,16 +586,13 @@ class UniteCreatorRSS{
         	return(null);
         	
             $autoDetectKey = $this->rssAutoDetectKeys[$keyName];
-				
+			
             $arrKeys = explode('|', $autoDetectKey);
-
-            foreach ($arrKeys as $arrKey) {
-            	
-                $foundValue = UniteFunctionsUC::getVal($rssElement, $arrKey);
-
-                if (!empty($foundValue)) {
-                    return $arrKey;
-                }
+			
+            foreach ($arrKeys as $key) {
+            					
+                if(array_key_exists($key, $rssElement))
+                	return($key);				
             }
             
             return(null);
@@ -647,20 +661,28 @@ class UniteCreatorRSS{
         $contentKeys = explode('|', $possibleContentKeys);
         $descKeys = explode('|', $possibleDescKeys);
         $rssKeys = array_merge($contentKeys, $descKeys);
-
-        $pattern = '/<img[^>]+src=["\']([^"\']+)["\']/i';
-
+		
+        //$pattern = '/<img[^>]+src=["\']([^"\']+)["\']/i';
+		$pattern = '/<img\b[^>]*\bsrc\s*=\s*["\']([^"\']+)["\'][^>]*>/i';
+		
         foreach ($rssKeys as $rssKey) {
+        	
             if(array_key_exists($rssKey, $rssItem)) {
+            	
                 if (!is_array($rssItem[$rssKey])) {
-                    if (preg_match($pattern, $rssItem[$rssKey], $matches)) {
+                	
+                	$content = $rssItem[$rssKey];
+                	                	
+                    if (preg_match($pattern, $content, $matches)) {
+                    	                    	
                         if (!empty($matches[1])) {
                             return $matches[1];
                         }
                     }
+                    
                 } else {
                     $firstImage = $this->getFirstImageLinkFromContent($rssItem[$rssKey]);
-
+					
                     if (!empty($firstImage)) {
                         return $firstImage;
                     }

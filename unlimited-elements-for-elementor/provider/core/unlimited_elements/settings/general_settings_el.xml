@@ -238,6 +238,25 @@
       default="">
     </field>
 
+    <field name="serpapi_heading"
+      type="statictext"
+      label="&lt;b&gt;Serp API&lt;/b&gt;">
+    </field>
+
+    <field name="serpapi_key"
+      type="text"
+      label="Serp API Key"
+      description="Used for google reviews. Get your API key here: &lt;a href='https://serpapi.com/' target='_blank'&gt;serpapi.com&lt;/a&gt;."
+      default="">
+    </field>
+
+    <field name="serpapi_requests_log_button"
+      type="button"
+      value="Show Requests Log"
+      gotoview="requests-log"
+      label=" ">
+    </field>
+
     <field name="wpml_heading"
       type="statictext"
       hidden="true"

@@ -1510,12 +1510,14 @@ function UCManagerAdminItems(){
 	 */
 	this.appendItem = function(htmlItem, noUpdate){
 		
-		jQuery("#uc_list_items").show();
+		var objListItems = jQuery("#uc_list_items");
+		objListItems.show();
+				
 		t.hideNoAddonsText();
-		
+				
 		var objItem = jQuery(htmlItem);
 		
-		jQuery("#uc_list_items").append(objItem);
+		objListItems.append(objItem);
 		
 		if(noUpdate !== true)
 			t.updateAfterHtmlListChange();
@@ -1751,7 +1753,9 @@ function UCManagerAdminItems(){
 		
 		if(jQuery("#uc_list_items li").length == 0){
 			jQuery("#uc_list_items").hide();
-			jQuery("#no_items_text").show();
+			
+			showNoItemsText(true);
+			
 		}else{
 			t.hideNoAddonsText();
 		}
@@ -1766,8 +1770,9 @@ function UCManagerAdminItems(){
 	this.removeAllItems = function(noUpdate){
 		
 		jQuery("#uc_list_items").html("").hide();
-		jQuery("#no_items_text").show();
 		
+		showNoItemsText(true);
+				
 		if(noUpdate !== true)
 			t.checkSelectRelatedItems();
 	};
@@ -1878,25 +1883,44 @@ function UCManagerAdminItems(){
 		var numItems = t.getNumItems();
 		
 		if(numItems == 0){
-			jQuery("#no_items_text").show();
+			
+			//show
+			showNoItemsText(true);
+			
 			jQuery("#uc_list_items").hide();
 		}else{
 			t.updateItemPositions(isFancy);
 			
 			jQuery("#uc_list_items").show();
 			t.hideNoAddonsText();
+			
 		}
 		
 		t.checkSelectRelatedItems();
 	}
 	
+	/**
+	 * hide or show actually no items text
+	 */
+	function showNoItemsText(isShow){
+		
+		var objNoItems = jQuery("#no_items_text");
+				
+		if(isShow == true)
+			objNoItems.show();
+		else
+			objNoItems.hide();
+		
+	}
 	
 	/**
 	 * hide no addons text
 	 */
 	this.hideNoAddonsText = function(){
-		jQuery("#no_items_text").hide();
 		
+		//hide
+		showNoItemsText(false);
+						
 		g_manager.triggerEvent(g_manager.events.ITEM_HIDE_EMPTY_TEXT);
 	}
 	
@@ -1985,6 +2009,7 @@ function UCManagerAdminItems(){
 	 * init the items
 	 */
 	this.initItems = function(objManager){
+				
 		initItems(objManager);
 	};
 	

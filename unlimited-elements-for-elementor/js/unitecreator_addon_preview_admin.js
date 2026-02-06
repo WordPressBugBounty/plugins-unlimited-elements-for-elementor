@@ -177,6 +177,7 @@ function UniteAddonPreviewAdmin() {
 			id: g_addonID,
 			settings: valuesStr,
 			selectors: true,
+			debug: 2,
 		};
 		
 		g_ucAdmin.setAjaxLoaderID("uc_preview_loader");

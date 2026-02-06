@@ -150,7 +150,7 @@ abstract class UCAdminNoticeAbstract{
 	 * enable the notice free only mode - show only in the free version
 	 */
 	protected function freeOnly(){
-
+	
 		$this->freeOnly = true;
 	}
 
@@ -252,7 +252,7 @@ abstract class UCAdminNoticeAbstract{
 	 * check if the notice is allowed for the free version
 	 */
 	private function isFreeAllowed(){
-		
+				
 		if($this->freeOnly === true && GlobalsUC::$isProVersion === true)
 			return false;
 

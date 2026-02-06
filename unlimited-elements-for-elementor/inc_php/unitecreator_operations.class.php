@@ -1083,7 +1083,13 @@ class UCOperations extends UniteElementsBaseUC{
 
 		if($orderBy == "id")
 			$orderBy = "ID";
-
+		
+		//fix by actual num posts
+		if(GlobalsProviderUC::$lastNumPosts > $numPosts){
+			$totalPosts += (GlobalsProviderUC::$lastNumPosts - $numPosts);
+			$numPosts = GlobalsProviderUC::$lastNumPosts;
+		}
+			
 		$output = array();
 		$output["count_posts"] = $numPosts;
 		$output["total_posts"] = $totalPosts;

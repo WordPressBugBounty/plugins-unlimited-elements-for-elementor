@@ -17,7 +17,7 @@ class UniteCreatorTemplateEngineWork{
 	protected $addon = null;
 	protected $objParamsProcessor;
 	protected $isItemsFromPosts = false;
-
+	
 	private static $arrSetVarsCache = array();
 	private static $urlBaseCache = null;
 	private static $isPostIDSaved = false;
@@ -106,8 +106,115 @@ class UniteCreatorTemplateEngineWork{
 	
 	
 	public function a_____CUSTOM_FUNCTIONS____(){}
+	
+	/**
+	 * get schema settings from params
+	 */
+	private function getSchemaSettings($arrValues, $paramName){
+								
+		
+	}
+	
+	/**
+	 * check and put schema items by param
+	 */
+	public function checkPutSchemaItems($paramName){
+		
+		$param = $this->addon->getParamByName($paramName);
+		$type = UniteFunctionsUC::getVal($param, "type");
 
+		if($type != UniteCreatorDialogParam::PARAM_SPECIAL)
+			return(false);
+		
+		$arrValues = UniteFunctionsUC::getVal($param, "value");
 
+		if(empty($arrValues))
+			return(false);
+
+		$isEnable = UniteFunctionsUC::getVal($arrValues, $paramName."_enable");
+		$isEnable = UniteFunctionsUC::strToBool($isEnable);
+		
+		if($isEnable == false)
+			return(false);
+		
+		$schemaType = UniteFunctionsUC::getVal($arrValues, $paramName."_type");
+		
+		$schemaSelection = UniteFunctionsUC::getVal($arrValues, $paramName."_selection");
+		
+		if($schemaSelection == "custom")
+			$schemaType = "custom";
+		
+		$arrParamsItems = $this->addon->getParamsItems();
+		
+		$arrSettings = array();
+		foreach($arrValues as $key=>$value){
+			$key = str_replace("{$paramName}_","",$key);
+			$arrSettings[$key] = $value;
+		}
+		
+		$objSchema = new UniteCreatorSchema();
+		$objSchema->putSchemaItems($schemaType, $this->arrItems, $arrParamsItems, $arrSettings);
+		
+	}
+	
+	/**
+	 * put schema items by global params like post list or multisource
+	 */
+	private function putSchemaItemsGlobal(){
+		
+		$type = $this->addon->getItemsType();
+		
+		$paramName = "ue_schema";
+		
+		$isEnable = UniteFunctionsUC::getVal($this->arrParams, $paramName."_enable");
+		$isEnable = UniteFunctionsUC::strToBool($isEnable);
+		
+		if($isEnable == false)
+			return(false);
+		
+		$schemaType = UniteFunctionsUC::getVal($this->arrParams, $paramName."_type");
+		
+		$schemaSelection = UniteFunctionsUC::getVal($this->arrParams, $paramName."_selection");
+		
+		if($schemaSelection == "custom")
+			$schemaType = "custom";
+		
+		$arrParamsItems = null;
+		
+		$arrSettings = array();
+		foreach($this->arrParams as $key=>$value){
+						
+			if(strpos($key, $paramName) === false)
+				continue;	
+			
+			$key = str_replace("{$paramName}_","",$key);
+			$arrSettings[$key] = $value;
+		}
+		
+		
+		switch($type){
+			case UniteCreatorAddon::ITEMS_TYPE_POST:
+				
+				$postParam = $this->addon->getParamByType(UniteCreatorDialogParam::PARAM_POSTS_LIST);
+				
+				$postListName = UniteFunctionsUC::getVal($postParam, "name");
+				
+				$arrSettings["post_list_name"] = $postListName;				
+			break;
+			case UniteCreatorAddon::ITEMS_TYPE_MULTISOURCE:
+				
+				$arrParamsItems = $this->addon->getParamsItems();
+				
+			break;
+		}
+		
+		
+		$objSchema = new UniteCreatorSchema();
+		$objSchema->putSchemaItemsByType($type, $schemaType, $this->arrItems, $arrParamsItems, $arrSettings);
+		
+	}
+	
+	
 	/**
 	 * output some item
 	 */
@@ -401,46 +508,6 @@ class UniteCreatorTemplateEngineWork{
 		$this->putItems(null, "css_item");
 	}
 
-	/**
-	 * check and put schema items by param
-	 */
-	public function checkPutSchemaItems($paramName){
-		
-		$param = $this->addon->getParamByName($paramName);
-		$type = UniteFunctionsUC::getVal($param, "type");
-
-		if($type != UniteCreatorDialogParam::PARAM_SPECIAL)
-			return(false);
-		
-		$arrValues = UniteFunctionsUC::getVal($param, "value");
-
-		if(empty($arrValues))
-			return(false);
-
-		$isEnable = UniteFunctionsUC::getVal($arrValues, $paramName."_enable");
-		$isEnable = UniteFunctionsUC::strToBool($isEnable);
-		
-		if($isEnable == false)
-			return(false);
-		
-		$schemaType = UniteFunctionsUC::getVal($arrValues, $paramName."_type");
-		
-		$showDebug = UniteFunctionsUC::getVal($arrValues, $paramName."_debug");
-		
-		$title = UniteFunctionsUC::getVal($arrValues, $paramName."_title");
-					
-		$arrParamsItems = $this->addon->getParamsItems();
-
-		$arrSettings = array();
-		foreach($arrValues as $key=>$value){
-			$key = str_replace("{$paramName}_","",$key);
-			$arrSettings[$key] = $value;
-		}
-		
-		$objSchema = new UniteCreatorSchema();
-		$objSchema->putSchemaItems($schemaType, $this->arrItems, $arrParamsItems, $arrSettings);
-		
-	}
 
 
 
@@ -688,7 +755,7 @@ class UniteCreatorTemplateEngineWork{
 	 * get all data
 	 */
 	public function getData(){
-
+		
 		$data = $this->arrParams;
 
 		return($data);
@@ -1473,7 +1540,7 @@ class UniteCreatorTemplateEngineWork{
 				return($data);
 			break;
 			case "put_schema_items_json":
-
+			
 					//$arg1- titleKey, $arg2 - contentKey, $arg3 - schemaName
 					
 					$this->putSchemaItems($arg1, $arg2, $arg3);
@@ -1481,6 +1548,11 @@ class UniteCreatorTemplateEngineWork{
 			case "put_schema_items_json_byparam":
 					
 					$this->checkPutSchemaItems($arg1);
+			break;
+			case "put_schema_items_json_global":
+				
+					$this->putSchemaItemsGlobal();
+				
 			break;
 			case "render":		//render twig template
 
@@ -1871,8 +1943,8 @@ class UniteCreatorTemplateEngineWork{
 
 		$arrOptions = array();
 		$arrOptions["debug"] = true;
-
-
+		
+		
 		if(class_exists("Twig\\Environment") == false){
 
 			$version = "";
@@ -1965,7 +2037,10 @@ class UniteCreatorTemplateEngineWork{
 	public function setParams($params){
 
 		$this->arrParams = $params;
-
+				
+		//some small hack
+		GlobalsProviderUC::$lastWidgetParams = $params;	
+		
 	}
 
 	/**

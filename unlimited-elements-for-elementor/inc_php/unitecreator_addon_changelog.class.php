@@ -16,14 +16,16 @@ class UniteCreatorAddonChangelog{
 	const TYPE_FEATURE = "feature";
 	const TYPE_FIX = "fix";
 	const TYPE_OTHER = "other";
-
+	const TYPE_REQUEST = "request";
+	const MAX_REQUEST_ROTATION = 100;
+	
 	/**
 	 * Get the table name.
 	 *
 	 * @return string
 	 */
 	public function getTable(){
-
+		
 		$table = UniteFunctionsWPUC::prefixDBTable(GlobalsUC::TABLE_CHANGELOG_NAME);
 
 		return $table;
@@ -114,6 +116,7 @@ class UniteCreatorAddonChangelog{
 			SELECT *
 			FROM {$this->getTable()}
 			WHERE addon_id = %d
+			AND type != %s
 			ORDER BY created_at DESC
 		";
 
@@ -124,7 +127,7 @@ class UniteCreatorAddonChangelog{
 		}
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$sql = $wpdb->prepare($sql, array($addonId));
+		$sql = $wpdb->prepare($sql, array($addonId, self::TYPE_REQUEST));
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_results($sql, ARRAY_A);
 		$changelogs = $this->prepareChangelogs($results);
@@ -273,6 +276,7 @@ class UniteCreatorAddonChangelog{
 			self::TYPE_FEATURE => __("Feature", "unlimited-elements-for-elementor"),
 			self::TYPE_FIX => __("Fix", "unlimited-elements-for-elementor"),
 			self::TYPE_OTHER => __("Other", "unlimited-elements-for-elementor"),
+			self::TYPE_REQUEST => __("Request", "unlimited-elements-for-elementor"),
 		);
 
 		return UniteFunctionsUC::getVal($titles, $type, $type);
@@ -307,6 +311,108 @@ class UniteCreatorAddonChangelog{
 		}
 
 		return $changelogs;
+	}
+
+	/**
+	 * Save a request to the changelog.
+	 * Stores request URL and request time.
+	 * Maintains only the last MAX_REQUEST_ROTATION requests with rotation (FIFO).
+	 *
+	 * @param string $url
+	 * @param string|null $requestTime
+	 *
+	 * @return int|false
+	 */
+	public function saveRequest($url, $requestTime = null){
+
+		global $wpdb;
+
+		if($requestTime === null)
+			$requestTime = current_time("mysql");
+
+		$data = array(
+			"addon_id" => 0,
+			"addon_title" => "",
+			"user_id" => get_current_user_id(),
+			"type" => self::TYPE_REQUEST,
+			"text" => $url,
+			"plugin_version" => UNLIMITED_ELEMENTS_VERSION,
+			"created_at" => $requestTime,
+		);
+
+		$result = $wpdb->insert($this->getTable(), $data);
+
+		// Maintain only the last 100 requests (FIFO rotation)
+		if($result !== false){
+			$this->rotateRequests(self::MAX_REQUEST_ROTATION);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Rotate requests to maintain only the specified number of requests.
+	 * Deletes the oldest requests if the count exceeds the limit.
+	 *
+	 * @param int $maxCount
+	 *
+	 * @return int Number of deleted records
+	 */
+	private function rotateRequests($maxCount){
+
+		global $wpdb;
+
+		$table = $this->getTable();
+
+		// Count total requests
+		$sql = "
+			SELECT COUNT(*) as total
+			FROM {$table}
+			WHERE type = %s
+		";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$sql = $wpdb->prepare($sql, array(self::TYPE_REQUEST));
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$result = $wpdb->get_var($sql);
+		$total = intval($result);
+
+		if($total <= $maxCount)
+			return 0;
+
+		// Calculate how many to delete
+		$toDelete = $total - $maxCount;
+
+		// Get IDs of oldest requests to delete
+		$sql = "
+			SELECT id
+			FROM {$table}
+			WHERE type = %s
+			ORDER BY created_at ASC
+			LIMIT %d
+		";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$sql = $wpdb->prepare($sql, array(self::TYPE_REQUEST, $toDelete));
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$ids = $wpdb->get_col($sql);
+
+		if(empty($ids) === true)
+			return 0;
+
+		// Delete the oldest requests
+		$idPlaceholders = UniteFunctionsWPUC::getDBPlaceholders($ids, "%d");
+		$sql = "
+			DELETE FROM {$table}
+			WHERE id IN($idPlaceholders)
+		";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$sql = $wpdb->prepare($sql, $ids);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$wpdb->query($sql);
+
+		return $toDelete;
 	}
 
 }

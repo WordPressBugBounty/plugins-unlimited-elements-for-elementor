@@ -562,22 +562,36 @@ class UniteCreatorElementorIntegrate{
 	private function outputBGIncludes($output){
 
 		$arrIncludes = UniteFunctionsUC::getVal($output, "includes");
-
+		
 		if(empty($arrIncludes))
 			return(false);
-
+		
+		$isCachingActive = HelperProviderCoreUC_EL::isElementorCachingActive();
+		
 		foreach($arrIncludes as $include){
 
 			$type = UniteFunctionsUC::getVal($include, "type");
 			$url = UniteFunctionsUC::getVal($include, "url");
 			$handle = UniteFunctionsUC::getVal($include, "handle");
 
-			if($type == "css")
-				HelperUC::addStyleAbsoluteUrl($url, $handle);
-			else
-				HelperUC::addScriptAbsoluteUrl($url, $handle);
+			if($isCachingActive == true){
+				
+				if($type == "css")
+					HelperUC::putStyleHTML($url, $handle);
+				else
+					HelperUC::putScriptHTML($url, $handle);
+			}
+			else{
+				
+				if($type == "css")
+					HelperUC::addStyleAbsoluteUrl($url, $handle);
+				else
+					HelperUC::addScriptAbsoluteUrl($url, $handle);
+			}
 		}
-
+		
+		
+		
 	}
 
 	/**
@@ -590,7 +604,7 @@ class UniteCreatorElementorIntegrate{
 		$rawData = $objElement->get_raw_data();
 
 		$elementID = UniteFunctionsUC::getVal($rawData, "id");
-		
+				
 		try{
 
 			$objAddon = new UniteCreatorAddon();
@@ -603,13 +617,13 @@ class UniteCreatorElementorIntegrate{
 
 			if(!empty($arrAddonValues))
 				$objAddon = $this->objBackgroundWidget->setAddonSettingsFromElementorSettings($objAddon, $arrAddonValues);
-
+			
 
 			if(empty(self::$objAddons))
 				self::$objAddons = new UniteCreatorAddons();
 		
 			$output = self::$objAddons->getAddonOutput($objAddon);
-
+			
 			if(empty($output))
 				return(false);
 			
@@ -618,7 +632,7 @@ class UniteCreatorElementorIntegrate{
 			
 			//put includes
 			$this->outputBGIncludes($output);
-
+			
 			//add location too
 			$location = UniteFunctionsUC::getVal($settings, "uc_background_location");
 
@@ -639,7 +653,7 @@ class UniteCreatorElementorIntegrate{
 	 * on before render
 	 */
 	public function onFrontAfterRender($objElement){
-
+		
 		//dmp("after render ".UniteFunctionsUC::getRandomString());
 		
 		$settings = $objElement->get_settings_for_display();
@@ -685,24 +699,21 @@ class UniteCreatorElementorIntegrate{
 	}
 	
 	
-	
 	/**
 	 * check if BG exists in page
+	 * or caching is active, it's like the bg exists - always print code
 	 */
 	private function isBGExistsInPage(){
+				
+		if($this->isBGRendered == true)
+			return(true);
 		
-		$isCachingActive = \Elementor\Plugin::$instance->experiments->is_feature_active( 'e_element_cache' );
+		$isCachingActive = HelperProviderCoreUC_EL::isElementorCachingActive();
 		
-		if($isCachingActive == false)
-			return($this->isBGRendered);
-			
-		//if caching active - assume there is background. no other option to check meanwhile.
-		//TODO: find a way to check if there is background in all the cached contents or not. by some hook.
-			
-		//apply this: $data = apply_filters( 'elementor/frontend/builder_content_data', $data, $post_id );
+		if($isCachingActive == true)
+			return(true);
 		
-			
-		return(true);
+		return(false);
 	}
 	
 	
@@ -715,7 +726,7 @@ class UniteCreatorElementorIntegrate{
 		
 		if($isBGExists == false)
 			return(false);
-		
+					
 		?>
 		<style>
 			.unlimited-elements-background-overlay{
@@ -735,9 +746,9 @@ class UniteCreatorElementorIntegrate{
 		<script type='text/javascript'>
 
 			jQuery(document).ready(function(){
-
+					
 				function ucBackgroundOverlayPutStart(){
-
+				
 					var objBG = jQuery(".unlimited-elements-background-overlay").not(".uc-bg-attached");
 
 					if(objBG.length == 0)
@@ -1215,10 +1226,10 @@ class UniteCreatorElementorIntegrate{
 
     	if(!empty($stylesIcons))
     		wp_add_inline_style($adminStyleHandle, $stylesIcons);
-
+		
     	//include font awesome
 		$urlFontAwesomeCSS = HelperUC::getUrlFontAwesome();
-
+		
 		HelperUC::addStyleAbsoluteUrl($urlFontAwesomeCSS, "font-awesome");
 
 
@@ -1387,7 +1398,7 @@ class UniteCreatorElementorIntegrate{
 	 * on the content - clear widget input cache - fix some double render elementor bug
 	 */
 	public function onTheContent($content){
-
+		
 		if(GlobalsProviderUC::$isUnderDynamicTemplateLoop == false)
 			UniteCreatorOutput::clearIncludesCache();
 

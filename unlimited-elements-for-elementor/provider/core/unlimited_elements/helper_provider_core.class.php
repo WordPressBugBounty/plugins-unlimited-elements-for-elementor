@@ -1597,6 +1597,27 @@ class HelperProviderCoreUC_EL{
 		
 	}
 	
+	/**
+	 * check if caching active
+	 */
+	public static function isElementorCachingActive(){
+				
+		if(isset(\Elementor\Plugin::$instance->experiments) == false)
+			return(false);
+		
+		$featureActive = \Elementor\Plugin::$instance->experiments->is_feature_active( 'e_element_cache' );
+		
+		if($featureActive == true)
+			return(true);
+		
+		$elementCacheTTL = get_option( 'elementor_element_cache_ttl', '' );
+		
+		if($elementCacheTTL === "disable" || empty($elementCacheTTL))
+			return(false);
+		
+		return(true);
+	}
+	
 	
 	/**
 	 * global init

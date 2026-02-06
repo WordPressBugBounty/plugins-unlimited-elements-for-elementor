@@ -453,7 +453,7 @@ class UniteCreatorEntranceAnimations{
     if(!step)
     	var step = 100;
 
-    var objItems = objElement.find("."+classItem);
+    var objItems = objElement.find("."+classItem).not(".uc-entrance-animate");
 
     var numItems = objItems.length;
 
@@ -463,7 +463,7 @@ class UniteCreatorEntranceAnimations{
     var maxTime = (numItems-1) * step;
 
     objItems.each(function(index, item){
-
+	  
    	  var timeoutTime = time;
    	  if(order == "up")
    	  	timeoutTime = maxTime - time;
@@ -575,11 +575,18 @@ jQuery(document).ready(function(){
 	    jQuery(window).on("scroll", function(){
 	    	ueCheckEntranceAnimation(objElement, <?php echo esc_attr($animationStep)?>, "<?php echo esc_attr($classItem)?>", "<?php echo esc_attr($order)?>")
 	    });
-
-	    objElement.on("uc_ajax_refreshed", function(){
-
-	        objElement.removeData("ue_entrance_animation_started");
-
+		
+	    objElement.on("uc_ajax_refreshed", function(event, params){
+				        
+			objElement.removeData("ue_entrance_animation_started");
+			
+			if(params.isLoadMore && params.isLoadMore === true){
+				
+				ueStartEntranceAnimation(objElement, <?php echo esc_attr($animationStep)?>, "<?php echo esc_attr($classItem)?>", "<?php echo esc_attr($order)?>");
+				
+				return(true);
+			}
+						
 	    	ueCheckEntranceAnimation(objElement, <?php echo esc_attr($animationStep)?>, "<?php echo esc_attr($classItem)?>", "<?php echo esc_attr($order)?>")
 	    });
 

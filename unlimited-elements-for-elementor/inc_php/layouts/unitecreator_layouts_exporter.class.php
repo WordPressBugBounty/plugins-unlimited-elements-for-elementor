@@ -262,7 +262,7 @@ class UniteCreatorLayoutsExporterWork extends UniteCreatorExporterBase{
 		
 		
 		$filepath = $this->pathCopyLayout.$filenameZip;
-		
+				
 		
 		if(file_exists($filepath)){
 			$counter = 0;
@@ -284,7 +284,8 @@ class UniteCreatorLayoutsExporterWork extends UniteCreatorExporterBase{
 		//actual zip
 		$zip = new UniteZipUC();
 		$zip->makeZip($this->pathExportLayout, $filepath);
-	
+		
+				
 		if(file_exists($this->pathExportLayout) == false)
 			UniteFunctionsUC::throwError("zip file {$filepath} could not be created");
 	

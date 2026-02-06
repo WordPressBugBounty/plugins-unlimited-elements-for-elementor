@@ -169,7 +169,7 @@ function UniteCreatorAddonDefaultsAdmin(){
 	 * init test view
 	 */
 	this.init = function(){
-		
+				
 		g_objWrapper = jQuery("#uc_addondefaults_wrapper");
 		g_options = g_objWrapper.data("options");
 		

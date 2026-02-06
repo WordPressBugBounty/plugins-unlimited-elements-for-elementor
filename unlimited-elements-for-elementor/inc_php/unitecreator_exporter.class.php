@@ -392,7 +392,7 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 	 * make export zip file
 	 */
 	private function makeExportZipFile(){
-
+		
 		$zip = new UniteZipUC();
 		$zip->makeZip($this->pathExportAddon, $this->filepathAddonZip);
 
@@ -521,8 +521,9 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 			$this->copyAssets();
 
 			$this->makeExportZipFile();
+			
 			$this->deleteExportAddonFolder();
-
+		
 			if(!empty($moveFolder)){
 				$this->moveExportZipToFolder($moveFolder, $createCategoryFolders);
 				$this->deleteExportAddonFolder();

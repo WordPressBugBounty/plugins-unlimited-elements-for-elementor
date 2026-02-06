@@ -27,7 +27,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		private static $arrDebug;
 		private static $hasOutput = false;
 		public static $arrWidgetScripts = array();
-
+		private static $arrUsedHTMLHandles = array();
+		
 		public static function a____GENERAL____(){}
 
 		/**
@@ -1473,8 +1474,60 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			HelperUC::putCustomScript("var g_ucRemoteHideErrors=true;", false, "remote_controls_hide_errors");
 		
 	}
-	
 
+	/**
+	 * put script html, if the handle didn't used
+	 */
+	public static function putScriptHtml($url, $handle = null){
+		
+		if(empty($handle))
+			$handle = self::convertTitleToHandle($url);
+		
+		if($handle == "jquery"){
+			$isJQueryInPage = wp_script_is( 'jquery', 'enqueued' );
+			if($isJQueryInPage == true){
+				self::$arrUsedHTMLHandles[$handle] = true;
+				return(false);
+			}
+		}
+		
+		
+		if($handle != "jquery")
+			$handle = "ue_js_{$handle}";
+		
+		if(isset(self::$arrUsedHTMLHandles[$handle]))
+			return(false);	
+		
+		self::$arrUsedHTMLHandles[$handle] = true;
+		
+		$htmlInclude = HelperHtmlUC::getHtmlJsInclude($url, $handle);
+		
+		echo $htmlInclude."\n";		
+	}
+	
+	
+	/**
+	 * put style html, if the handle didn't used
+	 */
+	public static function putStyleHtml($url, $handle = null){
+		
+		if(empty($handle))
+			$handle = self::convertTitleToHandle($url);
+		
+		$handle = "ue_css_{$handle}";
+		
+		if(isset(self::$arrUsedHTMLHandles[$handle]))
+			return(false);	
+		
+		self::$arrUsedHTMLHandles[$handle] = true;
+		
+		$htmlInclude = HelperHtmlUC::getHtmlCssInclude($url, $handle);
+		
+		echo $htmlInclude."\n";
+		
+	}
+	
+	
 	/**
 	 *
 	 * register style helper function

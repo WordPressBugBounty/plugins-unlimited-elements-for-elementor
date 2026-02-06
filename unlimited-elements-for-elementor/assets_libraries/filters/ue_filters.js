@@ -7,7 +7,7 @@ function UEDynamicFilters(){
 	var g_remote = null, g_lastSyncGrids, g_initFiltersCounter = 0;
 	
 	var t = this;
-
+	
 	var g_showDebug = false;
 	var g_debugInitMode = false;
 	
@@ -72,14 +72,13 @@ function UEDynamicFilters(){
 		REFRESH_MODE_LOADMORE: "loadmore",
 		trashold_handle:null,
 		class_widget_wrapper:"elementor-widget",
-		class_widget_container:"elementor-widget-container",
 		current_postid:null,
-		ucpage_url:null,
+		ucpage_url:null
 	};
 
 	var g_options = {
 		is_cache_enabled:true,
-		urlkey_taxsap:"~",
+		urlkey_taxsap:"~"
 	};
 	
 	/**
@@ -459,17 +458,17 @@ function UEDynamicFilters(){
 
 		//add init after filters
 		var isInitAfter = objFilter.data("initafter");
-		
+				
 		if(!isInitAfter)
 			isInitAfter = isSpecialFilterInitAfter(objFilter, objGrid);
 		
 		if(g_showDebug){
 			trace("init after: "+isInitAfter);
 		}
-		
-		
-		if(isInitAfter === true)
+				
+		if(isInitAfter === true){
 			addFilterToInitAfter(objFilter, objGrid);
+		}
 		
 		objGrid.data("filters", arrFilters);
 		
@@ -805,17 +804,14 @@ function UEDynamicFilters(){
 	function getFilterWrapper(objFilter){
 		
 		var objParent = objFilter.parent();		
-		
-		var objElementorParent = objParent.parents(".elementor-widget-container");
-		if(objElementorParent.length == 1)
-			return(objElementorParent);
-		
+				
 		if(objParent.hasClass("uc-checkbox-filter-accordion-container"))
 			objParent = objParent.parent();
 		
 		return(objParent);
 	}
 
+	
 	/**
 	 * get filter type
 	 */
@@ -1318,7 +1314,7 @@ function UEDynamicFilters(){
 		event.preventDefault();
 
 		var objLink = jQuery(this);
-
+ 
 		if(objLink.hasClass("uc-grid-filter")){
 
 			var objTermsFilter = objLink;
@@ -1499,7 +1495,7 @@ function UEDynamicFilters(){
 		var filterType = objFilter.data("filtertype");
 
 		if(filterType != "general"){
-
+			
 			trace(objFilter);
 
 			throw new Error("Not a general filter on action: " + g_vars.ACTION_FILTER_CHANGE);
@@ -1865,25 +1861,47 @@ function UEDynamicFilters(){
 	function getFilterElementData(objElement){
 				
 		var id = objElement.data("id");
-		var slug = objElement.data("slug");
-		var taxonomy = objElement.data("taxonomy");
 		var title = objElement.data("title");
 		var key = objElement.data("key");
 		var type = objElement.data("type");
 		
-		if(!taxonomy)
+		if(!id && !key)
 			return(null);
-
-		var objTerm = {
-			"type": type,
-			"id": id,
-			"slug": slug,
-			"taxonomy": taxonomy,
-			"title": title,
-			"key": key
-		};
-
-		return(objTerm);
+		
+		
+		switch(type){
+		case "taxonomy":
+		default:
+			var slug = objElement.data("slug");
+			var taxonomy = objElement.data("taxonomy");
+			
+			var objTerm = {
+				"type": type,
+				"id": id,
+				"slug": slug,
+				"taxonomy": taxonomy,
+				"title": title,
+				"key": key
+			};
+			return(objTerm);
+			
+		break;
+		case "author":
+			
+			var username = objElement.data("username");
+			
+			var objAuthor = {
+					"type": type,
+					"id": id,
+					"username": username,
+					"title": title,
+					"key": key
+				};
+				return(objAuthor);
+			
+		break;
+		}
+		
 	}
 
 
@@ -1965,7 +1983,7 @@ function UEDynamicFilters(){
 		if(!htmlDebug)
 			return(false);
 		
-		var gridParent = objGrid.parents("." + g_vars.class_widget_container);
+		var gridParent = objGrid.parents("." + g_vars.class_widget_wrapper);
 		
 		var objDebug = gridParent.find(".uc-debug-query-wrapper");
 
@@ -2228,7 +2246,7 @@ function UEDynamicFilters(){
 				var htmlDebug = getVal(objHtmlDebug, widgetID);
 
 			if(htmlDebug){
-				var objParent = objFilter.parents("." + g_vars.class_widget_container);
+				var objParent = objFilter.parents("." + g_vars.class_widget_wrapper);
 				var objDebug = objParent.find(".uc-div-ajax-debug");
 
 				if(objDebug.length)
@@ -2278,9 +2296,9 @@ function UEDynamicFilters(){
 		
 		operateAjax_setHtmlSyngGrids(response, objGrid, isLoadMore);
 		
-		objGrid.trigger(g_vars.EVENT_AJAX_REFRESHED);
+		objGrid.trigger(g_vars.EVENT_AJAX_REFRESHED,[{isLoadMore:isLoadMore}]);
 		g_objBody.trigger(g_vars.EVENT_AJAX_REFRESHED_BODY, [objGrid]);
-
+		
 		//trigger body as well
 
 		//scroll to grid top
@@ -3021,9 +3039,12 @@ function UEDynamicFilters(){
 		var numItems = null;
 		var arrTerms = [];
 		var objTaxIDs = {};
+		var objAuthorIDs = {};
 		var strSelectedTerms = "";
+		var strSelectedAuthors = "";
 		var search = "";
 		var price_from, price_to;
+		var arrAuthors = [];
 		var orderby = null;
 		var orderby_metaname = null;
 		var orderby_metatype = null;
@@ -3054,7 +3075,7 @@ function UEDynamicFilters(){
 			isPaginationClicked = true;
 
 		var child_auto, childAutoTaxonomy, childAutoSlug, childAutoString = "";
-		
+				
 		//get ajax options
 		jQuery.each(objFilters, function(index, objFilter){
 			
@@ -3092,7 +3113,7 @@ function UEDynamicFilters(){
 
 			if(urlAdd)
 				urlAddFromFilters = addUrlParam(urlAddFromFilters, urlAdd);
-
+			
 			switch(type){
 				case g_types.PAGINATION:
 						
@@ -3123,7 +3144,21 @@ function UEDynamicFilters(){
 				break;
 				case g_types.LOADMORE:
 
-					if(isFiltersInitMode == true)
+					//check if loadmore is before grid in init mode
+					var isLoadMoreBeforeGrid = false;
+					if(isFiltersInitMode == true){
+						var offsetLoadMore = objFilter.offset();
+						var offsetGrid = objGrid.offset();
+						
+						if(offsetLoadMore.top < offsetGrid.top){
+							isLoadMoreBeforeGrid = true;
+							
+							if(g_showDebug == true)
+								trace("Loadmore before grid - process in init mode");
+						}
+					}
+					
+					if(isFiltersInitMode == true && isLoadMoreBeforeGrid == false)
 						return(true);
 
 					//run load more only if it's clicked, unless reset load more
@@ -3151,31 +3186,56 @@ function UEDynamicFilters(){
 
 					//if not init mode - take first item
 					var objTerm = getTermsListSelectedTerm(objFilter);
-				
+					var filterSource = objFilter.data("filtersource");
+										
 					if(objTerm){
 						
 						if(isFiltersInitMode == false){
-
-							arrTerms.push(objTerm);
+							
+							if(filterSource == "authors")
+								arrAuthors.push(objTerm);
+							else
+								arrTerms.push(objTerm);
 						}
 						else{
-
+							
 							//INIT MODE
+							
+							//add terms if the filter is not initing itself
+							var isInit = objFilter.data("initafter");
 							
 							//add terms, if only children mode and the filter not child
 							if(initModeChildrens == true && filterRole != "child")
 								arrTerms.push(objTerm);
+							else
+								if(isInit != true){
+									
+									if(filterSource == "authors")
+										arrAuthors.push(objTerm);
+									else
+										arrTerms.push(objTerm);
+									
+								}
 							
 							//set selected terms string
-
+							
 							var termID = objTerm.id;
-							if(strSelectedTerms)
-								strSelectedTerms +=",";
-
-							strSelectedTerms += termID;
+							
+							if(filterSource == "authors"){
+								
+								if(strSelectedAuthors)
+									strSelectedAuthors +=",";
+								
+								strSelectedAuthors += termID;
+							}
+							else{
+								if(strSelectedTerms)
+									strSelectedTerms +=",";
+								
+								strSelectedTerms += termID;
+							}
 							
 						}
-
 					}
 
 					//replace mode
@@ -3225,7 +3285,7 @@ function UEDynamicFilters(){
 						return(true);
 					
 					var generalIsNoRefresh = objFilter.data("norefresh");
-
+					
 					if(generalIsNoRefresh === true)
 						isNoRefresh = true;
 					
@@ -3234,7 +3294,7 @@ function UEDynamicFilters(){
 					//add terms
 					
 					var dataTerms = getVal(filterData,"terms");
-
+					
 					if(dataTerms && dataTerms.length){	
 
 						var isOperatoeAdded = false;
@@ -3295,6 +3355,36 @@ function UEDynamicFilters(){
 						}
 					}
 					
+					//add authors
+					var dataAuthors = getVal(filterData,"authors");
+					
+					if(dataAuthors && dataAuthors.length){
+						
+						//gather authors list
+						jQuery.each(dataAuthors, function(index, author){
+							arrAuthors.push(author);
+						});
+						
+						//set selected authors string if init mode
+						
+						if(isFiltersInitMode == true){
+							
+							jQuery.each(dataAuthors, function(index, author){
+								
+								var authorID = getVal(author,"id");
+								
+								if(!authorID)
+									return(true);
+								
+								if(strSelectedAuthors)
+									strSelectedAuthors +=",";
+								
+								strSelectedAuthors += authorID;
+							});
+							
+						}
+					}
+					
 					
 					if(g_showDebug == true){
 						trace("Filter Data:");
@@ -3345,7 +3435,7 @@ function UEDynamicFilters(){
 			//handle filters init mode
 			
 			if(isFiltersInitMode == true){
-				
+								
 				var isInit = objFilter.data("initafter");
 				
 				if(isInit != true){
@@ -3360,8 +3450,10 @@ function UEDynamicFilters(){
 				if(initModeChildrens == true && filterRole != "child")
 					isNoRefresh = true;
 				
-				if(isNoRefresh == false)
-					arrFiltersForInit.push(objFilter);
+				if(isNoRefresh == false){
+					arrFiltersForInit.push(objFilter);					
+				}
+								
 			}
 			
 			
@@ -3395,7 +3487,13 @@ function UEDynamicFilters(){
 				var filterWidgetID = getElementWidgetID(objFilter);
 
 				//add test tax id's for init mode
-				objTaxIDs = getFilterTaxIDs(objFilter, objTaxIDs);
+				var filterSource = objFilter.data("filtersource");
+				if(filterSource == "authors" && isFiltersInitMode == true){
+					//add test author id's for init mode
+					objAuthorIDs = getFilterTaxIDs(objFilter, objAuthorIDs);
+				}else{
+					objTaxIDs = getFilterTaxIDs(objFilter, objTaxIDs);
+				}
 
 				if(strRefreshIDs)
 					strRefreshIDs += ",";
@@ -3433,16 +3531,17 @@ function UEDynamicFilters(){
 
 		var urlAddition_filtersTest = "";
 		var strTaxIDs = getTermDsList(objTaxIDs);
+		var strAuthorIDs = getTermDsList(objAuthorIDs);
 				
 		if(isFiltersInitMode == true){
 
-			if(!strTaxIDs && arrFiltersForInit.length == 0)
+			if(!strTaxIDs && !strAuthorIDs && arrFiltersForInit.length == 0)
 				urlAjax = null;
 			else{
 
 				if(urlAddition_filtersTest)
 					urlAddition_filtersTest += "&";
-
+				
 				urlAddition_filtersTest += "modeinit=true";
 			}
 		}
@@ -3450,11 +3549,20 @@ function UEDynamicFilters(){
 		//test terms - only if there are terms in query, or mode init
 				
 		if(strTaxIDs && (search || arrTerms.length || isFiltersInitMode == true || wasInitMode === true) ){
-			
+			 
 			if(urlAddition_filtersTest)
 				urlAddition_filtersTest += "&";
 			
 			urlAddition_filtersTest += "testtermids="+strTaxIDs;
+		}
+		
+		//test authors - only if there are authors in query, or mode init (author mode)
+		if(strAuthorIDs && (search || arrAuthors.length || isFiltersInitMode == true || wasInitMode === true) ){
+			
+			if(urlAddition_filtersTest)
+				urlAddition_filtersTest += "&";
+			
+			urlAddition_filtersTest += "testauthorids="+strAuthorIDs;
 		}
 
 		g_lastSyncGrids = null;
@@ -3531,12 +3639,14 @@ function UEDynamicFilters(){
 
 		if(numItems)
 			urlAjax += "&uccount="+numItems;
-	
+				
 		if(arrTerms.length){
+			
 			var strTerms = buildTermsQuery(arrTerms);
 		
 			if(strTerms)
 				urlAjax += "&ucterms="+strTerms;
+			
 			//set the url params as well
 			
 			urlReplace = addUrlParam(urlReplace, "ucterms="+strTerms);
@@ -3544,12 +3654,32 @@ function UEDynamicFilters(){
 			urlFilterString = addUrlParam(urlFilterString, "ucterms="+strTerms);
 		}
 		
+		//add authors
+		if(arrAuthors.length){
+			
+			var strAuthors = "";
+			jQuery.each(arrAuthors, function(index, author){
+				var authorID = getVal(author, "id");
+				if(authorID){
+					if(strAuthors)
+						strAuthors += ",";
+					strAuthors += authorID;
+				}
+			});
+			
+			if(strAuthors){
+				urlAjax += "&ucauthors="+strAuthors;
+				urlReplace = addUrlParam(urlReplace, "ucauthors="+strAuthors);
+				urlFilterString = addUrlParam(urlFilterString, "ucauthors="+strAuthors);
+			}
+		}
+		
 		 if(child_auto && arrTerms.length && childAutoString != ""){
 			 urlAjax += childAutoString;
 		 }
 
 		if(orderby){
-
+			
 			urlAjax += "&ucorderby="+orderby;
 			urlReplace = addUrlParam(urlReplace, "ucorderby="+orderby);
 
@@ -3571,10 +3701,12 @@ function UEDynamicFilters(){
 			urlReplace = addUrlParam(urlReplace, "ucorderdir="+orderdir);
 		}
 		
-		
-		if(isFiltersInitMode && strSelectedTerms)
+		if(isFiltersInitMode && strSelectedTerms && strSelectedTerms !== "undefined")
 			urlAjax += "&ucinitselectedterms="+strSelectedTerms;
-
+		
+		if(isFiltersInitMode && strSelectedAuthors && strSelectedAuthors !== "undefined")
+			urlAjax += "&ucinitselectedauthors="+strSelectedAuthors;
+		
 		//add refresh ids
 		if(strRefreshIDs)
 			urlAjax += "&addelids="+strRefreshIDs;
@@ -3601,23 +3733,26 @@ function UEDynamicFilters(){
 		
 		//avoid duplicates - exclude, disable the offset
 		
-		if(objGrid.hasClass("uc-avoid-duplicates") && isLoadMoreMode == true){
+		if(objGrid.hasClass("uc-avoid-duplicates")){
 			
-			var objCurrentGridForExclude = null;
-			if(isPaginationClicked == true)
-				objCurrentGridForExclude = objGrid;
-						
-			var strExcludePostIDs = getExcludePostIDs(objCurrentGridForExclude);
+			var objCurrentGrid = objGrid;
+			if(isLoadMoreMode == true)
+				objCurrentGrid = null;		//load with exclude but without offset
+			
+			var strExcludePostIDs = getExcludePostIDs(objCurrentGrid);		//exclude current grid
 			
 			if(strExcludePostIDs){
 				urlAjax += "&ucexclude="+strExcludePostIDs;
-				offset = null;
-
+				
+				if(isLoadMoreMode == true)
+					offset = null;
+	
 				urlFilterString = addUrlParam(urlFilterString, "ucexclude=" + strExcludePostIDs);
 			}
-
+		
 		}
-
+		
+		
 		if(offset){
 			urlAjax += "&ucoffset="+offset;
 
@@ -3719,7 +3854,113 @@ function UEDynamicFilters(){
 		return(strIDs);
 	}
 
+	function ________INIT_AFTER_______________(){}
 
+	/**
+	 * add filter to grid init after array
+	 */
+	function addFilterToInitAfter(objFilter, objGrid){
+				
+		var role = objFilter.data("role");
+		
+		var key = "filters_init_after";
+
+		if(role == "child")
+			key = "filters_init_after_children";
+
+		objFilter.data("initafter",true);
+
+		var arrFiltersInitAfter = objGrid.data(key);
+
+		if(!arrFiltersInitAfter)
+			arrFiltersInitAfter = [];
+
+		arrFiltersInitAfter.push(objFilter);
+
+		if(g_showDebug == true)
+			trace("Add init after: "+key+" | "+objFilter.attr("id") );
+		
+		objGrid.data(key, arrFiltersInitAfter);
+
+	}
+
+	/**
+	 * check filters init after
+	 */
+	function isSpecialFilterInitAfter(objFilter, objGrid){
+		
+		var type = getFilterType(objFilter);
+				
+		if(type != g_types.PAGINATION && type != g_types.LOADMORE)
+			return(false);
+
+		var offsetPagination = objFilter.offset();
+		var offsetGrid = objGrid.offset();
+
+		if(offsetPagination.top < offsetGrid.top){
+
+			if(g_showDebug == true)
+				trace("Set "+type+" to ajax init");
+
+			return(true);
+		}
+
+		return(false);
+	}
+
+	/**
+	 * check if there is a need to refresh child filters
+	 * grid related, other filters are set in the settings
+	 */
+	function initGrid_setInitFiltersAfterLoad(objGrid){
+		
+		//get all grid filters
+		var objFilters = objGrid.data("filters");
+		
+		if(!objFilters)
+			return(false);
+
+		if(objFilters.length == 0)
+			return(false);
+				
+		//check if there are filters with selected
+		
+		var arrSelectedFilters = getSelectedFilters(objFilters);
+		
+		if(arrSelectedFilters.length == 0)
+			return(false);
+
+		//add to refresh all not selected filters
+		
+		jQuery.each(objFilters, function(index, filter){
+						
+			var objFilter = jQuery(filter);
+			var type = getFilterType(objFilter);
+			
+			//skip not related to filter types
+			switch(type){
+				case g_types.PAGINATION:
+				case g_types.LOADMORE:
+					return(true);
+				break;
+			}
+			
+			var isSelected = objFilter.hasClass("uc-has-selected");
+			
+			if(isSelected == true)
+				return(true);
+			
+			//add to grid and option to refresh
+			
+			var objGrid = objFilter.data("grid");
+			
+			addFilterToInitAfter(objFilter, objGrid);
+
+		});
+
+	}
+	
+	
 	function ________INIT_______________(){}
 
 
@@ -3749,7 +3990,6 @@ function UEDynamicFilters(){
 		if(platform == "gutenberg"){
 			g_isGutenberg = true;
 			g_vars.class_widget_wrapper = "ue-widget-root";
-			g_vars.class_widget_container = "ue-widget-root"; 
 			g_vars.current_postid = getVal(g_filtersData, "postid");
 		}
 		
@@ -3761,6 +4001,7 @@ function UEDynamicFilters(){
 		//url keys
 
 		var objUrlKeys = getVal(g_filtersData, "urlkeys");
+		
 		var taxSap = getVal(objUrlKeys, "tax_sap");
 		if(taxSap)
 			g_options.urlkey_taxsap = taxSap;
@@ -3919,102 +4160,6 @@ function UEDynamicFilters(){
 	}
 
 
-	/**
-	 * check if there is a need to refresh child filters
-	 * grid related, other filters are set in the settings
-	 */
-	function initGrid_setInitFiltersAfterLoad(objGrid){
-
-		//get all grid filters
-		var objFilters = objGrid.data("filters");
-		
-		if(!objFilters)
-			return(false);
-
-		if(objFilters.length == 0)
-			return(false);
-				
-		//check if there are mains with selected
-
-		var arrSelectedMain = getSelectedFilters(objFilters, "main");
-
-		if(arrSelectedMain.length == 0)
-			return(false);
-
-		//add to refresh child filters
-
-		jQuery.each(objFilters, function(index, filter){
-
-			var objFilter = jQuery(filter);
-			var isSelected = objFilter.hasClass("uc-has-selected");
-
-			var role = objFilter.data("role");
-
-			if(role != "child")
-				return(true);
-
-			//add to grid and option to refresh
-
-			var objGrid = objFilter.data("grid");
-
-			addFilterToInitAfter(objFilter, objGrid);
-
-		});
-
-	}
-
-
-	/**
-	 * add filter to grid init after array
-	 */
-	function addFilterToInitAfter(objFilter, objGrid){
-
-		var role = objFilter.data("role");
-		
-		var key = "filters_init_after";
-
-		if(role == "child")
-			key = "filters_init_after_children";
-
-		objFilter.data("initafter",true);
-
-		var arrFiltersInitAfter = objGrid.data(key);
-
-		if(!arrFiltersInitAfter)
-			arrFiltersInitAfter = [];
-
-		arrFiltersInitAfter.push(objFilter);
-
-		if(g_showDebug == true)
-			trace("Add init after: "+key+" | "+objFilter.attr("id") );
-		
-		objGrid.data(key, arrFiltersInitAfter);
-
-	}
-
-	/**
-	 * check filters init after
-	 */
-	function isSpecialFilterInitAfter(objFilter, objGrid){
-
-		var type = getFilterType(objFilter);
-
-		if(type != g_types.PAGINATION)
-			return(false);
-
-		var offsetPagination = objFilter.offset();
-		var offsetGrid = objGrid.offset();
-
-		if(offsetPagination.top < offsetGrid.top){
-
-			if(g_showDebug == true)
-				trace("Set pagination to ajax init");
-
-			return(true);
-		}
-
-		return(false);
-	}
 
 
 	/**
@@ -4060,7 +4205,7 @@ function UEDynamicFilters(){
 
 			if(type == g_types.GENERAL){
 				var generalType = objFilter.data("generaltype");
-
+				
 				if(!generalType){
 					trace(objFilter);
 					throw new Error("The filter is missing generaltype data");
@@ -4124,15 +4269,16 @@ function UEDynamicFilters(){
 		// Create a new array for filtered items
 		var filteredTerms = [];
 		
-		for (let term of arrTerms) {
-				// Skip if the term is an object with slug "__or__", "__and__", or "__ucor__"
+		jQuery.each(arrTerms, function(index, term) {
+			
+			// Skip if the term is an object with slug "__or__", "__and__", or "__ucor__"
 				if (term.slug === "__ucand__" || term.slug === "__ucor__") {
-						continue;
+					return(true);
 				}
-
+				
 				// Add the term to the filtered array
 				filteredTerms.push(term);
-		}
+		});
 
 		// Assign the filtered array back to arrTerms
 		arrTerms = filteredTerms;
@@ -4373,7 +4519,6 @@ function UEDynamicFilters(){
 
 		//get the filters
 		var objFilters = jQuery(".uc-grid-filter, .uc-filter-pagination").not("." + g_vars.CLASS_FILTER_INITED);
-		
 		
 		//wait for load...
 

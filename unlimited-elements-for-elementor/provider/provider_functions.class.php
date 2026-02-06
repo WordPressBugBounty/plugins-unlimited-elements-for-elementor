@@ -238,7 +238,7 @@ class UniteProviderFunctionsUC{
 	 * register script
 	 */
 	public static function addScript($handle, $url, $inFooter = false, $deps = array()){
-
+				
 		if(empty($url))
 			UniteFunctionsUC::throwError("empty script url, handle: $handle");
 

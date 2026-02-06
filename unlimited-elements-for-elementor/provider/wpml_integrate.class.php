@@ -52,8 +52,14 @@ class UniteCreatorWpmlIntegrate{
 		if($this->isInited == true)
 			return(false);
 		
-		$this->arrLanguages = apply_filters( 'wpml_active_languages',NULL);
 		
+		global $sitepress;
+		
+		if(!empty($sitepress))
+		  $this->arrLanguages = $sitepress->get_active_languages();
+		else
+		   $this->arrLanguages = apply_filters( 'wpml_active_languages',NULL);
+				
 		if(empty($this->arrLanguages))
 			$this->arrLanguages = array();
 		
@@ -62,13 +68,15 @@ class UniteCreatorWpmlIntegrate{
 		
 		$this->arrShortPrefix["__none__"] = __("Not Selected","unlimited-elements-for-elementor");
 
+		$this->activeLanguage = $sitepress->get_current_language();
 		
 		//set active and short
 		foreach($this->arrLanguages as $language){
 			
 			$code = UniteFunctionsUC::getVal($language, "code");
 			$isActive = UniteFunctionsUC::getVal($language, "active");
-			if($isActive == true){
+			
+			if($isActive == true && empty($this->activeLanguage)){
 				$this->activeLanguage = $code;
 			}
 			
@@ -131,6 +139,7 @@ class UniteCreatorWpmlIntegrate{
 		return($this->activeLanguage);
 	}
 	
+	
 	/**
 	 * get translated attachment id for media translation
 	 */
@@ -140,18 +149,24 @@ class UniteCreatorWpmlIntegrate{
 			return($thumbID);
 		
 		if(empty(self::$objWpmlSingleton)){
+			
 			self::$objWpmlSingleton = new UniteCreatorWpmlIntegrate();
 			self::$objWpmlSingleton->init();
 		}
 		
 		if(empty(self::$objWpmlSingleton->activeLanguage))
 			return($thumbID);
-			
+		
+		$current_lang = apply_filters( 'wpml_current_language', null );             
+		$default_lang = apply_filters( 'wpml_default_language', null );  
+		
+		if ( $current_lang === $default_lang )
+			return($thumbID);	
+		
 		$alternateThumbID = apply_filters( 'wpml_object_id', $thumbID, 'attachment', FALSE, self::$objWpmlSingleton->activeLanguage); 		
 		
 		if(empty($alternateThumbID))
 			return($thumbID);
-		
 		
 		return($alternateThumbID);
 	}
@@ -308,7 +323,7 @@ class UniteCreatorWpmlIntegrate{
 		
 		$defaultLang    = $this->getDefaultSiteLanguage();
 		$activeLang     = $this->getActiveLanguage();
-
+		
 		if ($stickyPostDefaultLangOption == true && $activeLang != $defaultLang){
 			do_action('wpml_switch_language', $defaultLang);
 			add_action("ue_after_custom_posts_query", array($this, "setActiveLanguageAfterGetStickyPostsBasedOnDefaultLanguage"));

@@ -59,7 +59,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		$this->settings = $settings;
 
 		$this->idPrefix = $settings->getIDPrefix();
-
+		
 	}
 
 
@@ -137,7 +137,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 				$value = json_encode($value);
 		}
 
-		uelm_echo(' data-default="' . esc_attr($defaultValue) . '" data-initval="' . esc_attr($value) . '" ');
+		uelm_echo(' data-test="' . esc_attr($defaultValue) . '" data-default="' . esc_attr($defaultValue) . '" data-initval="' . esc_attr($value) . '" ');
 
 		$this->getGroupSelectorAddAttr($setting);
 		$this->getSelectorsAddAttr($setting);
@@ -525,7 +525,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 			$imageUrl = UniteProviderFunctionsUC::getImageUrlFromImageID($imageId, $imageSize);
 		else
 			$imageUrl = HelperUC::URLtoFull($imageUrl);
-
+		
 		$setting["value"] = $value; // for initval
 
 		$previewStyle = "";
@@ -546,8 +546,8 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		// translators: %s is a string
 		$sizeTitle = sprintf(__("%s Size", "unlimited-elements-for-elementor"), $title);
 		$sizeValue = $imageSize;
-
-		?>
+		
+        ?>
 		<div
 			id="<?php echo esc_attr($id); ?>"
 			class="unite-setting-image unite-setting-input-object unite-settings-exclude"
@@ -567,80 +567,6 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 			}
 			?>
 		>
-            <?php
-            /*
-            ?>
-			<div class="unite-setting-image-preview" <?php 
-				uelm_echo($previewStyle); ?>>
-				<div class="unite-setting-image-placeholder">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
-						<path d="M4.281 10.313V0h1.75v10.313h-1.75ZM0 6.03v-1.75h10.313v1.75H0Z" />
-					</svg>
-				</div>
-				<div class="unite-setting-image-actions">
-					<button class="unite-setting-image-choose unite-setting-button" type="button">
-						<?php esc_html_e("Choose Image", "unlimited-elements-for-elementor"); ?>
-					</button>
-					<button class="unite-setting-image-clear unite-setting-button" type="button">
-						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 13">
-							<path d="M1 3h11M5 3V1h3v2M10.5 5l-.401 5.607A1.5 1.5 0 0 1 8.603 12H4.394a1.5 1.5 0 0 1-1.496-1.394L2.5 5" />
-						</svg>
-					</button>
-				</div>
-			</div>
-
-			<?php if(empty($error) === false): ?>
-				<div class="unite-setting-image-error unite-setting-error">
-					<?php echo esc_html($error); ?>
-				</div>
-			<?php endif; ?>
-
-			<div class="unite-setting-image-section unite-inline-setting">
-				<div class="unite-setting-field">
-					<div class="unite-setting-text-wrapper">
-						<div class="unite-setting-text">
-							<?php echo esc_html($urlTitle); ?>
-						</div>
-					</div>
-					<div class="unite-setting-input">
-						<input
-							class="unite-setting-image-url"
-							type="text"
-							name="<?php echo esc_attr($urlName); ?>"
-							value="<?php echo esc_attr($urlValue); ?>"
-							placeholder="<?php esc_attr_e("Image URL", "unlimited-elements-for-elementor"); ?>"
-						/>
-					</div>
-				</div>
-			</div>
-
-			<div class="unite-setting-image-section unite-inline-setting">
-				<div class="unite-setting-field">
-					<div class="unite-setting-text-wrapper">
-						<div class="unite-setting-text">
-							<?php echo esc_html($sizeTitle); ?>
-						</div>
-					</div>
-					<div class="unite-setting-input">
-						<select
-							class="unite-setting-image-size"
-							name="<?php echo esc_attr($sizeName); ?>"
-						>
-							<?php foreach($sizes as $size => $label): ?>
-								<option
-									value="<?php echo esc_attr($size); ?>"
-									<?php echo ($size === $sizeValue ? "selected" : ""); ?>
-								>
-									<?php echo esc_html($label); ?>
-								</option>
-							<?php endforeach; ?>
-						</select>
-					</div>
-				</div>
-			</div>
-            <?php
-            */
-            ?>
         </div>
         <?php
 	}
@@ -1136,17 +1062,20 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 				<?php $itemId = $id . "_" . ++$counter; ?>
 
 				<div class="unite-setting-tabs-item">
-					<input
-						id="<?php echo esc_attr($itemId); ?>"
-						class="unite-setting-tabs-item-input"
-						type="radio"
-						name="<?php echo esc_attr($name); ?>"
-						value="<?php echo esc_attr($itemValue); ?>"
-					/>
 					<label
+                        data-name="<?php echo esc_attr($name); ?>"
+                        data-value="<?php echo esc_attr($itemValue); ?>"
 						class="unite-setting-tabs-item-label"
-						for="<?php echo esc_attr($itemId); ?>"
-					>
+						for="<?php echo esc_attr($itemId); ?>")"
+					>                    
+                        <input
+                            id="<?php echo esc_attr($itemId); ?>"
+                            class="unite-setting-tabs-item-input"
+                            type="radio"
+                            name="<?php echo esc_attr($name); ?>"
+                            value="<?php echo esc_attr($itemValue); ?>"
+                        />
+
 						<?php echo esc_html($itemText); ?>
 					</label>
 				</div>
@@ -2063,10 +1992,14 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 			$arrSaps = $this->settings->getArrSaps();
 
-			$arrSettings = $this->settings->getArrSettings();
-			
-			//group settings by saps
-			foreach($arrSettings as $key=>$setting){
+        // echo 'groupSettingsIntoSaps: ' . json_encode($arrSaps) . '<br><br>';
+
+        $arrSettings = $this->settings->getArrSettings();
+
+        // echo json_encode($arrSettings) . ' ===<br><br>';
+        
+        //group settings by saps
+        foreach($arrSettings as $key=>$setting){
 
 					$sapID = $setting["sap"];
 
@@ -2196,32 +2129,36 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		UniteFunctionsUC::validateNotEmpty($this->settingsMainClass, "settings main class not found, please use wide, inline or sidebar output");
 
-		//get options
+		// options
 		$options = $this->getOptions();
-		$strOptions = UniteFunctionsUC::jsonEncodeForHtmlData($options);
+        $strTemplateOptions = '';
+        if (!empty($options)) {
+            $strTemplateOptions = '<template id="' . esc_attr($this->wrapperID) . '-options" class="tpl-options">'
+                        . wp_json_encode($options, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                        . '</template>';
+        }
 
-		//get controls
-		$controls = $this->getControlsForJS();
-
-		$addHtml = "";
-		if(!empty($controls)){
-			$strControls = UniteFunctionsUC::jsonEncodeForHtmlData($controls);
-			$addHtml = " data-controls=\"{$strControls}\"";
-		}
-
+        // controls
+        $controls = $this->getControlsForJS();
+        $controlsTemplateHTML = '';
+        if (!empty($controls)) {
+            $controlsTemplateHTML = '<template id="' . esc_attr($this->wrapperID) . '-controls" class="tpl-controls">'
+                        . wp_json_encode($controls, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                        . '</template>';
+        }
 
 		if(!empty($this->addCss)) {
 			UniteProviderFunctionsUC::printCustomStyle($this->addCss, true);
 		}
 
 		?>
-		<div id="<?php echo esc_attr($this->wrapperID)?>" data-options="<?php echo esc_attr($strOptions)?>" <?php 
-			uelm_echo($addHtml);?> autofocus="true" class="unite_settings_wrapper <?php 
-			uelm_echo($this->settingsMainClass);?> unite-settings unite-inputs">
-
+		<div id="<?php echo esc_attr($this->wrapperID)?>" 
+            autofocus="true" 
+            class="unite_settings_wrapper <?php uelm_echo($this->settingsMainClass);?> unite-settings unite-inputs">
 		<?php
+        uelm_echo($controlsTemplateHTML); 
+        uelm_echo($strTemplateOptions);
 	}
-
 
 	/**
 	 * draw wrapper end
@@ -2365,7 +2302,6 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 	 *
 	 */
 	private function drawSettingsRowByType($setting, $mode){
-		// echo '==[drawSettingsRowByType: ' . $setting["type"] . ']<br>'; //debug
 		switch($setting["type"]){
 			case UniteSettingsUC::TYPE_HR:
 				$this->drawHrRow($setting);
@@ -2393,9 +2329,9 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		$this->drawSettings_before();
 
 		foreach($arrSettings as $setting){
-			if(isset($setting[UniteSettingsUC::PARAM_NODRAW]))
-				continue;
-
+			if(isset($setting[UniteSettingsUC::PARAM_NODRAW])) {
+                continue;
+            }
 			if($filterSapID !== null){
 				$sapID = UniteFunctionsUC::getVal($setting, "sap");
 				if($sapID != $filterSapID)
@@ -2440,6 +2376,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		<div class="unite-settings-accordion-saps-tabs">
 			<a href="javascript:void(0)" class="unite-settings-tab unite-active" data-id="content"><?php esc_attr_e("Content","unlimited-elements-for-elementor"); ?></a>
 			<a href="javascript:void(0)" class="unite-settings-tab" data-id="style"><?php esc_attr_e("Style","unlimited-elements-for-elementor"); ?></a>
+			<a href="javascript:void(0)" class="unite-settings-tab" data-id="advanced"><?php esc_attr_e("Advanced","unlimited-elements-for-elementor"); ?></a>
 		</div>
 		<?php
 	}
@@ -2453,35 +2390,36 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 
 		 $arrSaps = $this->groupSettingsIntoSaps();
 
+        foreach($arrSaps as $key=>$sap){
 
-			 foreach($arrSaps as $key=>$sap){
+            $tab = UniteFunctionsUC::getVal($sap, "tab");
 
-				$tab = UniteFunctionsUC::getVal($sap, "tab");
+            if($tab == UniteSettingsUC::TAB_STYLE)
+                $isHasStyleTab = true;
+        }
 
-				if($tab == UniteSettingsUC::TAB_STYLE)
-					$isHasStyleTab = true;
-			 }
+		if($isHasStyleTab == true) {
+            $this->drawSettings_saps_accordion_tabs();
+        }
+			
+        //draw settings - advanced - with sections
+        foreach($arrSaps as $key=>$sap):
 
-		if($isHasStyleTab == true)
-			$this->drawSettings_saps_accordion_tabs();
+            $arrSettings = UniteFunctionsUC::getVal($sap, "settings");
 
-					//draw settings - advanced - with sections
-					foreach($arrSaps as $key=>$sap):
+            $nodraw = UniteFunctionsUC::getVal($sap, "nodraw");
+            if($nodraw === true)
+                continue;
 
-							$arrSettings = UniteFunctionsUC::getVal($sap, "settings");
+            $this->drawSapBefore($sap, $key);
 
-							$nodraw = UniteFunctionsUC::getVal($sap, "nodraw");
-							if($nodraw === true)
-								continue;
+            if(!empty($arrSettings)) {
+                $this->drawSettings_settings($filterSapID, $mode, $arrSettings);
+            }
 
-									$this->drawSapBefore($sap, $key);
+            $this->drawSapAfter();
 
-									if(!empty($arrSettings))
-						$this->drawSettings_settings($filterSapID, $mode, $arrSettings);
-
-					$this->drawSapAfter();
-
-					endforeach;
+        endforeach;
 
 		 $this->drawSettingsBottom();
 
@@ -2507,10 +2445,11 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		if(count($arrSettings) == 1 && $arrSettings[0]["type"] == UniteSettingsUC::TYPE_EDITOR)
 				$mode = "single_editor";
 
-		if($this->showSaps == true && $this->sapsType == self::SAPS_TYPE_ACCORDION)
-				$this->drawSettings_saps($filterSapID, $mode);
-		else
-				$this->drawSettings_settings($filterSapID, $mode);
+		if($this->showSaps == true && $this->sapsType == self::SAPS_TYPE_ACCORDION) {
+            $this->drawSettings_saps($filterSapID, $mode);
+        } else {
+			$this->drawSettings_settings($filterSapID, $mode);
+        }
 	}
 
 }

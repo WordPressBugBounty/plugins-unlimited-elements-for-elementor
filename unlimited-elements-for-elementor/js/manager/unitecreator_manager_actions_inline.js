@@ -134,7 +134,7 @@ function UCManagerActionsInline(){
 		
 		if(typeof arrItems != "object")
 			return(false);
-		
+				
 		jQuery.each(arrItems, function(index, itemData){
 			appendItem(itemData, true);
 		});
@@ -377,9 +377,12 @@ function UCManagerActionsInline(){
 	 * @param objValues
 	 */
 	function appendItem(objValues, noUpdate){
+				
 		var htmlItem = generateItemHtml(objValues);
+		
 		var objItem = g_objItems.appendItem(htmlItem, noUpdate);
 		objItem.data("params", objValues);
+				
 	}
 	
 	
@@ -525,9 +528,10 @@ function UCManagerActionsInline(){
 		
 		//init from data
 		var arrInitItems = g_objWrapper.data("init-items");
-		
-		if(arrInitItems && typeof arrInitItems == "object")
+				
+		if(arrInitItems && typeof arrInitItems == "object"){			
 			t.setItemsFromData(arrInitItems);
+		}
 		
 	};
 	

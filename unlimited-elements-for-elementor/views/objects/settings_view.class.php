@@ -92,7 +92,6 @@ class UniteCreatorSettingsView{
 	 * modify custom settings - function for override
 	 */
 	protected function modifyCustomSettings($settings){
-		
 		return($settings);
 	}
 	

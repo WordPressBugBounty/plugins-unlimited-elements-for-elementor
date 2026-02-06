@@ -797,9 +797,11 @@ class UniteFunctionsUC{
 	/**
 	 * Modify data array for show - for DEBUG purposes
 	 * Convert single arrays like in post meta (multi-level support)
+	 * fordebug for debug debug array debug
 	 */
 	public static function modifyDataArrayForShow($arrData, $convertSingleArray = false) {
-	    // Check if input is not an array
+
+		// Check if input is not an array
 	    if (!is_array($arrData)) {
 	        return $arrData;
 	    }
@@ -819,8 +821,10 @@ class UniteFunctionsUC{
 	            $value = UniteFunctionsUC::truncateString($value, $truncateSize);
 	        }
 	        
-	        if(is_string($value))
+	        if(is_string($value)){
 	        	$value = htmlspecialchars($value);
+	        	
+	        }
 	        
 	        // If the value is an array, process it recursively
 	        if (is_array($value)) {
@@ -989,6 +993,13 @@ class UniteFunctionsUC{
 	public static function z_____________STRINGS_____________(){}
 	
 	/**
+	 * Remove http:// or https:// from a string
+	 */
+	public static function removeHttpHttps($str){
+		return preg_replace('#^https?://#i', '', $str);
+	}
+	
+	/**
 	 * comma sparated to array
 	 */
 	public static function csvToArray($strCsv){
@@ -1129,6 +1140,36 @@ class UniteFunctionsUC{
 				
 	}
 	
+	/**
+	 * normalize content for text output
+	 */
+	public static function normalizeContentForText( $content ) {
+	
+	    $allowed_tags = array(
+	        'br'     => array(),
+	        'p'      => array(),
+	        'strong' => array(),
+	        'b'      => array(),
+	        'em'     => array(),
+	        'i'      => array(),
+	        'u'      => array(),
+	        'span'   => array(
+	            'style' => array(),
+	            'class' => array(),
+	        ),
+	        'ul'     => array(),
+	        'ol'     => array(),
+	        'li'     => array(),
+	        'a'      => array(
+	            'href'  => array(),
+	            'title' => array(),
+	            'rel'   => array(),
+	            'target'=> array(),
+	        ),
+	    );
+	
+	    return wp_kses( $content, $allowed_tags );
+	}
 	
 	/**
 	 * truncate string
@@ -1141,8 +1182,8 @@ class UniteFunctionsUC{
 			$length = 100;
 					
 		$originalValue = $value;
-				
-		$value = wp_strip_all_tags($value,"<br><em><b><strong>");
+		
+		$value = self::normalizeContentForText($value);
 		
 		$stringLen = mb_strlen($value, $charset);
 		
@@ -1859,7 +1900,28 @@ class UniteFunctionsUC{
 			
 		return($str);
 	}
-
+	
+	/**
+	 * validate json string
+	 */
+	public static function jsonDecodeValidate($str){
+		
+		if(empty($str))
+			return(array());
+		
+		$arrJSON = self::jsonDecode($str);
+		
+		if(!empty($arrJSON))
+			return($arrJSON);
+				
+		$errorMessage = json_last_error_msg();
+		
+		UniteFunctionsUC::throwError($errorMessage);
+		
+		return($errorMessage);
+	}
+	
+	
 	/**
 	 * maybe json decode
 	 */
@@ -2392,6 +2454,7 @@ class UniteFunctionsUC{
 	 * return if the variable is alphanumeric
 	 */
 	public static function isAlphaNumeric($val){
+		
 		$match = preg_match('/^[\w_]+$/', $val);
 
 		if($match == 0)
@@ -2399,7 +2462,69 @@ class UniteFunctionsUC{
 
 		return(true);
 	}
-
+	
+	/**
+	 * check that meta key is valid
+	 */
+	public static function isMetaKeyValid($metaKey){
+		
+		if(is_string($metaKey) == false)
+			return(false);
+			
+		if(empty($metaKey))
+			return(false);
+		
+		 // length limit
+	    if ( strlen( $metaKey ) > 255 )
+	        return false;
+			
+		if ( ! preg_match('/^[A-Za-z0-9_\-]+$/', $metaKey) )
+			return false;
+		
+		return(true);
+	}
+	
+	
+	/**
+	 * check if taxonomy name is valid
+	 */
+	public static function isTaxonomyNameValid($taxonomy){
+		
+	    // must be a string
+	    if ( ! is_string( $taxonomy ) ) {
+	        return false;
+	    }
+	
+	    // not empty
+	    if ( $taxonomy === '' ) {
+	        return false;
+	    }
+	
+	    // max length 32 chars (WordPress internal limit)
+	    if ( strlen( $taxonomy ) > 32 ) {
+	        return false;
+	    }
+	
+	    // must be lowercase only
+	    if ( strtolower( $taxonomy ) !== $taxonomy ) {
+	        return false;
+	    }
+	
+	    // allowed characters: letters, digits, underscore
+	    if ( ! preg_match('/^[a-z0-9_]+$/', $taxonomy) ) {
+	        return false;
+	    }
+	
+	    // cannot start with a number
+	    if ( preg_match('/^[0-9]/', $taxonomy) ) {
+	        return false;
+	    }
+	
+	    return true;
+	}
+	
+	
+	
 	/**
 	 * validate id's list, allowed only numbers and commas
 	 * @param $val
@@ -2579,7 +2704,8 @@ class UniteFunctionsUC{
 
 			return $arrErrors;
 	}
-
+	
+	
 	public static function z________SANITIZE________(){}
 	
 	/**
@@ -3978,10 +4104,15 @@ class UniteFunctionsUC{
 	public static function downloadFile($filepath, $filename = null){
 
 		UniteFunctionsUC::validateFilepath($filepath,"export file");
-
+		
 		if(empty($filename))
 			$filename = basename($filepath);
 
+		// Clear all output buffers to prevent any previous output from corrupting the file
+		while (ob_get_level()) {
+			ob_end_clean();
+		}
+ 		
 		header('Content-Description: File Transfer');
 		header('Content-Type: application/octet-stream');
 		header('Content-Disposition: attachment; filename="'.$filename.'"');

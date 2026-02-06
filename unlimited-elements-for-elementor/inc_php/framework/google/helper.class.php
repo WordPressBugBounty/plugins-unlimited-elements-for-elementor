@@ -8,7 +8,7 @@ class UEGoogleAPIHelper{
 	const SCOPE_SHEETS_ALL = "https://www.googleapis.com/auth/spreadsheets";
 	const SCOPE_USER_EMAIL = "https://www.googleapis.com/auth/userinfo.email";
 	const SCOPE_YOUTUBE = "https://www.googleapis.com/auth/youtube.readonly";
-
+	
 	private static $credentials = array();
 
 	/**
@@ -43,7 +43,7 @@ class UEGoogleAPIHelper{
 	 * @throws Exception
 	 */
 	public static function getFreshAccessToken(){
-
+		
 		if(self::isAccessTokenExpired() === true)
 			self::refreshAccessToken();
 
@@ -75,7 +75,7 @@ class UEGoogleAPIHelper{
 
 		$returnUrl = HelperUC::getUrlAjax("save_google_connect_data");
 		$returnUrl = UniteFunctionsUC::encodeContent($returnUrl);
-
+		
 		$params = array(
 			"client_id" => GlobalsUnlimitedElements::GOOGLE_CONNECTION_CLIENTID,
 			"redirect_uri" => GlobalsUnlimitedElements::GOOGLE_CONNECTION_URL,
@@ -279,8 +279,7 @@ class UEGoogleAPIHelper{
 	 * @return string
 	 */
 	private static function getRefreshToken(){
-
-
+		
 		$credentials = self::getCredentials();
 		$refreshToken = UniteFunctionsUC::getVal($credentials, "refresh_token");
 
@@ -347,7 +346,7 @@ class UEGoogleAPIHelper{
 	 * @throws Exception
 	 */
 	private static function refreshAccessToken(){
-
+		
 		$refreshToken = self::getRefreshToken();
 
 		if(empty($refreshToken) === true)
@@ -355,7 +354,7 @@ class UEGoogleAPIHelper{
 
 		$request = UEHttp::make();
 		$request->acceptJson();
-
+	
 		$response = $request->get(GlobalsUnlimitedElements::GOOGLE_CONNECTION_URL, array("refresh_token" => $refreshToken, "time" => time()));
 		$data = $response->json();
 

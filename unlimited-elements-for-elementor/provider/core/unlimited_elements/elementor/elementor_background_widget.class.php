@@ -47,7 +47,12 @@ class UniteCreatorElementorBackgroundWidget extends UniteCreatorElementorWidget 
     		$conditionAttribute = UniteFunctionsUC::getVal($param, "condition_attribute");
     		if(!empty($conditionAttribute))
     			$param["condition_attribute"] = $alias."_".$conditionAttribute;
-    		    		
+
+    		$conditionAttribute = UniteFunctionsUC::getVal($param, "condition_attribute2");
+    		if(!empty($conditionAttribute))
+    			$param["condition_attribute2"] = $alias."_".$conditionAttribute;
+    		
+    			
     		$params[$key] = $param;
     	}
 
@@ -121,7 +126,7 @@ class UniteCreatorElementorBackgroundWidget extends UniteCreatorElementorWidget 
           
           if($isAddItems == true)
           	$this->addItemsControlsUC($itemsType);
-          	
+          
     }
     
     

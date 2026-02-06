@@ -784,9 +784,9 @@ class HelperProviderUC{
 			
 		}
 		
-		
 		$isAcfExists = UniteCreatorAcfIntegrate::isAcfActive();
-
+		
+		
 		//-------------- repeater meta name ----------------
 
 		$params = array();
@@ -805,11 +805,11 @@ class HelperProviderUC{
 			$text = __("Meta Field Name", "unlimited-elements-for-elementor");
 		else
 			$text = __("ACF Field Name", "unlimited-elements-for-elementor");
-
+		
 		$objSettings->addTextBox($name."_repeater_name", "", $text, $params);
 
 		// --- fields location -----------
-
+		
 		$params = array();
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_DROPDOWN;
 		
@@ -820,7 +820,7 @@ class HelperProviderUC{
 			$text = __("Meta Field Location", "unlimited-elements-for-elementor");
 		else
 			$text = __("ACF Field Location", "unlimited-elements-for-elementor");
-
+		
 		$arrLocations = array();
 		$arrLocations["current_post"] = __("Current Post", "unlimited-elements-for-elementor");
 		$arrLocations["parent_post"] = __("Parent Post", "unlimited-elements-for-elementor");
@@ -828,11 +828,16 @@ class HelperProviderUC{
 		$arrLocations["current_term"] = __("Current Term", "unlimited-elements-for-elementor");
 		$arrLocations["parent_term"] = __("Parent Term", "unlimited-elements-for-elementor");
 		$arrLocations["current_user"] = __("Current User", "unlimited-elements-for-elementor");
-
+		
+		if($isAcfExists == true){
+			$arrLocations["options_page"] = __("Options Page", "unlimited-elements-for-elementor");
+		}
+		
 		$arrLocations = array_flip($arrLocations);
 		
 		$objSettings->addSelect($name."_repeater_location", $arrLocations, $text, "current_post", $params);
-
+		
+		
 		// --- location post select -----------
 
 		if($isAcfExists == false)
@@ -849,11 +854,12 @@ class HelperProviderUC{
 
 		$objSettings->addPostIDSelect($name."_repeater_post", $text, $conditionRepeaterPost, "single");
 		
+			
+		// ----- ADD DEBUG OPTIONS
+		
 		if($addDebug == false)
 			return(false);
-
-		// ----- ADD DEBUG OPTIONS
-			
+		
 		$params = array();
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_HR;
 			
@@ -941,6 +947,7 @@ class HelperProviderUC{
 		$post = null;
 		$termID = null;
 		$userID = null;
+		$optionPagesData = null;
 		
 		
 		switch($location){
@@ -1048,9 +1055,17 @@ class HelperProviderUC{
 				}
 
 			break;
+			case "options_page":
+				
+				$objAcf = new UniteCreatorAcfIntegrate();
+				
+				$optionPagesData = $objAcf->getOptionsPagesData();
+				
+				
+			break;
 			default:
-				dmp("repeater location not found!");
-				dmp("repeater - get data from location: $location");
+				HelperHtmlUC::outputErrorMessage("repeater location not found!");
+				HelperHtmlUC::outputErrorMessage("repeater - get data from location: $location");
 			break;
 		}
 		
@@ -1060,8 +1075,9 @@ class HelperProviderUC{
 		//---- load from post
 
 		if(!empty($postID)){
-
+						
 			$arrCustomFields = UniteFunctionsWPUC::getPostCustomFields($postID, false);
+			
 		}
 		
 		//------ load from term
@@ -1073,9 +1089,12 @@ class HelperProviderUC{
 
 		if(!empty($userID))
 			$arrCustomFields = UniteFunctionsWPUC::getUserCustomFields($userID, false);
-					
-		
+
+		//------ load from option page data
 			
+		if(!empty($optionPagesData))
+			$arrCustomFields = $optionPagesData;
+		
 		//show debug meta text
 
 		if($showDebugMeta == true){
@@ -1100,6 +1119,14 @@ class HelperProviderUC{
 
 				HelperUC::$operations->putCustomFieldsArrayDebug($arrCustomFields, $text);
 			}
+			
+			if(!empty($optionPagesData)){
+
+				$text = "Options page data";
+				
+				HelperUC::$operations->putCustomFieldsArrayDebug($arrCustomFields, $text);
+			}
+			
 
 
 			if(empty($repeaterName)){
@@ -1233,6 +1260,11 @@ class HelperProviderUC{
 			$paramDefault = isset($field["default"]) ? $field["default"] : "";
 			
 			switch($field["type"]){
+				case UniteCreatorDialogParam::PARAM_HR:
+					
+					$settingsManager->addHr($paramName, $params);
+					
+				break;
 				case UniteCreatorDialogParam::PARAM_STATIC_TEXT:
 					$settingsManager->addStaticText($field["text"], $paramName, $params);
 				break;
@@ -1477,7 +1509,7 @@ class HelperProviderUC{
 					if($isSaparateScripts == false){		//one script tag
 
 						echo "<script type='text/javascript' id='unlimited-elements-scripts'>\n";
-
+		
 							foreach ($arrScriptsOutput as $script){
 								uelm_echo($script."\n");
 							}
@@ -1946,6 +1978,22 @@ class HelperProviderUC{
 	}
 	
 	/**
+	 * show post debug by id
+	 */
+	public static function showPostDebug($postID){
+		
+		$post = get_post($postID);
+		
+		if(empty($post))
+			dmp("post not found: $postID");
+		
+		$arrPosts = array($post);
+		
+		HelperUC::$operations->putPostsFullDebug($arrPosts);
+		
+	}
+	
+	/**
 	 * show current user meta data for debug
 	 */
 	public static function showCurrentUserMetaDataDebug(){
@@ -1967,6 +2015,17 @@ class HelperProviderUC{
 			
 			dmp($htmlFields);
 		}
+		
+	}
+	
+	/**
+	 * show post object debug
+	 */
+	public static function showCurrentPostObjectDebug(){
+		
+		$post = get_post();
+		
+		HelperUC::$operations->putPostObjectDebug($post);
 		
 	}
 	
@@ -1994,6 +2053,26 @@ class HelperProviderUC{
 		
 		dmp("Post Terms for post <b>$postTitle</b>: ");
 		dmp($arrTermsTitles);
+		
+	}
+	
+	/**
+	 * show current post meta debug
+	 */
+	public static function showLastQuery(){
+		
+		global $wp_query;
+		$queryVars = $wp_query->query;
+		
+		dmp("Last Posts Query:");
+		dmp($queryVars);
+		
+		//dmp("is main query: ".$wp_query->isMain());
+		
+		dmp("The Request: ");
+		
+		dmp($wp_query->request);
+		
 		
 	}
 	

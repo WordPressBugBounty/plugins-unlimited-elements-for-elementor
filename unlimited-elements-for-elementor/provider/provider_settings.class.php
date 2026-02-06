@@ -79,9 +79,8 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_RAW_HTML;
 		$params["html"] = "<div class='uc-edit-template-button'><a href='javascript:void(0)' class='uc-edit-template-button__link unite-setting-special-select' data-settingtype='template_button' style='display:none' data-selectid='{$name}_templateid' target='_blank'>Edit Template</a></div>";
 
-
-
-		$this->addTextBox($name."_templateid_button", "", $title , $params);
+        if(GlobalsProviderUC::$renderPlatform != GlobalsProviderUC::RENDER_PLATFORM_GUTENBERG)
+		    $this->addTextBox($name."_templateid_button", "", $title , $params);
 
 	}
 
@@ -987,9 +986,105 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_HR;
 
 		$this->addHr($name."post_terms_sap", $params);
-
-
 	}
+
+    protected function addBorderSettings($name, $value, $title, $param, $extra) {
+
+        $selector = UniteFunctionsUC::getVal($param, 'selector', '{{WRAPPER}}');
+
+        $types = array_flip(array(
+            ''       => __("Default", "unlimited-elements-for-elementor"),
+            'none'   => __("None",    "unlimited-elements-for-elementor"),
+            'solid'  => __("Solid",   "unlimited-elements-for-elementor"),
+            'dashed' => __("Dashed",  "unlimited-elements-for-elementor"),
+            'dotted' => __("Dotted",  "unlimited-elements-for-elementor"),
+            'double' => __("Double",  "unlimited-elements-for-elementor"),
+            'groove' => __("Groove",  "unlimited-elements-for-elementor"),
+        ));
+
+        // ---------- TYPE (live) ----------
+        $typeName    = $name . '_type';
+        // translators: %s is a string
+        $typeTitle   = sprintf(__("%s Type", "unlimited-elements-for-elementor"), $title);
+        $typeDefault = UniteFunctionsUC::getVal($param, 'border_type', '');
+
+        $typeParams  = array_merge($extra, array(
+            'selectors' => array(
+                'selector'       => $selector,
+                'selector_value' => 'border-style:{{value}};',
+            ),
+        ));
+
+        if (!$this->isSettingExist($typeName)) {
+            $this->addSelect($typeName, $types, $typeTitle, $typeDefault, $typeParams);
+        }
+
+        $typeCondition = array($typeName . '!' => array('', 'none'));
+
+        // ---------- WIDTH (Dimensions, live, responsive) ----------
+        // translators: %s is a string
+        $widthTitle  = sprintf(__("%s Width", "unlimited-elements-for-elementor"), $title);
+
+        $responsive = array(
+            'desktop' => '',
+            'tablet'  => '_tablet',
+            'mobile'  => '_mobile',
+        );
+
+        foreach ($responsive as $device => $suffix) {
+            $widthName = $name . '_width' . $suffix;
+
+            if ($this->isSettingExist($widthName)) {
+                continue;
+            }
+
+            $addValue = array();
+            $addValue['top']       = UniteFunctionsUC::getVal($param, "width_{$device}_top");
+            $addValue['right']     = UniteFunctionsUC::getVal($param, "width_{$device}_right");
+            $addValue['bottom']    = UniteFunctionsUC::getVal($param, "width_{$device}_bottom");
+            $addValue['left']      = UniteFunctionsUC::getVal($param, "width_{$device}_left");
+            $addValue['unit']      = UniteFunctionsUC::getVal($param, "width_{$device}_unit", 'px');
+            $addValue['is_linked'] = UniteFunctionsUC::getVal($param, "width_{$device}_is_linked", true);
+
+            $widthParams = array_merge($extra, array(
+                'elementor_condition' => $typeCondition,
+                'is_responsive'       => true,
+                'responsive_type'     => $device,
+                'responsive_id'       => $widthName,
+                'units'               => array('px','%','em','rem'),
+
+                'selectors' => array(
+                    'selector'       => $selector,
+                    'selector_value' =>
+                        'border-top-width:{{top}}{{unit}};'
+                    . 'border-right-width:{{right}}{{unit}};'
+                    . 'border-bottom-width:{{bottom}}{{unit}};'
+                    . 'border-left-width:{{left}}{{unit}};',
+                ),
+            ));
+
+            $this->addDimentionsSetting($widthName, $addValue, $widthTitle, $widthParams);
+        }
+
+        // ---------- COLOR (live) ----------
+        // translators: %s is a string
+        $colorTitle   = sprintf(__("%s Color", "unlimited-elements-for-elementor"), $title);
+        $colorDefault = UniteFunctionsUC::getVal($param, 'border_color');
+
+        $colorParams = array_merge($extra, array(
+            'elementor_condition' => $typeCondition,
+            'selectors'           => array(
+                'selector'       => $selector,
+                'selector_value' => 'border-color:{{value}};',
+            ),
+        ));
+
+        $colorName = $name . '_color';
+        if (!$this->isSettingExist($colorName)) {
+            $this->addColorPicker($colorName, $colorDefault, $colorTitle, $colorParams);
+        }
+    }
+
 
 	/**
 	 * add background settings
@@ -3481,12 +3576,385 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$groupSelectorReplace = array(
 			"{{BLUR}}" => $blurName,
 			"{{BRIGHTNESS}}" => $brightnessName,
-			"{{CONTRAST}}" => $contrastName,
+			"{{CONTRAST}}" => $contrastName, 
 			"{{SATURATE}}" => $saturationName,
 			"{{HUE}}" => $hueName,
 		);
 
 		$this->addGroupSelector($groupSelectorName, $groupSelector, $groupSelectorValue, $groupSelectorReplace);
 	}
+
+    public function loadXMLFile($filepath, $loadedSettingsType = null){
+        parent::loadXMLFile($filepath, $loadedSettingsType);
+    }
+
+	/**
+    * Add advanced
+    */
+    public function ensureAdvancedFields($debug = '') {
+
+        $advancedSaps = [
+            '__uc_adv_layout__'     => 'Layout',
+            '__uc_adv_border__'     => 'Border',
+            '__uc_adv_background__' => 'Background',
+            '__uc_adv_responsive__' => 'Responsive',
+        ];
+
+        foreach ($advancedSaps as $name => $title) {
+            $sapKey = $this->getSapKeyByName($name);
+            if ($sapKey === null) {
+                $this->addSap($title, $name, self::TAB_ADVANCED);
+            }
+        }
+
+        // ===================== LAYOUT =====================
+        $sapKey = $this->getSapKeyByName('__uc_adv_layout__');
+        $this->currentSapKey = $sapKey;
+
+        // Margin (live)
+        if (!$this->isSettingExist('advanced_margin')) {
+            $this->add(
+                'advanced_margin',
+                [
+                    'top' => '0', 'right' => '0', 'bottom' => '0', 'left' => '0',
+                    'unit' => 'px', 'is_linked' => true
+                ],
+                esc_html__('Margin','unlimited-elements-for-elementor'),
+                self::TYPE_DIMENTIONS,
+                [
+                    'label_block'     => true,
+                    'tab'             => self::TAB_ADVANCED,
+                    'is_responsive'   => true,
+                    'responsive_type' => 'desktop',
+                    'responsive_id'   => 'advanced_margin',
+                    'units'           => ['px','vh','%','em','rem'],
+                    'selector'        => '',
+                    'selector_value'  => 'margin-top:{{top}}!important;margin-right:{{right}}!important;margin-bottom:{{bottom}}!important;margin-left:{{left}}!important;',
+                ]
+            );
+        }
+
+        // Padding (live)
+        if (!$this->isSettingExist('advanced_padding')) {
+            $this->add(
+                'advanced_padding',
+                [
+                    'top' => '', 'right' => '', 'bottom' => '', 'left' => '',
+                    'unit' => 'px', 'is_linked' => true
+                ],
+                esc_html__('Padding','unlimited-elements-for-elementor'),
+                self::TYPE_DIMENTIONS,
+                [
+                    'label_block'     => true,
+                    'tab'             => self::TAB_ADVANCED,
+                    'is_responsive'   => true,
+                    'responsive_type' => 'desktop',
+                    'responsive_id'   => 'advanced_padding',
+                    'units'           => ['px','vh','%','em','rem'],
+                    'selector'        => '',
+                    'selector_value' => 'padding-top:{{top}}!important;padding-right:{{right}}!important;padding-bottom:{{bottom}}!important;padding-left:{{left}}!important;',
+                ]
+            );
+        }
+
+        // CSS ID
+        if (!$this->isSettingExist('advanced_css_id')) {
+            $this->add(
+                'advanced_css_id',
+                '',
+                esc_html__('CSS ID','unlimited-elements-for-elementor'),
+                self::TYPE_TEXT,
+                ['tab' => self::TAB_ADVANCED]
+            );
+        }
+
+        // CSS Classes
+        if (!$this->isSettingExist('advanced_css_classes')) {
+            $this->add(
+                'advanced_css_classes',
+                '',
+                esc_html__('CSS Classes','unlimited-elements-for-elementor'),
+                self::TYPE_TEXT,
+                ['tab' => self::TAB_ADVANCED]
+            );
+        }
+
+        // Z-Index
+        if (!$this->isSettingExist('advanced_z_index')) {
+            $this->add(
+                'advanced_z_index',
+                [1, 'unit' => ''],
+                esc_html__('Z-Index','unlimited-elements-for-elementor'),
+                self::TYPE_RANGE,
+                [
+                    'tab'             => self::TAB_ADVANCED,
+                    'is_responsive'   => true,
+                    'responsive_type' => 'desktop',
+                    'min'             => -1,
+                    'max'             => 999,
+                    'step'            => 1,
+                    'unit'           => '',
+                    'show_slider'     => false,
+
+                    'selector'       => '',
+                    'selector_value' => 'z-index:{{value}};',
+
+                ]
+            );
+        }
+
+        // Responsive Switchers
+        $responsive_types = [
+            'advanced_hide_on_desktop' => 'Hide On Desktop',
+            'advanced_hide_on_tablet' => 'Hide On Tablet Portrait',
+            'advanced_hide_on_mobile' => 'Hide On Mobile Portrait'
+        ];
+        $sapKey = $this->getSapKeyByName('__uc_adv_responsive__');
+        $this->currentSapKey = $sapKey;
+        foreach($responsive_types as $name => $label) {
+            if (!$this->isSettingExist($name)) {
+                $this->add(
+                    $name,
+                    0,
+                    esc_html__($label,'unlimited-elements-for-elementor'),
+                    self::TYPE_SWITCHER,
+                    [
+                        'tab'               => self::TAB_ADVANCED,
+                        'items'             => [0, 1],
+                        'selector'          => '',
+                    ]
+                );
+            }        
+        }
+
+        // ===================== BACKGROUND =====================
+        $sapKey = $this->getSapKeyByName('__uc_adv_background__');
+        $this->currentSapKey = $sapKey;
+
+        if (!$this->isSettingExist('advanced_background_type')) {
+            $bgTypes = array_flip([
+                'none'     => __('None', 'unlimited-elements-for-elementor'),
+                'solid'    => __('Solid', 'unlimited-elements-for-elementor'),
+                'gradient' => __('Gradient', 'unlimited-elements-for-elementor'),
+            ]);
+
+            $this->addSelect(
+                'advanced_background_type',
+                $bgTypes,
+                esc_html__('Background Type','unlimited-elements-for-elementor'),
+                'none',
+                [
+                    'tab' => self::TAB_ADVANCED,
+                    'selector' => '',
+                    'selector_value' => 'data-bg-type:{{value}};',
+                ]
+            );
+        }
+
+        if (!$this->isSettingExist('advanced_background_color')) {
+            $this->addColorPicker(
+                'advanced_background_color',
+                '',
+                esc_html__('Background Color','unlimited-elements-for-elementor'),
+                [
+                    'tab'                 => self::TAB_ADVANCED,
+                    'elementor_condition' => ['advanced_background_type' => 'solid'],
+                    'selector'            => '',
+                    'selector_value'      => 'background-color:{{value}};',
+                ]
+            );
+        }
+
+        if (!$this->isSettingExist('advanced_background_image')) {
+            $this->addImage(
+                'advanced_background_image',
+                '',
+                esc_html__('Background Image','unlimited-elements-for-elementor'),
+                [
+                    'tab'                 => self::TAB_ADVANCED,
+                    'elementor_condition' => ['advanced_background_type' => 'solid'],
+                    'selector'            => '',
+                    'selector_value'      => 'background-image:url({{value}}); background-size:cover; background-repeat:no-repeat;',
+                ]
+            );
+        }
+
+        if (!$this->isSettingExist('advanced_background_gradient_color1')) {
+            $this->addColorPicker(
+                'advanced_background_gradient_color1',
+                '#000000',
+                esc_html__('Gradient Color 1','unlimited-elements-for-elementor'),
+                [
+                    'tab'                 => self::TAB_ADVANCED,
+                    'elementor_condition' => ['advanced_background_type' => 'gradient'],
+                    'selector'            => '',
+                    'selector_value'      => 'background-image:linear-gradient({{advanced_background_gradient_angle}}deg, {{value}}, {{advanced_background_gradient_color2}});',
+                ]
+            );
+        }
+
+        if (!$this->isSettingExist('advanced_background_gradient_color2')) {
+            $this->addColorPicker(
+                'advanced_background_gradient_color2',
+                '#ffffff',
+                esc_html__('Gradient Color 2','unlimited-elements-for-elementor'),
+                [
+                    'tab'                 => self::TAB_ADVANCED,
+                    'elementor_condition' => ['advanced_background_type' => 'gradient'],
+                    'selector'            => '',
+                    'selector_value'      => 'background-image:linear-gradient({{advanced_background_gradient_angle}}deg, {{advanced_background_gradient_color1}}, {{value}});',
+                ]
+            );
+        }
+
+        if (!$this->isSettingExist('advanced_background_gradient_angle')) {
+            $this->add(
+                'advanced_background_gradient_angle',
+                180,
+                esc_html__('Gradient Angle','unlimited-elements-for-elementor'),
+                self::TYPE_RANGE,
+                [
+                    'tab'                 => self::TAB_ADVANCED,
+                    'elementor_condition' => ['advanced_background_type' => 'gradient'],
+                    'min'                 => 0,
+                    'max'                 => 360,
+                    'step'                => 1,
+                    'units'               => '',
+                    'show_slider'         => true,
+                    'selector'            => '',
+                    'selector_value'      => 'background-image:linear-gradient({{value}}deg, {{advanced_background_gradient_color1}}, {{advanced_background_gradient_color2}});',
+                ]
+            );
+        }
+
+        // ===================== BORDER =====================
+        $sapKey = $this->getSapKeyByName('__uc_adv_border__');
+        $this->currentSapKey = $sapKey;
+
+        if (!$this->isSettingExist('advanced_border_type')) {
+            $borderTypes = array_flip([
+                ''       => __('Default', 'unlimited-elements-for-elementor'),
+                'none'   => __('None',    'unlimited-elements-for-elementor'),
+                'solid'  => __('Solid',   'unlimited-elements-for-elementor'),
+                'dashed' => __('Dashed',  'unlimited-elements-for-elementor'),
+                'dotted' => __('Dotted',  'unlimited-elements-for-elementor'),
+                'double' => __('Double',  'unlimited-elements-for-elementor'),
+                'groove' => __('Groove',  'unlimited-elements-for-elementor'),
+            ]);
+
+            $this->addSelect(
+                'advanced_border_type',
+                $borderTypes,
+                esc_html__('Border Type','unlimited-elements-for-elementor'),
+                '',
+                [
+                    'tab'       => self::TAB_ADVANCED,
+
+                        'selector'       => '',
+                        'selector_value' => 'border-style:{{value}};',
+
+                ]
+            );
+        }
+
+        $borderTypeCondition = ['advanced_border_type!' => ['', 'none']];
+
+        if (!$this->isSettingExist('advanced_border_width')) {
+            $this->add(
+                'advanced_border_width',
+                ['top'=>'','right'=>'','bottom'=>'','left'=>'','unit'=>'px','is_linked'=>true],
+                esc_html__('Border Width','unlimited-elements-for-elementor'),
+                self::TYPE_DIMENTIONS,
+                [
+                    'tab'                 => self::TAB_ADVANCED,
+                    'label_block'         => true,
+                    'is_responsive'       => true,
+                    'responsive_type'     => 'desktop',
+                    'responsive_id'       => 'advanced_border_width',
+                    'units'               => ['px','%','em','rem'],
+                    'elementor_condition' => $borderTypeCondition,
+
+                        'selector'       => '',
+                        'selector_value' =>
+                            'border-top-width:{{top}};' .
+                            'border-right-width:{{right}};' .
+                            'border-bottom-width:{{bottom}};' .
+                            'border-left-width:{{left}};',
+
+                ]
+            );
+        }
+
+        if (!$this->isSettingExist('advanced_border_width_tablet')) {
+            $this->add(
+                'advanced_border_width_tablet',
+                ['top'=>'','right'=>'','bottom'=>'','left'=>'','unit'=>'px','is_linked'=>true],
+                esc_html__('Border Width (Tablet)','unlimited-elements-for-elementor'),
+                self::TYPE_DIMENTIONS,
+                [
+                    'tab'                 => self::TAB_ADVANCED,
+                    'label_block'         => true,
+                    'is_responsive'       => true,
+                    'responsive_type'     => 'tablet',
+                    'responsive_id'       => 'advanced_border_width_tablet',
+                    'units'               => ['px','%','em','rem'],
+                    'elementor_condition' => $borderTypeCondition,
+
+                        'selector'       => '',
+                        'selector_value' =>
+                            'border-top-width:{{top}}{{unit}};' .
+                            'border-right-width:{{right}}{{unit}};' .
+                            'border-bottom-width:{{bottom}}{{unit}};' .
+                            'border-left-width:{{left}}{{unit}};',
+
+                ]
+            );
+        }
+
+        if (!$this->isSettingExist('advanced_border_width_mobile')) {
+            $this->add(
+                'advanced_border_width_mobile',
+                ['top'=>'','right'=>'','bottom'=>'','left'=>'','unit'=>'px','is_linked'=>true],
+                esc_html__('Border Width (Mobile)','unlimited-elements-for-elementor'),
+                self::TYPE_DIMENTIONS,
+                [
+                    'tab'                 => self::TAB_ADVANCED,
+                    'label_block'         => true,
+                    'is_responsive'       => true,
+                    'responsive_type'     => 'mobile',
+                    'responsive_id'       => 'advanced_border_width_mobile',
+                    'units'               => ['px','%','em','rem'],
+                    'elementor_condition' => $borderTypeCondition,
+
+                        'selector'       => '',
+                        'selector_value' =>
+                            'border-top-width:{{top}}{{unit}};' .
+                            'border-right-width:{{right}}{{unit}};' .
+                            'border-bottom-width:{{bottom}}{{unit}};' .
+                            'border-left-width:{{left}}{{unit}};',
+
+                ]
+            );
+        }
+
+        if (!$this->isSettingExist('advanced_border_color')) {
+            $this->addColorPicker(
+                'advanced_border_color',
+                '',
+                esc_html__('Border Color','unlimited-elements-for-elementor'),
+                [
+                    'tab'                 => self::TAB_ADVANCED,
+                    'elementor_condition' => $borderTypeCondition,
+
+                        'selector'       => '',
+                        'selector_value' => 'border-color:{{value}};',
+
+                ]
+            );
+        }
+
+    }
+
+
 
 }

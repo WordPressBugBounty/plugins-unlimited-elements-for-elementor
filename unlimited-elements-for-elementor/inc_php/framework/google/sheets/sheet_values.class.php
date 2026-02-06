@@ -64,7 +64,8 @@ class UEGoogleAPISheetValues extends UEGoogleAPIModel{
 				$styles[] = "color:$hex";
 			}
 
-			$safeText = htmlspecialchars($rawText);
+			// Allow HTML from Sheets while stripping potentially unsafe JS.
+			$safeText = UniteFunctionsUC::sanitizeHTMLRemoveJS($rawText);
 			if(!empty($styles)) {
 				$styleAttr = htmlspecialchars(implode(";", $styles));
 				$safeText  = "<span style=\"$styleAttr\">$safeText</span>";

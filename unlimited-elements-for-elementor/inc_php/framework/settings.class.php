@@ -91,6 +91,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 		const TAB_CONTENT = "content";
 		const TAB_STYLE = "style";
+		const TAB_ADVANCED = "advanced";
 		
 		const CAT_GENERAL = "cat_general_general";
 		
@@ -426,8 +427,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$arr = array();
 			$arrUnits = array();
 
-			if($this->arrSaps)
-				$this->arrSaps = array();
+			if(!$this->arrSaps) {
+                $this->arrSaps = array();
+            }
 
 			foreach($this->arrSaps as $sap){
 				$text = $sap["text"];
@@ -521,7 +523,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$sap["text"] = $text;
 			$sap["icon"] = $icon;
 			$sap["tab"] = $tab;
-			
 			
 			if(!empty($params))
 				$sap = array_merge($sap, $params);
@@ -1489,7 +1490,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 */
 		public function loadXMLFile($filepath, $loadedSettingsType = null){
 
-
 			$obj = UniteFunctionsUC::loadXMLFile($filepath);
 
 			if(empty($obj))
@@ -1542,10 +1542,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				//check for duplicate sap
 				$sapKey = $this->getSapKeyByName($sapName);
 
-				if($sapKey === null)
-					$this->addSap($sapLabel, $sapName, null, $sapParams);
-				else
-					$this->currentSapKey = $sapKey;
+				if($sapKey === null) {
+                    $this->addSap($sapLabel, $sapName, null, $sapParams);
+                } else {
+                    $this->currentSapKey = $sapKey;
+                }
 
 				//--- add fields
 				$fieldset = (array)$fieldset;
@@ -1784,59 +1785,64 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 */
 		public function mergeSettings(UniteSettingsUC $settings){
 
-			$arrSapsNew = $settings->getArrSaps();
-			$arrSapsCurrent = $this->arrSaps;
+			$arrSapsNew   = $settings->getArrSaps();
+
 			$arrNewSapKeys = array();
 
-
-			//add new saps to saps array and remember keys
-			foreach($arrSapsNew as $key => $sap){
-				$sapName = $sap["name"];
+			foreach ($arrSapsNew as $key => $sap) {
+				$sapName = UniteFunctionsUC::getVal($sap, "name");
 
 				$currentSapKey = $this->getSapKeyByName($sapName);
-				if($currentSapKey === null){
-					$this->arrSaps[] = $sap;
-					$this->currentSapKey = count($this->arrSaps)-1;
-					$arrNewSapKeys[$key] = $this->currentSapKey;
-				}else{
+				if ($currentSapKey === null) {
+
+					$this->arrSaps[]      = $sap;
+					$this->currentSapKey  = count($this->arrSaps) - 1;
+					$arrNewSapKeys[$key]  = $this->currentSapKey;
+
+					$this->arrSapIndex[$sapName] = $this->currentSapKey;
+				} else {
 					$arrNewSapKeys[$key] = $currentSapKey;
 				}
-
 			}
 
-
-			//add settings
 			$arrSettingsNew = $settings->getArrSettings();
 
-			foreach($arrSettingsNew as $setting){
-				$name = $setting["name"];
-				$sapOld = $setting["sap"];
-				$setting["id"] = $this->idPrefix.$name;
-				$setting["id_service"] = $this->idPrefix.$name."_service";
-				$setting["id_row"] = $this->idPrefix.$name."_row";
+			foreach ($arrSettingsNew as $setting) {
+				$name  = UniteFunctionsUC::getVal($setting, "name");
+				if (empty($name)) {
+					continue;
+				}
 
-				if(array_key_exists($sapOld, $arrNewSapKeys) == false)
+				if (array_key_exists($name, $this->arrIndex)) {
+					continue;
+				}
+
+				$sapOld = UniteFunctionsUC::getVal($setting, "sap");
+				if (array_key_exists($sapOld, $arrNewSapKeys) == false) {
 					UniteFunctionsUC::throwError("sap {$sapOld} should be exists in sap keys array");
+				}
 
 				$sapNew = $arrNewSapKeys[$sapOld];
 
-				$setting["sap"] = $sapNew;
-				$this->arrSettings[] = $setting;
+				$setting["sap"]        = $sapNew;
+				$setting["id"]         = $this->idPrefix.$name;
+				$setting["id_service"] = $setting["id"]."_service";
+				$setting["id_row"]     = $setting["id"]."_row";
 
-				if(array_key_exists($name, $this->arrIndex))
-					UniteFunctionsUC::throwError("The setting <b>{$name} </b> already exists. ");
-
-				$this->arrIndex[$name] = count($this->arrSettings)-1;
-
+				$this->arrSettings[]    = $setting;
+				$this->arrIndex[$name]  = count($this->arrSettings) - 1;
 			}
 
-			//add controls
 			$arrControlsNew = $settings->getArrControls();
-			$this->arrControls = array_merge($this->arrControls, $arrControlsNew);
+			if (!empty($arrControlsNew)) {
+				$this->arrControls = array_merge($this->arrControls, $arrControlsNew);
+			}
 
 			$arrControlChildrenNew = $settings->getArrControlChildren();
-			$this->arrControlChildren = array_merge($this->arrControlChildren, $arrControlChildrenNew);
-
+			if (!empty($arrControlChildrenNew)) {
+				$this->arrControlChildren = array_merge($this->arrControlChildren, $arrControlChildrenNew);
+			}
+		
 		}
 
 		/**
@@ -1850,7 +1856,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 * add settings from external file
 		 */
 		private function addExternalSettings($filename, $loadParam = null, $loadType = null){
-			
 			$filepathSettings = GlobalsUnlimitedElements::$pathPluginSettings."{$filename}.xml";
 
 			if(file_exists($filepathSettings) == false)
@@ -2089,6 +2094,5 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$this->arrSettings[$index]["name"] = $newName;
 
 		}
-
-
-	}
+		
+}

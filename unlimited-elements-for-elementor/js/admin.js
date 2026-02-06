@@ -973,7 +973,7 @@ function UniteAdminUC(){
 	 */
 	this.replaceAll = function(text, from, to){
 
-		return text.split(from).join(to);
+		return text?.split(from).join(to);
 	};
 
 

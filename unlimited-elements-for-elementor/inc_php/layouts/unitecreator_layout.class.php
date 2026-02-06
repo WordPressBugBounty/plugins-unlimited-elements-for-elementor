@@ -174,7 +174,6 @@ class UniteCreatorLayoutWork extends UniteElementsBaseUC{
 		$objSettings = new UniteCreatorSettings();
 		$objSettings->loadXMLFile($filepathSettings);
 		
-		
 		return($objSettings);
 	}
 	

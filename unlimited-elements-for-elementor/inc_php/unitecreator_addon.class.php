@@ -14,7 +14,9 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	const ITEMS_TYPE_DEFAULT = "default";
 	const ITEMS_TYPE_FORM = "form";
 	const ITEMS_TYPE_DATASET = "dataset";
-
+	const ITEMS_TYPE_POST = "post";
+	const ITEMS_TYPE_MULTISOURCE = "multisource";
+	
 	const FILENAME_ICON = "icon_addon.png";
 	const FILENAME_PREVIEW = "preview_addon";  //jpg,png,gif
 	const FILENAME_ICON_SVG = "preview_icon.svg";
@@ -497,7 +499,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	 * get special items type accordign the params
 	 */
 	protected function getItemsSpecialType(){
-
+		
 		foreach($this->params as $param){
 			$type = UniteFunctionsUC::getVal($param, "type");
 
@@ -514,7 +516,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 				case UniteCreatorDialogParam::PARAM_LISTING:
 
 					$useFor = UniteFunctionsUC::getVal($param, "use_for");
-
+			
 					if($useFor == "remote")
 						continue(2);
 
@@ -1157,7 +1159,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	 * get items params
 	 */
 	public function getParamsItems($filterType = null){
-
+	
 		if(empty($this->paramsItems))
 			return ($this->paramsItems);
 
@@ -1221,7 +1223,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	 * check if has remote
 	 */
 	public function hasMultisource(){
-
+		
 		$arrTypes = $this->getListingTypes();
 
 		return (in_array("items", $arrTypes));
@@ -1610,6 +1612,8 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 		return (false);
 	}
 
+	private function a_______GET_PARAM_________(){}
+	
 	/**
 	 * get some param by type
 	 */
@@ -1651,6 +1655,29 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	}
 
 	/**
+	 * get multisource param
+	 */
+	public function getMultisourceParam(){
+		
+		$arrParams = $this->params;
+
+		foreach($arrParams as $param){
+			
+			$type = UniteFunctionsUC::getVal($param, "type");
+			if($type != UniteCreatorDialogParam::PARAM_LISTING)
+				continue;
+				
+			$useFor = UniteFunctionsUC::getVal($param, "use_for");
+			
+			if($useFor == "items")
+				return($param);
+			
+		}
+		
+		return(null);
+	}
+	
+	/**
 	 * get param by name
 	 */
 	public function getParamByName($name){
@@ -1672,7 +1699,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	public function getParamsTypes($isItems = false){
 
 		$this->validateInited();
-
+		
 		if($isItems == false)
 			$params = $this->params;
 		else
@@ -1839,7 +1866,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 		foreach($arrParams as $param){
 
 			$type = UniteFunctionsUC::getVal($param, "type");
-
+			
 			if($type != UniteCreatorDialogParam::PARAM_LISTING)
 				continue;
 
@@ -2172,7 +2199,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 		if($isGutenbergEditorBG == true)
 			$objSettings->addGutenbergEditorBackgroundSection();
 		
-		
+					
 		//choose if add items chooser
 		
 		if(!empty($this->params) || $this->hasItems){
@@ -2195,7 +2222,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 
 			$objSettings->initByCreatorParams($arrParams, $this->paramsCats);
 		}
-
+		
 		
 		//add items repeater
 
@@ -3475,14 +3502,13 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	 * @param $num
 	 */
 	public function getTestData($num){
-
+		
 		$arrData = array();
 
 		$this->validateTestSlot($num);
 
 		$fieldName = "test_slot" . $num;
 		$jsonData = UniteFunctionsUC::getVal($this->data, $fieldName);
-
 
 		if(empty($jsonData))
 			return (null);
@@ -3492,7 +3518,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 			if(empty($arrData))
 				$arrData = array();
 		}
-
+		
 		return ($arrData);
 	}
 
@@ -3502,7 +3528,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	public function getDefaultData(){
 
 		$arrData = $this->getTestData(2);
-
+				
 		return ($arrData);
 	}
 
@@ -3510,7 +3536,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	 * get all test data in array
 	 */
 	public function getAllTestData($isJson = false){
-
+		
 		$arrData = array();
 
 		$testData1 = $this->getTestData(1);
@@ -3620,7 +3646,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 			$data["fonts"] = $arrFonts;
 
 		$data = $this->modifyAddonDataConvertToUrlAssets($data);
-
+				
 		$dataJson = json_encode($data);
 
 		$slotName = "test_slot" . $slotNum;

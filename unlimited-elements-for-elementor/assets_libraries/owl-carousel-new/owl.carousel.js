@@ -1,5 +1,5 @@
 /**
-* Owl Carousel v2.3.8 - UE23
+* Owl Carousel v2.3.8 - UE25
 * Copyright 2013-2018 David Deutsch
 * Licensed under: SEE LICENSE IN https://github.com/OwlCarousel2/OwlCarousel2/blob/master/LICENSE
 */
@@ -269,7 +269,10 @@
     responsive: {},
     responsiveRefreshRate: 200,
     responsiveBaseElement: window,
-    
+    progressScroll: false,
+    progressScrollDistance: 200,
+    progressScrollDistanceTablet: 200,
+    progressScrollDistanceMobile: 200,
     fallbackEasing: 'swing',
     slideTransition: '',
     
@@ -915,6 +918,7 @@
     this.settings = settings;
     this.invalidate('settings');
     this.trigger('changed', { property: { name: 'settings', value: this.settings } });
+    this.setupScroll();
   };
   
   /**
@@ -1918,7 +1922,167 @@
         this.scrollToTop(carouselOffsetTop, offset);
         
       }   
-      
+
+      /**
+       * Hooks into the scroll event if progressScroll is enabled.
+       * 
+       */
+      Owl.prototype.setupScroll = function() {
+          if (this.settings.progressScroll) {
+              // Initialize state variables for tracking scroll progress
+              this._scroll = {
+                  lastScrollTop: 0,
+                  distanceScrolled: 0, // Single accumulation counter
+                  lastDirection: null // To reset accumulation on direction change
+              };
+
+              // Bind the window scroll event to the handler
+              $(window).on('scroll.owl.progress', $.proxy(this.onScrollProgress, this));
+          }
+      };
+
+      /**
+       * Handles the window scroll event, accumulating distance in the current direction 
+       * before triggering a slide. Implements a simplified "Spike Zeroing" to discard 
+       * massive momentum deltas that follow a change in scroll direction.
+       * 
+       * @param {Event} event - The scroll event arguments.
+       */
+      Owl.prototype.onScrollProgress = function(event) {
+          if (this.settings.progressScroll === false) {
+              return;
+          }
+          
+          // Prevent scroll event processing while the carousel is busy.
+          if (this.isTransitioning || this.isAnimating || this.isDragging) {
+              this._scroll.lastScrollTop = $(window).scrollTop();
+              return;
+          }
+
+          var currentScrollTop = $(window).scrollTop();
+          var lastScrollTop = this._scroll.lastScrollTop;
+          var windowWidth = $(window).width();
+          var distanceThreshold;
+ 
+          if (windowWidth < 767 && this.settings.progressScrollDistanceMobile) {
+              distanceThreshold = this.settings.progressScrollDistanceMobile;
+          } else if (windowWidth >= 767 && windowWidth < 1024 && this.settings.progressScrollDistanceTablet) {
+              distanceThreshold = this.settings.progressScrollDistanceTablet;
+          } else if (windowWidth >= 1024 && this.settings.progressScrollDistance) {
+              distanceThreshold = this.settings.progressScrollDistance;
+          }
+
+          
+          // Calculate instantaneous delta
+          var delta = currentScrollTop - lastScrollTop;
+          
+          // Exit if no scroll movement
+          if (delta === 0) {
+              return;
+          }
+
+          var absDelta = Math.abs(delta);
+
+          // Determine instantaneous direction
+          var newDirection;
+          if (currentScrollTop > lastScrollTop) {
+              newDirection = 'down';
+          } else { // Must be currentScrollTop < lastScrollTop since delta != 0
+              newDirection = 'up';
+          }
+          
+          // --- ACCUMULATION LOGIC ---
+          
+          // 1. Direction Change Check
+          var directionChanged = this._scroll.lastDirection !== newDirection;
+
+          if (directionChanged) {
+              // Direction just changed. Reset accumulation and update direction.
+              this._scroll.distanceScrolled = 0;
+              this._scroll.lastDirection = newDirection;
+          }
+          
+          // 2. MOMENTUM SPIKE CORRECTION (SPIKE ZEROING)
+          // If direction just changed AND the delta is massive, zero out the delta for accumulation.
+          const MOMENTUM_SPIKE_CAP = distanceThreshold; // Assumes any delta > 200px immediately after a direction change is corrupted momentum.
+          
+          if (directionChanged && absDelta > MOMENTUM_SPIKE_CAP) {
+              // Rogue spike detected after direction flip. We discard the distance for accumulation (by setting it to 0), 
+              // but still allow the final position update to proceed.
+              absDelta = 0; 
+              
+              // --- DEBUG OUTPUT (Spike Zeroed) ---
+              if(g_debug == true){
+
+                var positionHTML = '<div class="owl-debug" style="position: fixed; background: #960; color: #FFF; z-index: 1000; padding: 10px; left: 20px; top: 20px; border-radius: 4px; font-family: monospace; line-height: 1.4;">' +
+                + 'Direction: ' + newDirection +  '<span style="color: #FF0;">(SPIKE ZEROED)</span> <br>' +
+                + 'Original Delta: ' + Math.abs(currentScrollTop - lastScrollTop).toFixed(0) + 'px <br>' +
+                + 'Threshold: ' + distanceThreshold + 'px' + 
+                + '</div>';
+                
+                var objWolDebug = jQuery('.owl-debug');
+                if(objWolDebug.length){
+                    objWolDebug.html(positionHTML);
+                } else {
+                    jQuery('body').append(positionHTML);
+                }
+              }
+          }
+
+
+          // 3. Add the (potentially zeroed) change to the tracker
+          this._scroll.distanceScrolled += absDelta;
+
+          // 4. Check if the threshold has been met
+          if (this._scroll.distanceScrolled >= distanceThreshold) {
+              
+              // --- SLIDE TRIGGER ---
+              var directionToTrigger = newDirection;
+              var triggerEvent = (directionToTrigger === 'down') ? 'next.owl' : 'prev.owl';
+
+              this.$element.trigger(triggerEvent);
+              
+              // Reset the tracker.
+              this._scroll.distanceScrolled = 0; 
+              
+              // --- DEBUG OUTPUT (Triggered) ---
+              if(g_debug == true){
+                var positionHTML = '<div class="owl-debug" style="position: fixed; background: #060; color: #FFF; z-index: 1000; padding: 10px; left: 20px; top: 20px; border-radius: 4px; font-family: monospace; line-height: 1.4;">' +
+                + 'Scroll direction: ' + newDirection + '<span style="color: #FF0;">(TRIGGERED)</span> <br>' + 
+                + 'Distance scrolled: ' + this._scroll.distanceScrolled.toFixed(0) + 'px <br>' +
+                + 'Threshold: ' + distanceThreshold + 'px' +
+                ' + </div>';
+                
+                var objWolDebug = jQuery('.owl-debug');
+                if(objWolDebug.length){
+                    objWolDebug.remove();
+                }
+                jQuery('body').append(positionHTML);
+
+              }
+              
+          } else {
+            if(g_debug == true){
+
+              // --- DEBUG OUTPUT (Non-Triggered) ---
+              var positionHTML = '<div class="owl-debug" style="position: fixed; background: #666; color: #FFF; z-index: 1000; padding: 10px; left: 20px; top: 20px; border-radius: 4px; font-family: monospace; line-height: 1.4;">'+
+              + 'Scroll direction: ' + newDirection + '<br>' +
+              + 'Distance scrolled: ' + this._scroll.distanceScrolled.toFixed(0) + 'px <br>' +
+              + 'Threshold: ' + distanceThreshold +'px' +
+              + '</div>';
+              
+              var objWolDebug = jQuery('.owl-debug');
+              if(objWolDebug.length){
+                  objWolDebug.html(positionHTML);
+              } else {
+                  jQuery('body').append(positionHTML);
+              }
+            }
+          }
+          
+        
+          this._scroll.lastScrollTop = currentScrollTop;
+      };
       
       /**
       * Destroys the carousel.
@@ -1954,6 +2118,7 @@
         .removeClass(this.options.grabClass)
         .attr('class', this.$element.attr('class').replace(new RegExp(this.options.responsiveClass + '-\\S+\\s', 'g'), ''))
         .removeData('owl.carousel');
+        $(window).off('scroll.owl.progress');
       };
       
       /**

@@ -145,9 +145,9 @@ class UniteCreatorImportExportChangelog{
 		//delete the table
 
 		$wpdb->query("TRUNCATE TABLE {$changelogTable}");
-
-		$adminUserID = $this->getAdminID();
-
+		
+		$adminUserID = get_current_user_id();
+		
 		foreach ($data as $item) {
 
 			$addon = UniteFunctionsUC::getVal($arrAddonsAssoc, $item['addon_name']);
@@ -171,22 +171,6 @@ class UniteCreatorImportExportChangelog{
 		return true;
 	}
 
-	/**
-	 * get admin user id
-	 */
-	private function getAdminID() {
-
-		$arrUsers = UniteFunctionsWPUC::getAdminUsers();
-
-		if(empty($arrUsers))
-			return(null);
-
-		$firstUser = $arrUsers[0];
-
-		$userID = $firstUser->ID;
-
-		return($userID);
-	}
 
 	/**
 	 * set error message

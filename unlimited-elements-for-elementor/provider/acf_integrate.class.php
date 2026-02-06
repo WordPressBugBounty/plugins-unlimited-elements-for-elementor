@@ -34,13 +34,13 @@ class UniteCreatorAcfIntegrate{
 		 * return if acf plugin activated
 		 */
 		public static function isAcfActive(){
-			
-			if(class_exists('ACF'))
-				return(true);
-			
-			return(false);
+						
+			$isACFExists = class_exists('ACF');
+						
+			return($isACFExists);
 		}
-	
+		
+		
 		/**
 		 * get image title
 		 */
@@ -788,7 +788,7 @@ class UniteCreatorAcfIntegrate{
 				case "term":
 					
 					$termID = "term_".$postID;
-										
+						
 					$arrData = get_fields($termID);
 															
 				break;
@@ -917,6 +917,52 @@ class UniteCreatorAcfIntegrate{
 			*/
 			return($arrOutput);
 		}
-	
+		
+		
+		/**
+		 * get options pages list
+		 */
+		public function getOptionsPages(){
+			
+			if ( function_exists( 'acf_get_options_pages' ) == false)
+				return(array());
+
+			$noPageMessage = __("[No Page Selected]","unlimited-elements-for-elementor");
+			
+			$arrPages = array($noPageMessage => "");
+			
+			$optionPages = acf_get_options_pages();
+			
+			if(empty($optionPages))
+				return($arrPages);
+			
+			$num = 0;
+			foreach($optionPages as $page){
+				
+				$pageTitle = UniteFunctionsUC::getVal($page, "page_title");
+				$pageID = UniteFunctionsUC::getVal($page, "ID");
+				
+				if(isset($arrPages[$pageTitle])){
+					$num++;
+					$pageTitle .= " ($num)";
+				}
+					
+				$arrPages[$pageTitle] = $pageID;
+			}
+			
+			
+			return($arrPages);
+		}
+		
+		/**
+		 * get option pages data
+		 */
+		public function getOptionsPagesData(){
+			
+			$arrData = get_fields("option");
+			
+			return($arrData);
+		}
+		
 	
 }

@@ -1,5 +1,79 @@
 
 
+version 2.0.5:
+
+* Fix: made some fix for wpml in main category
+* Fix: fixed special characters in google sheets
+* Fix: fixed filters "All" empty posts issue
+
+
+version 2.0.4:
+
+* Feautre - made functionality of load more before the grid
+* Feature - added authors filter functionality to post filters.
+
+
+version 2.0.3:
+
+* Fix: fixed SERP API cache time - changed from minutes to seconds 
+* Feature: added requests log view
+
+version 2.0.2:
+
+* Feature: add google reviews from serp api feature
+* Fix - fixed double tax pricing in woocommerce variation
+* Fix - fixed the entrance animation together with load more issue
+* Fix - some blocks related bug fixes
+* Fix - fixed default items not loading js issues
+* Fix - fixed some small security issue
+
+
+version 2.0.1:
+
+* Fix: fixed some small secirity issue with the forms
+* Update: updated freemius sdk to 1.13.0
+
+
+version 2.0:
+
+* Feature: added schema options to posts and multisource widget types
+* Feature: made options for ai visibility (the schema)
+
+
+version 1.5.152:
+
+* Fix: disable short pixel plugin on ajax requests, because it's breaking the json response
+* Fix: fixed some wpml language with thumb id issues
+* Feature: added the schema for multisource and post list params authomatically
+* Fix: make sure that there are images url's in all of the schemas
+
+
+version 1.5.151:
+
+* Fix: fixed some font awesome double include bugs
+* Fix: fixed some init filters issue
+* Fix: fixed file upload issues
+* Feature: Set google reviews in original language and added option to choose review langauge
+* Feature: added support for acf option pages
+* Fix: added some doubly plugin compatability functions
+* Fix: fixed some filters and pagination issues or non showing correct numbers
+* Fix: Fixed current langauge setup in wpml
+* Feature: added Full Post Intro to multisource fields. Moved truncate text to top side
+* Fix: fixed js background output with object cache enabled
+
+
+
+version 1.5.150:
+
+* Update: updated freemius sdk to newest version
+* Fix: fixed bug in background widgets second condition
+* Fix: fixed some double js init with elementor popups
+* Fix: fixed avoid duplicates in post related widgets with filters
+* Fix: fixed svg output instead of url in some cases
+* Fix: fixed some bug with wpml inside loop and elementor grid
+* Fix: prepared the plugin for elementor class optimization
+
+
 version 1.5.149:
 
 * Feature - acf fields now get taxonomies array

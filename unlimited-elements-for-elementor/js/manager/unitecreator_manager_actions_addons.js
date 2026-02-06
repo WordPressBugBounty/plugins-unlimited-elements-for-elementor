@@ -687,7 +687,9 @@ function UCManagerActionsAddons(){
 			if(catID == "all" && activeFilter == "all" && g_emptyAddonsWrapper){
 				var numItems = jQuery("#uc_list_items li").length;
 				if(numItems == 0){
-					jQuery("#no_items_text").hide();
+					
+					jQuery("#no_items_text").show();
+					
 					g_emptyAddonsWrapper.show();
 					g_manager.updateGlobalHeight(null, 390);
 				}

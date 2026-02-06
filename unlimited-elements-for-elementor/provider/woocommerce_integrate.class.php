@@ -250,10 +250,7 @@ class UniteCreatorWooIntegrate{
 			$arrProduct["woo_sale_price_from"] = null;
 			$arrProduct["woo_sale_price_to"] = null;
 		}else{
-			
-			$regularPriceFrom = $this->modifyPrice($regularPriceFrom, $objProduct);
-			$regularPriceTo = $this->modifyPrice($regularPriceTo, $objProduct);
-			
+						
 			$arrProduct["woo_regular_price_from"] = $regularPriceFrom;
 			$arrProduct["woo_regular_price_to"] = $regularPriceTo;
 		}
@@ -725,25 +722,23 @@ class UniteCreatorWooIntegrate{
     	$regularPrice = UniteFunctionsUC::getVal($arrData, "regular_price");
     	$price = UniteFunctionsUC::getVal($arrData, "price");
     	
+    	$priceNoTax = wc_get_price_excluding_tax($objInfo);
+    	$priceWithTax = wc_get_price_including_tax($objInfo);
+    	
     	$price = apply_filters("woocommerce_product_get_price", $price, $objInfo);
     	$salePrice = apply_filters("woocommerce_product_get_sale_price", $salePrice, $objInfo);
     	$regularPrice = apply_filters("woocommerce_product_get_regular_price", $regularPrice, $objInfo);
-    	
     	
     	$salePrice = $this->modifyPrice($salePrice, $objInfo);
     	$regularPrice = $this->modifyPrice($regularPrice, $objInfo);
     	$price = $this->modifyPrice($price, $objInfo);
     	
-    	$priceNoTax = wc_get_price_excluding_tax($objInfo);
-    	$priceWithTax = wc_get_price_including_tax($objInfo);
-    	    	
     	if(empty($regularPrice) && !empty($price))
     		$regularPrice = $price;
     	
     	$arrData["regular_price"] = $regularPrice;
     	$arrData["price"] = $price;
     	$arrData["sale_price"] = $salePrice;
-    	
     	
     	$arrProduct = array();
     	
@@ -779,7 +774,7 @@ class UniteCreatorWooIntegrate{
     		$arrPrices = $objInfo->get_variation_prices();
     		
     		$arrProduct = $this->addPricesFromTo($arrProduct, $arrPrices, $objInfo);
-    		    		
+    		
     		$arrProduct["woo_price"] = $arrProduct["woo_price_from"];
     		$arrProduct["woo_price_id"] = $arrProduct["woo_price_from_id"];
     		
@@ -815,6 +810,7 @@ class UniteCreatorWooIntegrate{
 		
     	//put add to cart link
     	$arrProduct = $this->addAddToCartData($arrProduct, $productID, $productSku);
+    	
     	
     	    	
     	return($arrProduct);
@@ -1005,12 +1001,12 @@ class UniteCreatorWooIntegrate{
                 ON p.ID = pm_stock.post_id 
                 AND pm_stock.meta_key = '_stock_status' 
                 AND pm_stock.meta_value = 'instock'";
-
+			
 			$clauses['join'] .= "\n" . implode("\n", $variationJoinConditions);
 		}
 		
 		remove_filter('posts_clauses', array($this, 'excludeOutOfStockVariationProducts'), 10, 2);
-
+		
 		return $clauses;
 	}
 

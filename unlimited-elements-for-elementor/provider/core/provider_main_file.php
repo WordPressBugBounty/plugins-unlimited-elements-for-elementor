@@ -34,6 +34,3 @@ try{
 		if(GlobalsUC::$SHOW_TRACE == true)
 			dmp($trace);
 	}
-	
-	
-?>

@@ -11,6 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 function ueCheckCatalog(){
 
+	$objAddon = new UniteCreatorAddon();
+	
+	$objAddon->getCatTitle();
+	
 	HelperProviderUC::showPostsDebug($arrPosts);
 	
 	$webAPI = new UniteCreatorWebAPI();

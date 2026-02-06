@@ -1458,7 +1458,7 @@ function UERemoteWidgets(){
 		var minDiff = 1000000;
 
 		var elementOffset = objElement.offset();
-
+		
 		if(g_vars.trace_debug){
 			trace("Widget Offset: ");
 			trace(elementOffset);
@@ -1958,10 +1958,8 @@ function UERemoteWidgets(){
 	 * get widget container
 	 */
 	function getWidgetContainer(objWidget){
-
-		var objParent = objWidget.parents(".elementor-widget-container");
-		if(objParent.length == 0)
-			objParent = objWidget.parent();
+		
+		objParent = objWidget.parent();
 
 		return(objParent);
 	}
@@ -1972,7 +1970,7 @@ function UERemoteWidgets(){
 	 *
 	 */
 	function addTextDiv(objWidget, type){
-
+		
 		var objParent = getWidgetContainer(objWidget);
 
 		var isDebug = (type == "debug");

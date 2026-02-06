@@ -54,8 +54,17 @@ class UniteCreatorAPIIntegrations{
 
 	const GOOGLE_REVIEWS_FIELD_EMPTY_API_KEY = "google_reviews_empty_api_key";
 	const GOOGLE_REVIEWS_FIELD_PLACE_ID = "google_reviews_place_id";
+	const GOOGLE_REVIEWS_FIELD_API_TEXT = "google_reviews_api_text";
 	const GOOGLE_REVIEWS_FIELD_CACHE_TIME = "google_reviews_cache_time";
+	const GOOGLE_REVIEWS_FIELD_LANG = "google_reviews_lang";
+	const GOOGLE_REVIEWS_FIELD_SHOW_DEBUG = "google_reviews_show_debug";
+	const GOOGLE_REVIEWS_SORT_BY = "google_reviews_sort_by";
+	const GOOGLE_REVIEWS_SERP_CACHE_TIME = "google_reviews_serp_cache_time";
 	const GOOGLE_REVIEWS_DEFAULT_CACHE_TIME = 10;
+	const GOOGLE_REVIEWS_CACHE_TIME_DAY = 86400; // 1 day in seconds
+	const GOOGLE_REVIEWS_CACHE_TIME_WEEK = 604800; // 1 week in seconds
+	const GOOGLE_REVIEWS_CACHE_TIME_MONTH = 2592000; // 1 month in seconds (30 days)
+	
 
 	const GOOGLE_SHEETS_FIELD_EMPTY_CREDENTIALS = "google_sheets_empty_credentials";
 	const GOOGLE_SHEETS_FIELD_ID = "google_sheets_id";
@@ -94,7 +103,9 @@ class UniteCreatorAPIIntegrations{
 	const ORDER_DIRECTION_RANDOM = "random";
 
 	private static $instance = null;
-
+	
+	private $googleReviewsShowDebug = false;
+	
 	private $params = array();
 	
 	/**
@@ -183,7 +194,13 @@ class UniteCreatorAPIIntegrations{
 				$data = $this->getYoutubePlaylistData();
 			break;
 			default:
+				
+				if(UniteFunctionsUC::isMaxDebug()){
+					UniteFunctionsUC::showTrace();
+				}
+				
 				UniteFunctionsUC::throwError(__FUNCTION__ . " Error: API type \"$type\" is not implemented");
+			break;
 		}
 
 		return $data;
@@ -193,15 +210,18 @@ class UniteCreatorAPIIntegrations{
 	 * get the api data for multisource
 	 */
 	public function getDataForMultisource($type, $params){
-
+		
 		$data = $this->getData($type, $params);
-
+		
 		switch($type){
 			case self::TYPE_CURRENCY_EXCHANGE:
 				$data = UniteFunctionsUC::getVal($data, "rates_chosen");
 			break;
 			case self::TYPE_WEATHER_FORECAST:
 				$data = UniteFunctionsUC::getVal($data, "daily");
+			break;
+			case self::TYPE_GOOGLE_REVIEWS:
+				$data = UniteFunctionsUC::getVal($data, "reviews");
 			break;
 		}
 
@@ -213,15 +233,28 @@ class UniteCreatorAPIIntegrations{
 	 *
 	 * @return array
 	 */
-	public function addDataToParams($data, $name){
+	public function addDataToParams($data, $name, $paramType = null){
 
 		$params = UniteFunctionsUC::getVal($data, $name, array());
 		$params = UniteFunctionsUC::clearKeysFirstUnderscore($params);
-
+				
 		try{
+			
 			$apiType = UniteFunctionsUC::getVal($params, "api_type");
+			
+			
+			//some small fix - get api type by special param type
+			
+			if(empty($apiType)){
+				switch($paramType){
+					case "reviews":
+						$apiType = "google_reviews";
+					break;
+				}
+			}
+			
 			$apiData = $this->getData($apiType, $params);
-
+						
 			$params["success"] = true;
 			$params = array_merge($params, $apiData);
 		}catch(Exception $exception){
@@ -239,17 +272,17 @@ class UniteCreatorAPIIntegrations{
 	 *
 	 * @return array
 	 */
-	public function getSettingsFields(){
-
+	public function getSettingsFields($isSingle = false){
+		
 		$fields = array();
-
+		
 		if(GlobalsUnlimitedElements::$enableGoogleAPI === true){
 			$fields[self::TYPE_GOOGLE_EVENTS] = $this->getGoogleEventsSettingsFields();
-			$fields[self::TYPE_GOOGLE_REVIEWS] = $this->getGoogleReviewsSettingsFields();
+			$fields[self::TYPE_GOOGLE_REVIEWS] = $this->getGoogleReviewsSettingsFields($isSingle);
 			$fields[self::TYPE_GOOGLE_SHEETS] = $this->getGoogleSheetsSettingsFields();
 			$fields[self::TYPE_YOUTUBE_PLAYLIST] = $this->getYoutubePlaylistSettingsFields();
 		}
-
+		
 		if(GlobalsUnlimitedElements::$enableCurrencyAPI === true)
 			$fields[self::TYPE_CURRENCY_EXCHANGE] = $this->getCurrencyExchangeSettingsFields();
 
@@ -267,22 +300,23 @@ class UniteCreatorAPIIntegrations{
 	 */
 	public function addServiceSettingsFields($settingsManager, $type, $name, $condition = null){
 
-		$fields = $this->getSettingsFields();
+		$fields = $this->getSettingsFields(true);
 		$fields = UniteFunctionsUC::getVal($fields, $type);
-
+		
 		if(empty($fields))
 			return;
-
+		
 		// add api type
 		$params = array();
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_HIDDEN;
 
 		$settingsManager->addHiddenInput($name . "_api_type", $type, "API Type", $params);
-
+		
 		// add the fields
-		HelperProviderUC::addSettingsFields($settingsManager, $fields, $name, $condition);
+		HelperProviderUC::addSettingsFields($settingsManager, $fields, $name, $condition, true);
 	}
 		
+	
 	/**
 	 * init the api integrations
 	 */
@@ -328,6 +362,7 @@ class UniteCreatorAPIIntegrations{
 
 			"google_reviews:place_id" => self::GOOGLE_REVIEWS_FIELD_PLACE_ID,
 			"google_reviews:cache_time" => self::GOOGLE_REVIEWS_FIELD_CACHE_TIME,
+			"google_reviews:lang" => self::GOOGLE_REVIEWS_FIELD_LANG,
 
 			"google_sheets:id" => self::GOOGLE_SHEETS_FIELD_ID,
 			"google_sheets:sheet_id" => self::GOOGLE_SHEETS_FIELD_SHEET_ID,
@@ -362,9 +397,12 @@ class UniteCreatorAPIIntegrations{
 		if(!empty($name))
 			$key = $name."_".$key;
 		
-		$value = empty($this->params[$key]) ? $fallback : $this->params[$key];
+		$paramValue = UniteFunctionsUC::getVal($this->params, $key);
 
-		return $value;
+		if(empty($paramValue))
+			$paramValue = $fallback;
+		
+		return $paramValue;
 	}
 
 	/**
@@ -401,7 +439,7 @@ class UniteCreatorAPIIntegrations{
 	 * authorize google service
 	 */
 	private function authorizeGoogleService($service){
-
+		
 		try{
 			$service->setAccessToken(UEGoogleAPIHelper::getFreshAccessToken());
 		}catch(Exception $exception){
@@ -421,7 +459,7 @@ class UniteCreatorAPIIntegrations{
 	 * has google credentials
 	 */
 	private function hasGoogleCredentials(){
-
+		
 		try{
 			$token = UEGoogleAPIHelper::getFreshAccessToken();
 
@@ -450,7 +488,7 @@ class UniteCreatorAPIIntegrations{
 	 * validate google credentials
 	 */
 	private function validateGoogleCredentials(){
-
+		
 		$hasCredentials = $this->hasGoogleCredentials();
 
 		if($hasCredentials === false)
@@ -461,7 +499,7 @@ class UniteCreatorAPIIntegrations{
 	 * get exchange rate api key
 	 */
 	private function getExchangeRateApiKey(){
-
+		
 		$key = $this->getRequiredParam(self::SETTINGS_EXCHANGE_RATE_API_KEY, "Exchange Rate API key");
 
 		return $key;
@@ -477,7 +515,7 @@ class UniteCreatorAPIIntegrations{
 		$key = HelperProviderCoreUC_EL::getGeneralSetting(self::SETTINGS_EXCHANGE_RATE_API_KEY);
 
 		$fields = $this->addEmptyApiKeyField($fields, $key, self::CURRENCY_EXCHANGE_FIELD_EMPTY_API_KEY, "Exchange Rate API");
-
+		
 		$fields = array_merge($fields, array(
 			array(
 				"id" => self::CURRENCY_EXCHANGE_FIELD_CURRENCY,
@@ -581,35 +619,7 @@ class UniteCreatorAPIIntegrations{
 		return $fields;
 	}
 
-	/**
-	 * get google reviews settings fields
-	 */
-	private function getGoogleReviewsSettingsFields(){
-
-		$fields = array();
-
-		$fields = $this->addGoogleEmptyApiKeyField($fields, self::GOOGLE_REVIEWS_FIELD_EMPTY_API_KEY);
-
-		$fields = array_merge($fields, array(
-			array(
-				"id" => self::GOOGLE_REVIEWS_FIELD_PLACE_ID,
-				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
-				"text" => __("Place ID", "unlimited-elements-for-elementor"),
-				// translators: %s is page url
-				"desc" => sprintf(__("You can find the place ID by using <a href='%s' target='_blank'>Place ID Finder</a>.", "unlimited-elements-for-elementor"), "https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder"),
-			),
-			array(
-				"id" => self::GOOGLE_REVIEWS_FIELD_CACHE_TIME,
-				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
-				"text" => __("Cache Time", "unlimited-elements-for-elementor"),
-				// translators: %d is a number
-				"desc" => sprintf(__("Optional. You can specify the cache time of results in minutes. The default value is %d minutes.", "unlimited-elements-for-elementor"), self::GOOGLE_REVIEWS_DEFAULT_CACHE_TIME),
-				"default" => self::GOOGLE_REVIEWS_DEFAULT_CACHE_TIME,
-			),
-		));
-
-		return $fields;
-	}
+	
 
 
 	/**
@@ -858,43 +868,322 @@ class UniteCreatorAPIIntegrations{
 		return $range;
 	}
 
+	
+	private function _________GOOGLE_REVIEWS_________(){}
+	
 	/**
-	 * get google reviews data
+	 * get serp api key
 	 */
-	private function getGoogleReviewsData(){
-
-		$data = array();
-
+	private function getSerpAPIKey(){
+		
+		if(GlobalsUnlimitedElements::$enableSerpAPI == false)
+			return(null);
+		
+		$serpKey = HelperProviderCoreUC_EL::getGeneralSetting("serpapi_key");
+		$serpKey = trim($serpKey);
+		
+		return($serpKey);
+	}
+	
+	/**
+	 * is serp api enabled
+	 */
+	private function isGoogleReviewsSerpEnabled(){
+						
+		$apiKey = $this->getSerpAPIKey();
+		
+		if(!empty($apiKey))
+			return(true);
+			
+		return(false);		
+	}
+	
+	/**
+	 * get official google reviews
+	 */
+	private function getGoogleReviewsData_official($placeId){
+		
 		$this->validateGoogleApiKey();
-
-		$placeId = $this->getRequiredParam(self::GOOGLE_REVIEWS_FIELD_PLACE_ID, "Place ID");
+		
 		$cacheTime = $this->getCacheTimeParam(self::GOOGLE_REVIEWS_FIELD_CACHE_TIME, self::GOOGLE_REVIEWS_DEFAULT_CACHE_TIME);
-
+		
 		$placesService = new UEGoogleAPIPlacesService();
 		$placesService->setCacheTime($cacheTime);
 
 		$this->authorizeGoogleServiceWithApiKey($placesService);
-
-		$place = $placesService->getDetails($placeId, array(
+		
+		$reviewsLanguage = $this->getParam(self::GOOGLE_REVIEWS_FIELD_LANG);
+		
+		$placeParams = array(
 			"fields" => "reviews",
 			"reviews_sort" => "newest",
-		));
+			"lang" => $reviewsLanguage,
+		);
+		
+		$place = $placesService->getDetails($placeId, $placeParams, $this->googleReviewsShowDebug);
+		
+		return($place);
+	}
+	
+	/**
+	 * get google reviews from serp service
+	 */
+	private function getGoogleReviewsData_serp($placeId){
+		
+		$placesService = new UEGoogleAPIPlacesService();
 
-		foreach($place->getReviews() as $review){
-			$data[] = array(
-				"id" => $review->getId(),
-				"date" => $review->getDate(self::FORMAT_DATETIME),
-				"text" => $review->getText(true),
-				"rating" => $review->getRating(),
-				"author_name" => $review->getAuthorName(),
-				"author_photo" => $review->getAuthorPhotoUrl(),
-			);
+		$placeParams = array();
+				
+		$apiKey = $this->getSerpAPIKey();
+		
+		$reviewsLanguage = $this->getParam(self::GOOGLE_REVIEWS_FIELD_LANG);
+		$placeParams["hl"] = $reviewsLanguage;
+		
+		$reviewsSortBy = $this->getParam(self::GOOGLE_REVIEWS_SORT_BY);
+		$placeParams["sort_by"] = $reviewsSortBy;
+		
+		//get cache time option and convert to seconds
+		$cacheTimeOption = $this->getParam(self::GOOGLE_REVIEWS_SERP_CACHE_TIME, "week");
+		$cacheTime = self::GOOGLE_REVIEWS_CACHE_TIME_WEEK; // default: 1 week in seconds
+		
+		switch($cacheTimeOption){
+			case "day":
+				$cacheTime = self::GOOGLE_REVIEWS_CACHE_TIME_DAY;
+				break;
+			case "week":
+				$cacheTime = self::GOOGLE_REVIEWS_CACHE_TIME_WEEK;
+				break;
+			case "month":
+				$cacheTime = self::GOOGLE_REVIEWS_CACHE_TIME_MONTH;
+				break;
 		}
-
+		
+		$place = $placesService->getDetailsSerp($placeId, $apiKey, $placeParams, $this->googleReviewsShowDebug, $cacheTime);
+		
+		return($place);
+	}
+	
+	
+	/**
+	 * get google reviews data
+	 */
+	private function getGoogleReviewsData(){
+		
+		$data = array();
+		
+		$showDebug = $this->getParam(self::GOOGLE_REVIEWS_FIELD_SHOW_DEBUG);
+		
+		if($showDebug == true)
+			$this->googleReviewsShowDebug = true;
+		
+		try{
+					
+			$serpAPIKey = $this->getSerpAPIKey();
+			
+			$isSerp = !empty($serpAPIKey);
+			
+			if($this->googleReviewsShowDebug == true){
+				
+				$message = "Reviews API Debug";
+				
+				if($isSerp == true)
+					$message .= "<br> Output google reviews data using serp.com API";
+				else
+					$message .= "<br> Output google reviews data using Official Google API";
+				
+				echo HelperHtmlUC::getDebugWarningMessageHtml($message);
+			} 
+		
+			$placeId = $this->getRequiredParam(self::GOOGLE_REVIEWS_FIELD_PLACE_ID, "Place ID");
+		
+		
+			if($isSerp == false)
+				$place = $this->getGoogleReviewsData_official($placeId);
+			else
+				$place = $this->getGoogleReviewsData_serp($placeId);
+		
+		
+		//add api source
+			
+			$apiSourceText = ($isSerp == true)?"serp":"official";
+			
+			$data["reviews_api_type"] = $apiSourceText;
+			
+			//add place info
+			
+			$arrInfo = $place->getPlaceInfo();
+			
+			if(!empty($arrInfo))
+				$data["place_info"] = $arrInfo;
+			
+			//add search link
+			
+			if($isSerp == true){
+				
+				$arrMetaData = $place->getMetaData();
+				
+				$data["api_search_link_for_debug"] = UniteFunctionsUC::getVal($arrMetaData, "json_endpoint");
+				$data["api_search_html_link_for_debug"] = UniteFunctionsUC::getVal($arrMetaData, "prettify_html_file");
+				
+			}
+		
+		
+			//add reviews
+				
+			$arrReviews = $place->getReviews();
+			
+			$arrReviewsOutput = array();
+			
+			foreach($arrReviews as $review){
+				
+				if($isSerp == true)
+					$review->setSerpSource();
+				
+				$arrReviewsOutput[] = array(
+					"id" => $review->getId(),
+					"date" => $review->getDate(self::FORMAT_DATETIME),
+					"time_ago" => $review->getTimeAgoText(),
+					"text" => $review->getText(true),
+					"rating" => $review->getRating(),
+					"author_name" => $review->getAuthorName(),
+					"author_photo" => $review->getAuthorPhotoUrl(),
+				);
+				
+			}
+			
+			$data["reviews"] = $arrReviewsOutput;
+		
+		}catch(Exception $e){
+			
+			if($this->googleReviewsShowDebug == true){
+				
+				$message = $e->getMessage();
+				
+				echo HelperHtmlUC::getErrorMessageHtml($message,"",true);
+			}
+			
+			throw $e;
+		}
+		
 		return $data;
 	}
+	
+	
+	/**
+	 * get google reviews settings fields
+	 */
+	private function getGoogleReviewsSettingsFields($isSingle = false){
+		
+		$fields = array();
 
+		$fields = $this->addGoogleEmptyApiKeyField($fields, self::GOOGLE_REVIEWS_FIELD_EMPTY_API_KEY);
+		
+		$fields[] = array(
+				"id" => self::GOOGLE_REVIEWS_FIELD_PLACE_ID,
+				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
+				"text" => __("Place ID", "unlimited-elements-for-elementor"),
+				// translators: %s is page url
+				"desc" => sprintf(__("You can find the place ID by using <a href='%s' target='_blank'>Place ID Finder</a>.", "unlimited-elements-for-elementor"), "https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder"),
+				"default"=>"ChIJmeeg4mbcQUcRIOHu3gDTJDs"
+		);
+		
+		$isSerpEnabled = $this->isGoogleReviewsSerpEnabled();
+		
+		if($isSerpEnabled == false)
+			$text = sprintf(__("To get more then 5 reviews, enter %s key in general settings", "unlimited-elements-for-elementor"), "<a href='https://serpapi.com' target='_blank'>serpapi.com</a>");
+		else
+			$text = sprintf(__("Fetching google reviews using %s service.", "unlimited-elements-for-elementor"), "<a href='https://serpapi.com' target='_blank'>serpapi.com</a>");
+		
+		//if there is no option - no need for text
+		if(GlobalsUnlimitedElements::$enableSerpAPI == true){
+			
+			$fields[] = array(
+					"id" => self::GOOGLE_REVIEWS_FIELD_API_TEXT,
+					"type" => UniteCreatorDialogParam::PARAM_STATIC_TEXT,
+					"text" => $text,
+			);
+		}
+		
+		//for serp api the cache is configurable
+				
+		if($isSerpEnabled == false){
+			
+			$fields[] = array(
+					"id" => self::GOOGLE_REVIEWS_FIELD_CACHE_TIME,
+					"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
+					"text" => __("Cache Time", "unlimited-elements-for-elementor"),
+					// translators: %d is a number
+					"desc" => sprintf(__("Optional. You can specify the cache time of results in minutes. The default value is %d minutes.", "unlimited-elements-for-elementor"), self::GOOGLE_REVIEWS_DEFAULT_CACHE_TIME),
+					"default" => self::GOOGLE_REVIEWS_DEFAULT_CACHE_TIME,
+				);
+		}else{
+			
+			$fields[] = array(
+				"id" => self::GOOGLE_REVIEWS_SERP_CACHE_TIME,
+				"type" => UniteCreatorDialogParam::PARAM_DROPDOWN,
+				"text" => __("Cache Time", "unlimited-elements-for-elementor"),
+				"desc" => __("Select how often the reviews should be refreshed.", "unlimited-elements-for-elementor"),
+				"options" => array(
+					"day" => __("Once a day", "unlimited-elements-for-elementor"),
+					"week" => __("Once a week", "unlimited-elements-for-elementor"),
+					"month" => __("Once a month", "unlimited-elements-for-elementor"),
+				),
+				"default" => "week"
+			);
+			
+		}
+		
+		
+		$fields[] = array(
+				"id" => self::GOOGLE_REVIEWS_FIELD_LANG,
+				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
+				"text" => __("Language Code", "unlimited-elements-for-elementor"),
+				"desc" => __("Optional. Specify a language code. Example: de and google will translate the review.", "unlimited-elements-for-elementor"),
+				"default" => "",
+			);
+		
+		if($isSerpEnabled == true){
+			
+			$fields[] = array(
+				"id" => self::GOOGLE_REVIEWS_SORT_BY,
+				"type" => UniteCreatorDialogParam::PARAM_DROPDOWN,
+				"text" => __("Sort By", "unlimited-elements-for-elementor"),
+				"options" => array(
+					"qualityScore"=>"Most Relevant",
+					"newestFirst"=>"Newest",
+					"ratingHigh"=>"Highest Rating",
+					"ratingLow"=>"Lowest Rating",
+				),
+				"default" => "qualityScore"
+			);
+			
+		}
+		
+		
+		//add fields for single mode
+		
+		if($isSingle == true){
+			
+			$fields[] = array(
+				"id" => "google_reviews_hr_beore_debug",
+				"type" => UniteCreatorDialogParam::PARAM_HR,
+			);
+			
+			$fields[] = array(
+				"id" => self::GOOGLE_REVIEWS_FIELD_SHOW_DEBUG,
+				"type" => UniteCreatorDialogParam::PARAM_RADIOBOOLEAN,
+				"text" => __("Show Debug", "unlimited-elements-for-elementor"),
+			);
+			
+		}
+			
+
+		return $fields;
+	}
+	
+	
 	private function _________GOOGLE_SHEETS_________(){}
+	
 	
 	/**
 	 * get google sheets settings fields
@@ -1056,7 +1345,8 @@ class UniteCreatorAPIIntegrations{
 
 		return $key;
 	}
-
+	
+	
 	/**
 	 * get weather forecast settings fields
 	 */
@@ -1425,6 +1715,39 @@ class UniteCreatorAPIIntegrations{
 		}
 
 		return $fields;
+	}
+	
+	/**
+	 * output google reviews refresh button
+	 */
+	private function outputGoogleReviewsRefreshButton(){
+		
+		// Check if user is admin
+		if(!current_user_can('manage_options'))
+			return;
+		
+		$placeId = $this->getParam(self::GOOGLE_REVIEWS_FIELD_PLACE_ID);
+		
+		if(empty($placeId))
+			return;
+		
+		$ajaxUrl = admin_url('admin-ajax.php');
+		$nonce = wp_create_nonce('uc_refresh_google_reviews');
+		$widgetID = "uc_google_reviews_" . md5($placeId);
+		
+		$html = '<div class="uc-google-reviews-refresh-wrapper" style="margin: 10px 0; padding: 10px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px;">';
+		$html .= '<button type="button" class="uc-google-reviews-refresh-btn" ';
+		$html .= 'data-widget-id="' . esc_attr($widgetID) . '" ';
+		$html .= 'data-place-id="' . esc_attr($placeId) . '" ';
+		$html .= 'data-nonce="' . esc_attr($nonce) . '" ';
+		$html .= 'data-ajax-url="' . esc_attr($ajaxUrl) . '" ';
+		$html .= 'style="padding: 8px 16px; background: #0073aa; color: #fff; border: none; border-radius: 3px; cursor: pointer; font-size: 14px;">';
+		$html .= __('Manual Refresh Reviews', 'unlimited-elements-for-elementor');
+		$html .= '</button>';
+		$html .= '<span class="uc-google-reviews-refresh-status" style="margin-left: 10px; display: none;"></span>';
+		$html .= '</div>';
+		
+		echo $html;
 	}
 
 }

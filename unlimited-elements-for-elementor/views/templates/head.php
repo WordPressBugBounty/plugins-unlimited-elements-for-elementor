@@ -34,15 +34,6 @@ $headAddClass = "";
 
 $buyButtonText = __("Go Pro", "unlimited-elements-for-elementor");
 
-if($isBFMode == true){
-	
-	$headAddClass = "ue-header__bf";
-	$logoImage = GlobalsUC::$urlPluginImages."logo_unlimited-white.svg";
-	
-	$buyButtonText = __("Get Deal Now!", "unlimited-elements-for-elementor");
-	
-	$urlHeaderImage = GlobalsUC::$urlPluginImages."banners/bf-banner-header.png";
-}
 
 // determine versions of plugin activated
 $verFlags = HelperUC::getActivePluginVersions();
@@ -56,6 +47,18 @@ if($verFlags[GlobalsUC::VERSION_ELEMENTOR] && $verFlags[GlobalsUC::VERSION_GUTEN
 	$plugin_ver_name = 'for Gutenberg'; 
 	$logoImage = GlobalsUC::$urlPluginImages . 'logo_unlimited' . ($isProVersion ? '-pro' : '') . '-gutenberg-new.svg';
 }
+
+if($isBFMode == true){
+	
+	$headAddClass = "ue-header__bf";
+	$logoImage = GlobalsUC::$urlPluginImages."logo_unlimited-white.svg";
+	
+	$buyButtonText = __("Get Deal Now!", "unlimited-elements-for-elementor");
+	
+	$urlHeaderImage = GlobalsUC::$urlPluginImages."banners/bf-banner-header.png";
+}
+
+
 ?>
 
 <div class="ue-root ue-header <?php echo esc_attr($headAddClass) ?>">
@@ -71,7 +74,6 @@ if($verFlags[GlobalsUC::VERSION_ELEMENTOR] && $verFlags[GlobalsUC::VERSION_GUTEN
 	<?php if($isBFMode == true):
 		//Black Friday Inner Elements
 	?>
-	
 		<img class="uc-bf-banner__header" src="<?php echo esc_url($urlHeaderImage)?>">
 		
 		<img class="uc-bf-banner__counter" src="<?php echo esc_url('http://i.countdownmail.com/2mgwko.gif')?>" style="display:inline-block!important;width:100%!important;max-width:272px!important;" border="0" alt="countdownmail.com"/>

@@ -211,7 +211,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			
 			return($title);
 		}
-
+		
 
 		/**
 		 *
@@ -889,7 +889,31 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 			return(null);
 		}
+		
+		/**
+		 * get first post term name by taxonomy
+		 */
+		public static function getPostTerm_firstTermName($postID, $taxName){
+			
+			if(empty($taxName))
+				$taxName = "category";
+			
+			$arrTerms = wp_get_post_terms($postID, $taxName);
 
+			if(empty($arrTerms))
+				return(null);
+
+			foreach($arrTerms as $term){
+
+				$slug = $term->name;
+				
+				return($slug);
+			}
+
+			return("");
+		}
+		
+		
 		/**
 		 * get post terms title string
 		 */
@@ -3289,7 +3313,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 		if($isWPML)
 			$thumbID = UniteCreatorWpmlIntegrate::getTranslatedAttachmentID($thumbID);
-
+		
 		$arrImage = wp_get_attachment_image_src($thumbID, $size);
 		if(empty($arrImage))
 			return (false);
@@ -3856,6 +3880,29 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	}
 
 	/**
+	 * get user names from list of user objects for debug
+	 * returns array of formatted strings: "Display Name (ID: X, Login: Y)"
+	 */
+	public static function getUsersNamesShort($arrUsers){
+		
+		if(empty($arrUsers))
+			return(array());
+		
+		$arrUserNames = array();
+		
+		foreach($arrUsers as $user){
+			
+			$userName = $user->display_name;
+			$userID = $user->ID;
+			$userLogin = $user->user_login;
+			
+			$arrUserNames[] = "$userName (ID: $userID, Login: $userLogin)";
+		}
+		
+		return($arrUserNames);
+	}
+
+	/**
 	 * get roles as name/value array
 	 */
 	public static function getRolesShort($addAll = false){
@@ -3872,15 +3919,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		return ($arrShort);
 	}
 
-	/**
-	 * get all admin users
-	 */
-	public static function getAdminUsers(){
-		
-		$arrAdminUsers = get_users( array( 'role' => 'Administrator' ) );
-		
-		return($arrAdminUsers);
-	}
 	
 	/**
 	 * get users array short
