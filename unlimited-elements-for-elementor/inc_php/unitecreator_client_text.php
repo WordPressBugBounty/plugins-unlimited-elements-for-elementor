@@ -93,6 +93,7 @@ GlobalsUC::$arrClientSideText = array(
 		"uc_addonpicker"=>esc_html__("Addon Picker","unlimited-elements-for-elementor"),
 		"uc_map"=>esc_html__("Google Map Picker","unlimited-elements-for-elementor"),
 		"uc_image"=>esc_html__("Image","unlimited-elements-for-elementor"),
+		"uc_file"=>esc_html__("File","unlimited-elements-for-elementor"),
 		"uc_mp3"=>esc_html__("Audio","unlimited-elements-for-elementor"),
 		"uc_post"=>esc_html__("Post","unlimited-elements-for-elementor"),
 		"uc_posts_list"=>esc_html__("Posts List","unlimited-elements-for-elementor"),

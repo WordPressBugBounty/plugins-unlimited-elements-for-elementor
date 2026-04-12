@@ -1626,8 +1626,11 @@ class UniteCreatorWooIntegrate{
 		    
 			$quantity = $cart_item['quantity'];
 			
-			$priceHtml = wc_price( $cart_item['line_subtotal']+$cart_item['line_subtotal_tax'] );
-
+			$lineTotal = $cart_item['line_total'] + $cart_item['line_tax']; // cart-adjusted
+			$unitTotal = $quantity > 0 ? $lineTotal / $quantity : 0;
+			$priceHtml  = wc_price( $unitTotal );
+			
+			
 			$imageHTML = "";
 			
 			if(!empty($urlImage))
@@ -1681,6 +1684,7 @@ $htmlItem = "
 		
 		if(empty(WC()->cart)){
 			$subtotal = 0;
+			$subtotalWithTax = 0;
 		}else{
 			
 			$arrTotals = WC()->cart->get_totals();
@@ -1694,6 +1698,8 @@ $htmlItem = "
 		
 		$subtotalHTML = wc_price($subtotalWithTax);
 		
+		$subtotalNoTax = wc_price($subtotal);
+		
 		$strNum = "";
 		
 		if($isSecond)
@@ -1703,6 +1709,7 @@ $htmlItem = "
 <div class=\"ue-mini-cart-totals-holder{$strNum}\">
 	
 	<div class=\"uc-minicart-totals__subtotal\">{$subtotalHTML}</div>
+	<div class=\"uc-minicart-totals__subtotal-notax\" style='display:none'>{$subtotalNoTax}</div>
 
 </div>";
 	

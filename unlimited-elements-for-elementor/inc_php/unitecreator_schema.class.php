@@ -134,6 +134,10 @@ class UniteCreatorSchema {
 				"type"=>"SearchResultsPage",
 				"title"=>"Search Results Page",
 				"multiple"=>true
+			),
+			array(
+				"type"=>"NewsArticle",
+				"title"=>"News Article"
 			)
 			
 		);
@@ -986,6 +990,7 @@ private function addFieldsMappingSettings($objSettings, $name, $paramsItems, $is
 		
 		$arrParam = array();
 		$arrParam["origtype"] = UniteCreatorDialogParam::PARAM_TEXTFIELD;
+		$arrParam["add_dynamic"] = true;
 		$arrParam["elementor_condition"] = array($name."_enable"=>"true",$name."_type"=>
 			array("howto", 
 				  "recipe", 
@@ -1281,6 +1286,8 @@ private function addFieldsMappingSettings($objSettings, $name, $paramsItems, $is
 		        return $this->schemaMusicPlaylist($items);
 		    case "searchresultspage":
 		        return $this->schemaSearchResultsPage($items, $title);
+		    case "newsarticle":
+		        return $this->schemaNewsArticle($items);
 		    case "custom":
 		    	
 		    	if(GlobalsUnlimitedElements::$enableCustomSchema == true){
@@ -1693,6 +1700,51 @@ private function schemaCourse($items) {
 }
 
 
+
+/**
+ * NewsArticle (schema.org/NewsArticle - Article subtype for news)
+ */
+private function schemaNewsArticle($items) {
+
+    $schema = array();
+
+    foreach ($items as $item) {
+
+        $article = array(
+            '@context' => self::SCHEMA_ORG_SITE,
+            '@type'    => 'NewsArticle',
+            'headline' => $item[self::ROLE_TITLE],
+        );
+
+        if (!empty($item[self::ROLE_CONTENT])) {
+            $article['articleBody'] = $item[self::ROLE_CONTENT];
+        }
+
+        if (!empty($item[self::ROLE_DESCRIPTION])) {
+            $article['description'] = $item[self::ROLE_DESCRIPTION];
+        }
+
+        if (!empty($item[self::ROLE_IMAGE])) {
+            $article['image'] = $item[self::ROLE_IMAGE];
+        }
+
+        if (!empty($item[self::ROLE_LINK])) {
+            $article['url'] = $item[self::ROLE_LINK];
+            $article['mainEntityOfPage'] = $item[self::ROLE_LINK];
+        }
+
+        if (!empty($item[self::ROLE_HEADING])) {
+            $article['author'] = array(
+                '@type' => 'Person',
+                'name'  => $item[self::ROLE_HEADING]
+            );
+        }
+
+        $schema[] = $article;
+    }
+
+    return $schema;
+}
 
 /**
  * Book

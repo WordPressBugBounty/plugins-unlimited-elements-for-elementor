@@ -120,6 +120,33 @@
            label="Edit Pro Settings"
            description="Edit Pro Settings for the Widgets">
     </field>
+
+    <field name="allow_upload_file_types"
+      type="statictext"
+      label="Allow Upload File Types">
+    </field>
+	
+    <field name="allow_upload_documents"
+      type="checkbox"
+      default="false"
+      addfield="allow_upload_zip,allow_upload_svg"
+      label="unite_setting_notext"
+      text_near="Documents (pdf, doc, docx, ppt etc...) ">
+    </field>
+
+    <field name="allow_upload_zip"
+      type="checkbox"
+      default="false"
+      label="unite_setting_notext"
+      text_near="Zip ">
+    </field>
+
+    <field name="allow_upload_svg"
+      type="checkbox"
+      default="false"
+      label="unite_setting_notext"
+      text_near="SVG">
+    </field>
 	
   </fieldset>
   

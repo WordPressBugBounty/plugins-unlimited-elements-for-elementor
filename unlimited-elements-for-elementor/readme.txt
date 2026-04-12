@@ -940,7 +940,60 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
-version 2.0.5:
+= 2.0.6 - 2026-01-22 =
+
+Plugin Changes:
+
+* Feature: added new option: allow empty in items settings
+* Feature: Added "File" attribute
+* Feature: added option in general settings: "allow upload file types"
+* Feature: added order by functionality in the most popular posts plugin
+* Feature: added one more schema type: News Article
+* Feature: added autocorrection option in ajax search
+* Feature: added support for popular posts plugin for the sorting filter
+* Fix: make sure that gallery has item title always, in product item also
+* Fix: fixed some logical bug with the filters
+* Fix: fixed mini cart pricing issue
+* Fix: fixed some small form related vulnurability
+* Fix: fixed the authors fetch, to get only author roles and not all roles with exclude
+* Fix: fixed some breadcrumbs issues
+
+
+Widgets Changes:
+
+* Feature: Post Carousel Lite (Free) - Performed a comprehensive review of widget options and enabled responsive controls (Desktop, Tablet, and Mobile) for all applicable settings to ensure better layout flexibility across devices
+* Feature: Off Canvas Filters (Pro) - A new feature has been added allowing the Simple Popup widget to be included within the Offcanvas Filters widget. It now functions seamlessly alongside other filter widgets, providing more flexible layout options.
+* Feature: Simple Popup (Free) - A new feature has been added allowing the Simple Popup widget to be included within the Offcanvas Filters widget. It now functions seamlessly alongside other filter widgets, providing more flexible layout options.
+* Feature: Conditions (Free) - A new Is Logged In User trigger type has been added, allowing you to set up conditional actions or visibility rules based on whether a user is currently authenticated or browsing as a guest.
+* Feature: Woo Mini Cart (Free) - A new Show Subtotal Type option has been added, allowing users to choose whether to display prices inclusive of tax or exclusive of tax.
+* Feature: Post Carousel Lite (Free) - A new Link Entire Item Type option has been added, allowing users to choose specific link sources such as a Dynamic Post Popup, a Link from a Custom Field, and other dynamic destinations for the item-wide click action.
+* Feature: Active Filters (Pro) - A new Flex Wrap option has been added, giving users the ability to control whether elements within a container should wrap onto multiple lines or stay on a single row.
+* Feature: Post Grid (Free) - A new Order option has been added for each Additional Data element.
+* Feature: Post Magazine Grid (Pro) - A new Order option has been added for each Additional Data element
+* Feature: Post Carousel (Free) - A new Order option has been added for each Additional Data element
+* Feature: Video on Hover (Free) - A new Show Controls option has been added, giving users the ability to display or hide native video player controls
+* Feature: Post Magazine Grid (Pro) - A new Show Post Views option has been added, allowing users to display the total view count for individual posts within the widget.
+* Feature: Post Carousel (Free) - A new Show Post Views option has been added, allowing users to display the total view count for individual posts within the widget.
+* Feature: Video on Hover (Free) - new Play on Click value has been added to the Video Play Mode option, allowing videos to remain static until a user specifically interacts with them with a click event.
+* Feature: Text Field (Free) - A new Hidden option has been implemented that allows a field to be visually concealed while ensuring that Form Entries still receive and record data from it
+* Feature: AJAX Search (Free) - Added Autocorrection option that allows to display a suggestion with a clickable link when the initial search returns no results due to a potential typo.
+* Feature: Video Carousel (Free) - A new YouTube video source option has been added to allow users to directly integrate and display video content from the platform within the widget.
+* Feature: Repeater Table (Pro) - A new feature has been enabled within the widget that allows users to remove all existing items, bypassing the typical restriction in item-based widgets that requires at least one item to remain.
+* Change: Icon Pointer Button (Pro) - Updated the Icon Selection attribute to utilize the native Icon Library, enabling support for both standard font icons and custom SVG graphics
+* Change: Masonry &amp; Justified Gallery (Free) - To improve clarity and avoid user confusion, the Column gallery type has been renamed to Masonry, more accurately reflecting its layout behavior.
+* Fix: Button Icon Hover Effect (Pro) - Removed the Visibility Conditions options. These settings were previously added in error, as they are only compatible with form field logic and cannot function within standard widget layouts
+* Fix: Background Switcher (Free) - An issue was resolved where disabling the First Selected option caused the widget to render as a blank space with no images visible. The widget now correctly initializes its display state even when no item is pre-selected.
+* Fix: Background Switcher (Free) - An issue was resolved where the Hover Blur Effect only applied while the mouse was physically over a widget item. The effect has been corrected to persist on the active/selected item even when the mouse leaves the widget area
+* Fix: Linear Progress Bar (Free) - An issue was resolved where browser background optimization features, such as bfcache and tab throttling, would freeze the widget's execution state. This caused the progress bar to remain stuck in a finished or desynchronized state upon page revisit or tab reactivation
+* Fix: Post Carousel Lite (Free) - An issue was resolved where the Link Entire Item option was not functioning as expected
+* Fix: WordPress Menu (Free) - An issue was resolved in the Elementor editor where the dropdown menu failed to display after clicking the burger icon, ensuring that navigation previews now function correctly within the editing interface.
+* Fix: Huge Shapes Background (Pro) - An issue was resolved where the clearRect function utilized outdated or mismatched canvas dimensions, causing previous animation frames to persist and accumulate as visual &quot;ghosting&quot; or &quot;smearing&quot; artifacts.
+* Fix: WordPress Menu (Free) - An issue was resolved in the Menu widget where the Clickable Parent Item option was incorrectly hidden when the Responsive Behavior was set to &quot;Slide.&quot; This setting now logic-gates correctly: parent items remain visible and clickable on desktop, while automatically adjusting only at the responsive breakpoint to ensure sub-menus function properly on mobile devices.
+* Fix: Alphabet Filter (Pro) - An issue was resolved where users were required to click the Close icon twice to unselect an active filter, ensuring that filters now deactivate as expected with a single click.
+* Fix: Post Carousel (Free) - An issue was resolved where the Author element failed to inherit the color value defined in the Meta Data Color option
+* Fix: Conditions (Free) - An issue was resolved where ACF Field trigger types were not functioning correctly, ensuring that conditional logic or actions tied to Advanced Custom Fields now trigger as expected
+* Fix: Post Carousel (Free) - The CSS priority of the title selector has been increased to ensure that its specific styling consistently overrides any conflicting general styles
+* Fix: Animated Split Text (Pro) - An issue was resolved where the Splitting library was being initialized before the necessary JavaScript files had fully loaded on the page, preventing proper execution.
 
 
 = 2.0.5 - 2026-01-22 =

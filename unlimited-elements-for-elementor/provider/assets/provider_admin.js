@@ -25,20 +25,41 @@ function UniteProviderAdminUC(){
 		if(isMultiple == undefined)
 			isMultiple = false;
 
+		var mediaTypes = type;
+		if(typeof mediaTypes === "string" && mediaTypes.indexOf(",") !== -1)
+			mediaTypes = mediaTypes.split(",");
+
+		var hasSvg = false;
+		if(Array.isArray(mediaTypes)){
+			mediaTypes = mediaTypes.map(function(item){
+				item = jQuery.trim(item);
+				if(item === "svg"){
+					hasSvg = true;
+					return "image/svg+xml";
+				}
+				return item;
+			}).filter(function(item){
+				return item !== "";
+			});
+		}else if(mediaTypes === "svg"){
+			hasSvg = true;
+			mediaTypes = "image/svg+xml";
+		}
+
 		// Media Library params
 		let options = {
 			//frame:      'post',
             //state:      'insert',
 			title : title,
 			multiple : isMultiple,
-			library : { type : ( type == 'svg' ? 'image/svg+xml' : type ) },
+			library : { type : mediaTypes },
 			button : { text : 'Insert' }
 		}
 
 		var frame = wp.media(options);		
 
 		// if SVG only
-		if (type == 'svg') {
+		if (hasSvg === true) {
 			frame.on('open', function() {
 				setTimeout(() => {
 					const fileInputs = document.querySelectorAll('.media-frame input[type="file"]');

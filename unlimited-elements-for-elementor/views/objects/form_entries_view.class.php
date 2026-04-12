@@ -333,7 +333,7 @@ class UCFormEntriesView extends WP_List_Table{
 		}
 
 		if($status === self::STATUS_TRASH){
-			$content = $label;
+			$content = esc_html($label);
 
 			$actions = array(
 				self::ACTION_UNTRASH => $this->getActionLink(self::ACTION_UNTRASH, $id, __("Restore", "unlimited-elements-for-elementor")),
@@ -368,7 +368,7 @@ class UCFormEntriesView extends WP_List_Table{
 	 */
 	protected function column_form($item){
 
-		return $item["form_name"];
+		return esc_html($item["form_name"]);
 	}
 
 	/**

@@ -33,6 +33,5 @@ class UniteProviderCoreFrontUC_Elementor extends UniteProviderFrontUC{
 		parent::__construct();
 						
 	}
-	
-	
+
 }

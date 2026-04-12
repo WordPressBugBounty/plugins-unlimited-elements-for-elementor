@@ -23,7 +23,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	private $lastValues = null;
 	private $lastName = null;
 
-	
+
 	/**
 	 * add other image thumbs based of the platform
 	 */
@@ -329,9 +329,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$objWoo->checkModifyQueryClauses($args, $excludeOutofStockVariation, $showDebug);
 		
 	}
-
-
-
+	
 
 
 	protected function z_______________POSTS____________(){}
@@ -1385,6 +1383,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if(self::SHOW_DEBUG_QUERY == true)
 			$showDebugQuery = true;
 		
+        if(GlobalsUC::$hideDebug)
+            $showDebugQuery = false;
+		
 		//show debug by url only for admins
 		
 		$debugType = null;
@@ -1795,6 +1796,12 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$filters = $this->getPostListData_addOrderBy($filters, $value, $name);
 		
 		$orderBy = UniteFunctionsUC::getVal($filters, "orderby");
+		$isWppOrderBy = ($orderBy == "popular_wpp");
+		
+		if($isWppOrderBy === true){
+			unset($filters["orderby"]);
+			$orderBy = null;
+		}
 		
 		
 		//add debug for further use
@@ -2130,7 +2137,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 				break;
 				case "most_viewed":
-
+					
 					$isWPPPluginExists = UniteCreatorPluginIntegrations::isWPPopularPostsExists();
 
 					if($showDebugQuery == true && $isWPPPluginExists == false){
@@ -2205,7 +2212,45 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 										
 				break;
 			}
-
+				
+		}
+		
+		//order the posts by most viewed using the wpp plugin
+		
+		if($isWppOrderBy === true){
+			
+			$isWPPPluginExists = UniteCreatorPluginIntegrations::isWPPopularPostsExists();
+			
+			if($showDebugQuery == true && $isWPPPluginExists == false){
+				dmp("Order by popular posts is possible only if you install 'WordPress Popular Posts' plugin. Please install it");
+			}
+			
+			if($isWPPPluginExists){
+				
+				$objIntegrations = new UniteCreatorPluginIntegrations();
+				
+				$wppRange = UniteFunctionsUC::getVal($value, "{$name}_orderby_wpp_range", "last30days");
+				
+				$wpp_args = array(
+					"post_type"=>$postType,
+					"limit"=>$limit,
+					"range"=>$wppRange
+				);
+				
+				if(!empty($category))
+					$wpp_args["cat"] = $category;
+				
+				$response = $objIntegrations->WPP_getPopularPosts($wpp_args, $showDebugQuery);
+				
+				$arrIDsPopular = UniteFunctionsUC::getVal($response, "post_ids");
+				
+				$debugWPP = UniteFunctionsUC::getVal($response, "debug");
+				
+				if($showDebugQuery == true && !empty($debugWPP)){
+					dmp("Popular Posts Order Data: ");
+					dmp($debugWPP);
+				}
+			}
 		}
 		
 		//include id's
@@ -2219,7 +2264,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				$arrPostInIDs = $arrIDsOnSale;
 		}
 
-		if(!empty($arrIDsPopular)){
+		if(!empty($arrIDsPopular) && $isWppOrderBy === false){
 			$makePostINOrder = true;
 			$arrPostInIDs = $arrIDsPopular;
 		}
@@ -2259,7 +2304,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 			$orderDir = UniteFunctionsUC::getVal($args, "order");
 			if($orderDir == "ASC")
-				$arrIDsPopular = array_reverse($arrIDsPopular);
+				$arrPostInIDs = array_reverse($arrPostInIDs);
 
 			unset($args["order"]);
 		}
@@ -2433,6 +2478,21 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$args = $objFiltersProcess->processRequestFilters($args, $isFilterable);
 				
 		$args = $this->getPostListData_getCustomQueryFilters($args, $value, $name, $data);
+
+		// WPP orderby: from widget or from sort filter (URL) - handled via integrations class
+		$isWppFromFilter = (isset($args["orderby"]) && $args["orderby"] == "popular_wpp" && UniteCreatorPluginIntegrations::isWPPopularPostsExists());
+		if($isWppOrderBy === true || $isWppFromFilter){
+			$isWppOrderBy = true; // ensure post-query cleanup runs
+			if(empty($arrIDsPopular) && $isWppFromFilter){
+				$arrIDsPopular = UniteCreatorPluginIntegrations::WPP_getPopularPostIdsForOrderBy($args, "last30days");
+			}
+			if(!empty($arrIDsPopular)){
+				$orderDir = UniteFunctionsUC::getVal($args, "order", "DESC");
+				UniteCreatorPluginIntegrations::WPP_applyOrderByFilter($arrIDsPopular, $orderDir);
+				$args["ue_wpp_orderby"] = "true";
+				unset($args["orderby"]);
+			}
+		}
 		
 		HelperUC::addDebug("Posts Query", $args);
 
@@ -2521,6 +2581,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				dmp("Skip main query run");
 				
 			$wasSkipRun = true;
+		}
+		
+		if($isWppOrderBy === true){
+			UniteCreatorPluginIntegrations::WPP_removeOrderByFilter();
 		}
 
 		$objFiltersProcess->afterQueryRun();
@@ -2933,6 +2997,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			dmp("Current Posts. The Query Is:");
 
 			$argsForDebug = UniteFunctionsWPUC::cleanQueryArgsForDebug($currentQueryVars);
+			if(GlobalsUC::$showQueryDebugTermsByUrl == true)
+				$argsForDebug = UniteFunctionsWPUC::expandTaxQueryTermsForDebug($argsForDebug);
 			dmp($argsForDebug);
 
 			$debugType = UniteFunctionsUC::getVal($value, "{$name}_query_debug_type");
@@ -2994,6 +3060,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			$originalQueryVars = $query->query_vars;
 			$originalQueryVars = UniteFunctionsWPUC::cleanQueryArgsForDebug($originalQueryVars);
+			if(GlobalsUC::$showQueryDebugTermsByUrl == true)
+				$originalQueryVars = UniteFunctionsWPUC::expandTaxQueryTermsForDebug($originalQueryVars);
 			
 			dmp("The Query Request Is:");
 			dmp($query->request);
@@ -3395,6 +3463,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$objFilters = new UniteCreatorFiltersProcess();
 
 		$numPosts = count($arrPosts);
+		$showPostListDebug = HelperUC::hasPermissionsFromQuery("ucpostlistdebug");
 
 		if($useForListing == true){
 
@@ -3406,6 +3475,11 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$data[$nameListing."_settings"] = $value;
 
 			$data[$nameListing."_items"] = $arrPosts;
+
+			//post list debug for listing/loop grid (same as non-listing path)
+			if($showPostListDebug == true)
+				HelperProviderUC::showPostsDebug($arrPosts, true);
+			GlobalsProviderUC::$showPostsQueryDebug = false;
 
 			return($data);
 		}else{
@@ -3452,8 +3526,6 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			HelperProviderUC::printDebugQueries(true);
 		}
-		
-		$showPostListDebug = HelperUC::hasPermissionsFromQuery("ucpostlistdebug");
 		
 		if($showPostListDebug == true)
 			HelperProviderUC::showPostsDebug($arrPosts,true);
@@ -3551,6 +3623,39 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 		return($title);
 	}	
+
+	/**
+	 * ensure gallery item has title
+	 */
+	private function ensureTitle($title, $data, $name, $post, $urlImage, $index){
+		
+		if(!empty($title))
+			return($title);
+		
+		if(!empty($post) && !empty($post->post_title))
+			$title = $post->post_title;
+
+		if(empty($title))
+			$title = UniteFunctionsUC::getVal($data, $name."_title");
+
+		if(empty($title))
+			$title = UniteFunctionsUC::getVal($data, $name."_caption");
+
+		if(empty($title))
+			$title = UniteFunctionsUC::getVal($data, $name."_alt");
+
+		if(empty($title) && !empty($urlImage)){
+			$filename = basename(parse_url($urlImage, PHP_URL_PATH));
+			$filename = preg_replace('/\.[^.]+$/', '', $filename);
+			if(!empty($filename))
+				$title = str_replace(array("-", "_"), " ", $filename);
+		}
+
+		if(empty($title))
+			$title = !empty($index) ? "Image {$index}" : "Image";
+		
+		return($title);
+	}
 		
 
 	/**
@@ -3927,6 +4032,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				
 			
 		}
+
+		if($titleSource == "item_title")
+			$title = $this->ensureTitle($title, $data, $name, $post, $urlImage, $index);
 
 		$item["title"] = $title;
 		$item["description"] = $description;
@@ -4731,7 +4839,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 					$metaKey = UniteFunctionsUC::getVal($value, $name."_orderby_meta_key");
 					$metaKey = trim($metaKey);
-
+	
 					if(empty($metaKey))
 						$orderBy = null;
 					else
@@ -5161,19 +5269,15 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$term_query = new WP_Term_Query();
 		$arrTermsObjects = $term_query->query( $args );
 
-
-
-
-		if($showDebug == true){
-			dmp("terms found: ".count($arrTermsObjects));
-		}
-
+		
 		//term query debug
 
 		if($showDebug == true && $queryDebugType == "show_query"){
 
 			$originalQueryVars = $term_query->query_vars;
 			$originalQueryVars = UniteFunctionsWPUC::cleanQueryArgsForDebug($originalQueryVars);
+			if(GlobalsUC::$showQueryDebugTermsByUrl == true)
+				$originalQueryVars = UniteFunctionsWPUC::expandTaxQueryTermsForDebug($originalQueryVars);
 
 			dmp("The Query Request Is:");
 			dmp($term_query->request);
@@ -5194,6 +5298,15 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		}
 
+		/*
+		if($showDebug == true){
+			dmp("terms found: ".count($arrTermsObjects));
+			dmp("The terms (WP_Term objects):");
+			dmp($arrTermsObjects);
+		}
+		*/
+		
+		
 		if(!empty($arrExcludeSlugs)){
 			HelperUC::addDebug("Terms Before Filter:", $arrTermsObjects);
 			HelperUC::addDebug("Exclude by:", $arrExcludeSlugs);
@@ -5488,6 +5601,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			$originalQueryVars = $user_query->query_vars;
 			$originalQueryVars = UniteFunctionsWPUC::cleanQueryArgsForDebug($originalQueryVars);
+			if(GlobalsUC::$showQueryDebugTermsByUrl == true)
+				$originalQueryVars = UniteFunctionsWPUC::expandTaxQueryTermsForDebug($originalQueryVars);
 
 			dmp("The Query Request Is:");
 			dmp($user_query->request);

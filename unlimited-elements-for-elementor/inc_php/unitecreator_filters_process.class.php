@@ -162,6 +162,10 @@ class UniteCreatorFiltersProcess{
 			$output[$type] = $title;
 		}
 
+		// add WPP (WordPress Popular Posts) ordering option when plugin exists and not for Woo
+		if($isForWooProducts == false && UniteCreatorPluginIntegrations::isWPPopularPostsExists() === true){
+			$output["popular_wpp"] = __("Popular Posts", "unlimited-elements-for-elementor");
+		}
 
 		return($output);
 	}
@@ -531,6 +535,11 @@ class UniteCreatorFiltersProcess{
 
 		//check if valid
 		$arrOrderby = UniteFunctionsWPUC::getArrSortBy(true);
+
+		// allow WPP orderby when WordPress Popular Posts plugin is active
+		if(UniteCreatorPluginIntegrations::isWPPopularPostsExists() === true){
+			$arrOrderby["popular_wpp"] = __("Popular Posts", "unlimited-elements-for-elementor");
+		}
 
 		if($orderby == "id")
 			$orderby = "ID";
@@ -2378,7 +2387,7 @@ class UniteCreatorFiltersProcess{
 		$arrHtmlWidget = $this->getContentWidgetHtml($arrContent, $elementID);
 
 		GlobalsProviderUC::$isUnderAjaxSearch = false;
-
+		
 		$htmlGridItems = UniteFunctionsUC::getVal($arrHtmlWidget, "html");
 		$htmlGridItems2 = UniteFunctionsUC::getVal($arrHtmlWidget, "html2");
 
@@ -2396,6 +2405,29 @@ class UniteCreatorFiltersProcess{
 
 		if(!empty($htmlGridItems2))
 			$outputData["html_items2"] = $htmlGridItems2;
+
+		//add search suggestion data if no results
+		//autocorrection in options
+		
+		$lastQuery = GlobalsProviderUC::$lastPostQuery;
+		
+		$isAutoCorrect = UniteFunctionsUC::getVal(GlobalsProviderUC::$lastWidgetParams, "search_autocorrect");
+		$isAutoCorrect = UniteFunctionsUC::strToBool($isAutoCorrect);
+				
+		if($isAutoCorrect == true && !empty($lastQuery) && (int)$lastQuery->found_posts === 0){
+						
+			$lastQueryArgs = GlobalsProviderUC::$lastQueryArgs;
+			$searchTerm = UniteFunctionsUC::getVal($lastQueryArgs, "s");
+			$searchTerm = trim($searchTerm);
+			
+			if(!empty($searchTerm)){
+				$objAjaxSearch = new UniteCreatorAjaxSeach();
+				$suggestionData = $objAjaxSearch->getSearchSuggestionData($searchTerm, $lastQueryArgs);
+				
+				if(!empty($suggestionData))
+					$outputData["search_suggestion"] = $suggestionData;
+			}
+		}
 
 
 		HelperUC::ajaxResponseData($outputData);

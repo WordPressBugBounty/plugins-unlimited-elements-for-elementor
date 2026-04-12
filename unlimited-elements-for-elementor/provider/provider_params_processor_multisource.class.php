@@ -301,7 +301,7 @@ class UniteCreatetorParamsProcessorMultisource{
 	 * get gallery data
 	 */
 	private function getData_gallery(){
-
+		
 		$arrImages = UniteFunctionsUC::getVal($this->arrValues, $this->name."_gallery");
 
 		if(empty($arrImages))
@@ -340,7 +340,8 @@ class UniteCreatetorParamsProcessorMultisource{
 				$alt = "Demo Image Alt $counter";
 				$description = "Demo Image Description $counter";
 
-				$arrImage["image_imageid"] = $url;
+				$arrImage["image_imageid"] = 0;
+				$arrImage["image"] = $url;
 				$arrImage["image_title"] = $title;
 				$arrImage["image_alt"] = $alt;
 				$arrImage["image_caption"] = $caption;
@@ -996,6 +997,18 @@ class UniteCreatetorParamsProcessorMultisource{
 	 * show debug
 	 */
 	private function showDebug_input($source, $arrData){
+
+    /*
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+
+        foreach ($trace as $i => $t) {
+            $func = ($t['class'] ?? '') . ($t['type'] ?? '') . ($t['function'] ?? 'global');
+            $file = $t['file'] ?? '';
+            $line = $t['line'] ?? '';
+
+            echo "#$i $func ($file:$line)<br>\n";
+        }
+    */
 		
 		if($this->showDataType == "output")
 			return(false);
@@ -1005,20 +1018,20 @@ class UniteCreatetorParamsProcessorMultisource{
 
 		HelperHtmlUC::putHtmlDataDebugBox_start();
 		
-			if($source == self::SOURCE_DEMO){
-				dmp("Switching to demo data source in editor only.");
-			}
-	
-			$numItems = 0;
-	
-			if(is_array($arrData))
-				$numItems = count($arrData);
-			
-			dmp("Input data from: <b>$source</b>, found: $numItems");
-			
-			$arrData = UniteFunctionsUC::modifyDataArrayForShow($arrData);
-			
-			dmp($arrData);
+        if($source == self::SOURCE_DEMO){
+            dmp("Switching to demo data source in editor only.");
+        }
+
+        $numItems = 0;
+
+        if(is_array($arrData))
+            $numItems = count($arrData);
+        
+        dmp("Input data from: <b>$source</b>, found: $numItems");
+        
+        $arrData = UniteFunctionsUC::modifyDataArrayForShow($arrData);
+        
+        dmp($arrData);
 		
 		HelperHtmlUC::putHtmlDataDebugBox_end();
 	}
@@ -1062,7 +1075,7 @@ class UniteCreatetorParamsProcessorMultisource{
 
 		if(empty($arrFields) === true && GlobalsProviderUC::$isUnderAjax === false)
 			UniteFunctionsUC::throwError("multisource getItems error: $itemsSource fields not found");
-
+		
 		//get items params
 		$arrItemParams = $this->arrParamsItems;
 		$arrItemParams = UniteFunctionsUC::arrayToAssoc($arrItemParams, "name");
@@ -1172,7 +1185,8 @@ class UniteCreatetorParamsProcessorMultisource{
 
 			$arrItems[] = array("item" => $item);
 		}
-
+	
+				
 		return ($arrItems);
 	}
 
@@ -1293,8 +1307,10 @@ class UniteCreatetorParamsProcessorMultisource{
 		$this->checkDebugBeforeData($itemsSource);
 
 		$arrData = $this->getData($itemsSource);
-		
-		$this->showDebug_input($itemsSource, $arrData);
+        
+        if(GlobalsUC::$hideDebug !== true) {
+		    $this->showDebug_input($itemsSource, $arrData);
+        } 
 
 		//set empty demo output
 		if(empty($arrData) === true
@@ -1304,13 +1320,15 @@ class UniteCreatetorParamsProcessorMultisource{
 
 			$itemsSource = self::SOURCE_DEMO;
 
-			$this->showDebug_input($itemsSource, $arrData);
+            if(GlobalsUC::$hideDebug !== true) {
+                $this->showDebug_input($itemsSource, $arrData);
+            }
 		}
-
+				
 		$arrItems = $this->getItems($itemsSource, $arrData);
 				
 		$data[$name] = $arrItems;
-
+		
 		if($this->showDebugData === true)
 			$this->showDebug_output($arrItems);
 

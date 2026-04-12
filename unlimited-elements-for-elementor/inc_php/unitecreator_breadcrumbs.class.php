@@ -27,6 +27,9 @@ class UniteCreatorBreadcrumbs {
 		if($isDebug == true)
 			self::$showDebug = true;
 		
+		$debugWrapperStyle = 'background:#fff; border:2px dashed #999; padding:1em 1.25em; margin:1em 0; font-family:inherit;';
+		if(self::$showDebug == true)
+			echo '<div class="uc-breadcrumbs-debug" style="' . esc_attr($debugWrapperStyle) . '">';
 			
     	if(self::$showDebug == true)
     		dmp("Breadcrumbs Debug");
@@ -40,6 +43,19 @@ class UniteCreatorBreadcrumbs {
         $max_category_depth = intval($this->getParamValueByKey('max_category_depth', $params, '2'));
         $show_blog_page = $this->getParamValueByKey('show_blog_page', $params, 'true');
         $search_page_text = $this->getParamValueByKey('search_page_text', $params, 'Results For:');
+
+        if(self::$showDebug == true) {
+            dmp("Options:");
+            dmp(array(
+                'show_home' => $show_home,
+                'home_text' => $home_text,
+                'show_category_breadcrumbs' => $show_category_breadcrumbs,
+                'categories_show_direction' => $categories_show_direction,
+                'max_category_depth' => $max_category_depth,
+                'show_blog_page' => $show_blog_page,
+                'search_page_text' => $search_page_text,
+            ));
+        }
 
         if($show_home === 'true') {
             $items[] = $this->getHomeItem($home_text);
@@ -63,7 +79,7 @@ class UniteCreatorBreadcrumbs {
         	if(self::$showDebug == true)
     			dmp("---- Category or Archive -----");
 
-            $items = array_merge($items, $this->getBreadcrumbs_category($show_category_breadcrumbs, $categories_show_direction, $max_category_depth));
+            $items = array_merge($items, $this->getBreadcrumbs_category($show_category_breadcrumbs, $categories_show_direction, $max_category_depth, $show_blog_page));
         } elseif(is_page()) {
 
 	        if(self::$showDebug == true)
@@ -119,6 +135,7 @@ class UniteCreatorBreadcrumbs {
 
         	dmp("The Items:");
         	dmp($items);
+        	echo '</div>';
         }
 
 
@@ -190,9 +207,10 @@ class UniteCreatorBreadcrumbs {
      * @param string $show_category_breadcrumbs Whether to show category breadcrumbs
      * @param string $categories_show_direction Direction to show categories from
      * @param int $max_category_depth Maximum depth of categories to show
+     * @param string $show_blog_page Whether to show the blog/post type page in breadcrumbs
      * @return array Breadcrumb items
      */
-    private function getBreadcrumbs_category($show_category_breadcrumbs, $categories_show_direction, $max_category_depth) {
+    private function getBreadcrumbs_category($show_category_breadcrumbs, $categories_show_direction, $max_category_depth, $show_blog_page = 'true') {
         
     	$items = array();
 
@@ -206,7 +224,33 @@ class UniteCreatorBreadcrumbs {
             return $items;
         }
 
+        if($current_category instanceof WP_Post_Type) {
+            $label = !empty($current_category->labels->name) ? $current_category->labels->name : $current_category->name;
+            $url = ($current_category->has_archive) ? get_post_type_archive_link($current_category->name) : '';
+            $items[] = array(
+                'text' => html_entity_decode($label, ENT_QUOTES, 'UTF-8'),
+                'url' => $url,
+                'type' => ''
+            );
+            return $items;
+        }
+
 	    $taxonomy = $current_category->taxonomy;
+
+        if($show_blog_page === 'true') {
+            if(self::$showDebug == true)
+                dmp("add blog/post type option (category)");
+            if($taxonomy === 'category') {
+                $items = $this->addBlogPage($items);
+            } else {
+                $objTax = get_taxonomy($taxonomy);
+                if(!empty($objTax->object_type) && is_array($objTax->object_type)) {
+                    $postType = $objTax->object_type[0];
+                    $objPostType = get_post_type_object($postType);
+                    $items = $this->addPostTypeItem($items, $objPostType);
+                }
+            }
+        }
 
         $ancestors = get_ancestors($current_category->term_id,  $taxonomy);
         $ancestors = array_reverse($ancestors);
@@ -411,11 +455,13 @@ class UniteCreatorBreadcrumbs {
         
     	$items = array();
 
-        $post_type = get_post_type_object(get_post_type());
-        if($post_type) {
+        $post_type = get_queried_object();
+        if($post_type && $post_type instanceof WP_Post_Type) {
+            $label = !empty($post_type->labels->name) ? $post_type->labels->name : $post_type->name;
+            $url = ($post_type->has_archive) ? get_post_type_archive_link($post_type->name) : '';
             $items[] = array(
-                'text' => html_entity_decode($post_type->labels->name, ENT_QUOTES, 'UTF-8'),
-                'url' => '',
+                'text' => html_entity_decode($label, ENT_QUOTES, 'UTF-8'),
+                'url' => $url,
                 'type' => ''
             );
         }

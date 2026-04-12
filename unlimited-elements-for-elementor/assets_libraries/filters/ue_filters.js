@@ -804,7 +804,7 @@ function UEDynamicFilters(){
 	function getFilterWrapper(objFilter){
 		
 		var objParent = objFilter.parent();		
-				
+		
 		if(objParent.hasClass("uc-checkbox-filter-accordion-container"))
 			objParent = objParent.parent();
 		
@@ -1283,7 +1283,7 @@ function UEDynamicFilters(){
 	 * unselect by key terms list and select
 	 */
 	function termsFilterUnselectByKey(event,key){
-		
+				
 		var objFilter = jQuery(this);
 		
 		var selectedTerm = getTermsListSelectedTerm(objFilter);
@@ -1474,7 +1474,7 @@ function UEDynamicFilters(){
 	 * init general filter
 	 */
 	function initGeneralFilter(objFilter){
-
+		
 		objFilter.on(g_vars.ACTION_FILTER_CHANGE, onGeneralFilterChange);
 
 	}
@@ -1560,7 +1560,7 @@ function UEDynamicFilters(){
 
 		if(!arrTerms || arrTerms.length == 0)
 			return(false);
-
+		
 		jQuery.each(objFilters,function(index, filter){
 
 			var objFilter = jQuery(filter);
@@ -1766,23 +1766,31 @@ function UEDynamicFilters(){
 		//break by taxonomy
 
 		var arrTax = {};
-		var arrGroupTax = {};
+		var arrGroupTax = [];
 
 		if(isDebug == true){
 			trace("arr terms");
 			trace(arrTerms);
 		}
-
+		
 		jQuery.each(arrTerms, function(index, objTerm){
 
 			//group term
 			if(jQuery.isArray(objTerm) && objTerm.length != 0){
+				
+				if(objTerm.length == 1){
+					arrTax = buildTermsQuery_handleTerm(objTerm[0], arrTax);
+					return;
+				}
 
+				var arrGroupTaxonomy = {};
+				
 				jQuery.each(objTerm, function(index, groupTerm){
 					
-					arrGroupTax = buildTermsQuery_handleTerm(groupTerm, arrGroupTax);
-
+					arrGroupTaxonomy = buildTermsQuery_handleTerm(groupTerm, arrGroupTaxonomy);
 				});
+
+				arrGroupTax.push(arrGroupTaxonomy);
 
 			}else{	//single term
 
@@ -1790,7 +1798,7 @@ function UEDynamicFilters(){
 			}
 
 		});
-
+		
 		if(isDebug == true){
 			trace("first arr tax");
 			trace(arrTax);
@@ -1802,33 +1810,36 @@ function UEDynamicFilters(){
 			return(null);
 
 		if(isDebug == true){
-			trace("build group");
+			trace("group tax");
 			trace(arrGroupTax);
 		}
 		
+		//build group slugs, in case that there is a group
 		
-		//build group slugs
-		jQuery.each(arrGroupTax,function(taxonomy, objSlugs){
+		jQuery.each(arrGroupTax, function(index, objGroupTaxonomies){
 			
+			jQuery.each(objGroupTaxonomies, function(taxonomy, objSlugs){
+				
 			var strSlugs = buildTermsQuery_getStrSlugs(objSlugs, true);
 			
-			var strAdd = "|"+strSlugs+"|";
-				
-			var objTax = getVal(arrTax, taxonomy);
-			if(!objTax){
-				objTax = {};
-
-				strAdd = strSlugs;
+			var strAdd = strSlugs;
+			if(strSlugs.indexOf(".") !== -1){
+				strAdd = "|"+strSlugs+"|";	//OR inside the group
 			}
-
-			objTax[strAdd] = true;
-
-			arrTax[taxonomy] = objTax;
+				
+				var objTax = getVal(arrTax, taxonomy);
+				if(!objTax)
+					objTax = {};
+		
+				objTax[strAdd] = true;
+		
+				arrTax[taxonomy] = objTax;
+			});
 		});
 
-
+		
 		if(isDebug == true){
-			trace("group built");
+			trace("The result taxonomy after grouping");
 			trace(arrTax);
 		}
 
@@ -3644,14 +3655,13 @@ function UEDynamicFilters(){
 			
 			var strTerms = buildTermsQuery(arrTerms);
 		
-			if(strTerms)
+			if(strTerms){
 				urlAjax += "&ucterms="+strTerms;
+				//set the url params as well
+				urlReplace = addUrlParam(urlReplace, "ucterms="+strTerms);
+				urlFilterString = addUrlParam(urlFilterString, "ucterms="+strTerms);
+			}
 			
-			//set the url params as well
-			
-			urlReplace = addUrlParam(urlReplace, "ucterms="+strTerms);
-
-			urlFilterString = addUrlParam(urlFilterString, "ucterms="+strTerms);
 		}
 		
 		//add authors

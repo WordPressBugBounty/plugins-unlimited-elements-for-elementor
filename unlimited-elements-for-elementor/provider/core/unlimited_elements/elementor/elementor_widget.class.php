@@ -402,6 +402,13 @@ class UniteCreatorElementorWidget extends Widget_Base {
     			else
     				$value = array("url"=>$value);
     		break;
+    		case UniteCreatorDialogParam::PARAM_FILE:
+
+    			if(is_numeric($value))
+    				$value = array("id"=>$value);
+    			else
+    				$value = array("url"=>$value);
+    		break;
     		case UniteCreatorDialogParam::PARAM_LINK:
 				
     			if(is_array($value) == false)
@@ -559,6 +566,9 @@ class UniteCreatorElementorWidget extends Widget_Base {
     	$itemsHeading = $this->objAddon->getOption("items_section_heading");
     	$itemsHeading = trim($itemsHeading);
 
+    	$allowEmpty = $this->objAddon->getOption("items_allow_empty");    	    	    	    	
+    	$allowEmpty = UniteFunctionsUC::strToBool($allowEmpty);
+    	
     	$titleField = $this->objAddon->getOption("items_title_field");
     	$titleField = trim($titleField);
 	
@@ -711,7 +721,12 @@ class UniteCreatorElementorWidget extends Widget_Base {
          $arrItemsControl = array();
          $arrItemsControl["type"] = Controls_Manager::REPEATER;
          $arrItemsControl["fields"] = $repeater->get_controls();
-
+         
+        //allow empty items
+        if($allowEmpty == true)
+        	$arrItemsControl["prevent_empty"] = false;
+		
+         
          if(!empty($titleField))
          	$arrItemsControl["title_field"] = $titleField;
 
@@ -988,6 +1003,9 @@ class UniteCreatorElementorWidget extends Widget_Base {
     		case UniteCreatorDialogParam::PARAM_IMAGE:
     			$controlType = Controls_Manager::MEDIA;
     		break;
+    		case UniteCreatorDialogParam::PARAM_FILE:
+    			$controlType = Controls_Manager::MEDIA;
+    		break;
     		case UniteCreatorDialogParam::PARAM_HR:
     			//$controlType = "uc_hr";
     			$controlType = Controls_Manager::DIVIDER;
@@ -1122,6 +1140,42 @@ class UniteCreatorElementorWidget extends Widget_Base {
     				$arrControl['media_type'] = 'application/json';
     				$arrControl['default'] = $defaultValue;
     			}
+
+    		break;
+    		case UniteCreatorDialogParam::PARAM_FILE:
+
+    			$fileTypes = array();
+    			if(UniteFunctionsUC::strToBool(UniteFunctionsUC::getVal($param, "file_type_application")) === true)
+    				$fileTypes[] = "application";
+    			if(UniteFunctionsUC::strToBool(UniteFunctionsUC::getVal($param, "file_type_image")) === true)
+    				$fileTypes[] = "image";
+    			if(UniteFunctionsUC::strToBool(UniteFunctionsUC::getVal($param, "file_type_video")) === true)
+    				$fileTypes[] = "video";
+    			if(UniteFunctionsUC::strToBool(UniteFunctionsUC::getVal($param, "file_type_svg")) === true)
+    				$fileTypes[] = "svg";
+
+    			if(empty($fileTypes))
+    				$fileTypes = array("application", "image", "video", "svg");
+
+    			$mediaTypes = array();
+    			$mimeTypes = array();
+    			foreach($fileTypes as $type){
+    				if($type === "svg"){
+    					$mediaTypes[] = "image";
+    					$mimeTypes[] = "image/svg+xml";
+    				}else{
+    					$mediaTypes[] = $type;
+    				}
+    			}
+
+    			$mediaTypes = array_values(array_unique($mediaTypes));
+    			if(count($mediaTypes) == 1)
+    				$arrControl["media_type"] = $mediaTypes[0];
+    			else
+    				$arrControl["media_type"] = $mediaTypes;
+
+    			if(!empty($mimeTypes))
+    				$arrControl["mime_types"] = array_values(array_unique($mimeTypes));
 
     		break;
     		case UniteCreatorDialogParam::PARAM_POST_SELECT:
@@ -1781,9 +1835,9 @@ class UniteCreatorElementorWidget extends Widget_Base {
  				$arrControl["fields"] = $repeater->get_controls();
 
          		$arrControl["default"] = $arrItemValues;
-
+		
          		$arrControl["prevent_empty"] = false;
-
+				
     		break;
     	}
 

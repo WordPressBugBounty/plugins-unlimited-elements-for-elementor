@@ -3934,9 +3934,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 			return (self::$cacheAuthorsShort);
 		}
-
-		$args = array("role__not_in" => array("subscriber", "customer"));
-
+		
+		$args = array(
+			"role__in" => array("administrator", "editor", "author"),
+			"number"   => 200
+		);
 		$arrUsers = get_users($args);
 
 		$arrUsersShort = array();
@@ -4912,6 +4914,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	public static function onFrontInit(){
 		
 		add_action('wp_print_scripts', array('UniteFunctionsWPUC', 'onStylesAndScriptsDeregister'), PHP_INT_MAX);
+
+        add_action('wp_after_insert_post', function ($post_id, $post, $update) { GlobalsUC::$hideDebug = true; }, 10, 3);
 		
 	}
 	

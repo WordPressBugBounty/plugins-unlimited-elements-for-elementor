@@ -53,6 +53,19 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				$textWidth = 'width="'.$setting["textWidth"].'"';
 			
 			$addField = UniteFunctionsUC::getVal($setting, UniteSettingsUC::PARAM_ADDFIELD);
+			$addFields = array();
+			if(!empty($addField)){
+				if(is_array($addField)){
+					$addFields = $addField;
+				}else{
+					$addFields = explode(",", $addField);
+				}
+				
+				$addFields = array_map("trim", $addFields);
+				$addFields = array_filter($addFields, function($value){
+					return $value !== "";
+				});
+			}
 			
 			$drawTh = true;
 			$tdHtmlAdd = "";			
@@ -68,15 +81,22 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			?>
 						
 			<?php
-			if(!empty($addField)):
+			if(!empty($addFields)):
 				
-				$addSetting = $this->settings->getSettingByName($addField);
-				UniteFunctionsUC::validateNotEmpty($addSetting,"AddSetting {$addField}");
-			
-				$addSettingText = UniteFunctionsUC::getVal($addSetting,"text","");
-				$addSettingText = str_replace(" ","&nbsp;", $addSettingText);
+				$addSettings = array();
+				$hasAddSettingText = false;
+				foreach($addFields as $addFieldName){
+					$addSetting = $this->settings->getSettingByName($addFieldName);
+					UniteFunctionsUC::validateNotEmpty($addSetting,"AddSetting {$addFieldName}");
+					$addSettings[] = $addSetting;
+					
+					$addSettingText = UniteFunctionsUC::getVal($addSetting,"text","");
+					if(!empty($addSettingText))
+						$hasAddSettingText = true;
+				}
+				
 				$tdSettingAdd = "";
-				if(!empty($addSetting)){
+				if(!empty($addSettings)){
 					$tdSettingAdd = ' class="unite-settings-onecell" colspan="2"';
 				}
 				
@@ -84,7 +104,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				<tr <?php 
 				uelm_echo($rowClass)?> valign="top">
 				
-				<?php if(empty($addSettingText)):?>
+				<?php if($hasAddSettingText == false):?>
 					
 					<th <?php uelm_echo($textStyle)?> scope="row" <?php uelm_echo($textWidth) ?>>
 						<?php if($this->showDescAsTips == true): ?>
@@ -112,18 +132,26 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 								$this->drawInputAdditions($setting);
 							?>
 							
-						<?php if(!empty($addSettingText)):?>
+						<?php if($hasAddSettingText == true):?>
 							<span class="setting_onecell_horsap"></span>
 						<?php endif?>
 					</span>
 					
-					<span id="<?php echo esc_attr($addSetting["id_row"])?>">
-						<span class='setting_onecell_text'><?php echo esc_html($addSettingText)?></span>				
-						<?php
-							$this->drawInputs($addSetting);
-							$this->drawInputAdditions($addSetting);
+					<?php foreach($addSettings as $addSetting): ?>
+						<?php 
+							$addSettingText = UniteFunctionsUC::getVal($addSetting,"text","");
+							$addSettingText = str_replace(" ","&nbsp;", $addSettingText);
 						?>
-					</span>
+						<span id="<?php echo esc_attr($addSetting["id_row"])?>">
+							<?php if(!empty($addSettingText)):?>
+								<span class='setting_onecell_text'><?php echo esc_html($addSettingText)?></span>
+							<?php endif?>
+							<?php
+								$this->drawInputs($addSetting);
+								$this->drawInputAdditions($addSetting);
+							?>
+						</span>
+					<?php endforeach; ?>
 				</td>
 				</tr>
 				<?php

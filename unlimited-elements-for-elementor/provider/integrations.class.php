@@ -15,6 +15,11 @@ class UniteCreatorPluginIntegrations{
 	private $activeLang;
 
 	private $defaultLang;
+
+	/** WPP orderby filter: post IDs order (static for filter callback) */
+	private static $wppOrderByIDs = array();
+	/** WPP orderby filter: ASC/DESC */
+	private static $wppOrderByDirection = "DESC";
 	
 	private function ___________JET_ENGINE_________(){}
 	
@@ -57,6 +62,24 @@ class UniteCreatorPluginIntegrations{
 		$numViews = wpp_get_views($postID);
 		
 		return($numViews);
+	}
+	
+	/**
+	 * get wpp range select
+	 */
+	public static function WPP_getRangeSelect(){
+		
+		$arrItems = array(
+			"last30days" => "Last 30 Days",
+			"last7days" => "Last 7 Days",
+			"last24hours" => "Last 24 Hours",
+			"daily" => "Daily",
+			"weekly" => "Weekly",
+			"monthly" => "Monthly",
+			"all" => "All",
+		);
+		
+		return($arrItems);
 	}
 	
 	/**
@@ -146,38 +169,71 @@ class UniteCreatorPluginIntegrations{
 		$output["debug"] = $strDebug;
 		
 		return($output);
-		
-		
-        // Return cached results
-        /*
-        if ( $this->config['tools']['cache']['active'] ) {
-            $key = 'wpp_' . md5(json_encode($params));
-            $query = \WordPressPopularPosts\Cache::get($key);
+	}
 
-            if ( false === $query ) {
-                $query = new Query($params);
+	/**
+	 * get popular post IDs for orderby (e.g. from sort filter) from query args
+	 * queryArgs - WP_Query-style args (post_type, posts_per_page)
+	 * range - WPP range key, default last30days
+	 * @return array post IDs or empty array
+	 */
+	public static function WPP_getPopularPostIdsForOrderBy($queryArgs, $range = "last30days"){
+		if(self::isWPPopularPostsExists() == false)
+			return array();
+		$postType = UniteFunctionsUC::getVal($queryArgs, "post_type", "post");
+		$limit = UniteFunctionsUC::getVal($queryArgs, "posts_per_page", 999);
+		if(empty($limit) || $limit < 1)
+			$limit = 999;
+		$obj = new self();
+		$wpp_args = array(
+			"post_type" => $postType,
+			"limit" => $limit,
+			"range" => $range
+		);
+		$response = $obj->WPP_getPopularPosts($wpp_args, false);
+		$ids = UniteFunctionsUC::getVal($response, "post_ids");
+		return is_array($ids) ? $ids : array();
+	}
 
-                $time_value = $this->config['tools']['cache']['interval']['value'];
-                $time_unit = $this->config['tools']['cache']['interval']['time'];
+	/**
+	 * WordPress filter: order by WPP popularity (uses static IDs/direction)
+	 */
+	public static function filterPostsOrderbyWpp($orderby, $query){
+		if(is_object($query) && method_exists($query, "get")){
+			$isActive = $query->get("ue_wpp_orderby");
+			if(empty($isActive))
+				return $orderby;
+		}
+		if(empty(self::$wppOrderByIDs))
+			return $orderby;
+		$arrIDs = array_map("intval", self::$wppOrderByIDs);
+		$arrIDs = array_filter($arrIDs);
+		$arrIDs = array_unique($arrIDs);
+		if(empty($arrIDs))
+			return $orderby;
+		global $wpdb;
+		$orderDir = (self::$wppOrderByDirection == "ASC") ? "ASC" : "DESC";
+		$orderDirField = ($orderDir == "ASC") ? "DESC" : "ASC";
+		$field = "FIELD({$wpdb->posts}.ID," . implode(",", $arrIDs) . ")";
+		$orderby = "({$field} = 0) ASC, {$field} {$orderDirField}, {$wpdb->posts}.post_date {$orderDir}";
+		return $orderby;
+	}
 
-                // No popular posts found, check again in 1 minute
-                if ( ! $query->get_posts() ) {
-                    $time_value = 1;
-                    $time_unit = 'minute';
-                }
+	/**
+	 * apply WPP orderby filter for the next WP_Query run
+	 */
+	public static function WPP_applyOrderByFilter($arrIDs, $orderDir = "DESC"){
+		self::$wppOrderByIDs = is_array($arrIDs) ? $arrIDs : array();
+		self::$wppOrderByDirection = ($orderDir == "ASC") ? "ASC" : "DESC";
+		add_filter("posts_orderby", array(__CLASS__, "filterPostsOrderbyWpp"), 10, 2);
+	}
 
-                \WordPressPopularPosts\Cache::set(
-                    $key,
-                    $query,
-                    $time_value,
-                    $time_unit
-                );
-            }
-        } // Get real-time popular posts
-        
-		*/
-		
-        return $query;
+	/**
+	 * remove WPP orderby filter after query
+	 */
+	public static function WPP_removeOrderByFilter(){
+		remove_filter("posts_orderby", array(__CLASS__, "filterPostsOrderbyWpp"), 10);
+		self::$wppOrderByIDs = array();
 	}
 
 	private function ___________STICKY_POSTS_STITCH_________(){}

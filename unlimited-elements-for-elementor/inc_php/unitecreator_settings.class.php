@@ -161,7 +161,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 	 * get settings types array
 	 */
 	public function getArrUCSettingTypes(){
-
+	
 		$arrTypes = array(
 			"uc_textfield",
 			UniteCreatorDialogParam::PARAM_NUMBER,
@@ -172,6 +172,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 			"uc_dropdown",
 			"uc_colorpicker",
 			"uc_image",
+			UniteCreatorDialogParam::PARAM_FILE,
 			"uc_mp3",
 			"uc_icon",
 			UniteCreatorDialogParam::PARAM_ICON_LIBRARY,

@@ -197,6 +197,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		public static $showQueryDebugByUrl = false;
 		public static $isInsidePlugin = false;	//set in provider_admin
 		
+		public static $hideDebug = false;
+		
 		
 		/**
 		 * init globals
@@ -331,6 +333,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$showQueryDebugByUrl = HelperUC::hasPermissionsFromQuery("ucquerydebug");
 			if($showQueryDebugByUrl == true)
 				self::$showQueryDebugByUrl = true;
+			$showQueryDebugTermsByUrl = HelperUC::hasPermissionsFromQuery("ucquerydebug_terms");
+			if($showQueryDebugTermsByUrl == true)
+				self::$showQueryDebugTermsByUrl = true;
 			
 						
 			//test free version

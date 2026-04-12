@@ -127,6 +127,10 @@ class UniteCreatorAddonView{
 		$settingsItem->addTextBox("items_title_field", "", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".esc_html__("Title Field", "unlimited-elements-for-elementor"), $params);
 		$settingsItem->addControl("enable_items", "items_title_field", "show", "true");
 
+		//allow empty items
+		$settingsItem->addRadioBoolean("items_allow_empty", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".esc_html__("Allow Empty", "unlimited-elements-for-elementor"), false);
+		$settingsItem->addControl("enable_items", "items_allow_empty", "show", "true");
+		
 
 		$settingsItem->setStoredValues($options);
 		

@@ -38,6 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		const TYPE_BUTTON = "button";
 		const TYPE_LINK = "link";
 		const TYPE_IMAGE = "image";
+		const TYPE_FILE = "file";
 		const TYPE_BOOLEAN = "boolean";
 		const TYPE_EDITOR = "editor";
 		const TYPE_MP3 = "mp3";
@@ -754,6 +755,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$this->add($name, $defaultValue, $text, self::TYPE_IMAGE, $arrParams);
 		}
 
+	/**
+	 * add file chooser setting
+	 */
+	public function addFile($name, $defaultValue = "", $text = "", $arrParams = array()){
+
+		$arrParams["label_block"] = true;
+
+		$this->add($name, $defaultValue, $text, self::TYPE_FILE, $arrParams);
+	}
+
 		/**
 		 * add image chooser setting
 		 */
@@ -1437,8 +1448,22 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 				if(empty($addSettingName))
 					continue;
+				
+				$addSettingNames = array();
+				if(is_array($addSettingName)){
+					$addSettingNames = $addSettingName;
+				}else{
+					$addSettingNames = explode(",", $addSettingName);
+				}
+				
+				$addSettingNames = array_map("trim", $addSettingNames);
+				$addSettingNames = array_filter($addSettingNames, function($value){
+					return $value !== "";
+				});
 
-				$this->updateSettingProperty($addSettingName, self::PARAM_NODRAW, true);
+				foreach($addSettingNames as $addSettingSingleName){
+					$this->updateSettingProperty($addSettingSingleName, self::PARAM_NODRAW, true);
+				}
 			}
 
 		}

@@ -449,5 +449,176 @@ class UniteCreatorAjaxSeach{
 		}
 		
 	}
+	
+	/**
+	 * get suggestion data for ajax search
+	 */
+	public function getSearchSuggestionData($search, $args){
+		
+		$searchToken = $this->getSuggestionToken($search);
+		
+		if(empty($searchToken))
+			return(null);
+		
+		$suggestion = $this->getSuggestionFromArgs($searchToken, $args);
+		
+		if(empty($suggestion) || $suggestion === $searchToken)
+			return(null);
+		
+		$output = array();
+		$output["original"] = $search;
+		$output["suggestion"] = $suggestion;
+		
+		return($output);
+	}
+	
+	/**
+	 * get suggestion from query args
+	 */
+	private function getSuggestionFromArgs($searchToken, $args){
+		
+		if(empty($args) || is_array($args) == false)
+			return(null);
+		
+		if(isset($args["s"]))
+			unset($args["s"]);
+		
+		if(isset($args["search"]))
+			unset($args["search"]);
+		
+		if(isset($args["paged"]))
+			unset($args["paged"]);
+		
+		if(isset($args["offset"]))
+			unset($args["offset"]);
+		
+		$args["posts_per_page"] = 50;
+		$args["no_found_rows"] = true;
+		$args["ignore_sticky_posts"] = true;
+		
+		$query = new WP_Query($args);
+		
+		if(empty($query) || empty($query->posts))
+			return(null);
+		
+		$maxDistance = $this->getSuggestionMaxDistance($searchToken);
+		$bestWord = null;
+		$bestDistance = null;
+		
+		foreach($query->posts as $post){
+			
+			$title = "";
+			
+			if(is_object($post) && isset($post->post_title)){
+				$title = $post->post_title;
+			}else{
+				$title = UniteFunctionsUC::getVal($post, "post_title");
+			}
+			
+			if(empty($title))
+				continue;
+			
+			$arrWords = $this->getSuggestionWordsFromTitle($title);
+			
+			if(empty($arrWords))
+				continue;
+			
+			foreach($arrWords as $word){
+				
+				if($word === $searchToken)
+					return(null);
+				
+				$lenDiff = abs(strlen($word) - strlen($searchToken));
+				
+				if($lenDiff > $maxDistance)
+					continue;
+				
+				$distance = levenshtein($searchToken, $word);
+				
+				if($distance === false)
+					continue;
+				
+				if($distance <= $maxDistance && ($bestDistance === null || $distance < $bestDistance)){
+					$bestDistance = $distance;
+					$bestWord = $word;
+					
+					if($bestDistance === 0)
+						break 2;
+				}
+				
+			}
+			
+		}
+		
+		return($bestWord);
+	}
+	
+	/**
+	 * get suggestion token (single word)
+	 */
+	private function getSuggestionToken($search){
+		
+		$search = trim($search);
+		
+		if(empty($search))
+			return(null);
+		
+		$search = strtolower($search);
+		$search = preg_replace("/[^a-z0-9\\s]/", " ", $search);
+		$tokens = preg_split("/\\s+/", $search, -1, PREG_SPLIT_NO_EMPTY);
+		
+		if(empty($tokens))
+			return(null);
+		
+		$token = $tokens[0];
+		
+		if(strlen($token) < 3)
+			return(null);
+		
+		return($token);
+	}
+	
+	/**
+	 * get words from title
+	 */
+	private function getSuggestionWordsFromTitle($title){
+		
+		$title = strtolower($title);
+		$title = preg_replace("/[^a-z0-9\\s]/", " ", $title);
+		$words = preg_split("/\\s+/", $title, -1, PREG_SPLIT_NO_EMPTY);
+		
+		if(empty($words))
+			return(array());
+		
+		$output = array();
+		
+		foreach($words as $word){
+			
+			if(strlen($word) < 3)
+				continue;
+			
+			$output[$word] = true;
+		}
+		
+		$output = array_keys($output);
+		
+		return($output);
+	}
+	
+	/**
+	 * get suggestion max distance
+	 */
+	private function getSuggestionMaxDistance($word){
+		
+		$length = strlen($word);
+		
+		if($length <= 4)
+			return(1);
+		
+		if($length <= 7)
+			return(2);
+		
+		return(3);
+	}
 
 }

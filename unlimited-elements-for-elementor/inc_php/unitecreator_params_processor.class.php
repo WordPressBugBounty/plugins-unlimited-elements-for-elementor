@@ -92,6 +92,7 @@ class UniteCreatorParamsProcessorWork{
 			switch($type){
 				case "uc_image":
 				case "uc_mp3":
+				case UniteCreatorDialogParam::PARAM_FILE:
 					$value = HelperUC::URLtoFull($value);
 					break;
 			}
@@ -334,7 +335,7 @@ class UniteCreatorParamsProcessorWork{
 		//dmp($arrFont);exit();
 
 		//on production don't return empty span
-		if($this->processType == self::PROCESS_TYPE_OUTPUT && empty($arrFont) && $isReturnCss == false)
+		if(($this->processType == self::PROCESS_TYPE_OUTPUT) && empty($arrFont) && $isReturnCss == false)
 			return($value);
 
 		//generate id
@@ -760,7 +761,6 @@ class UniteCreatorParamsProcessorWork{
 			break;
 			case self::PROCESS_TYPE_OUTPUT:
 			case self::PROCESS_TYPE_OUTPUT_BACK:
-
 				$data[$name] = $this->getPostData($postID, $arrPostAdditions);
 			break;
 		}
@@ -1037,6 +1037,45 @@ class UniteCreatorParamsProcessorWork{
 		if(empty($urlThumb) === true)
 			$data[$keyThumb] = $imageUrl;
 		
+		return $data;
+	}
+
+	/**
+	 * process file param value, add to data
+	 */
+	protected function getProcessedParamsValue_file($data, $value, $param){
+
+		$name = UniteFunctionsUC::getVal($param, "name");
+
+		$fileId = null;
+		$fileUrl = null;
+
+		if(is_array($value) === true){
+			$fileId = UniteFunctionsUC::getVal($value, "id");
+			$fileUrl = UniteFunctionsUC::getVal($value, "url");
+		}else{
+			if(is_numeric($value) === true)
+				$fileId = $value;
+			else
+				$fileUrl = $value;
+		}
+
+		if(empty($fileId) === true && empty($fileUrl) === true) {
+			$data[$name] = "";
+			return $data;
+		}
+
+		if(empty($fileId) === false)
+			$fileUrl = wp_get_attachment_url($fileId);
+		else
+			$fileUrl = HelperUC::URLtoFull($fileUrl);
+
+		//sanitize the url
+		if(!empty($fileUrl))
+			$fileUrl = UniteFunctionsUC::sanitize($fileUrl, UniteFunctionsUC::SANITIZE_URL);
+
+		$data[$name] = $fileUrl;
+
 		return $data;
 	}
 
@@ -1962,6 +2001,9 @@ class UniteCreatorParamsProcessorWork{
 			case UniteCreatorDialogParam::PARAM_IMAGE:
 				$data = $this->getProcessedParamsValue_image($data, $value, $param);
 			break;
+			case UniteCreatorDialogParam::PARAM_FILE:
+				$data = $this->getProcessedParamsValue_file($data, $value, $param);
+			break;
 			case UniteCreatorDialogParam::PARAM_POST:
 				$data = $this->getProcessedParamsValue_post($data, $value, $param, $processType);
 			break;
@@ -2066,7 +2108,7 @@ class UniteCreatorParamsProcessorWork{
 		//modify some params, like in filter, if the source is authors - remove the terms param
 		//and if the source is terms, remove the users param
 		$arrParams = $this->modifyParamsBySpecialAddonBehaviour($arrParams);
-		
+
 		foreach($arrParams as $param){
 			$type = UniteFunctionsUC::getVal($param, "type");
 
@@ -2084,12 +2126,12 @@ class UniteCreatorParamsProcessorWork{
 			$defaultValue = UniteFunctionsUC::getVal($param, "default_value");
 			$value = UniteFunctionsUC::getVal($param, "value", $defaultValue);
 			$value = $this->convertValueByType($value, $type, $param);
-
+            
 			if($type !== "imagebase_fields")
 				$data[$name] = $value;
 
-			$data = $this->getProcessedParamData($data, $value, $param, $processType);
-		}
+			$data = $this->getProcessedParamData($data, $value, $param, $processType); 
+		}   
 
 		$data = $this->modifyDataBySpecialAddonBehaviour($data);
 		

@@ -400,6 +400,18 @@ function UniteCreatorParamsDialog(){
 			g_ucAdmin.validateNotEmpty(objParam.name, "Name");
 
 			g_ucAdmin.validateNameField(objParam.name, "Name");
+			
+			if(objParam.type === "uc_file"){
+				var hasFileTypes = (
+					objParam.file_type_application === true ||
+					objParam.file_type_image === true ||
+					objParam.file_type_video === true ||
+					objParam.file_type_svg === true
+				);
+				
+				if(hasFileTypes === false)
+					throw new Error("Please select at least one file type");
+			}
 
 		}catch(error){
 			g_objError.show().html(error.message);

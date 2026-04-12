@@ -21,6 +21,7 @@ class HelperProviderCoreUC_EL{
 	private static $arrTemplatesCounter = array();
 	private static $isInfiniteLoopCode = false;
 	private static $arrAddedStyles = array();
+	private static $isUploadMimeFiltersRegistered = false;
 	
 	private static $currentDocument = null;
 	private static $originalQueriedObject = null;
@@ -1617,6 +1618,78 @@ class HelperProviderCoreUC_EL{
 		
 		return(true);
 	}
+
+	/**
+	 * register upload mime filters based on settings
+	 */
+	public static function registerUploadMimeFilters(){
+		
+		if(self::$isUploadMimeFiltersRegistered === true)
+			return;
+		
+		self::$isUploadMimeFiltersRegistered = true;
+		
+		$allowedMimes = self::getAllowedUploadMimes();
+		if(empty($allowedMimes))
+			return;
+		
+		add_filter("upload_mimes", function($mimes) use ($allowedMimes){
+			return array_merge($mimes, $allowedMimes);
+		});
+		
+		add_filter("wp_check_filetype_and_ext", function($data, $file, $filename, $mimes) use ($allowedMimes){
+			
+			$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+			
+			if(isset($allowedMimes[$extension])){
+				$data["ext"] = $extension;
+				$data["type"] = $allowedMimes[$extension];
+			}
+			
+			return $data;
+		}, 10, 4);
+	}
+	
+	/**
+	 * get allowed upload mime types from general settings
+	 */
+	private static function getAllowedUploadMimes(){
+		
+		$allowedMimes = array();
+		
+		$allowDocuments = self::getGeneralSetting("allow_upload_documents");
+		$allowDocuments = UniteFunctionsUC::strToBool($allowDocuments);
+		
+		$allowZip = self::getGeneralSetting("allow_upload_zip");
+		$allowZip = UniteFunctionsUC::strToBool($allowZip);
+		
+		$allowSvg = self::getGeneralSetting("allow_upload_svg");
+		$allowSvg = UniteFunctionsUC::strToBool($allowSvg);
+		
+		if($allowDocuments === true){
+			$allowedMimes = array_merge($allowedMimes, array(
+				"pdf" => "application/pdf",
+				"doc" => "application/msword",
+				"docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+				"ppt" => "application/vnd.ms-powerpoint",
+				"pptx" => "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+				"xls" => "application/vnd.ms-excel",
+				"xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+				"rtf" => "application/rtf",
+				"odt" => "application/vnd.oasis.opendocument.text",
+				"ods" => "application/vnd.oasis.opendocument.spreadsheet",
+				"odp" => "application/vnd.oasis.opendocument.presentation",
+			));
+		}
+		
+		if($allowZip === true)
+			$allowedMimes["zip"] = "application/zip";
+		
+		if($allowSvg === true)
+			$allowedMimes["svg"] = "image/svg+xml";
+		
+		return $allowedMimes;
+	}
 	
 	
 	/**
@@ -1636,6 +1709,8 @@ class HelperProviderCoreUC_EL{
 		self::$urlCore = GlobalsUC::$urlPlugin.$pathRelative;
 				
 		self::$filepathGeneralSettings = self::$pathCore."settings/general_settings_el.xml";
+
+		self::registerUploadMimeFilters();
 		
 		do_action("ue_after_global_init");
 

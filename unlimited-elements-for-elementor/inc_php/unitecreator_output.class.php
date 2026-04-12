@@ -1100,50 +1100,6 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
         return $style;
     }
 
-	/*
-	private function processParamCSSSelector_typography($param, $selectors){
-
-		$value = UniteFunctionsUC::getVal($param, "value");
-
-		$style = "";
-		$selector = $this->combineCSSSelectors($selectors);
-
-		// import font family
-		$fontFamily = UniteFunctionsUC::getVal($value, "font_family");
-
-		if(empty($fontFamily) === false){
-			$fontData = HelperUC::getFontPanelData();
-			$googleFonts = UniteFunctionsUC::getVal($fontData, "arrGoogleFonts");
-
-			if(empty($googleFonts[$fontFamily]) === false){
-				$fontUrl = HelperHtmlUC::getGoogleFontUrl($googleFonts[$fontFamily]);
-
-				$this->addon->addCssInclude($fontUrl);
-			}
-		}
-
-		$regularFields = array(
-			"font_family" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TYPOGRAPHY, "family"),
-			"font_style" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TYPOGRAPHY, "style"),
-			"font_weight" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TYPOGRAPHY, "weight"),
-			"text_decoration" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TYPOGRAPHY, "decoration"),
-			"text_transform" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TYPOGRAPHY, "transform"),
-		);
-
-		$responsiveFields = array(
-			"font_size" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TYPOGRAPHY, "size"),
-			"line_height" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TYPOGRAPHY, "line-height"),
-			"letter_spacing" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TYPOGRAPHY, "letter-spacing"),
-			"word_spacing" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TYPOGRAPHY, "word-spacing"),
-		);
-
-		$style .= $this->prepareCSSSelectorFieldsStyle($regularFields, $selector, $value);
-		$style .= $this->prepareCSSSelectorResponsiveFieldsStyle($responsiveFields, $selector, $value);
-
-		return $style;
-	}
-    */
-
     /**
      * process css selector of text shadow param
      */
@@ -3214,8 +3170,11 @@ $css
 				if(empty($rootId) === true)
 					$rootId = $this->getWidgetID();
 				
-             	$params = $this->addon->getProcessedMainParamsValues($this->processType);
-
+                $currentHideDebug = GlobalsUC::$hideDebug;
+				GlobalsUC::$hideDebug = true;
+                $params = $this->addon->getProcessedMainParamsValues($this->processType);
+				GlobalsUC::$hideDebug = $currentHideDebug;
+				
                 $advancedAddClasses = UniteFunctionsUC::getVal($params, "advanced_css_classes");
 
 				$output .= "\n<div id=\"" . esc_attr($id) . "\" class=\"ue-widget-root " . esc_attr($advancedAddClasses) . " " . esc_attr($id) . "\" data-id=\"" . esc_attr($rootId) . "\">";
@@ -3463,9 +3422,8 @@ $css
 		if(!empty($this->paramsCache)) {
 			return($this->paramsCache);
         }
-
-		$this->paramsCache = $this->addon->getProcessedMainParamsValues($this->processType);
-
+        
+		$this->paramsCache = $this->addon->getProcessedMainParamsValues($this->processType, true);
         $allParamDefs = $this->addon->getParams();
 
 		return($this->paramsCache);
@@ -3759,7 +3717,6 @@ $css
 						$dataValue = UniteFunctionsUC::getVal($arrData, $paramName);
 
 						if(is_string($dataValue) && $dataValue === "uc_items"){
-							// $arrItemData = $this->addon->getProcessedItemsData($this->processType);
                             $arrItemData = $this->getProcessedItemsData();
 						}elseif(is_array($dataValue)){
 							$arrItemData = $dataValue;
@@ -3771,7 +3728,6 @@ $css
 						UniteCreatetorParamsProcessorMultisource::checkShowItemsDebug($arrItemData);
 					break;
 					default:
-						// $arrItemData = $this->addon->getProcessedItemsData($this->processType);
                         $arrItemData = $this->getProcessedItemsData();
 					break;
 				}

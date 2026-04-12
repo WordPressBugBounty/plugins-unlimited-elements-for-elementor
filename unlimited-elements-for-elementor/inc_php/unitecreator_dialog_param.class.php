@@ -45,6 +45,7 @@ class UniteCreatorDialogParamWork{
 	const PARAM_ICON_LIBRARY = "uc_icon_library";
 	const PARAM_SHAPE = "uc_shape";
 	const PARAM_IMAGE = "uc_image";
+	const PARAM_FILE = "uc_file";
 	const PARAM_MAP = "uc_map";
 	const PARAM_ADDONPICKER = "uc_addonpicker";
 	const PARAM_TYPOGRAPHY = "uc_typography";
@@ -188,6 +189,7 @@ class UniteCreatorDialogParamWork{
 		$this->addParam(self::PARAM_COLORPICKER, esc_html__("Color Picker", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_LINK, esc_html__("Link", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_IMAGE, esc_html__("Image (media)", "unlimited-elements-for-elementor"));
+		$this->addParam(self::PARAM_FILE, esc_html__("File (media)", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_HR, esc_html__("HR Line", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_HEADING, esc_html__("Heading", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_FONT_OVERRIDE, esc_html__("Font Override", "unlimited-elements-for-elementor"));
@@ -296,8 +298,9 @@ class UniteCreatorDialogParamWork{
 				self::PARAM_POST_TERMS,
 				self::PARAM_WOO_CATS,
 				self::PARAM_INSTAGRAM,
-				self::PARAM_ICON,
+				self::PARAM_FILE,
 				self::PARAM_SPECIAL,
+				self::PARAM_ICON,
 			),
 		);
 
@@ -415,11 +418,16 @@ class UniteCreatorDialogParamWork{
 	/**
 	 * put checkbox input
 	 */
-	protected function putCheckbox($name, $text){
+	protected function putCheckbox($name, $text, $isDefaultChecked = false){
+		
+		$checkedAttr = "";
+		if($isDefaultChecked === true)
+			$checkedAttr = ' data-defaultchecked="true" checked';
+		
 		?>
 			<label class="unite-inputs-label-inline-free">
 					<?php echo esc_html($text)?>:
-				 	<input type="checkbox" onfocus="this.blur()" name="<?php echo esc_attr($name)?>">
+				 	<input type="checkbox" onfocus="this.blur()" name="<?php echo esc_attr($name)?>"<?php echo $checkedAttr?>>
 			</label>
 
 		<?php
@@ -686,7 +694,7 @@ class UniteCreatorDialogParamWork{
 		$arrTypes["json"] = "Json (lottie)";
 
 		$htmlSelect = HelperHtmlUC::getHTMLSelect($arrTypes,"image", "name='media_type' class='uc-control' data-controlled-selector='.uc-media-param-image-attributes'",true);
-
+		
 		?>
 			<?php esc_attr_e("Media Type","unlimited-elements-for-elementor") ?>:
 
@@ -699,7 +707,6 @@ class UniteCreatorDialogParamWork{
 			<div class="unite-inputs-sap-double"></div>
 
 			<div class="uc-media-param-image-attributes" data-control="image">
-
 
 				<?php $this->putImageSelectInput("default_value",esc_html__("Default Image","unlimited-elements-for-elementor")); ?>
 
@@ -728,6 +735,40 @@ class UniteCreatorDialogParamWork{
 		<?php
 	}
 
+	/**
+	 * put file param settings
+	 */
+	private function putFileParam(){
+
+		?>
+			<div class="unite-inputs-sap-double"></div>
+
+			<div class="unite-inputs-label">
+				<?php esc_html_e("Allowed File Types", "unlimited-elements-for-elementor")?>
+			</div>
+
+			<div class="unite-inputs-sap"></div>
+
+			<?php $this->putCheckbox("file_type_application", __("Application", "unlimited-elements-for-elementor"), true)?>
+			<div class="unite-inputs-description">
+				<?php esc_html_e("Extensions: pdf, doc, docx, xls, xlsx, ppt, pptx, zip (plus other WordPress application types)", "unlimited-elements-for-elementor")?>
+			</div>
+			<div class="vert_sap10"></div>
+			<?php $this->putCheckbox("file_type_image", __("Image", "unlimited-elements-for-elementor"))?>
+			<div class="unite-inputs-description">
+				<?php esc_html_e("Extensions: jpg, jpeg, png, gif, webp, bmp, tiff, ico (plus other WordPress image types)", "unlimited-elements-for-elementor")?>
+			</div>
+			<div class="vert_sap10"></div>
+			<?php $this->putCheckbox("file_type_video", __("Video", "unlimited-elements-for-elementor"))?>
+			<div class="unite-inputs-description">
+				<?php esc_html_e("Extensions: mp4, mov, webm, ogv, avi, wmv, flv, mpeg, 3gp (plus other WordPress video types)", "unlimited-elements-for-elementor")?>
+			</div>
+			<div class="vert_sap10"></div>
+			<?php $this->putCheckbox("file_type_svg", __("SVG", "unlimited-elements-for-elementor"))?>
+
+		<?php
+	}
+
 
 	/**
 	 * put single setting input
@@ -747,6 +788,13 @@ class UniteCreatorDialogParamWork{
 					"source" => "addon",
 					"url_name" => $name,
 					"size_name" => $name . "_size",
+				));
+			break;
+			case "file":
+				$objSettings->addFile($name, "", $text, array(
+					"source" => "addon",
+					"url_name" => $name,
+					"file_types" => array("application", "image", "video", "svg"),
 				));
 			break;
 			case "mp3":
@@ -770,6 +818,14 @@ class UniteCreatorDialogParamWork{
 	protected function putImageSelectInput($name, $text){
 
 		$this->putSingleSettingInput($name, $text, "image");
+	}
+
+	/**
+	 * put file select input
+	 */
+	protected function putFileSelectInput($name, $text){
+
+		$this->putSingleSettingInput($name, $text, "file");
 	}
 
 
@@ -1610,6 +1666,9 @@ class UniteCreatorDialogParamWork{
 			case self::PARAM_IMAGE:
 				$this->putImageParam();
 			break;
+			case self::PARAM_FILE:
+				$this->putFileParam();
+			break;
 			case "uc_mp3":
 				$this->putMp3Param();
 			break;
@@ -2069,6 +2128,7 @@ class UniteCreatorDialogParamWork{
 			self::PARAM_HR,
 			self::PARAM_HEADING,
 			self::PARAM_IMAGE,
+			self::PARAM_FILE,
 			self::PARAM_AUDIO,
 			self::PARAM_ICON,
 			self::PARAM_ICON_LIBRARY,
@@ -2106,6 +2166,7 @@ class UniteCreatorDialogParamWork{
 			self::PARAM_HR,
 			self::PARAM_HEADING,
 			self::PARAM_IMAGE,
+			self::PARAM_FILE,
 			self::PARAM_AUDIO,
 			self::PARAM_ICON,
 			self::PARAM_ICON_LIBRARY,

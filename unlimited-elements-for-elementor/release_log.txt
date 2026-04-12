@@ -1,5 +1,22 @@
 
 
+version 2.0.6:
+
+* Feature: added new option: allow empty in items settings
+* Feature: Added "File" attribute
+* Feature: added option in general settings: "allow upload file types"
+* Feature: added order by functionality in the most popular posts plugin
+* Feature: added one more schema type: News Article
+* Feature: added autocorrection option in ajax search
+* Feature: added support for popular posts plugin for the sorting filter
+* Fix: make sure that gallery has item title always, in product item also
+* Fix: fixed some logical bug with the filters
+* Fix: fixed mini cart pricing issue
+* Fix: fixed some small form related vulnurability
+* Fix: fixed the authors fetch, to get only author roles and not all roles with exclude
+* Fix: fixed some breadcrumbs issues
+
+
 version 2.0.5:
 
 * Fix: made some fix for wpml in main category
