@@ -88,7 +88,8 @@ class UniteCreatorActions{
 		$addonType = $addons->getAddonTypeFromData($data);
 
 		$data = UniteProviderFunctionsUC::normalizeAjaxInputData($data);
-
+	
+				
 		try{
 
 			//protection - it's intended to logged in users only with the capabilities defined in the plugin
@@ -123,34 +124,35 @@ class UniteCreatorActions{
 					HelperUC::ajaxResponseSuccess(esc_html__("Order updated", "unlimited-elements-for-elementor"));
 				break;
 				case "get_category_settings_html":
-
+				
 					$manager = UniteCreatorManager::getObjManagerByAddonType($addonType);
 					$response = $manager->getCatSettingsHtmlFromData($data);
 
 					HelperUC::ajaxResponseData($response);
 				break;
 				case "get_cat_addons":
-
+					
+					HelperProviderUC::verifyAdminPermission();
+					
+					if($addonType == "layout")
+						UniteFunctionsUC::throwError("get_cat_addons blocked for layout");
+					
 					$manager = UniteCreatorManager::getObjManagerByAddonType($addonType, $data);
 					$response = $manager->getCatAddonsHtmlFromData($data);
-
+					
 					HelperUC::ajaxResponseData($response);
 				break;
 				case "get_layouts_params_settings_html":
-
+					
 					$manager = UniteCreatorManager::getObjManagerByAddonType($addonType, $data);
 					$response = $manager->getAddonPropertiesDialogHtmlFromData($data);
 
 					HelperUC::ajaxResponseData($response);
 				break;
-				case "get_catlist":
-
-					$manager = UniteCreatorManager::getObjManagerByAddonType($addonType, $data);
-					$response = $manager->getCatListFromData($data);
-
-					HelperUC::ajaxResponseData($response);
-				break;
 				case "get_layouts_categories":
+					
+					HelperProviderUC::verifyAdminPermission();
+					
 					$response = $categories->getLayoutsCatsListFromData($data);
 
 					HelperUC::ajaxResponseData($response);

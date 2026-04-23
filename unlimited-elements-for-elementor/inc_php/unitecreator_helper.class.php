@@ -573,8 +573,23 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 		public static function a________URL_AND_PATH_________(){}
-
-
+		
+		/**
+		 * check if some file exists and is under base path
+		 */
+		public static function isFileUnderBase($filepath){
+						
+			$isUnderBase = UniteFunctionsUC::isPathUnderBase($filepath, GlobalsUC::$path_base);
+			
+			if($isUnderBase == false)
+				return(false);
+		
+			if(is_file($filepath) == false)
+				return(false);
+			
+			return(true);
+		}
+	
 		/**
 		 * convert url to full url
 		 */
@@ -663,11 +678,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		public static function urlToPath($url){
 
 			$urlRelative = self::URLtoRelative($url);
-						
+
+			//check path traversal
+			if(strpos($urlRelative, '../') !== false)
+				return(null);
+			
 			$path = GlobalsUC::$path_base.$urlRelative;
 			
 			$path = UniteFunctionsUC::cleanPath($path);
-						
+			
 			if(file_exists($path) == false)
 				return(null);
 
@@ -982,7 +1001,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	 * get url content
 	 */
 	public static function getFileContentByUrl($url, $filterExtention = null){
-
+		
 		if(!empty($filterExtention)){
 			$info = pathinfo($url);
 			$ext = UniteFunctionsUC::getVal($info, "extension");
@@ -991,15 +1010,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			if($ext != $filterExtention)
 				return (null);
 		}
-
+		
 		$pathFile = self::urlToPath($url);
-
+		
 		if(empty($pathFile))
 			return (null);
 
 		if(file_exists($pathFile) == false)
 			return (null);
-
+		
 		$content = UniteFunctionsUC::fileGetContents($pathFile);
 
 		return ($content);

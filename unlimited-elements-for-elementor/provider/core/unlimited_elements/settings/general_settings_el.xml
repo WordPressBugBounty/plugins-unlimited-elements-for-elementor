@@ -518,6 +518,14 @@
       label="Show The DB Tables available"
     >
     </field>
+
+    <field name="text_showobjects_button"
+      type="button"
+      value="Show Objects"
+      gotoview="troubleshooting-showobjects"
+      label="Show objects - like posts or terms"
+    >
+    </field>
     
     <field name="api-connectivity"
       type="hr">

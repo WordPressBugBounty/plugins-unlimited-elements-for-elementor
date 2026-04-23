@@ -222,7 +222,13 @@ class UniteCreatetorParamsProcessorMultisource{
 			dmp("---- the debug is ON, please turn it off before release --- ");
 		}
 
-		$arrData = HelperProviderUC::getRepeaterItems_json($this->arrValues, $this->name, $this->showDebugData);
+		$httpContext = array(
+			"addon_alias" => $this->addon->getAlias(),
+			"repeater_name" => $this->name,
+			"source" => self::SOURCE_JSONCSV,
+		);
+
+		$arrData = HelperProviderUC::getRepeaterItems_json($this->arrValues, $this->name, $this->showDebugData, false, $httpContext);
 		
 		return($arrData);
 	}

@@ -53,7 +53,7 @@ class UniteCreatorManager{
 		$objAddonType = UniteCreatorAddonType::getAddonTypeObject($addonType);
 		
 		$manager = UniteProviderFunctionsUC::applyFilters(UniteCreatorFilters::FILTER_GET_MANAGER_OBJECT_BYDATA, null, $data);
-				
+		
 		if(empty($manager)){
 			if($objAddonType->isLayout == true)
 				$manager = new UniteCreatorManagerLayouts();

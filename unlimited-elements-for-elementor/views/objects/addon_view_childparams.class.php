@@ -1421,9 +1421,10 @@ var json = {{ucfunc(\"csv_to_json\",yourattribute)}};
 		
 		$arrParams[] = $this->createChildParam("date",null,array("raw_insert_text"=>"{{[param_name]|ucdate(\"d F Y, H:i\")|raw}}"));
 		$arrParams[] = $this->createChildParam("date_modified",null,array("raw_insert_text"=>"{{[param_name]|ucdate(\"d F Y, H:i\")|raw}}"));
+		$arrParams[] = $this->createChildParam("time_ago",null,array("raw_insert_text"=>"{{[param_prefix]|time_ago}}"));
 		$arrParams[] = $this->createChildParam("post_type",null,array("raw_insert_text"=>"{{[param_name]}}\n\n{{ucfunc(\"put_post_type_title\",[param_name])}}\n"));
 		
-		$arrParams[] = $this->createChildParam("tagslist",null,array("raw_insert_text"=>"{{putPostTags([param_prefix].id)}}"));		
+		$arrParams[] = $this->createChildParam("tagslist",null,array("raw_insert_text"=>"{{putPostTags([param_prefix].id)}}"));
 		
 		$arrParams = $this->getChildParams_post_addTerms($arrParams);
 		$arrParams = $this->getChildParams_post_addAuthor($arrParams);

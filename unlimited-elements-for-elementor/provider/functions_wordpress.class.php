@@ -2345,15 +2345,26 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		$arrQuery = $wp_query->query;
 		$titleFilter = UniteFunctionsUC::getVal($arrQuery, "title_filter");
 
-		if(!empty($titleFilter)){
-			if(!empty($where))
-				$where .= " AND";
-
-			$where .= " wp_posts.post_title like '%$titleFilter%'";
+		if ( ! is_string( $titleFilter ) ) {
+			return $where;
 		}
+		
+		$titleFilter = UniteFunctionsUC::sanitize( $titleFilter, UniteFunctionsUC::SANITIZE_SQL_INJECTS );
+		
+		if ( $titleFilter !== '' ) {
+			if ( ! empty( $where ) ) {
+				$where .= ' AND';
+			}
 
+			// esc_like: % _ \ are literal in LIKE; prepare: value is bound (no SQL injection).
+			$like = '%' . $wpdb->esc_like( $titleFilter ) . '%';
+			$where .= $wpdb->prepare( " {$wpdb->posts}.post_title LIKE %s", $like );
+		}
+		
+		
 		return ($where);
 	}
+	
 
 	/**
 	 *
@@ -4129,6 +4140,83 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		}
 
 		return ($argsNew);
+	}
+	
+	/**
+	 * Expand tax_query terms for debug output (avoid fatals if missing).
+	 * Adds readable info (name/slug) alongside numeric term IDs.
+	 */
+	public static function expandTaxQueryTermsForDebug($args){
+		
+		if(empty($args) || is_array($args) == false)
+			return($args);
+		
+		$taxQuery = UniteFunctionsUC::getVal($args, "tax_query");
+		if(empty($taxQuery) || is_array($taxQuery) == false)
+			return($args);
+		
+		foreach($taxQuery as $index => $clause){
+			
+			if(is_array($clause) == false)
+				continue;
+			
+			$terms = UniteFunctionsUC::getVal($clause, "terms");
+			if(empty($terms) || is_array($terms) == false)
+				continue;
+			
+			$taxonomy = UniteFunctionsUC::getVal($clause, "taxonomy");
+			if(empty($taxonomy))
+				continue;
+			
+			$field = UniteFunctionsUC::getVal($clause, "field");
+			if(empty($field))
+				$field = "term_id";
+			
+			//expand only numeric IDs
+			if($field !== "term_id" && $field !== "id")
+				continue;
+			
+			$arrExpanded = array();
+			foreach($terms as $termID){
+				
+				if(is_numeric($termID) == false){
+					$arrExpanded[] = $termID;
+					continue;
+				}
+				
+				$termID = (int)$termID;
+				$objTerm = get_term($termID, $taxonomy);
+				if(empty($objTerm) || is_wp_error($objTerm)){
+					$arrExpanded[] = $termID;
+					continue;
+				}
+				
+				$slug = UniteFunctionsUC::getVal($objTerm, "slug");
+				$name = UniteFunctionsUC::getVal($objTerm, "name");
+				
+				$str = $termID;
+				if(!empty($slug) || !empty($name)){
+					$str .= " (";
+					if(!empty($slug))
+						$str .= "slug:{$slug}";
+					if(!empty($name)){
+						if(!empty($slug))
+							$str .= ", ";
+						$str .= "name:{$name}";
+					}
+					$str .= ")";
+				}
+				
+				$arrExpanded[] = $str;
+			}
+			
+			$clause["terms"] = $arrExpanded;
+			$taxQuery[$index] = $clause;
+		}
+		
+		$args["tax_query"] = $taxQuery;
+		
+		return($args);
 	}
 
 	/**

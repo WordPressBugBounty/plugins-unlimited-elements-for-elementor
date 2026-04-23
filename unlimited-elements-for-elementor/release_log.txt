@@ -1,5 +1,20 @@
 
 
+version 2.0.7:
+
+* Fix: fixed some search related bug
+* Feature: added "view objects" page in settings->troubleshooter
+* Feature: added action and filter for request in get repeater from url
+* Fix: improved the time ago string
+* Fix: set the elementor dynamic settings under ajax
+* Fix: fixed the typography fatal error with new elementor editor
+* Fix: main role filter was inited after load in some cases. 
+* Fix: fixed bug with synced grids inside simple popup widget
+* Fix: image title get from "alt" when the caption is empty
+* Fix: fixed some security issues with repeater url
+* Fix: fixed some security issues get addons ajax url
+
+
 version 2.0.6:
 
 * Feature: added new option: allow empty in items settings

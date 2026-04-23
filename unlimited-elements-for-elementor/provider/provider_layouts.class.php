@@ -132,6 +132,7 @@ class UniteCreatorLayouts extends UniteCreatorLayoutsWork{
 	 * get category layouts. category id can be null, all number or 0 (uncategorized)
 	 */ 	 
 	public function getCatLayouts($catID = null, $objLayoutType=null, $onlyRecords = false, $options = array()){
+		
 				
 		$postType = null;
 		
@@ -193,8 +194,9 @@ class UniteCreatorLayouts extends UniteCreatorLayoutsWork{
 		if(!empty($filterSearch))
 			$arrParams["title_filter"] = $filterSearch;
 		
+		
 		$arrPosts = UniteFunctionsWPUC::getPostsByType($postType, $sortBY, $arrParams, true);
-				
+		
 		//dmp("get cat layouts");dmp($arrPosts);exit();
 		
 		//don't add the parent post as well

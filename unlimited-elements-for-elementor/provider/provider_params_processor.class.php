@@ -841,16 +841,26 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$arrData["intro"] = $intro;
 			$arrData["intro_full"] = $introFull;
 			
-			//put data
-			$strDate = UniteFunctionsUC::getVal($arrPost, "post_date");
-			$arrData["date"] = !empty($strDate)?strtotime($strDate):"";
+			// put data: use WP date functions so stamps match Settings > General timezone.
+			// strtotime(post_date) uses PHP default TZ and breaks Time Ago vs get_the_date().
+			$dateTimestamp = get_post_time( 'U', false, $post );
+			$arrData["date"] = ( false !== $dateTimestamp ) ? (int) $dateTimestamp : '';
 			
-			//set modified date - if available
-			$arrData["date_modified"] = $arrData["date"];
-			$strDateModified = UniteFunctionsUC::getVal($arrPost, "post_modified");
+			$dateTimestampGmt = get_post_time( 'U', true, $post );
+			$arrData["date_gmt"] = ( false !== $dateTimestampGmt ) ? (int) $dateTimestampGmt : $arrData["date"];
+
+			$modifiedTimestamp = get_post_modified_time( 'U', false, $post );
+			if ( false === $modifiedTimestamp ) {
+				$arrData["date_modified"] = $arrData["date"];
+			} else {
+				$arrData["date_modified"] = (int) $modifiedTimestamp;
+			}
 			
-			if(!empty($strDateModified)){
-				$arrData["date_modified"] = strtotime($strDateModified);
+			$modifiedTimestampGmt = get_post_modified_time( 'U', true, $post );
+			if ( false === $modifiedTimestampGmt ) {
+				$arrData["date_modified_gmt"] = $arrData["date_modified"];
+			} else {
+				$arrData["date_modified_gmt"] = (int) $modifiedTimestampGmt;
 			}
 			
 			//add parent id
@@ -2052,7 +2062,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 				break;
 				case "meta":
-
+										
 					$metaKey = UniteFunctionsUC::getVal($value, "{$name}_includeby_metakey");
 					$metaCompare = UniteFunctionsUC::getVal($value, "{$name}_includeby_metacompare");
 
@@ -2077,7 +2087,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 					$metaValueSecond = $this->modifyMetaValueForCompare($metaValueSecond);
 
 					$metaRelation = UniteFunctionsUC::getVal($value, "{$name}_includeby_meta_relation");
-				
+					
 					$arrMetaSubQuery = array();
 					$arrMetaSubQuery2 = array();
 
@@ -2360,6 +2370,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$args["post__in"] = $arrRelatedProductIDs;
 		}
 
+				
 		if(!empty($arrMetaQuery))
 			$args["meta_query"] = $arrMetaQuery;
 
@@ -2553,14 +2564,16 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if(GlobalsProviderUC::$skipRunPostQueryOnce == true)
 			$this->skipPostListQueryRun = true;
 		
-		//debug - clear some arguments by query
+		// debug: uctestquery_cleararg (unset vars) / uctestquery_changearg (key:value,...) — this WP_Query only; see preGetPostsModifyQueryDebug.
 		
 		if(GlobalsUC::$showQueryDebugByUrl == true){
-		
+
 			$argsToClear = HelperUC::getQueryVarWithPermission("uctestquery_cleararg");
-						
-			if(!empty($argsToClear))
+			$changeargRaw = $this->getUcTestQueryChangeargParam();
+
+			if(!empty($argsToClear) || $changeargRaw !== null)
 				add_action("pre_get_posts", array($this,"preGetPostsModifyQueryDebug"), 9999, 1);
+
 		}
 					
 		$wasSkipRun = false;
@@ -2697,8 +2710,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		if($showDebugQuery == true){
 			
-			if($wasSkipRun == false)
+			if($wasSkipRun == false){
 				dmp("Found Posts: ".count($arrPosts));
+				dmp("Total Query Posts: ".(int)$query->found_posts);
+			}
 			
 		}
         
@@ -2997,7 +3012,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			dmp("Current Posts. The Query Is:");
 
 			$argsForDebug = UniteFunctionsWPUC::cleanQueryArgsForDebug($currentQueryVars);
-			if(GlobalsUC::$showQueryDebugTermsByUrl == true)
+			if(GlobalsUC::$showQueryDebugByUrl == true)
 				$argsForDebug = UniteFunctionsWPUC::expandTaxQueryTermsForDebug($argsForDebug);
 			dmp($argsForDebug);
 
@@ -3060,7 +3075,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			$originalQueryVars = $query->query_vars;
 			$originalQueryVars = UniteFunctionsWPUC::cleanQueryArgsForDebug($originalQueryVars);
-			if(GlobalsUC::$showQueryDebugTermsByUrl == true)
+			if(GlobalsUC::$showQueryDebugByUrl == true)
 				$originalQueryVars = UniteFunctionsWPUC::expandTaxQueryTermsForDebug($originalQueryVars);
 			
 			dmp("The Query Request Is:");
@@ -3076,7 +3091,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if($showDebugQuery == true){
 			dmp("Found Posts: ".count($arrPosts));
 			
-			dmp("Total Posts: ".$numPosts);
+			dmp("Total Query Posts: ".$numPosts);
 			
 			echo "</div>";	//close query wrapper div
 		}
@@ -3262,6 +3277,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		if($showDebugQuery == true){
 			dmp("Found Posts: ".$numPosts);
+			dmp("Total Query Posts: ".(int)$query->found_posts);
 		}
 
 		//handle avoid duplicates - save post ids
@@ -3325,8 +3341,12 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$args["post__in"] = $arrPostInIDs;
 		$args["orderby"] = "post__in";
 		$args["posts_per_page"] = 100;
+		$args["suppress_filters"] = true;
 
-		$arrPosts = get_posts($args);
+		$queryUeTemplates = new WP_Query($args);
+		$arrPosts = $queryUeTemplates->posts;
+		if(empty($arrPosts))
+			$arrPosts = array();
 
 		if($showDebugQuery == true){
 
@@ -3339,6 +3359,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			dmp($args);
 
 			dmp("Found Posts: ".count($arrPosts));
+			dmp("Total Query Posts: ".(int)$queryUeTemplates->found_posts);
 			echo "</div>";
 		}
 
@@ -3537,28 +3558,122 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	}
 	
 	protected function z_______________BY_PRE_GET_POSTS____________(){}
+
+	/**
+	 * uctestquery_changearg URL param (logged-in / local; not sanitize_text_field — may contain commas).
+	 *
+	 * @return string|null
+	 */
+	private function getUcTestQueryChangeargParam(){
+
+		if(UniteFunctionsWPUC::isCurrentUserHasPermissions() == false)
+			return(null);
+
+		$val = UniteFunctionsUC::getGetVar("uctestquery_changearg", "", UniteFunctionsUC::SANITIZE_NOTHING);
+		$val = trim((string)$val);
+
+		return ($val === "") ? null : $val;
+	}
+
+	/**
+	 * Scalar value for a single uctestquery_changearg key (arrays not supported).
+	 *
+	 * @return mixed
+	 */
+	private function parseUcTestQueryChangeargScalarValue($raw, $argKey){
+
+		$rawTrim = trim((string)$raw);
+
+		$boolKeys = array(
+			"ignore_sticky_posts",
+			"suppress_filters",
+			"nopaging",
+			"no_found_rows",
+			"cache_results",
+			"update_post_meta_cache",
+			"update_post_term_cache",
+			"exact",
+		);
+
+		if(in_array($argKey, $boolKeys, true))
+			return UniteFunctionsUC::strToBool($rawTrim);
+
+		if(strcasecmp($rawTrim, "true") === 0)
+			return true;
+		if(strcasecmp($rawTrim, "false") === 0)
+			return false;
+
+		if(is_numeric($rawTrim)){
+			if(strpos($rawTrim, ".") !== false)
+				return (float)$rawTrim;
+			return (int)$rawTrim;
+		}
+
+		return $rawTrim;
+	}
 	
 	/**
-	 * pre get posts - modify the query for debug
+	 * pre_get_posts (priority 9999): apply uctestquery_cleararg / uctestquery_changearg for the custom posts WP_Query run only.
 	 */
 	public function preGetPostsModifyQueryDebug($query){
-		
+
 		$argsToClear = HelperUC::getQueryVarWithPermission("uctestquery_cleararg");
 
-		if (!empty($argsToClear)) {
-			
-	        // Convert comma-separated string to an array
-	        $argsArray = array_map('trim', explode(',', $argsToClear));
-	
-	        foreach ($argsArray as $arg) {
-	        	
-	            dmp("<b>Unsetting argument: $arg</b>");
-	            unset($query->query_vars[$arg]);
-	        }
-	    }		
-		
+		if(!empty($argsToClear)){
+
+			$argsArray = array_map("trim", explode(",", $argsToClear));
+
+			foreach($argsArray as $arg){
+
+				if($arg === "")
+					continue;
+
+				dmp("<b>Unsetting argument: ".esc_html($arg)."</b>");
+				unset($query->query_vars[$arg]);
+			}
+		}
+
+		$changeargRaw = $this->getUcTestQueryChangeargParam();
+
+		if($changeargRaw !== null){
+
+			$pairs = array_map("trim", explode(",", $changeargRaw));
+
+			foreach($pairs as $pair){
+
+				if($pair === "")
+					continue;
+
+				$colonPos = strpos($pair, ":");
+
+				if($colonPos === false){
+					dmp("<b>Invalid uctestquery_changearg pair (expected key:value): ".esc_html($pair)."</b>");
+					continue;
+				}
+
+				$argKey = trim(substr($pair, 0, $colonPos));
+				$argValRaw = trim(substr($pair, $colonPos + 1));
+
+				if($argKey === "")
+					continue;
+
+				if($argValRaw === "" || strcasecmp($argValRaw, "null") === 0){
+
+					unset($query->query_vars[$argKey]);
+					dmp("<b>Unsetting argument (changearg): ".esc_html($argKey)."</b>");
+					continue;
+				}
+
+				$parsedVal = $this->parseUcTestQueryChangeargScalarValue($argValRaw, $argKey);
+				$query->set($argKey, $parsedVal);
+
+				dmp("<b>Setting argument (changearg): ".esc_html($argKey)."</b>");
+				dmp($parsedVal);
+			}
+		}
+
 		remove_action("pre_get_posts", array($this,"preGetPostsModifyQueryDebug"), 9999, 1);
-		
+
 	}
 	
 	/**
@@ -4464,7 +4579,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 				$postData = $this->getPostDataByObj($item);
 				
-				$arrFields = array("id","alias","link","intro","intro_full","excerpt","date","date_modified","image","image_thumb","image_thumb_large");
+				$arrFields = array("id","alias","link","intro","intro_full","excerpt","date","date_modified","date_modified_gmt","date_gmt","image","image_thumb","image_thumb_large");
 				
 				foreach($arrFields as $fieldKey){
 
@@ -5276,7 +5391,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			$originalQueryVars = $term_query->query_vars;
 			$originalQueryVars = UniteFunctionsWPUC::cleanQueryArgsForDebug($originalQueryVars);
-			if(GlobalsUC::$showQueryDebugTermsByUrl == true)
+			if(GlobalsUC::$showQueryDebugByUrl == true)
 				$originalQueryVars = UniteFunctionsWPUC::expandTaxQueryTermsForDebug($originalQueryVars);
 
 			dmp("The Query Request Is:");
@@ -5295,7 +5410,16 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			dmp("Query modify callbacks ( get_terms_orderby ):");
 			dmp($arrActions);
+			
+			dmp("Found Terms: ".count($arrTermsObjects));
 
+			$showTermsObjects = HelperUC::hasPermissionsFromQuery("ucquerydebug_showterms");
+
+			if($showTermsObjects == true){
+				dmp("The terms (WP_Term objects):");
+				dmp($arrTermsObjects);
+			}
+			
 		}
 
 		/*
@@ -5601,9 +5725,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			$originalQueryVars = $user_query->query_vars;
 			$originalQueryVars = UniteFunctionsWPUC::cleanQueryArgsForDebug($originalQueryVars);
-			if(GlobalsUC::$showQueryDebugTermsByUrl == true)
+			if(GlobalsUC::$showQueryDebugByUrl == true)
 				$originalQueryVars = UniteFunctionsWPUC::expandTaxQueryTermsForDebug($originalQueryVars);
-
+			
 			dmp("The Query Request Is:");
 			dmp($user_query->request);
 

@@ -4,7 +4,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Stroke;
 use Elementor\Group_Control_Border;
@@ -12,7 +11,7 @@ use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Css_Filter;
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Repeater;
 use Elementor\Utils;
 
@@ -2026,7 +2025,10 @@ class UniteCreatorElementorWidget extends Widget_Base {
     	$arrControl = array();
     	$arrControl["name"] = $controlName;
     	$arrControl["selector"] = $selector;
-    	$arrControl["scheme"] = 3;
+    	// Former scheme slot 3 ("text") — Schemes API removed in Elementor 3.x; use global typography default.
+    	$arrControl["global"] = array(
+    		"default" => Global_Typography::TYPOGRAPHY_TEXT,
+    	);
 
     	if(!empty($title))
     		$arrControl["label"] = $title;

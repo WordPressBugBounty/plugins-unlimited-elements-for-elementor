@@ -383,7 +383,7 @@ class UniteCreatorAssetsWork extends UniteCreatorAssets{
 
 		switch($action){
 			case "assets_upload_files":
-
+				
 				HelperProviderUC::verifyAdminPermission();
 				
 				$this->validateInited();

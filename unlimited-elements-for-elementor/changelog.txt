@@ -2,6 +2,65 @@
 
 = 2.0.6 - 2026-01-22 =
 
+
+Plugin Changes:
+
+* Fix: fixed some search related bug
+* Feature: added "view objects" page in settings->troubleshooter
+* Feature: added action and filter for request in get repeater from url
+* Fix: improved the time ago string
+* Fix: set the elementor dynamic settings under ajax
+* Fix: fixed the typography fatal error with new elementor editor
+* Fix: main role filter was inited after load in some cases. 
+* Fix: fixed bug with synced grids inside simple popup widget
+* Fix: image title get from "alt" when the caption is empty
+* Fix: fixed some security issues with repeater url
+* Fix: fixed some security issues get addons ajax url
+
+Widgets Changes:
+
+* Feature: Conditions (Free) - Added a Custom User Role trigger type so actions can run based on the logged-in user’s role for access control and personalization.
+* Feature: Place (Free) - Added custom title options for Price Range, Rating, Reviews, and Week Days (Monday–Sunday) so labels can be renamed or translated.
+* Feature: Checkboxes Filter (Pro) - Added margin options for parent and child terms for finer spacing and layout hierarchy.
+* Feature: Coverflow Carousel (Free) - Added opacity options for normal and active states for smoother transitions and transparency control.
+* Feature: Simple Popup (Free) - Added Popup Vertical Offset and Popup Horizontal Offset for finer positioning.
+* Feature: Unfold Content (Free) - Added support for the Content Tabs widget for more flexible, organized layouts.
+* Feature: Recipe (Free) - Added title options for Instructions, Ingredients, and Video for custom labeling and styling.
+* Feature: Before After (Free) - Added support for using the Before/After widget inside Elementor Tabs so the comparison slider initializes correctly when switching tabs.
+* Feature: Flip Box Carousel (Pro) - Added support for the Override Item BG Image setting in Multi-source options for more flexible backgrounds across sources.
+* Feature: Load More / Infinite Scroll (Pro) - Made the Alignment option fully responsive (desktop, tablet, mobile).
+* Feature: Scroll Text Animation (Free) - Added a Text Align option.
+* Feature: Tabs Filter (Free) - Added styling options for child terms (padding, margin, text color, background color).
+* Feature: Google Reviews (Free) - Added Max Reviews Number to limit how many reviews are shown.
+* Feature: Glowing Content Card (Free) - Added Show Outer Glow Animation for a pulsing glow around the element.
+* Feature: Woo Category Grid (Free) - Added an Image Size option for better performance.
+* Feature: Woo Category Carousel (Free) - Added an Image Size option for better performance.
+* Feature: Post Grid (Free) - Added content background options for hover and active states, plus transition duration control.
+* Feature: How To (Free) - Replaced hardcoded titles with customizable Instructions and Video title fields for localization.
+* Feature: Video Carousel (Free) - Updated the Icon Selection control to the native Font Awesome library, with standard icons and custom SVG upload support.
+* Fix: Sorting Filter (Pro) - Fixed compatibility with third-party translation plugins so widget strings are fully translatable.
+* Fix: Post List (Free) - Fixed the Time Ago feature so relative dates display correctly.
+* Fix: Video on Hover (Free) - Fixed auto-play failing with cookie consent plugins after the user accepts cookies.
+* Fix: Pie chart (Free) - Fixed the ampersand (&) not displaying correctly.
+* Fix: Justified Image Carousel (Pro) - Fixed navigation positioning conflicting with native Elementor widgets.
+* Fix: Dynamic Post Popup (Pro) - Fixed missing loading text while content is fetched.
+* Fix: Flip Box Carousel (Pro) - Fixed Marquee mode on iPad missing cloned items so the loop is continuous.
+* Fix: Video Carousel (Free) - Resolved a script conflict with Video on Hover so both widgets work on the same page.
+* Fix: Multi Level Sliding Menu (Pro) - Fixed minimum height when nested in an Elementor Accordion so height is correct on load.
+* Fix: Repeater Table (Pro) - Applied overflow: auto so a horizontal scrollbar appears when content exceeds the container.
+* Fix: Stacking Cards (Free) - Fixed the widget alternating cards when that option was disabled.
+* Fix: Masonry Post Grid (Pro) - Fixed column count on initial load (including iOS before scroll).
+* Fix: Loop Carousel (Pro) - Fixed Equal Item Height not calculating correctly in some layouts.
+* Fix: Woo Mini Cart (Free) - Fixed the widget JavaScript not loading on the front end.
+* Fix: Video Carousel (Free) - Fixed SVG icons not respecting height and width controls.
+* Fix: Icon Pointer Button (Pro) - Fixed SVG icons not respecting height and width controls.
+* Fix: Video Carousel (Free) - Refactored JavaScript for performance and fixed a conflict with the carousel library that blocked playback in some cases.
+* Fix: Scroll Marquee (Free) - Fixed Gallery source images not rendering so gallery items display correctly.
+
+
+
+= 2.0.6 - 2026-01-22 =
+
 Plugin Changes:
 
 * Feature: added new option: allow empty in items settings

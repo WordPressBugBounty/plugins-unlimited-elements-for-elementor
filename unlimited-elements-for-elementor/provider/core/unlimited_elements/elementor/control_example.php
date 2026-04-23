@@ -2,7 +2,6 @@
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Scheme_Color;
 
 class ElementorWidgetTest extends Widget_Base {
 

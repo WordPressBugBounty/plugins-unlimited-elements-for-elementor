@@ -29,6 +29,7 @@ class UniteProviderCoreAdminUC_Elementor extends UniteProviderAdminUC{
 			"requests-log",	
 			"troubleshooting-overload",
 			"troubleshooting-globals",
+			"troubleshooting-showobjects",
 			"troubleshooting-tables",
 			"troubleshooting-phpinfo",
 			"troubleshooting-memory-usage",

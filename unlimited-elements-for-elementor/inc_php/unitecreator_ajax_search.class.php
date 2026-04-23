@@ -174,6 +174,7 @@ class UniteCreatorAjaxSeach{
 			dmp("Query:");
 			dmp($args);
 			dmp("Found Posts: ".count($arrPostsByMeta));
+			dmp("Total Query Posts: ".(int)$query->found_posts);
 
 		}
 		
@@ -269,6 +270,7 @@ class UniteCreatorAjaxSeach{
 			dmp($args);
 			dmp("Found Terms: ".count($arrTermsFound));
 			dmp("Found Posts: ".count($arrPostsByTerms));
+			dmp("Total Query Posts: ".(int)$query->found_posts);
 			
 		}
 

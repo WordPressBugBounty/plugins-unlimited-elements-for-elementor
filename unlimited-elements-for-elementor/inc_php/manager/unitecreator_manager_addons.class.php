@@ -491,9 +491,9 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 	 * get addons or layout by type
 	 */
 	private function getCatAddonsOrLayouts($catID, $filterActive, $params = null){
-
+		
 		$isLayout = $this->objAddonType->isLayout;
-
+						
 		//UniteFunctionsUC::showTrace();
 
 		if($isLayout == false){		//addons
@@ -502,8 +502,8 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 
 			return($addons);
 		}
-
-
+		
+		
 		//layouts
 		$objLayouts = new UniteCreatorLayouts();
 		$arrLayouts = $objLayouts->getCatLayouts($catID, $this->objAddonType, false, $params);

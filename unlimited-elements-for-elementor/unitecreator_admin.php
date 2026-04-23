@@ -204,7 +204,7 @@ class UniteCreatorAdmin extends UniteBaseAdminClassUC{
 			case GlobalsUC::VIEW_LAYOUTS_LIST:
 
 				self::onAddScriptsBrowser();
-
+			
 				UniteCreatorManager::putScriptsIncludes(UniteCreatorManager::TYPE_PAGES);
 
 				HelperUC::addScript("unitecreator_admin_layouts", "unitecreator_admin_layouts");

@@ -333,9 +333,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$showQueryDebugByUrl = HelperUC::hasPermissionsFromQuery("ucquerydebug");
 			if($showQueryDebugByUrl == true)
 				self::$showQueryDebugByUrl = true;
+			
+			//legacy alias: enable query debug via "ucquerydebug_terms" too
 			$showQueryDebugTermsByUrl = HelperUC::hasPermissionsFromQuery("ucquerydebug_terms");
 			if($showQueryDebugTermsByUrl == true)
-				self::$showQueryDebugTermsByUrl = true;
+				self::$showQueryDebugByUrl = true;
 			
 						
 			//test free version

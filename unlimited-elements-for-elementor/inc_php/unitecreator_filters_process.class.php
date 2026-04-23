@@ -1699,6 +1699,15 @@ class UniteCreatorFiltersProcess{
 		}
 
 		$addon->setParamsValues($arrSettingsValues);
+
+		if(GlobalsProviderUC::$isUnderAjax == true && self::$isGutenberg == false
+			&& class_exists("UniteCreatorElementorIntegrate") && $addon->hasElementorDynamicSettings() == true){
+
+			$layoutID = UniteFunctionsUC::getPostGetVariable("layoutid", "", UniteFunctionsUC::SANITIZE_KEY);
+
+			$objElIntegrate = new UniteCreatorElementorIntegrate();
+			$objElIntegrate->mergeElementorDynamicSettingsIntoAddon($addon, $layoutID);
+		}
 		
 		//init the ajax search object to modify the post search list, if available
 		if(GlobalsProviderUC::$isUnderAjaxSearch){
@@ -2696,7 +2705,20 @@ class UniteCreatorFiltersProcess{
 			$lang = urlencode($lang);
 			$urlBase = UniteFunctionsUC::addUrlParams($urlBase, "lang=$lang");
 		}
-		
+
+		// Preserve URL query-debug flags on filter AJAX (urlbase drives GET requests in ue_filters.js).
+		$ucQueryDebug = UniteFunctionsUC::getGetVar("ucquerydebug","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
+		if(UniteFunctionsUC::strToBool($ucQueryDebug) == true)
+			$urlBase = UniteFunctionsUC::addUrlParams($urlBase, "ucquerydebug=1");
+
+		$ucQueryDebugTerms = UniteFunctionsUC::getGetVar("ucquerydebug_terms","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
+		if(UniteFunctionsUC::strToBool($ucQueryDebugTerms) == true)
+			$urlBase = UniteFunctionsUC::addUrlParams($urlBase, "ucquerydebug_terms=1");
+
+		$ucTestChangearg = UniteFunctionsUC::getGetVar("uctestquery_changearg", "", UniteFunctionsUC::SANITIZE_NOTHING);
+		if(UniteFunctionsWPUC::isCurrentUserHasPermissions() == true && trim($ucTestChangearg) !== "")
+			$urlBase = UniteFunctionsUC::addUrlParams($urlBase, "uctestquery_changearg=".rawurlencode($ucTestChangearg));
+
 		
 		//debug client url
 
@@ -2942,6 +2964,41 @@ class UniteCreatorFiltersProcess{
 
 
 	/**
+	 * flatten slugs array that can contain nested groups / relations
+	 */
+	private function flattenTermSlugs($arrSlugs){
+
+		if(empty($arrSlugs))
+			return(array());
+
+		$result = array();
+
+		foreach($arrSlugs as $key => $value){
+
+			//skip relation markers
+			if($key === "relation")
+				continue;
+
+			//simple slug value
+			if(!is_array($value)){
+				if($value !== "" && $value !== null)
+					$result[] = $value;
+
+				continue;
+			}
+
+			//nested group – flatten recursively
+			$nested = $this->flattenTermSlugs($value);
+
+			if(!empty($nested))
+				$result = array_merge($result, $nested);
+		}
+
+		return($result);
+	}
+
+
+	/**
 	 * check if term selected by request
 	 */
 	private function isTermSelectedByRequest($term, $selectedTerms){
@@ -2958,7 +3015,14 @@ class UniteCreatorFiltersProcess{
 
 		$slug = UniteFunctionsUC::getVal($term, "slug");
 
-		$found = in_array($slug, $arrSlugs);
+		// $arrSlugs can contain nested arrays for grouped OR conditions (|a.b|),
+		// so flatten it before searching.
+		if(is_array($arrSlugs))
+			$arrSlugsFlat = $this->flattenTermSlugs($arrSlugs);
+		else
+			$arrSlugsFlat = array($arrSlugs);
+		
+		$found = in_array($slug, $arrSlugsFlat, true);
 
 		return($found);
 	}
