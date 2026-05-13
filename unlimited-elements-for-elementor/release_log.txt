@@ -1,5 +1,12 @@
 
 
+version 2.0.8:
+
+* Fix: fixed some more security issues with addons search
+* Fix: fixed the time ago string, use it from date and not from modified date of the post
+* Fix: in google reviews - don't run the serp request
+
+
 version 2.0.7:
 
 * Fix: fixed some search related bug

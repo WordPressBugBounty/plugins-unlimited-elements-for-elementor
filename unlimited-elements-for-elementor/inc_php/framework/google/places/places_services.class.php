@@ -60,10 +60,13 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 	 * get details using serp function
 	 */
 	public function getDetailsSerp($placeID, $apiKey, $params = array(),$showDebug = false, $cacheTime = 86400){
-
+		
 		if(empty($apiKey))
 			UniteFunctionsUC::throwError("No serp api key");
 		
+		if(GlobalsUC::$isSaveBuilderMode == true)
+			return(null);
+			
 		$this->isSerp = true;
 		
 		//cache time is passed as parameter (default: 1 day in seconds)
@@ -85,9 +88,7 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 		$request->withQuery($params);
 		
 		$url = "https://serpapi.com/search?engine=google_maps_reviews";
-		
-		//first call
-		
+				
 		$response = $request->request(UEHttpRequest::METHOD_GET, $url);
 		
 		$data = $response->json();

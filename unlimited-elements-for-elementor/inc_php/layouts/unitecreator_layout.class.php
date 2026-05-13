@@ -252,6 +252,7 @@ class UniteCreatorLayoutWork extends UniteElementsBaseUC{
 		}catch(Exception $e){
 			UniteFunctionsUC::throwError("Layout with name: $name not found");
 		}
+		
 		UniteFunctionsUC::validateNotEmpty($record, "layout record");
 		
 		$this->initByRecord($record);

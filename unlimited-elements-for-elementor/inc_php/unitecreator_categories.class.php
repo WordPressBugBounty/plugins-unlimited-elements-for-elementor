@@ -145,7 +145,9 @@ class UniteCreatorCategoriesWork extends UniteElementsBaseUC{
 	 * get list extra where ending
 	 */
 	private function getListExtra_WhereEnding($type, $filterTitle="", $ordering="", $params = array()){
-				
+
+		global $wpdb;
+
 		$whereFilterActive = UniteFunctionsUC::getVal($params, "where_filter_active");
 		
 		$filterSearchAddons = UniteFunctionsUC::getVal($params, "filter_search_addons");
@@ -159,17 +161,13 @@ class UniteCreatorCategoriesWork extends UniteElementsBaseUC{
 			$where = "where cats.type='$type'";
 	
 		//add filter by title
-		if(!empty($filterTitle)){				
-			
-			$filterTitle = $this->db->escape($filterTitle);
-			$where .= " and cats.title like '%$filterTitle%'";
+		if(!empty($filterTitle)){
+			$where .= $wpdb->prepare(" and cats.title like %s", '%' . $wpdb->esc_like($filterTitle) . '%');
 		}
-				
+
 		if($type != GlobalsUnlimitedElements::ADDONSTYPE_ELEMENTOR_TEMPLATE && !empty($filterSearchAddons)){
-			
-			$filterSearchAddons = $this->db->escape($filterSearchAddons);
-			
-			$where .= " and (addons.title like '%$filterSearchAddons%' or cats.title like '%$filterSearchAddons%')";
+			$like = '%' . $wpdb->esc_like($filterSearchAddons) . '%';
+			$where .= $wpdb->prepare(" and (addons.title like %s or cats.title like %s)", $like, $like);
 		}
 		
 	

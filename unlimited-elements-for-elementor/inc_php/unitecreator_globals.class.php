@@ -197,6 +197,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		public static $showQueryDebugByUrl = false;
 		public static $isInsidePlugin = false;	//set in provider_admin
 		
+		public static $isSaveBuilderMode = false;	//set that inside the save builder
+		
 		public static $hideDebug = false;
 		
 		

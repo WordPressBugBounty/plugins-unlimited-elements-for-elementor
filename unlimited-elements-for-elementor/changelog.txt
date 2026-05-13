@@ -1,6 +1,15 @@
+
 == Changelog ==
 
-= 2.0.6 - 2026-01-22 =
+
+version 2.0.8 - 2026-04-23 =
+
+* Fix: fixed some more security issues with addons search
+* Fix: fixed the time ago string, use it from date and not from modified date of the post
+* Fix: in google reviews - don't run the serp request
+
+
+= 2.0.7 - 2026-04-12 =
 
 
 Plugin Changes:
@@ -19,8 +28,8 @@ Plugin Changes:
 
 Widgets Changes:
 
-* Feature: Conditions (Free) - Added a Custom User Role trigger type so actions can run based on the logged-in user’s role for access control and personalization.
-* Feature: Place (Free) - Added custom title options for Price Range, Rating, Reviews, and Week Days (Monday–Sunday) so labels can be renamed or translated.
+* Feature: Conditions (Free) - Added a Custom User Role trigger type so actions can run based on the logged-in user's role for access control and personalization.
+* Feature: Place (Free) - Added custom title options for Price Range, Rating, Reviews, and Week Days (Monday-Sunday) so labels can be renamed or translated.
 * Feature: Checkboxes Filter (Pro) - Added margin options for parent and child terms for finer spacing and layout hierarchy.
 * Feature: Coverflow Carousel (Free) - Added opacity options for normal and active states for smoother transitions and transparency control.
 * Feature: Simple Popup (Free) - Added Popup Vertical Offset and Popup Horizontal Offset for finer positioning.
@@ -59,7 +68,7 @@ Widgets Changes:
 
 
 
-= 2.0.6 - 2026-01-22 =
+= 2.0.6 - 2026-02-26 =
 
 Plugin Changes:
 

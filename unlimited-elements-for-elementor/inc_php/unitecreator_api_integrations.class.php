@@ -14,7 +14,7 @@ class UniteCreatorAPIIntegrations{
 	const FORMAT_DATE = "d.m.Y";
 	const FORMAT_DATETIME = "d.m.Y H:i";
 	const FORMAT_MYSQL_DATETIME = "Y-m-d H:i:s";
-
+	
 	const TYPE_CURRENCY_EXCHANGE = "currency_exchange";
 	const TYPE_GOOGLE_EVENTS = "google_events";
 	const TYPE_GOOGLE_REVIEWS = "google_reviews";
@@ -933,7 +933,7 @@ class UniteCreatorAPIIntegrations{
 		$placesService = new UEGoogleAPIPlacesService();
 
 		$placeParams = array();
-				
+		
 		$apiKey = $this->getSerpAPIKey();
 		
 		$reviewsLanguage = $this->getParam(self::GOOGLE_REVIEWS_FIELD_LANG);
@@ -1002,7 +1002,10 @@ class UniteCreatorAPIIntegrations{
 			else
 				$place = $this->getGoogleReviewsData_serp($placeId);
 		
-		
+			if(empty($place))
+				return(array());
+			
+			
 		//add api source
 			
 			$apiSourceText = ($isSerp == true)?"serp":"official";

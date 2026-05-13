@@ -64,13 +64,14 @@ class UniteCreatorLayoutsWork extends UniteElementsBaseUC{
 	private function getRecordsPaging($pagingOptions){
 		
 		$arrWhere = array();
-		
+
+		global $wpdb;
+
 		//search
 		$search = UniteFunctionsUC::getVal($pagingOptions, "search");
 				
 		if(!empty($search))	{
-			$search = $this->db->escape($search);
-			$arrWhere["title"] = array("LIKE","%{$search}%");
+			$arrWhere[] = $wpdb->prepare("title LIKE %s", '%' . $wpdb->esc_like($search) . '%');
 		}
 		
 		$order = UniteFunctionsUC::getVal($pagingOptions, "ordering");

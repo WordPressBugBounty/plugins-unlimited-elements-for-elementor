@@ -201,22 +201,8 @@ class UniteCreatorElementorIntegrate{
 			}else{
 				$name = $addon->getName();
 			}
-
-			//help save action and skip addons that not exists in layout
-			if(self::$isSaveBuilderMode == true){
-
-				$arrWidgetsNames = HelperProviderCoreUC_EL::getWidgetNamesFromElementorContent(self::$arrSaveBuilderContent);
-
-				$nameForCheck = str_replace("_elementor", "", $name);
-
-				if(!isset($arrWidgetsNames[$nameForCheck])){
-
-					continue;
-				}
-			}
-
-
-
+			
+			
 			if($isEnoughtMemory == false){
 
 				self::logMemoryUsage("Skip widget register (no memory): ".$name.", counter: ".self::$counterWidgets, true);
@@ -1849,8 +1835,10 @@ class UniteCreatorElementorIntegrate{
     	self::$isEditMode = HelperUC::isEditMode();
 		
     	//if turn it on - please do good QA - it's for saving resources on save builder action
-    	//self::$isSaveBuilderMode = $this->isSaveBuilderAction();
+    	self::$isSaveBuilderMode = $this->isSaveBuilderAction();
 		
+    	GlobalsUC::$isSaveBuilderMode = self::$isSaveBuilderMode;
+    	
     	GlobalsProviderUC::$isInsideEditor = self::$isEditMode;
 		
     	$arrSettingsValues = HelperProviderCoreUC_EL::getGeneralSettingsValues();

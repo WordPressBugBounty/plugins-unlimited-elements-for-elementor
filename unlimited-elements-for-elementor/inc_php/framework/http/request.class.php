@@ -201,6 +201,7 @@ class UEHttpRequest{
 	 */
 	public function request($method, $url){
 		
+		
 		$headers = $this->headers;
 		$query = $this->query;
 		$body = $this->prepareBody($method);
@@ -214,7 +215,7 @@ class UEHttpRequest{
 		
 		$cacheKey = $this->prepareCacheKey($url, $body);
 		$cacheTime = $this->prepareCacheTime($method);
-		
+				
 		if($cacheTime > 0){
 			
 			$requestResponse = UniteProviderFunctionsUC::getTransient($cacheKey);

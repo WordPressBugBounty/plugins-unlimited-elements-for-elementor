@@ -1175,38 +1175,23 @@ class UniteCreatorTemplateEngineWork{
 	 * make fitler post time ago output
 	 */
 	public function filterPostTimeAgo($arrPost){
-
-		$selectedSource = "";
 		
-		// prefer GMT values to avoid timezone mismatch between stored post data and current server time().
-		$timeStamp = UniteFunctionsUC::getVal($arrPost, "date_modified_gmt");
-		if(UniteFunctionsUC::isTimeStamp($timeStamp) == true)
-			$selectedSource = "date_modified_gmt";
-				
-		if(UniteFunctionsUC::isTimeStamp($timeStamp) == false){
-			$timeStamp = UniteFunctionsUC::getVal($arrPost, "date_gmt");
-			if(UniteFunctionsUC::isTimeStamp($timeStamp) == true)
-				$selectedSource = "date_gmt";
-		}
+		//dmp($arrPost);
 		
-		// fallback to local fields in case GMT values are not present.
-		if(UniteFunctionsUC::isTimeStamp($timeStamp) == false){
-			$timeStamp = UniteFunctionsUC::getVal($arrPost, "date_modified");
-			if(UniteFunctionsUC::isTimeStamp($timeStamp) == true)
-				$selectedSource = "date_modified";
-		}
+		// Always use post creation date (never modified date).
+		$timeStamp = UniteFunctionsUC::getVal($arrPost, "date_gmt");
 		
-		if(UniteFunctionsUC::isTimeStamp($timeStamp) == false){
+		if(UniteFunctionsUC::isTimeStamp($timeStamp) == false)
 			$timeStamp = UniteFunctionsUC::getVal($arrPost, "date");
-			if(UniteFunctionsUC::isTimeStamp($timeStamp) == true)
-				$selectedSource = "date";
-		}
 		
 		if(UniteFunctionsUC::isTimeStamp($timeStamp) == false)
 			return("");
 		
 		$strTimeAgo = UniteFunctionsUC::getTimeAgoString((int)$timeStamp);
 		
+		//dmp($timeStamp);
+		//dmp($strTimeAgo);
+
 		return($strTimeAgo);
 	}
 

@@ -9,7 +9,8 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Stable tag: 1.0
 
 Elementor all-in-one addons pack with the best widgets for Elementor, offering 100+ free widgets, templates, and tools to create stunning websites!
- 
+
+
 == Description ==
 
 **Elementor** users, elevate your web design experience with **Unlimited Elements for Elementor**. An all in one plugin that instantly gives you the most advanced widgets and tools to make better Elementor websites faster.  Take your WordPress website to the next level. 
@@ -939,6 +940,13 @@ The choice depends on your design preferences. If you want complete control, go 
 
 
 == Changelog ==
+
+
+version 2.0.8 - 2026-04-23 =
+
+* Fix: fixed some more security issues with addons search
+* Fix: fixed the time ago string, use it from date and not from modified date of the post
+* Fix: in google reviews - don't run the serp request
 
 
 = 2.0.7 - 2026-04-12 =
