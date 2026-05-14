@@ -1850,11 +1850,12 @@ class UniteCreatorElementorWidget extends Widget_Base {
     		case UniteCreatorDialogParam::PARAM_BORDER:
     		case UniteCreatorDialogParam::PARAM_BACKGROUND:
     		case UniteCreatorDialogParam::PARAM_CSS_FILTERS:
-
+				
     			$selector = UniteFunctionsUC::getVal($param, "selector");
     			if(!empty($selector)){
+    				    				
     				$selector = $this->addWrapperToSelector($selector);
-
+    				
     				$arrControl["selector"] = $selector;
     			}
 
@@ -1952,7 +1953,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     	$selector = trim($selector);
     	$selector = "{{WRAPPER}} $selector";
-
+		
     	//handle the commas
     	if(strpos($selector, ",") === false)
     		return($selector);
@@ -2025,7 +2026,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
     	$arrControl = array();
     	$arrControl["name"] = $controlName;
     	$arrControl["selector"] = $selector;
-    	// Former scheme slot 3 ("text") — Schemes API removed in Elementor 3.x; use global typography default.
+    	
     	$arrControl["global"] = array(
     		"default" => Global_Typography::TYPOGRAPHY_TEXT,
     	);
@@ -2037,7 +2038,6 @@ class UniteCreatorElementorWidget extends Widget_Base {
     		$arrControl["condition"] = $elementorCondition;
     	}
 
-
     	$this->objControls->add_group_control(Group_Control_Typography::get_type(), $arrControl);
 
     }
@@ -2047,7 +2047,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
      * add elementor param
      */
     protected function addElementorParamUC($param, $objControls = null){
-
+		    	
     	if(empty($objControls))
     		$objControls = $this->objControls;
 
@@ -2104,7 +2104,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     			//add current posts settings
     			$param["add_current_posts"] = true;
-
+			
     			$settings = new UniteCreatorSettings();
 				$settings->setCurrentAddon($this->objAddon);
     			
@@ -2145,12 +2145,12 @@ class UniteCreatorElementorWidget extends Widget_Base {
     				case UniteCreatorDialogParam::PARAM_CSS_FILTERS:
 
     					$groupType = $arrControl["type"];
-
+						    					
     					$values = $objControls->add_group_control($groupType, $arrControl);
 
     				break;
     				default:
-
+    					
     					//add control (responsive or not)
     					if(isset($arrControl["uc_responsive"])){
 
@@ -2644,6 +2644,8 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
          $arrCatsAndParams = $this->sortParamsByCats($arrCats, $allParams);
 
+         //remove me
+   		
          $hasPostsList = false;
 	     $postListParam = null;
 
@@ -2662,7 +2664,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
          	$arrSectionOptions["label"] = $catTitle;
 
          	$params = UniteFunctionsUC::getVal($arrCat, "params");
-
+		
          	if($catTab == "style")
          		$arrSectionOptions["tab"] = "style";
 
@@ -2688,8 +2690,8 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
 	          $activeTab = null;
 
-	          foreach($params as $index => $param){
-
+	          foreach($params as $index => $param){	          	
+	          	
 	          		$type = UniteFunctionsUC::getVal($param, "type");
 	          		if($type === UniteCreatorDialogParam::PARAM_POSTS_LIST){
 	          			$hasPostsList = true;
@@ -2705,7 +2707,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
 	          		}
 
 	          		if($type == UniteCreatorDialogParam::PARAM_LISTING){
-
+			
 	          			$useFor = UniteFunctionsUC::getVal($param, "use_for");
 	          			switch($useFor){
 	          				case "remote":
@@ -2908,8 +2910,9 @@ class UniteCreatorElementorWidget extends Widget_Base {
           //add debug controls
           $this->addAdvancedSectionControls($showMore, $isItemsEnabled);
 		  
-          
 
+          
+		
 		if(self::DEBUG_CONTROLS && $this->isBGWidget == false){
 
 			dmp("end debug");
@@ -3185,7 +3188,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
     * add addons dropdown
     */
    protected function ucRegisterControls_cat_addAddonsDropdown($meta){
-
+		
    		$arrOptions = array();
    		foreach($this->arrAddons as $objAddon){
    			$title = $objAddon->getTitle();
@@ -3547,7 +3550,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
    		//skip controls when saving builder
     	if(UniteCreatorElementorIntegrate::$isSaveBuilderMode == true)
     		return(false);
-
+		
     	try{
 
     	  if($this->isConsolidated == true){

@@ -163,7 +163,7 @@ class UniteCreatorParamsProcessorWork{
 			case "ue_sort_filter":
 
 				$optionsSortBy = UniteFunctionsWPUC::getArrSortBy(true, true);
-
+				
 				$options = array_flip($options);
 
 				$options = array_merge($options,$optionsSortBy);

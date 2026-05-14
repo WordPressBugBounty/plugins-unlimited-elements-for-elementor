@@ -162,11 +162,7 @@ class UniteCreatorFiltersProcess{
 			$output[$type] = $title;
 		}
 
-		// add WPP (WordPress Popular Posts) ordering option when plugin exists and not for Woo
-		if($isForWooProducts == false && UniteCreatorPluginIntegrations::isWPPopularPostsExists() === true){
-			$output["popular_wpp"] = __("Popular Posts", "unlimited-elements-for-elementor");
-		}
-
+		
 		return($output);
 	}
 
@@ -532,14 +528,9 @@ class UniteCreatorFiltersProcess{
 
 		if(empty($orderby))
 			return($arrOutput);
-
+		
 		//check if valid
 		$arrOrderby = UniteFunctionsWPUC::getArrSortBy(true);
-
-		// allow WPP orderby when WordPress Popular Posts plugin is active
-		if(UniteCreatorPluginIntegrations::isWPPopularPostsExists() === true){
-			$arrOrderby["popular_wpp"] = __("Popular Posts", "unlimited-elements-for-elementor");
-		}
 
 		if($orderby == "id")
 			$orderby = "ID";

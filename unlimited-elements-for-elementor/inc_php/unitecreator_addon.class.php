@@ -541,7 +541,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 		$specialType = $this->getItemsSpecialType();
 
 		$this->specialType = $specialType;
-
+		
 		if(!empty($specialType)){
 			$this->itemsType = $specialType;
 
@@ -1159,10 +1159,10 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	 * get items params
 	 */
 	public function getParamsItems($filterType = null){
-	
+		
 		if(empty($this->paramsItems))
 			return ($this->paramsItems);
-
+		
 		//return filteres params
 		if(!empty($filterType))
 			return $this->filterParamsByType($this->paramsItems, $filterType);
@@ -1903,9 +1903,9 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	}
 
 	/**
-	 * check if the addon has sequence animation special param
+	 * check if the addon has a special param by attribute_type
 	 */
-	public function hasSequenceAnimation(){
+	public function isSpecialParamExists($special_type){
 		
 		$arrParams = $this->getParams(UniteCreatorDialogParam::PARAM_SPECIAL);
 		
@@ -1913,14 +1913,19 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 			return(false);
 		
 		foreach($arrParams as $param){
-
 			$type = UniteFunctionsUC::getVal($param, "attribute_type");
-
-			if($type == "entrance_animation")
+			if($type == $special_type)
 				return(true);
 		}
 		
 		return(false);
+	}
+	
+	/**
+	 * check if the addon has sequence animation special param
+	 */
+	public function hasSequenceAnimation(){
+		return($this->isSpecialParamExists("entrance_animation"));
 	}
 
 	/**

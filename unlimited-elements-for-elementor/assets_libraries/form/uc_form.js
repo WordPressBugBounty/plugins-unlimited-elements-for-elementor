@@ -1,6 +1,6 @@
 "use strict";
 
-//version: 1.21
+//version: 1.22
 
 function UnlimitedElementsForm(){
   
@@ -13,7 +13,7 @@ function UnlimitedElementsForm(){
   var g_objCalcInputs;
   
   //helpers
-  var g_allowedSymbols, g_parents = [];
+  var g_allowedSymbols, g_parents = [], inputCache = {};
   
   /**
   * trace
@@ -86,6 +86,16 @@ function UnlimitedElementsForm(){
     return(names);    
   }
   
+  /** 
+  * get obj from cache or create new
+  */
+  function getObjInputByName(name) {
+    if (!inputCache[name]) {
+      inputCache[name] = jQuery(ueInputFieldSelector+'[name="'+name+'"]');
+    }
+    return inputCache[name];
+  }
+  
   /**
   * replace fields name with its values
   */
@@ -96,7 +106,7 @@ function UnlimitedElementsForm(){
       return(expr);
     
     names.forEach(function(name, index){      
-      var objInpput = jQuery(ueInputFieldSelector+'[name="'+name+'"]');
+      var objInpput = getObjInputByName(name);
       
       if(!objInpput.length){        
         var errorText = 'Unlimited Elements Form Error: couldn"t find Number Field Widget with name: '+name;
@@ -323,7 +333,7 @@ function UnlimitedElementsForm(){
     if(val.length > 1 && dataSeparateThousandsFormat == "en-US")
       val = parseFloat(val[0]).toLocaleString(dataSeparateThousandsFormat) + '.' + val[1];
     else
-    val = parseFloat(val[0]).toLocaleString(dataSeparateThousandsFormat)
+      val = parseFloat(val[0]).toLocaleString(dataSeparateThousandsFormat)
     
     return(val);    
   }
@@ -372,7 +382,7 @@ function UnlimitedElementsForm(){
     dataName = dataName.replace('[', '');
     dataName = dataName.replace(']', '');
     
-    var objInput = jQuery(ueInputFieldSelector+'[name="'+dataName+'"]');
+    var objInput = getObjInputByName(dataName);;
     
     return(objInput);    
   }
@@ -539,7 +549,7 @@ function UnlimitedElementsForm(){
       parentsArray.forEach(function(id, index){        
         var parentId = id;
         var objParentCalcInput = jQuery("#"+parentId).find("[data-calc-mode='true']");
-
+        
         if(!objParentCalcInput || objParentCalcInput.length == 0)
           objParentCalcInput = jQuery("#"+parentId).find("[data-calc-mode='1']");
         
@@ -578,6 +588,9 @@ function UnlimitedElementsForm(){
   */
   function getConditions(condition, objFieldValue, fieldValue){ 
     var visibilityCondition;
+    var strObjFieldValue = String(objFieldValue).toLowerCase();
+    var strFieldValue = String(fieldValue).toLowerCase();
+
     switch (condition) {
       case "=":
       
@@ -608,7 +621,17 @@ function UnlimitedElementsForm(){
       
       visibilityCondition = objFieldValue != fieldValue;
       
-      break;      
+      break;            
+      case "like":
+     
+      visibilityCondition = strObjFieldValue.includes(strFieldValue);
+      
+      break;
+      case "not_like":
+      
+      visibilityCondition = !strObjFieldValue.includes(strFieldValue);
+
+      break;
     }
     
     return(visibilityCondition);    
@@ -704,7 +727,7 @@ function UnlimitedElementsForm(){
         return(false);
       
       names.forEach(function(name, index){        
-        var objInpput = jQuery(ueInputFieldSelector+'[name="'+name+'"]');
+        // var objInpput = jQuery(ueInputFieldSelector+'[name="'+name+'"]');
         
         //check if field is hidden due to condition
         // if(objInpput.is(':visible') == false){
@@ -806,14 +829,14 @@ function UnlimitedElementsForm(){
       var condition = conditionArray.condition;
       var fieldName = conditionArray.field_name;
       var fieldValue = conditionArray.field_value;
-
+      
       if(isNumber(fieldValue) == true)
         fieldValue = parseFloat(fieldValue);
-
+      
       var operator = conditionArray.operator;
       var id = conditionArray._id;
       
-      var objField = jQuery(ueInputFieldSelector+'[name="'+fieldName+'"]');
+      var objField = getObjInputByName(fieldName);;
       var isInEditor = objField.data("editor");
       
       var objFieldValue = objField.val();
@@ -823,7 +846,7 @@ function UnlimitedElementsForm(){
       
       //sets the condition: "==", ">", "<" ...
       var visibilityCondition = getConditions(condition, objFieldValue, fieldValue);
-    
+      
       //set the conditions: "&&", "||"
       var visibilityOperator = getOperators(operator, visibilityOperator);             
       
@@ -958,7 +981,7 @@ function UnlimitedElementsForm(){
 var g_ucUnlimitedForms = new UnlimitedElementsForm();
 
 setTimeout(function(){
-g_ucUnlimitedForms.init();	
+  g_ucUnlimitedForms.init();	
 }, 2000);
 
 

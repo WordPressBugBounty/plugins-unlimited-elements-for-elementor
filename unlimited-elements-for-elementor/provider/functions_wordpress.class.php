@@ -134,6 +134,33 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 			return $placeholders;
 		}
+		
+		/**
+		 * sanitize and validate post types
+		 */
+		public static function sanitizePostTypes($postTypes, $arrFallback = array("post")){
+			
+			if(is_array($postTypes) == false)
+				$postTypes = array($postTypes);
+			
+			$arrPostTypes = array();
+			foreach($postTypes as $postType){
+				$postType = sanitize_key($postType);
+				if(empty($postType))
+					continue;
+				
+				if(post_type_exists($postType) == false)
+					continue;
+				
+				$arrPostTypes[] = $postType;
+			}
+			
+			$arrPostTypes = array_unique($arrPostTypes);
+			if(empty($arrPostTypes))
+				$arrPostTypes = $arrFallback;
+			
+			return($arrPostTypes);
+		}
 
 		/**
 		 * process the transaction
@@ -1685,7 +1712,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				$arr[self::SORTBY_SALES] = __("Number of Sales (WooCommerce)", "unlimited-elements-for-elementor");
 				$arr[self::SORTBY_RATING] = __("Rating (WooCommerce)", "unlimited-elements-for-elementor");
 			}
-
+			
 			$arr[self::SORTBY_SLUG] = __("Slug", "unlimited-elements-for-elementor");
 			$arr[self::SORTBY_AUTHOR] = __("Author", "unlimited-elements-for-elementor");
 			$arr[self::SORTBY_LAST_MODIFIED] = __("Last Modified", "unlimited-elements-for-elementor");
@@ -1694,7 +1721,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$arr[self::SORTBY_NONE] = __("Unsorted", "unlimited-elements-for-elementor");
 			$arr[self::SORTBY_MENU_ORDER] = __("Menu Order", "unlimited-elements-for-elementor");
 			$arr[self::SORTBY_PARENT] = __("Parent Post", "unlimited-elements-for-elementor");
-
+			
+			if(UniteCreatorPluginIntegrations::isWPPopularPostsExists() === true)
+				$arr["popular_wpp"] = __("Popular Posts", "unlimited-elements-for-elementor");
+			
 			if($forFilter !== true){
 				
 				$arr["post__in"] = __("Preserve Posts In Order", "unlimited-elements-for-elementor");
@@ -1702,7 +1732,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				$arr[self::SORTBY_META_VALUE] = __("Meta Field Value", "unlimited-elements-for-elementor");
 				$arr[self::SORTBY_META_VALUE_NUM] = __("Meta Field Value (numeric)", "unlimited-elements-for-elementor");
 			}
-
+	
 			return($arr);
 		}
 
@@ -2686,7 +2716,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$args["orderby"] = $orderby;
 
 		if($orderby == self::SORTBY_META_VALUE || $orderby == self::SORTBY_META_VALUE_NUM)
-			$args["meta_key"] = UniteFunctionsUC::getVal($filters, "meta_key");
+			$args["meta_key"] = UniteFunctionsUC::getVal($filters, "orderby_meta_key");
 
 		$isProduct = ($postType == "product");
 

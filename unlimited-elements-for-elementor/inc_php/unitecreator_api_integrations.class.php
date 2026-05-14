@@ -60,6 +60,7 @@ class UniteCreatorAPIIntegrations{
 	const GOOGLE_REVIEWS_FIELD_SHOW_DEBUG = "google_reviews_show_debug";
 	const GOOGLE_REVIEWS_SORT_BY = "google_reviews_sort_by";
 	const GOOGLE_REVIEWS_SERP_CACHE_TIME = "google_reviews_serp_cache_time";
+	const GOOGLE_REVIEWS_SHOW_DEMO_DATA = "google_reviews_show_demo_data";
 	const GOOGLE_REVIEWS_DEFAULT_CACHE_TIME = 10;
 	const GOOGLE_REVIEWS_CACHE_TIME_DAY = 86400; // 1 day in seconds
 	const GOOGLE_REVIEWS_CACHE_TIME_WEEK = 604800; // 1 week in seconds
@@ -958,8 +959,15 @@ class UniteCreatorAPIIntegrations{
 				break;
 		}
 		
-		$place = $placesService->getDetailsSerp($placeId, $apiKey, $placeParams, $this->googleReviewsShowDebug, $cacheTime);
+		$showDemoData = $this->getParam(self::GOOGLE_REVIEWS_SHOW_DEMO_DATA, false);
+
 		
+		if($showDemoData == true && GlobalsProviderUC::$isInsideEditor == true){
+			$place = $placesService->getDetailsDemo();
+		}else{
+			$place = $placesService->getDetailsSerp($placeId, $apiKey, $placeParams, $this->googleReviewsShowDebug, $cacheTime);
+		}
+
 		return($place);
 	}
 	
@@ -1132,6 +1140,14 @@ class UniteCreatorAPIIntegrations{
 					"month" => __("Once a month", "unlimited-elements-for-elementor"),
 				),
 				"default" => "week"
+			);
+
+			$fields[] = array(
+				"id" => self::GOOGLE_REVIEWS_SHOW_DEMO_DATA,
+				"type" => UniteCreatorDialogParam::PARAM_RADIOBOOLEAN,
+				"text" => __("Show Demo Data in Editor", "unlimited-elements-for-elementor"),
+				"desc" => __("Show demo data in editor to save serp credits.", "unlimited-elements-for-elementor"),
+				"default" => "false"
 			);
 			
 		}

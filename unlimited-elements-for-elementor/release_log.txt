@@ -1,4 +1,16 @@
 
+version 2.0.10:
+
+* Fix - fixed the pro version missing files
+
+
+version 2.0.9:
+
+* Fix: added translation for sorting filter fields for wpml
+* Fix: fixed some filter tabs security issues
+* Fix: fixed the hard coded wpp orderby
+* Feature: added option to show demo data in google reviews to save serp api credits
+
 
 version 2.0.8:
 

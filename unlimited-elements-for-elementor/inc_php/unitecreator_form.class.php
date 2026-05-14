@@ -87,7 +87,10 @@ class UniteCreatorForm{
 			">=" => ">= (more or equal)",
 			"<" => "< (less)",
 			"<=" => "<= (less or equal)",
-			"!=" => "!= (not equal)");
+			"!=" => "!= (not equal)",
+			"like" => "like",
+			"not_like" => "not like"
+		);
 
 		$arrOptions = array_flip($arrOptions);
 

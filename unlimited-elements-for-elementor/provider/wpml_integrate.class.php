@@ -182,6 +182,7 @@ class UniteCreatorWpmlIntegrate{
 		foreach($params as $param){
 			
 			$type = UniteFunctionsUC::getVal($param, "type");
+
 			
 			$editorType = null;
 						
@@ -228,6 +229,21 @@ class UniteCreatorWpmlIntegrate{
 		
 		return($arrFields);
 	}
+
+	/**
+	 * 
+	 * get sorting params items
+	 */
+	private function getSortingFilterItemsParams(){
+		
+		$arrParamsItems = array();
+				
+		$settingsItems = HelperProviderUC::getSortFilterRepeaterFields();
+		$arrParamsItems = $settingsItems->getSettingsCreatorFormat();
+
+		
+		return($arrParamsItems);
+	}
 	
 	
 	/**
@@ -268,6 +284,18 @@ class UniteCreatorWpmlIntegrate{
 				$arrItemsFields = $this->getTranslatableParamsFields($widgetTitle, $paramsItems, true);
 			}
 			
+			
+			//special case for sorting filter
+			$isSortingFilterExists = $addon->isSpecialParamExists("sort_filter_fields");
+
+			if($isSortingFilterExists == true){
+				
+				$paramsItems = $this->getSortingFilterItemsParams($addon);
+								
+				$arrItemsFields = $this->getTranslatableParamsFields($widgetTitle, $paramsItems, true);
+			}
+			
+				
 			if(empty($arrFields) && empty($arrItemsFields))
 				continue;
 

@@ -1,6 +1,47 @@
 
+
 == Changelog ==
 
+version 2.0.10 - 2026-05-14 =
+
+* Fix - fixed the pro version missing files
+
+
+version 2.0.9 - 2026-05-13 =
+
+Plugin Changes:
+
+* Fix: added translation for sorting filter fields for wpml
+* Fix: fixed some filter tabs security issues
+* Fix: fixed the hard coded wpp orderby
+* Feature: added option to show demo data in google reviews to save serp api credits
+
+
+Widgets Changes:
+
+* Feature: List Marquee (Pro) - Introduced a Speed Type option for the Marquee widget, offering two distinct movement behaviors: Regular - the animation speed is determined by the content width. Under this setting, a wider Marquee will move faster to complete its full cycle within the same allocated timeframe. Pixels Per Second - the movement maintains a constant, uniform speed regardless of the content's width, ensuring a consistent visual pace across different elements.
+* Feature: Flip Box Carousel (Pro) - Introduced Image Border Radius and Image Border options, providing comprehensive control over corner rounding and border styling.
+* Feature: Remote Bullets (Free) - Added Bullet Background Color Hover option, providing granular control over the visual feedback of the Bullets when hovered by a user
+* Feature: Video on Hover (Free) - Implemented a Stop Video on Outside Click functionality, ensuring that video playback automatically terminates when a user clicks anywhere outside the widget
+* Feature: Unlimited Timeline (Free) - Introduced an Item ID option, enabling the assignment of unique identifiers to individual elements for more precise CSS styling and targeted JavaScript interactions.
+* Feature: Taxonomy Terms (Pro) - Implemented a comprehensive "Show All" button feature that grants the ability to integrate a custom global action button with fully configurable text and destination links.
+* Feature: Before After (Free) - Implemented a vertical swipe gesture support for the Before After widget when configured in horizontal mode, ensuring intuitive interaction and accessibility across all touch-enabled devices.
+* Feature: Instagram Feed (Free) - Implemented a new functionality that automatically detects video content within Instagram posts and displays it in a lightbox for an enhanced viewing experience.
+* Feature: Video Carousel (Free) - Introduced a Loop option for video content, enabling continuous playback to create a seamless, repetitive viewing experience for users.
+* Fix: Scroll Accordion (Pro) - Resolved a UI accessibility bug where buttons within cards were unreachable or unclickable in specific layouts, ensuring consistent interactivity regardless of the card's container or positioning.
+* Fix: Content Accordion (Free) - Implemented support for the Before After widget when used within Elementor templates as Accordion items,
+* Fix: Flip Box (Free) - Resolved a navigation bug where the Back Link and Back Button link elements failed to function
+* Fix: Image Scroll (Free) - Resolved a rendering issue where the bottom SVG image failed to display correctly due to low CSS specificity
+* Fix: Video on Hover (Free) - Resolved a race condition in the Elementor editor where video playback would initiate before the necessary JavaScript assets had fully loaded
+* Fix: Video on Hover (Free) - Resolved a playback logic conflict where Vimeo-sourced videos would continue to loop even when the "Restart Video" option was disabled
+* Fix: Content Tabs (Free) - Resolved a synchronization issue where clicking an anchor link would occasionally fail to trigger a switch to the corresponding active tab, ensuring consistent navigation and tab state alignment
+* Fix: Unlimited Timeline (Free) - Resolved a styling bug where the active state background color failed to render
+* Fix: SVG Animation (Free) - Resolved a redundancy conflict where widgets would erroneously duplicate or fail to maintain a single instance when placed within a sticky container.
+* Fix: Justified Image Carousel (Pro) - Resolved a rendering issue where content background styles would persist or display incorrectly in scenarios where all nested content elements were set to "display: none."
+* Fix: Scroll Text Animation (Free) - Enhanced performance and improved compatibility with other GSAP widgets.
+* Fix: Scroll Image Comparison (Pro) - Improved performance and compatibility when used within iframes.
+* Fix: Video Carousel (Free) - Resolved a scope issue with the "Outside Click" feature where the "Stop Video" functionality would only trigger for the final instance on pages containing multiple Video Carousel widgets.
+* Fix: Sorting Filter (Pro) - Resolved a bug where the "Ascending" text option failed to populate within the select element, ensuring all sorting parameters are correctly visible and selectable.
 
 version 2.0.8 - 2026-04-23 =
 

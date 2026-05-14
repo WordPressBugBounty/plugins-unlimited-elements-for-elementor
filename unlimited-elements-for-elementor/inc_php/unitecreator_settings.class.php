@@ -779,7 +779,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 
 			break;
 			case "sort_filter_fields":
-
+			
 				$params = array();
 				$params["elementor_condition"] = $condition;
 				$params["origtype"] = UniteCreatorDialogParam::PARAM_REPEATER;
@@ -794,9 +794,9 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 				$settingsItems = HelperProviderUC::getSortFilterRepeaterFields();
 				
 				$settingsValues = HelperProviderUC::getSortFilterDefaultValues();
-
+				
 				$title = UniteFunctionsUC::getVal($param, "title");
-
+								
 				$this->addRepeater("{$name}_fields", $settingsItems, $settingsValues, $title, $params);
 				
 			break;

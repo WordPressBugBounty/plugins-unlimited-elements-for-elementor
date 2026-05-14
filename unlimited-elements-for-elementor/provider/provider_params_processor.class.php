@@ -1075,7 +1075,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		$keyOrderBy = "orderby";
 		$keyOrderDir = "orderdir";
-		$keyMeta = "meta_key";
+		$keyMeta = "orderby_meta_key";
 
 		if($isArgs == true){
 			$keyOrderDir = "order";
@@ -1096,9 +1096,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$filters[$keyOrderDir] = $orderDir;
 
 		if($orderBy == UniteFunctionsWPUC::SORTBY_META_VALUE || $orderBy == UniteFunctionsWPUC::SORTBY_META_VALUE_NUM){
-			$filters["meta_key"] = UniteFunctionsUC::getVal($value, "{$name}_orderby_meta_key1");
+			$filters[$keyMeta] = UniteFunctionsUC::getVal($value, "{$name}_orderby_meta_key1");
 		}
-
+		
 		return($filters);
 	}
 
@@ -2489,7 +2489,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$args = $objFiltersProcess->processRequestFilters($args, $isFilterable);
 				
 		$args = $this->getPostListData_getCustomQueryFilters($args, $value, $name, $data);
-
+		
 		// WPP orderby: from widget or from sort filter (URL) - handled via integrations class
 		$isWppFromFilter = (isset($args["orderby"]) && $args["orderby"] == "popular_wpp" && UniteCreatorPluginIntegrations::isWPPopularPostsExists());
 		if($isWppOrderBy === true || $isWppFromFilter){
@@ -2497,13 +2497,16 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			if(empty($arrIDsPopular) && $isWppFromFilter){
 				$arrIDsPopular = UniteCreatorPluginIntegrations::WPP_getPopularPostIdsForOrderBy($args, "last30days");
 			}
+			
 			if(!empty($arrIDsPopular)){
 				$orderDir = UniteFunctionsUC::getVal($args, "order", "DESC");
 				UniteCreatorPluginIntegrations::WPP_applyOrderByFilter($arrIDsPopular, $orderDir);
 				$args["ue_wpp_orderby"] = "true";
 				unset($args["orderby"]);
 			}
+			
 		}
+		
 		
 		HelperUC::addDebug("Posts Query", $args);
 
@@ -5021,7 +5024,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		return($arrMetaQuery);
 	}
-
+	
 
 	/**
 	 * get terms data
@@ -5029,6 +5032,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	public function getWPTermsData($value, $name, $processType, $param, $data){
 		
 		$postType = UniteFunctionsUC::getVal($value, $name."_posttype","post");
+		
+		$postType = UniteFunctionsWPUC::sanitizePostTypes($postType);
+
 		$taxonomy =  UniteFunctionsUC::getVal($value, $name."_taxonomy","category");
 
 		$orderBy =  UniteFunctionsUC::getVal($value, $name."_orderby","name");
@@ -5461,12 +5467,18 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	 * filter remove empty terms for selected post types
 	 */
 	public function filterTermsByPostTypes( $clauses, $taxonomies, $args ) {
-		if ( ! empty( $args['selected_post_types'] ) && is_array( $args['selected_post_types'] ) ) {
+		if ( ! empty( $args['selected_post_types'] ) ) {
 			global $wpdb;
 
-
 			$post_types = $args['selected_post_types'];
-			$post_types_in = "'" . implode( "','", $post_types ) . "'";
+			$arrValidPostTypes = UniteFunctionsWPUC::sanitizePostTypes($post_types, array());
+			if(empty($arrValidPostTypes)){
+				remove_filter( 'terms_clauses', array($this, "filterTermsByPostTypes"), 10, 3);
+				return $clauses;
+			}
+			
+			$placeholders = implode(", ", array_fill(0, count($arrValidPostTypes), "%s"));
+			$post_types_in = $wpdb->prepare($placeholders, $arrValidPostTypes);
 
 			$clauses['where'] .= "
                 AND EXISTS (

@@ -199,23 +199,30 @@ class UniteCreatorPluginIntegrations{
 	 * WordPress filter: order by WPP popularity (uses static IDs/direction)
 	 */
 	public static function filterPostsOrderbyWpp($orderby, $query){
+		
 		if(is_object($query) && method_exists($query, "get")){
 			$isActive = $query->get("ue_wpp_orderby");
 			if(empty($isActive))
 				return $orderby;
 		}
+		
 		if(empty(self::$wppOrderByIDs))
 			return $orderby;
+		
 		$arrIDs = array_map("intval", self::$wppOrderByIDs);
 		$arrIDs = array_filter($arrIDs);
 		$arrIDs = array_unique($arrIDs);
+		
 		if(empty($arrIDs))
 			return $orderby;
+			
 		global $wpdb;
+		
 		$orderDir = (self::$wppOrderByDirection == "ASC") ? "ASC" : "DESC";
 		$orderDirField = ($orderDir == "ASC") ? "DESC" : "ASC";
 		$field = "FIELD({$wpdb->posts}.ID," . implode(",", $arrIDs) . ")";
 		$orderby = "({$field} = 0) ASC, {$field} {$orderDirField}, {$wpdb->posts}.post_date {$orderDir}";
+				
 		return $orderby;
 	}
 
@@ -223,8 +230,10 @@ class UniteCreatorPluginIntegrations{
 	 * apply WPP orderby filter for the next WP_Query run
 	 */
 	public static function WPP_applyOrderByFilter($arrIDs, $orderDir = "DESC"){
+		
 		self::$wppOrderByIDs = is_array($arrIDs) ? $arrIDs : array();
 		self::$wppOrderByDirection = ($orderDir == "ASC") ? "ASC" : "DESC";
+		
 		add_filter("posts_orderby", array(__CLASS__, "filterPostsOrderbyWpp"), 10, 2);
 	}
 

@@ -75,7 +75,7 @@ class UniteFunctionsUC{
 		try{
 			throw new Exception("Show me the trace");
 		}catch(Exception $e){
-
+			
 			$trace = $e->getTraceAsString();
 			dmp($trace);
 
