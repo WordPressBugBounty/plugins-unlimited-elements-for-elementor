@@ -706,6 +706,7 @@ class UniteCreatorUniteGallery{
 		 */
 		public static function getUniteGalleryHtmlItem($item){
 			
+			
 			$type = UniteFunctionsUC::getVal($item, "type");
 			$title = UniteFunctionsUC::getVal($item, "title");
 			$link = UniteFunctionsUC::getVal($item, "link");

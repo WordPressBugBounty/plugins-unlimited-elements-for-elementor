@@ -4038,7 +4038,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 		$isAddItemsData = UniteFunctionsUC::getVal($arrParams, "add_item_data");
 		$isAddItemsData = UniteFunctionsUC::strToBool($isAddItemsData);
-
+		
 		$index = UniteFunctionsUC::getVal($arrParams, "index");
 
 		$name = "image";
@@ -4094,9 +4094,13 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			return($item);
 		}
-				
+		
+		//should be image data for gallery item
+		if(isset($param["no_image_data"]))
+			unset($param["no_image_data"]);
+		
 		$data = $this->getProcessedParamsValue_image($data, $value, $param);
-
+		
 		$arrItem = array();
 		$keyThumb = "{$name}_thumb_$thumbSize";
 		$keyImage = "{$name}_thumb_$imageSize";
@@ -4170,7 +4174,6 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$item["imageid"] = $id;
 
 		$item = $this->checkAddPostVideo($item, $arrParams, $post);
-		
 		
 		return($item);
 	}

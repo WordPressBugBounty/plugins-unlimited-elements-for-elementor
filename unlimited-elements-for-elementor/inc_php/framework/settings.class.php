@@ -892,7 +892,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			}
 
 			$setting["id"] = $this->idPrefix.$itemName;
-			$setting["id_row"] = $setting["id"]."_row";
+			// $setting["id_row"] = $setting["id"]."_row";
 			$setting["name"] = $itemName;
 
 			//add sap key
@@ -933,7 +933,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 			$setting["id"] = $this->idPrefix.$itemName;
 			$setting["name"] = $itemName;
-			$setting["id_row"] = $setting["id"]."_row";
+			// $setting["id_row"] = $setting["id"]."_row";
 			$setting["text"] = $text;
 
 			$this->checkAddBulkControl($itemName);
@@ -1145,8 +1145,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$this->checkAddBulkControl($name);
 
 			$setting["id"] = $this->idPrefix.$name;
-			$setting["id_service"] = $setting["id"]."_service";
-			$setting["id_row"] = $setting["id"]."_row";
+			// $setting["id_service"] = $setting["id"]."_service";
+			// $setting["id_row"] = $setting["id"]."_row";
 
 			//add sap key and sap keys
 
@@ -1851,8 +1851,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 				$setting["sap"]        = $sapNew;
 				$setting["id"]         = $this->idPrefix.$name;
-				$setting["id_service"] = $setting["id"]."_service";
-				$setting["id_row"]     = $setting["id"]."_row";
+				// $setting["id_service"] = $setting["id"]."_service";
+				// $setting["id_row"]     = $setting["id"]."_row";
 
 				$this->arrSettings[]    = $setting;
 				$this->arrIndex[$name]  = count($this->arrSettings) - 1;

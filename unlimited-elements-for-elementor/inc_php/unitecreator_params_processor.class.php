@@ -809,7 +809,6 @@ class UniteCreatorParamsProcessorWork{
 		$data[$name] = $value;
 		$data = $this->getProcessedParamsValue_image($data, $value, $param);
 
-
 		return($data);
 	}
 
@@ -938,8 +937,6 @@ class UniteCreatorParamsProcessorWork{
 	 */
 	private function getProcessedParamsValue_imageJson($data, $value, $param){
 
-
-
 		//if the value is emtpy
 		if(empty($value)){
 
@@ -974,7 +971,7 @@ class UniteCreatorParamsProcessorWork{
 	 * process image param value, add to data
 	 */
 	protected function getProcessedParamsValue_image($data, $value, $param){
-
+		
 		$name = UniteFunctionsUC::getVal($param, "name");
 		$mediaType = UniteFunctionsUC::getVal($param, "media_type");
 

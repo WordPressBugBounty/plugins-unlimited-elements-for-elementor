@@ -50,7 +50,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			
 			?>
 				
-				<div id="<?php echo esc_attr($setting["id_row"])?>" <?php 
+				<div id="<?php echo esc_attr($setting["id_row"] ?? '')?>" <?php 
 					uelm_echo($rowClass)?>>
 					
 					<div class="unite-setting-text" <?php 

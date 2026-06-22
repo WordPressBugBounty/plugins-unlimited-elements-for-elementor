@@ -71,9 +71,8 @@ class UniteCreatorFiltersProcess{
 		//get fields
 
 		$arrFields = UniteFunctionsUC::getVal($params, "fields");
-
+		
 		$arrFields = UniteFunctionsUC::getVal($arrFields, "fields_fields");
-
 
 		if(empty($arrFields))
 			$arrFields = array(
@@ -370,9 +369,9 @@ class UniteCreatorFiltersProcess{
 		}
 
 		//get the array
-
+		
 		$arrValues = $this->parseStrTerms_values($strValues);
-
+			
 		foreach($arrValues as $key => $value){
 
 			if(isset($arrReplace[$value])){
@@ -380,9 +379,10 @@ class UniteCreatorFiltersProcess{
 				$strGroupValue = $arrReplace[$value];
 
 				$arrGroupValue = $this->parseStrTerms_values($strGroupValue);
-
-				$arrGroupValue["relation"] = "OR";
-
+				
+				if(isset($arrGroupValue["relation"]) == false)
+					$arrGroupValue["relation"] = "OR";
+				
 				if(count($arrGroupValue) == 1)
 					$arrGroupValue = $arrGroupValue[0];
 
@@ -392,7 +392,7 @@ class UniteCreatorFiltersProcess{
 		}
 
 		$arrValues["relation"] = "AND";
-
+				
 		return($arrValues);
 	}
 
@@ -408,7 +408,7 @@ class UniteCreatorFiltersProcess{
 		if(strpos($strValues,"|") !== false){
 
 			$arrValues = $this->parseStrTerms_groups($strValues);
-
+			
 			return($arrValues);
 		}
 
@@ -2444,6 +2444,9 @@ class UniteCreatorFiltersProcess{
 		if(self::$isFilesAdded == true)
 			return(false);
 
+	        if (HelperUC::isEditMode())
+	            return false;
+
 		UniteProviderFunctionsUC::addAdminJQueryInclude();
 
 		$urlFiltersJS = GlobalsUC::$url_assets_libraries."filters/ue_filters.js";
@@ -2978,7 +2981,7 @@ class UniteCreatorFiltersProcess{
 				continue;
 			}
 
-			//nested group – flatten recursively
+			//nested group flatten recursively
 			$nested = $this->flattenTermSlugs($value);
 
 			if(!empty($nested))

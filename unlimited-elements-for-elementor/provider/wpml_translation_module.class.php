@@ -8,7 +8,7 @@ class UNITE_CREATOR_WPML_Translation_Module extends WPML_Elementor_Module_With_I
 	
 	private $ucIsInited = false;
 	private $ucData = array();
-	
+	private $widgetName;
 	
 	/**
 	 * init the class
@@ -27,6 +27,8 @@ class UNITE_CREATOR_WPML_Translation_Module extends WPML_Elementor_Module_With_I
 		if(empty($widgetName))
 			return(false);
 		
+		$this->widgetName = $widgetName;
+			
 		$arrData = UniteFunctionsUC::getVal(UniteCreatorWpmlIntegrate::$arrWidgetItemsData, $widgetName);
 		
 		if(empty($arrData))
@@ -37,12 +39,20 @@ class UNITE_CREATOR_WPML_Translation_Module extends WPML_Elementor_Module_With_I
 		$this->ucData = $arrData;
 	}
 	
+	
 	/**
 	 * @return string
 	 */
 	public function get_items_field() {
+		
+		$this->ucInit();
+		
+		if($this->widgetName == "ucaddon_ue_sort_filter" || $this->widgetName == "ue_sort_filter_elementor")
+			return("fields_fields");
+		
 		return 'uc_items';
 	}
+	
 
 	/**
 	 * @return array

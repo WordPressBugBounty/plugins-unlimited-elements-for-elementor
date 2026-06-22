@@ -1045,12 +1045,12 @@ class UniteCreatorAPIIntegrations{
 			
 			$arrReviewsOutput = array();
 			
-			foreach($arrReviews as $review){
+			foreach($arrReviews as $index=>$review){
 				
 				if($isSerp == true)
 					$review->setSerpSource();
 				
-				$arrReviewsOutput[] = array(
+				$arrReview = array(
 					"id" => $review->getId(),
 					"date" => $review->getDate(self::FORMAT_DATETIME),
 					"time_ago" => $review->getTimeAgoText(),
@@ -1059,7 +1059,8 @@ class UniteCreatorAPIIntegrations{
 					"author_name" => $review->getAuthorName(),
 					"author_photo" => $review->getAuthorPhotoUrl(),
 				);
-				
+ 
+				$arrReviewsOutput[] = $arrReview;
 			}
 			
 			$data["reviews"] = $arrReviewsOutput;

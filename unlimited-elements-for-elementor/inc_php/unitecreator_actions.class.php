@@ -149,6 +149,13 @@ class UniteCreatorActions{
 
 					HelperUC::ajaxResponseData($response);
 				break;
+				case "get_catlist":
+
+					$manager = UniteCreatorManager::getObjManagerByAddonType($addonType, $data);
+					$response = $manager->getCatListFromData($data);
+
+					HelperUC::ajaxResponseData($response);
+				break;
 				case "get_layouts_categories":
 					
 					HelperProviderUC::verifyAdminPermission();
@@ -342,9 +349,12 @@ class UniteCreatorActions{
 				break;
 				case "get_addon_settings_html":    //from elementor/gutenberg
 					
-					$html = $addons->getAddonSettingsHTMLFromData($data);
-					
-					HelperUC::ajaxResponseData(array("html" => $html));
+					// $html = $addons->getAddonSettingsHTMLFromData($data);
+					// HelperUC::ajaxResponseData(array("html" => $html));
+
+                    $json = $addons->getAddonSettingsJSONFromData($data);
+                    HelperUC::ajaxResponseData(array("json" => $json));
+
 				break;
 				case "get_addon_item_settings_html":  //from elementor
 

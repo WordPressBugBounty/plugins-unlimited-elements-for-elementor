@@ -2309,6 +2309,426 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	}
 
 	/**
+	 * get settings as json-serializable array
+	 * builds full settings object for client-side rendering
+	 */
+	public function getJsonConfig(){
+
+		$this->validateInited();
+
+		GlobalsProviderUC::$activeAddonForSettings = $this;
+
+		$arrParams = $this->objProcessor->processParamsForOutput($this->params);
+
+		// fonts
+		$isFontsPanelEnabled = $this->objProcessor->isFontsPanelEnabled();
+		$arrFontParamNames   = $this->objProcessor->getAllParamsNamesForFonts();
+
+		if(empty($arrFontParamNames))
+			$isFontsPanelEnabled = false;
+
+		// Build the full settings object (same pipeline as getHtmlConfig sidebar mode)
+		$objSettings = new UniteCreatorSettings();
+		$objSettings->setCurrentAddon($this);
+
+		$isGutenbergEditorBG = $this->isBGForGutenbergEditor();
+		if($isGutenbergEditorBG == true)
+			$objSettings->addGutenbergEditorBackgroundSection();
+
+		if(!empty($this->params) || $this->hasItems){
+
+			if(empty($this->paramsCats))
+				$objSettings->addSap(esc_html__("General", "unlimited-elements-for-elementor"), "config", "config");
+
+			if($this->hasItems == true){
+				if($this->itemsType == self::ITEMS_TYPE_IMAGE){
+					$objSettings->addGallery("uc_items", "", __("Select Images", "unlimited-elements-for-elementor"));
+				}
+			}
+
+			$objSettings->initByCreatorParams($arrParams, $this->paramsCats);
+		}
+
+		// items repeater (sidebar mode)
+		if($this->hasItems == true){
+			$objSettings->addSap(esc_html__("Items", "unlimited-elements-for-elementor"), "items");
+			$objSettings->addItemsPanelRepeater($this, "");
+		}
+
+		// fonts panel
+		if($isFontsPanelEnabled == true){
+			$objSettings->addSap(esc_html__("Fonts", "unlimited-elements-for-elementor"), "fonts");
+			$arrFontsData = $this->getArrFonts();
+			$objSettings->addFontPanel($arrFontParamNames, $arrFontsData, null, array());
+		}
+
+		// advanced section
+		$objSettings->addAdvancedSection();
+
+		// get controls and rendering options via the sidebar output object
+		$objOutput = new UniteSettingsOutputSidebarUC();
+		$objOutput->init($objSettings);
+		$configData = $objOutput->getConfigDataForJson();
+
+		// capture repeater template HTML before sanitization strips settings_items objects
+		$repeaterTemplates = $this->getRepeaterTemplatesForJson($objSettings->getArrSettings());
+
+		// sanitize settings for JSON (strip non-serializable PHP objects)
+		$arrSettings = $this->sanitizeSettingsForJson($objSettings->getArrSettings());
+
+		// Inject id_prefix so JS can reconstruct element IDs without storing them per-setting
+		$configData["options"]["id_prefix"] = $objSettings->getIDPrefix();
+
+		// Pre-process settings: strip value==default_value dupes, id, datatype, origtype
+		$arrSettings = $this->prepareSettingsForJson($arrSettings);
+
+		// Dialog settings sent per-request as fallback (when global g_uelm_dialogSettings is unavailable).
+		// Normally served once at page load via wp_localize_script; here kept as safety net.
+		$dialogSettings = $this->getSubSettingsDialogJson($arrSettings);
+
+		$json = array(
+			"settings"           => $arrSettings,
+			"saps"               => $objSettings->getArrSaps(),
+			"controls"           => $configData["controls"],
+			"render_options"     => $configData["options"],
+			"repeater_templates" => $repeaterTemplates,
+			"dialog_settings"    => $dialogSettings,
+
+			"params"         => $arrParams,
+			"params_cats"    => $this->paramsCats,
+			"params_items"   => $this->paramsItems,
+			"items"          => $this->getArrItemsForConfig(),
+			"has_items"      => $this->hasItems,
+			"items_type"     => $this->itemsType,
+			"fonts"          => array(
+				"enabled"     => $isFontsPanelEnabled,
+				"param_names" => $arrFontParamNames,
+			),
+			"options"        => $this->options,
+		);
+
+		// Remove null, empty-string, and empty-array fields to minimize payload size.
+		$json = $this->compactJsonRecursive($json);
+
+		// Collapse responsive triplets (name / name_tablet / name_mobile) into one object
+		$json["settings"] = $this->consolidateResponsiveSettings($json["settings"]);
+
+		return ($json);
+	}
+
+	/**
+	 * Build dialog settings JSON data for each sub-settings type (typography, textshadow, etc.)
+	 */
+	private function getSubSettingsDialogJson($arrSettings){
+
+		$subSettingsTypes = array(
+			UniteCreatorSettings::TYPE_TYPOGRAPHY,
+			UniteCreatorSettings::TYPE_TEXTSHADOW,
+			UniteCreatorSettings::TYPE_TEXTSTROKE,
+			UniteCreatorSettings::TYPE_BOXSHADOW,
+			UniteCreatorSettings::TYPE_CSS_FILTERS,
+		);
+
+		$usedTypes = array();
+		foreach($arrSettings as $setting){
+			$type = UniteFunctionsUC::getVal($setting, 'type');
+			if(in_array($type, $subSettingsTypes) && !isset($usedTypes[$type]))
+				$usedTypes[$type] = $type;
+		}
+
+		if(empty($usedTypes))
+			return array();
+
+		return $this->buildDialogSettingsJson($usedTypes);
+	}
+
+	/**
+	 * Build dialog settings JSON for the given list of sub-settings types.
+	 * @param array $types  map of type=>type (e.g. ['typography'=>'typography', ...])
+	 * @return array
+	 */
+	private function buildDialogSettingsJson($types){
+
+		$dialogData = array();
+		foreach($types as $type){
+			$dialogSettingsObj = new UniteCreatorSettings();
+			$dialogSettingsObj->addDialogSettings($type);
+
+			$dialogOutput = new UniteSettingsOutputSidebarUC();
+			$dialogOutput->init($dialogSettingsObj);
+
+			$configData  = $dialogOutput->getConfigDataForJson();
+			$settingsArr = $this->sanitizeSettingsForJson($dialogSettingsObj->getArrSettings());
+			$settingsArr = $this->prepareSettingsForJson($settingsArr);
+			$configData["options"]["id_prefix"] = $dialogSettingsObj->getIDPrefix();
+			$settingsArr = $this->consolidateResponsiveSettings($settingsArr);
+
+			$dialogData[$type] = $this->compactJsonRecursive(array(
+				"settings"       => $settingsArr,
+				"saps"           => $dialogSettingsObj->getArrSaps(),
+				"controls"       => $configData["controls"],
+				"render_options" => $configData["options"],
+			));
+		}
+
+		return $dialogData;
+	}
+
+	/**
+	 * Return JSON data for sub-settings dialog types.
+	 * Intended for one-time output at page load (wp_localize_script).
+	 */
+	public static function getGlobalDialogSettingsJson(){
+
+		$allTypes = array(
+			UniteCreatorSettings::TYPE_TYPOGRAPHY  => UniteCreatorSettings::TYPE_TYPOGRAPHY,
+			UniteCreatorSettings::TYPE_TEXTSHADOW  => UniteCreatorSettings::TYPE_TEXTSHADOW,
+			UniteCreatorSettings::TYPE_TEXTSTROKE  => UniteCreatorSettings::TYPE_TEXTSTROKE,
+			UniteCreatorSettings::TYPE_BOXSHADOW   => UniteCreatorSettings::TYPE_BOXSHADOW,
+			UniteCreatorSettings::TYPE_CSS_FILTERS => UniteCreatorSettings::TYPE_CSS_FILTERS,
+		);
+
+		$instance = new self();
+		return $instance->buildDialogSettingsJson($allTypes);
+	}
+
+	/**
+	 * Recursively compact an array for JSON output:
+	 *   - drops null values
+	 *   - drops empty strings (except inside 'items' sub-arrays, where they are valid option values)
+	 *   - drops empty arrays / objects
+	 * Does NOT drop `false` or `0` � those can be semantically meaningful
+	 * (e.g. show_slider:false, show_saps:false, min:0).
+	 */
+	private function compactJsonRecursive($data){
+
+		if(!is_array($data))
+			return $data;
+
+		$result = array();
+		foreach($data as $key => $val){
+
+			if($val === null)
+				continue;
+
+			if(is_array($val)){
+				if(empty($val))
+					continue;
+
+				if($key === 'items' || ($key === 'value' && is_array($val))){
+					$val = $this->stripNullFromArray($val);
+				} else {
+					$val = $this->compactJsonRecursive($val);
+					if(is_array($val) && empty($val))
+						continue;
+				}
+
+				$result[$key] = $val;
+			} else {
+				if($val === '')
+					continue;
+				$result[$key] = $val;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Recursively strip only null values from an array (leaves empty strings intact)
+	 */
+	private function stripNullFromArray($data){
+
+		if(!is_array($data))
+			return $data;
+
+		$result = array();
+		foreach($data as $key => $val){
+			if($val === null)
+				continue;
+			if(is_array($val))
+				$val = $this->stripNullFromArray($val);
+			$result[$key] = $val;
+		}
+		return $result;
+	}
+
+	/**
+	 * Pre-process settings before JSON output:
+	 *   Opt1: drop 'value' when identical to 'default_value' (JS falls back to default_value)
+	 *   Opt2: drop 'id' (JS reconstructs as id_prefix + name; prefix sent once in render_options)
+	 *   Opt3: drop 'datatype' and 'origtype' (verified unused in JS renderer � 0 references)
+	 *   Opt4: drop 'items' for font_family fields (use global g_ucGoogleFonts instead)
+	 */
+	private function prepareSettingsForJson($arrSettings){
+
+		$dropKeys = array('id', 'datatype', 'origtype');
+
+		foreach($arrSettings as &$s){
+
+			// Opt1: strip duplicate value
+			if(isset($s['value']) && isset($s['default_value'])
+				&& $s['value'] === $s['default_value']
+			){
+				unset($s['value']);
+			}
+
+			// Opt2+3: strip always-redundant keys
+			foreach($dropKeys as $k){
+				unset($s[$k]);
+			}
+
+			// Opt4: strip items for font_family fields
+			if(isset($s['name']) && $s['name'] === 'font_family' && isset($s['items'])){
+				unset($s['items']);
+			}
+		}
+		unset($s);
+
+		return $arrSettings;
+	}
+
+	/**
+	 * Opt4: Collapse responsive triplets (name / name_tablet / name_mobile) into one setting.
+	 * Tablet/mobile stored as _tablet/_mobile sub-objects with only fields that differ from base.
+	 * JS expands them back to flat settings before rendering (expandResponsiveSettings).
+	 */
+	private function consolidateResponsiveSettings($arrSettings){
+
+		if(empty($arrSettings))
+			return $arrSettings;
+
+		// Index by name for O(1) lookup
+		$byName = array();
+		foreach($arrSettings as $s){
+			$byName[$s['name']] = $s;
+		}
+
+		$result   = array();
+		$consumed = array();
+
+		foreach($arrSettings as $s){
+			$name = $s['name'];
+			if(isset($consumed[$name])) continue;
+
+			$tabletName = $name . '_tablet';
+			$mobileName = $name . '_mobile';
+
+			if(isset($byName[$tabletName])){
+				$ts   = $byName[$tabletName];
+				$diff = array();
+				// Fields in variant that differ from base
+				foreach($ts as $k => $v){
+					if(!array_key_exists($k, $s) || $s[$k] !== $v){
+						$diff[$k] = $v;
+					}
+				}
+				// Fields in base absent from variant: mark with null so JS deletes them
+				foreach($s as $k => $v){
+					if(!array_key_exists($k, $ts)){
+						$diff[$k] = null;
+					}
+				}
+				$s['_tablet'] = $diff;
+				$consumed[$tabletName] = true;
+			}
+
+			if(isset($byName[$mobileName])){
+				$ms   = $byName[$mobileName];
+				$diff = array();
+				// Fields in variant that differ from base
+				foreach($ms as $k => $v){
+					if(!array_key_exists($k, $s) || $s[$k] !== $v){
+						$diff[$k] = $v;
+					}
+				}
+				// Fields in base absent from variant: mark with null so JS deletes them
+				foreach($s as $k => $v){
+					if(!array_key_exists($k, $ms)){
+						$diff[$k] = null;
+					}
+				}
+				$s['_mobile'] = $diff;
+				$consumed[$mobileName] = true;
+			}
+
+			$result[] = $s;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * render repeater template HTML for each repeater setting, keyed by setting name.
+	 */
+	private function getRepeaterTemplatesForJson($arrSettings){
+
+		$templates = array();
+
+		foreach($arrSettings as $setting){
+			$type = UniteFunctionsUC::getVal($setting, "type");
+			if($type !== "repeater")
+				continue;
+
+			$name = UniteFunctionsUC::getVal($setting, "name");
+			$objSettingsItems = UniteFunctionsUC::getVal($setting, "settings_items");
+
+			if(empty($objSettingsItems) || !is_object($objSettingsItems))
+				continue;
+
+			$output = new UniteSettingsOutputSidebarUC();
+			$output->setShowSaps(false);
+			$output->init($objSettingsItems);
+
+			ob_start();
+			$output->draw("settings_item_repeater", false);
+			$html = ob_get_clean();
+            $html = UniteFunctionsUC::minifyHTML($html);
+            $templates[$name] = $html;
+		}
+
+		return $templates;
+	}
+
+	/**
+	 * sanitize settings array for JSON serialization
+	 */
+	private function sanitizeSettingsForJson($arrSettings){
+
+		if(empty($arrSettings))
+			return array();
+
+		$sanitized = array();
+		foreach($arrSettings as $setting){
+			$clean = array();
+			foreach($setting as $key => $value){
+				if(is_object($value))
+					continue;
+				if(is_array($value))
+					$value = $this->sanitizeSettingValueForJson($value);
+				$clean[$key] = $value;
+			}
+			$sanitized[] = $clean;
+		}
+		return $sanitized;
+	}
+
+	/**
+	 * recursively sanitize array value for JSON
+	 */
+	private function sanitizeSettingValueForJson($arr){
+
+		$result = array();
+		foreach($arr as $key => $value){
+			if(is_object($value))
+				continue;
+			if(is_array($value))
+				$value = $this->sanitizeSettingValueForJson($value);
+			$result[$key] = $value;
+		}
+		return $result;
+	}
+
+	/**
 	 * return if fonts panel enabled
 	 */
 	public function isFontsPanelEnabled(){
@@ -3694,10 +4114,6 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 
 		$items = UniteFunctionsUC::getVal($arrData, "items");
 		$fonts = UniteFunctionsUC::getVal($arrData, "fonts");
-
-
-		//if(!empty($config))
-		//$this->setParamsValues($config);
 
 		if(!empty($items))
 			$this->setArrItems($items);

@@ -2074,6 +2074,34 @@ class HelperProviderUC{
 	}
 	
 	/**
+	 * show current post Elementor data debug (decoded _elementor_data via core helper)
+	 */
+	public static function showElementorDataDebug(){
+		
+		$post = get_post();
+		
+		if(empty($post))
+			return(false);
+		
+		$postTitle = $post->post_title;
+		$postID = $post->ID;
+		
+		$arrData = HelperProviderCoreUC_EL::getElementorContentByPostID($postID);
+		
+		if(empty($arrData)){
+			return(false);
+		}
+		
+		dmp("Elementor data (_elementor_data) for post: <b>$postTitle</b>, post id: $postID");
+		
+		$arrForShow = UniteFunctionsUC::modifyDataArrayForShow($arrData);
+		
+		dmp($arrForShow);
+		
+		return(true);
+	}
+	
+	/**
 	 * show current post meta debug
 	 */
 	public static function showLastQuery(){

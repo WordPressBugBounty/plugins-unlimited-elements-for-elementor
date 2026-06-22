@@ -291,15 +291,19 @@ class UniteProviderFunctionsUC{
 
 			$handle .= "_". UniteFunctionsUC::getRandomString(5, true);
 		}
-				
-		if($hardCoded == false)
-			self::$arrScripts[$handle] = $script;
-		else{
+		
+		if($hardCoded == false) {
+			UniteFunctionsWPUC::putCustomScript($handle, $script);
+			// self::$arrScripts[$handle] = $script;
+		}else{
 			 
 			if($isModule == true)
 				uelm_echo( "<script type='module' id='{$handle}'>{$script}</script>" );
-			else
-				uelm_echo( "<script type='text/javascript' id='{$handle}'>{$script}</script>" );
+			else {
+				// uelm_echo( "<script type='text/javascript' id='{$handle}'>{$script}</script>" );
+				UniteFunctionsWPUC::putCustomScript($handle, $script);
+			}
+				
 			
 		}
 				

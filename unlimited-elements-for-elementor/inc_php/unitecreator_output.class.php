@@ -571,31 +571,6 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 
 	private function ______CSS_SELECTORS_______(){}
 
-    /*
-	private function processParamCSSSelector_number($param, $selectors){
-
-		$values = array(
-			"desktop" => UniteFunctionsUC::getVal($param, "value"),
-			"tablet" => UniteFunctionsUC::getVal($param, "value_tablet"),
-			"mobile" => UniteFunctionsUC::getVal($param, "value_mobile"),
-		);
-
-		$style = "";
-
-		foreach($values as $device => $value){
-			if(empty($value) === true)
-				continue;
-
-			foreach($selectors as $selector => $selectorValue){
-				$css = $this->prepareCSSSelectorValueCSS($selectorValue, $value);
-				$style .= $this->prepareCSSSelectorStyle($selector, $css, $device);
-			}
-		}
-
-		return $style;
-	}
-    */
-
 	/**
 	 * process css selector of number param
 	 */
@@ -632,69 +607,6 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 
         return $style;
     }
-
-    /*
-	private function processParamCSSSelector_background($param, $selectors){
-
-		$name = UniteFunctionsUC::getVal($param, "name");
-		$value = UniteFunctionsUC::getVal($param, "value");
-		$type = UniteFunctionsUC::getVal($value, $name . "_type");
-
-		$style = "";
-		$selector = $this->combineCSSSelectors($selectors);
-
-		switch($type){
-			case "solid":
-				$regularFields = array(
-					$name . "_solid_color" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_BACKGROUND, "color"),
-					$name . "_solid_image_attachment" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_BACKGROUND, "attachment"),
-				);
-
-				$responsiveFields = array(
-					$name . "_solid_image" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_BACKGROUND, "image"),
-					$name . "_solid_image_position" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_BACKGROUND, "position"),
-					$name . "_solid_image_repeat" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_BACKGROUND, "repeat"),
-					$name . "_solid_image_size" => HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_BACKGROUND, "size"),
-				);
-
-				$style .= $this->prepareCSSSelectorFieldsStyle($regularFields, $selector, $value);
-				$style .= $this->prepareCSSSelectorResponsiveFieldsStyle($responsiveFields, $selector, $value);
-			break;
-			case "gradient":
-				$color1 = UniteFunctionsUC::getVal($value, $name . "_gradient1_color");
-				$stop1 = UniteFunctionsUC::getVal($value, $name . "_gradient1_stop");
-				$color2 = UniteFunctionsUC::getVal($value, $name . "_gradient2_color");
-				$stop2 = UniteFunctionsUC::getVal($value, $name . "_gradient2_stop");
-				$type = UniteFunctionsUC::getVal($value, $name . "_gradient_type");
-				$angle = UniteFunctionsUC::getVal($value, $name . "_gradient_angle");
-				$position = UniteFunctionsUC::getVal($value, $name . "_gradient_position");
-
-				$stop1 = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $stop1);
-				$stop2 = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $stop2);
-				$angle = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $angle);
-
-				if($color1 !== "" && $stop1 !== "" && $color2 !== "" && $stop2 !== "" && $type !== "" && $angle !== "" && $position !== ""){
-					$selectorValue = ($type === "radial")
-						? HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_BACKGROUND, "radial-gradient")
-						: HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_BACKGROUND, "linear-gradient");
-
-					$css = $this->processCSSSelectorReplaces($selectorValue, array(
-						"{{angle}}" => $angle,
-						"{{position}}" => $position,
-						"{{color1}}" => $color1,
-						"{{stop1}}" => $stop1,
-						"{{color2}}" => $color2,
-						"{{stop2}}" => $stop2,
-					));
-
-					$style .= $this->prepareCSSSelectorStyle($selector, $css);
-				}
-			break;
-		}
-
-		return $style;
-	}
-    */
 
 	/*
 	 * process css selector of background param
@@ -787,49 +699,6 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
         return $style;
     }
 
-	/*
-	private function processParamCSSSelector_border($param, $selectors){
-
-		$value = UniteFunctionsUC::getVal($param, "value");
-		$type = UniteFunctionsUC::getVal($value, "type", "none");
-		$color = UniteFunctionsUC::getVal($value, "color", "#000000");
-
-        // echo json_encode($param) . ' ==[2]';
-
-		if($type === "none")
-			return null;
-
-		$style = "";
-		$selector = $this->combineCSSSelectors($selectors);
-
-		$selectorValue = HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_BORDER, "style");
-		$css = $this->prepareCSSSelectorValueCSS($selectorValue, $type);
-		$style .= $this->prepareCSSSelectorStyle($selector, $css);
-
-		$selectorValue = HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_BORDER, "color");
-		$css = $this->prepareCSSSelectorValueCSS($selectorValue, $color);
-		$style .= $this->prepareCSSSelectorStyle($selector, $css);
-
-		$widths = array(
-			"desktop" => UniteFunctionsUC::getVal($value, "width"),
-			"tablet" => UniteFunctionsUC::getVal($value, "width_tablet"),
-			"mobile" => UniteFunctionsUC::getVal($value, "width_mobile"),
-		);
-
-		$selectorValue = HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_BORDER, "width");
-
-		foreach($widths as $device => $value){
-			if(empty($value) === true)
-				continue;
-
-			$css = $this->prepareCSSSelectorDimentionsCSS($selectorValue, $value);
-			$style .= $this->prepareCSSSelectorStyle($selector, $css, $device);
-		}
-
-		return $style;
-	}
-    */
-
     private function processParamCSSSelector_border($param, $selectors){
         $value = UniteFunctionsUC::getVal($param, "value");
         
@@ -910,31 +779,6 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 
         return $style;
     }
-
-    /*
-	private function processParamCSSSelector_dimentions($param, $selectors, $type){
-
-		$values = array(
-			"desktop" => UniteFunctionsUC::getVal($param, "value"),
-			"tablet" => UniteFunctionsUC::getVal($param, "value_tablet"),
-			"mobile" => UniteFunctionsUC::getVal($param, "value_mobile"),
-		);
-
-		$style = "";
-		$selector = $this->combineCSSSelectors($selectors);
-		$selectorValue = HelperHtmlUC::getCSSSelectorValueByParam($type);
-
-		foreach($values as $device => $value){
-			if(empty($value) === true)
-				continue;
-
-			$css = $this->prepareCSSSelectorDimentionsCSS($selectorValue, $value);
-			$style .= $this->prepareCSSSelectorStyle($selector, $css, $device);
-		}
-
-		return $style;
-	}
-    */
 
     /**
      * process css selector of dimentions param
@@ -1142,39 +986,6 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
         return $style;
     }
 
-    /*
-	private function processParamCSSSelector_textShadow($param, $selectors){
-
-		$value = UniteFunctionsUC::getVal($param, "value");
-		$x = UniteFunctionsUC::getVal($value, "x");
-		$y = UniteFunctionsUC::getVal($value, "y");
-		$blur = UniteFunctionsUC::getVal($value, "blur");
-		$color = UniteFunctionsUC::getVal($value, "color");
-
-		$x = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $x);
-		$y = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $y);
-		$blur = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $blur);
-
-		$css = "";
-
-		if($x !== "" && $y !== "" && $blur !== "" && $color !== ""){
-			$selectorValue = HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TEXTSHADOW);
-
-			$css = $this->processCSSSelectorReplaces($selectorValue, array(
-				"{{x}}" => $x,
-				"{{y}}" => $y,
-				"{{blur}}" => $blur,
-				"{{color}}" => $color,
-			));
-		}
-
-		$selector = $this->combineCSSSelectors($selectors);
-		$style = $this->prepareCSSSelectorStyle($selector, $css);
-
-		return $style;
-	}
-    */
-
     private function processParamCSSSelector_textStroke($param, $selectors){
         $value = UniteFunctionsUC::getVal($param, "value");
         
@@ -1210,36 +1021,6 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 
         return $style;
     }
-
-    /*
-	private function processParamCSSSelector_textStroke($param, $selectors){
-
-		$value = UniteFunctionsUC::getVal($param, "value");
-		$width = UniteFunctionsUC::getVal($value, "width");
-		$color = UniteFunctionsUC::getVal($value, "color");
-
-		// Prepare CSS for stroke width
-		$width = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $width);
-
-		$css = "";
-
-		// If both width and color are available, apply the text stroke
-		if($width !== "" && $color !== ""){
-			$selectorValue = HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_TEXTSTROKE);
-
-			$css = $this->processCSSSelectorReplaces($selectorValue, array(
-				"{{width}}" => $width,
-				"{{color}}" => $color,
-			));
-		}
-
-		// Combine the selectors and prepare the style
-		$selector = $this->combineCSSSelectors($selectors);
-		$style = $this->prepareCSSSelectorStyle($selector, $css);
-
-		return $style;
-	}    
-    */
 
     /**
      * process css selector of box shadow param
@@ -1288,44 +1069,6 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
         return $style;
     }
 
-	/*
-	private function processParamCSSSelector_boxShadow($param, $selectors){
-
-		$value = UniteFunctionsUC::getVal($param, "value");
-		$x = UniteFunctionsUC::getVal($value, "x");
-		$y = UniteFunctionsUC::getVal($value, "y");
-		$blur = UniteFunctionsUC::getVal($value, "blur");
-		$spread = UniteFunctionsUC::getVal($value, "spread");
-		$color = UniteFunctionsUC::getVal($value, "color");
-		$position = UniteFunctionsUC::getVal($value, "position");
-
-		$x = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $x);
-		$y = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $y);
-		$blur = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $blur);
-		$spread = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $spread);
-
-		$css = "";
-
-		if($x !== "" && $y !== "" && $blur !== "" && $spread !== "" && $color !== "" && $position !== ""){
-			$selectorValue = HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_BOXSHADOW);
-
-			$css = $this->processCSSSelectorReplaces($selectorValue, array(
-				"{{x}}" => $x,
-				"{{y}}" => $y,
-				"{{blur}}" => $blur,
-				"{{spread}}" => $spread,
-				"{{color}}" => $color,
-				"{{position}}" => $position,
-			));
-		}
-
-		$selector = $this->combineCSSSelectors($selectors);
-		$style = $this->prepareCSSSelectorStyle($selector, $css);
-
-		return $style;
-	}
-    */
-
     /**
      * process css selector of css filters param
      */
@@ -1372,42 +1115,6 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
         return $style;
     }
 
-    /*
-	private function processParamCSSSelector_cssFilters($param, $selectors){
-
-		$value = UniteFunctionsUC::getVal($param, "value");
-		$blur = UniteFunctionsUC::getVal($value, "blur");
-		$brightness = UniteFunctionsUC::getVal($value, "brightness");
-		$contrast = UniteFunctionsUC::getVal($value, "contrast");
-		$saturation = UniteFunctionsUC::getVal($value, "saturation");
-		$hue = UniteFunctionsUC::getVal($value, "hue");
-
-		$blur = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $blur);
-		$brightness = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $brightness);
-		$contrast = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $contrast);
-		$saturation = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $saturation);
-		$hue = $this->prepareCSSSelectorSliderCSS(self::SELECTOR_VALUE_PLACEHOLDER, $hue);
-
-		$css = "";
-
-		if($blur !== "" && $brightness !== "" && $contrast !== "" && $saturation !== "" && $hue !== ""){
-			$selectorValue = HelperHtmlUC::getCSSSelectorValueByParam(UniteCreatorDialogParam::PARAM_CSS_FILTERS);
-
-			$css = $this->processCSSSelectorReplaces($selectorValue, array(
-				"{{blur}}" => $blur,
-				"{{brightness}}" => $brightness,
-				"{{contrast}}" => $contrast,
-				"{{saturate}}" => $saturation,
-				"{{hue}}" => $hue,
-			));
-		}
-
-		$selector = $this->combineCSSSelectors($selectors);
-		$style = $this->prepareCSSSelectorStyle($selector, $css);
-
-		return $style;
-	}
-    */
 
     /**
      * process css selector based on value
@@ -1479,49 +1186,6 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 
         return $style;
     }
-
-	/*
-	private function processParamCSSSelector_value($param, $selectors){
-
-		$values = array(
-			"desktop" => UniteFunctionsUC::getVal($param, "value"),
-			"tablet" => UniteFunctionsUC::getVal($param, "value_tablet"),
-			"mobile" => UniteFunctionsUC::getVal($param, "value_mobile"),
-		);
-
-		$options = UniteFunctionsUC::getVal($param, "options");
-
-		if(empty($options) === false){
-			// fix: flip options back, due to a bug with the filter
-			// (see UniteCreatorParamsProcessorWork->checkModifyParamOptions)
-			$phpFilter = UniteFunctionsUC::getVal($param, "php_filter_name");
-
-			if(empty($phpFilter) === false)
-				$options = array_flip($options);
-
-			// check if the value exists in the options
-			foreach($values as $device => $value){
-				if(in_array($value, $options) === false)
-					unset($values[$device]);
-			}
-		}
-
-		$style = "";
-
-		foreach($values as $device => $value){
-			if(empty($value) === true)
-				continue;
-
-			foreach($selectors as $selector => $selectorValue){
-				$css = $this->prepareCSSSelectorValueCSS($selectorValue, $value);
-				$style .= $this->prepareCSSSelectorStyle($selector, $css, $device);
-			}
-		}
-
-		return $style;
-	}
-    */
-
 
 
 	/**
@@ -1874,13 +1538,11 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 
             $unit = !empty($padding['unit']) ? $padding['unit'] : 'px';
 
-            if(!empty($padding['is_linked']) && $padding['is_linked'] && $padding['top'] !== '' && $padding['top'] !== null) {
-                $val = (string)$padding['top'];
-                if ($val !== '' && $val !== null && $val !== false) {
-                    $val = trim((string)$val);
-                    if ($val !== '') {
-                        $advanced_styles .= 'padding: ' . $val . $unit . '; ';
-                    }
+            if (!empty($padding['is_linked']) && !empty($padding['top'])) {
+                $val = trim((string)$padding['top']);
+
+                if ($val !== '') {
+                    $advanced_styles .= 'padding: ' . $val . $unit . '; ';
                 }
             } else {
                 foreach($sides as $side) {
@@ -3168,7 +2830,7 @@ $css
 				$rootId = UniteFunctionsUC::getVal($params, "root_id");
 
 				if(empty($rootId) === true)
-					$rootId = $this->getWidgetID();
+					$rootId = $id; // $rootId = $this->getWidgetID();
 				
                 $currentHideDebug = GlobalsUC::$hideDebug;
 				GlobalsUC::$hideDebug = true;

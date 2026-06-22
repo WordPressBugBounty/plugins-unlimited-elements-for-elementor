@@ -4551,7 +4551,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		}
 	
 		// Register and enqueue dummy script
-		wp_register_script($handle, '', array(), null, true);
+		wp_register_script($handle, '', ["jquery"]);
 		wp_add_inline_script($handle, $script);
 		wp_enqueue_script($handle);
 	

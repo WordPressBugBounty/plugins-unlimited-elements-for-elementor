@@ -1128,6 +1128,19 @@ function UniteSettingsUC(){
 	};
 
 	/**
+	 * run initial control visibility for all parent settings after init() so that show/hide rules based on initial values are applied.
+	 */
+	this.runInitialControls = function() {
+		if (!g_arrControls) return;
+		var parents = Object.keys(g_arrControls);
+		parents.forEach(function(parentID) {
+			var objInput = t.getInputByName(parentID);
+			if (!objInput || objInput.length === 0) return;
+			processControlSettingChange(objInput);
+		});
+	};
+
+	/**
 	 * set on change event
 	 */
 	this.setEventOnChange = function (handler) {
@@ -1263,14 +1276,27 @@ function UniteSettingsUC(){
 
         if (template.length) {
             try {
-                objControls = JSON.parse(template.html().trim());
+                var raw = "";
+                if (
+                    template[0].tagName &&
+                    template[0].tagName.toLowerCase() === "template" &&
+                    template[0].content &&
+                    typeof template[0].content.textContent === "string"
+                ) {
+                    raw = template[0].content.textContent;
+                } else {
+                    raw = template.html() || "";
+                }
+                raw = jQuery.trim(raw);
+                if (raw) {
+                    objControls = JSON.parse(raw);
+                }
             } catch (e) {
                 console.warn("Controls JSON parse error:", e);
             }
         }
 
-        if (!objControls)
-            return; 
+        if (!objControls) return;
 
         g_arrControls = objControls.parents;
 
@@ -1497,6 +1523,18 @@ function UniteSettingsUC(){
         const $mp3Settings = g_objParent.find(".unite-setting-mp3");
         t.initMp3Chooser($mp3Settings);
 
+        // Initialize repeaters synchronously first to avoid batch processing delay
+        $inputs.each(function() {
+            const $input = jQuery(this);
+            if (getInputType($input) === 'repeater') {
+                try {
+                    initInputOnce($input, t.onSettingChange);
+                } catch (e) {
+                    console.error("Init repeater error:", $input, e);
+                }
+            }
+        });
+
         let index = 0;
         const total = $inputs.length;
         const batchSize = 100;
@@ -1509,9 +1547,7 @@ function UniteSettingsUC(){
                 try {
 
                     let type = getInputType($input);
-                    if(type == 'repeater') {
-                        initInputOnce($input, t.onSettingChange);
-                    } else {
+                    if(type !== 'repeater') {
                         initInputOnDisplay($input, t.onSettingChange);
                     }
                     
@@ -4665,6 +4701,8 @@ function UniteSettingsUC(){
 	function getControlAction(parent, control) {
 		if(typeof parent.value == 'undefined') {
 			let objInput = t.getInputByName(parent.id);
+
+			if (objInput === null) return null;
 			parent.value = getSettingInputValue(objInput);
 		}
 		var isEqual = isInputValuesEqual(parent.value, control.value);

@@ -2831,15 +2831,24 @@ class UniteFunctionsUC{
         // Remove all event handlers that start with 'javascript:'
         $html = preg_replace('/\s*on\w+\s*=\s*["\']?\s*javascript\s*:[^"\'>]*["\']?/i', '', $html);
 
-		// Remove all event handlers, even if malformed (e.g., <iframe/onload=...>)
-        $html = preg_replace('/\s*\/?on\w+\s*=\s*["\']?[^"\'>]*["\']?/i', '', $html);
+		// Remove event handlers (incl. chained/malformed: onerror/onload="", onerror/**/=, etc.)
+		$eventHandlerPattern = '/\s*\/?on\w+(?:\s*\/\s*on\w+)*[^>]*?=\s*["\']?[^"\'>]*["\']?/i';
+		$prevHtml = null;
+		$maxPasses = 10;
+		while($html !== $prevHtml && $maxPasses-- > 0){
+			$prevHtml = $html;
+			$html = preg_replace($eventHandlerPattern, '', $html);
+		}
+
+		// Remove leftover JS call debris from collapsed malformed handlers (e.g. <img src="x"=alert(1)>)
+		$html = preg_replace('/=\s*(?:alert|confirm|prompt|eval)\s*\(\s*[^)]*\s*\)/i', '', $html);
         
         // Remove javascript: URLs in href/src/xlink:href/etc.
         $html = preg_replace('/\s*(href|src|xlink:href)\s*=\s*["\']?\s*javascript\s*:[^"\'>]*["\']?/i', '', $html);
 
         // Remove potentially harmful attributes
-        $html = preg_replace('/\s*(autofocus|formaction|fscommand|seekSegmentTime|xmlns)\s*=\s*["\'][^"\']*["\']?/i', '', $html);
-        
+        $html = preg_replace('/\s*(autofocus|formaction|fscommand|seekSegmentTime|xmlns)\s*=\s*["\'][^"\']*["\']?/i', '', $html);		
+
         return trim($html);		
 	}
 
@@ -4558,30 +4567,65 @@ class UniteFunctionsUC{
 	/**
      * HTML-minifyer
     */
-	public static function minifyHTML($html) {
-		// skip <pre>, <code>, <textarea>
-		preg_match_all('#<(pre|code|textarea)\b[^>]*>.*?</\1>#si', $html, $matches);
-		$placeholders = [];
-		foreach ($matches[0] as $i => $block) {
-			$placeholder = "___HTML_BLOCK_" . $i . "___";
-			$placeholders[$placeholder] = $block;
-			$html = str_replace($block, $placeholder, $html);
-		}
+    public static function minifyHTML($html) {
+        if (empty($html)) return $html;
 
-		// minifying
-		$html = preg_replace('/\>[^\S ]+/s', '>', $html);
-		$html = preg_replace('/[^\S ]+\</s', '<', $html);
-		$html = preg_replace('/(\s)+/s', ' ', $html);
-		$html = preg_replace('/[\r\n\t]+/s', '', $html);
-		$html = trim($html);
+        $blocks = [];
 
-		// return textarea
-		foreach ($placeholders as $placeholder => $block) {
-			$html = str_replace($placeholder, $block, $html);
-		}
+        $html = preg_replace_callback('/<(script|style)[^>]*>.*?<\/\\1>/is', function($match) use (&$blocks) {
+            $id = "@@@UELM_BLOCK_" . count($blocks) . "@@@";
+            $blocks[$id] = $match[0];
+            return $id;
+        }, $html);
 
-		return $html;
-	}
-	
+        $html = preg_replace('/\s+/', ' ', $html);
+        
+        $html = str_replace('> <', '><', $html);
+
+        foreach ($blocks as $id => $content) {
+            if (strpos($content, '<script') === 0) {
+                $minified = self::processJS($content);
+            } elseif (strpos($content, '<style') === 0) {
+                $minified = self::processCSS($content);
+            } else {
+                $minified = $content;
+            }
+            
+            $html = str_replace($id, $minified, $html);
+        }
+
+        return trim($html);
+    }
+
+    private static function processJS($scriptTag) {
+        if (preg_match('/^(<script[^>]*>)(.*?)(<\/script>)$/is', $scriptTag, $m)) {
+            $header = $m[1];
+            $code = $m[2];
+            $footer = $m[3];
+
+            if(class_exists("JShrink\\Minifier") == false)
+                return $scriptTag;
+
+            try {
+                $minifiedCode = \JShrink\Minifier::minify($code);
+                return $header . $minifiedCode . $footer;
+            } catch (\Throwable $e) {
+                return $scriptTag;
+            }
+        }
+        return $scriptTag;
+    }
+
+    private static function processCSS($styleTag) {
+        if (preg_match('/^(<style[^>]*>)(.*?)(<\/style>)$/is', $styleTag, $m)) {
+            $css = $m[2];
+            $css = preg_replace('!/\*.*?\*/!s', '', $css); 
+            $css = preg_replace('/\s*([\{\};:,])\s*/', '$1', $css); 
+            $css = str_replace(';}', '}', $css); 
+            $css = preg_replace('/\s+/', ' ', $css);
+            return $m[1] . trim($css) . $m[3];
+        }
+        return $styleTag;
+    }
 
 }

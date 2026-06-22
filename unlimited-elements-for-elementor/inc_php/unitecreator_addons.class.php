@@ -558,7 +558,7 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 		$outputId = $objOutput->getWidgetID();
 
 		$arr = array();
-		$arr["html"] = $html;
+		$arr["html"] = UniteFunctionsUC::minifyHTML($html);
 		$arr["includes"] = $includes;
 
 		if($includeSelectors === true)
@@ -687,6 +687,23 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 		$html = UniteFunctionsUC::minifyHTML($html);
 		
 		return ($html);
+	}
+
+	/**
+	 * get addon settings as json-serializable array
+	 * analog of getAddonSettingsHTMLFromData
+	 */
+	public function getAddonSettingsJSONFromData($data){
+
+		$this->checkInitAddonGlobalVars($data);
+
+		$objAddon = $this->initAddonByData($data);
+
+		GlobalsProviderUC::$activeAddonForSettings = $objAddon;
+
+		$json = $objAddon->getJsonConfig();
+
+		return ($json);
 	}
 
 	/**

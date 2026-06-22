@@ -123,10 +123,12 @@ class UniteProviderFrontUC{
 		if($isSingle == true){
 			
 			HelperProviderUC::showCurrentPostObjectDebug();
-				
+			
 			HelperProviderUC::showCurrentPostMetaDebug();
 			
 			HelperProviderUC::showCurrentPostTermsDebug();
+			
+			HelperProviderUC::showElementorDataDebug();
 
 			return(false);
 		}

@@ -2098,6 +2098,22 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 	private function a______DRAW_GENERAL_____(){}
 
 	/**
+	 * get config data for JSON response (controls + render options).
+	 * Evaluates conditions first (same as prepareToDraw) so that settings
+	 * with unmet conditions will have hidden:true set before getArrSettings() is called.
+	 */
+	public function getConfigDataForJson(){
+
+		$this->prepareToDraw();
+
+		$controls = $this->getControlsForJS();
+		$options  = $this->getOptions();
+
+		return array('controls' => $controls, 'options' => $options);
+	}
+
+
+	/**
 	 * get controls for client side
 	 * eliminate only one setting in children
 	 */

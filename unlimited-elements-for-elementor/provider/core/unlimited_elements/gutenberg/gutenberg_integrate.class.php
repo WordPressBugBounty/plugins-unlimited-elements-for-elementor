@@ -341,10 +341,19 @@ class UniteCreatorGutenbergIntegrate{
 	 * @return array
 	 */
 	public function getPostBlocks($postId = null){
-
+		if(empty($post))
+			return(array());
+			
 		$post = get_post($postId);
+		
+		if(isset($post->post_content) == false)
+			return(false);
+		
 		$blocks = parse_blocks($post->post_content);
-
+		
+		if(empty($blocks))
+			return(array());
+		
 		return $blocks;
 	}
 
@@ -388,6 +397,18 @@ class UniteCreatorGutenbergIntegrate{
 
 			$blockAttributes = UniteFunctionsUC::getVal($block, 'attrs');
 			$blockRootId = UniteFunctionsUC::getVal($blockAttributes, '_rootId');
+
+			if(empty($blockRootId)){
+				$dataJson = UniteFunctionsUC::getVal($blockAttributes, 'data');
+				if(!empty($dataJson)){
+					$dataArr = json_decode($dataJson, true);
+					if(is_array($dataArr)){
+						$advCssId = UniteFunctionsUC::getVal($dataArr, 'advanced_css_id');
+						if(!empty($advCssId))
+							$blockRootId = preg_replace('/[^A-Za-z0-9\-_]/', '-', $advCssId);
+					}
+				}
+			}
 
 			if($rootId === $blockRootId)
 				return $block;

@@ -1,8 +1,19 @@
 
+
+version 2.0.11:
+
+* Fix - checkbox filter logic or/end fix
+* Fix - fixed some gallery item output issues
+* fix - fixed some small security issues 
+* Change - chaned to the new google places api
+* Change - removed the mootools library from the plugin at all. it's legacy
+* Change - make some adjustment to sync with the blocks version
+* Change - updated owl carousel js script with some enhancements
+
+
 version 2.0.10:
 
 * Fix - fixed the pro version missing files
-
 
 version 2.0.9:
 

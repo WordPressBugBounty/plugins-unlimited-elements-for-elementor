@@ -65,6 +65,10 @@ class UniteCreatorLibraryWork{
 			$attribs = $objInclude->attributes();
 			
 			$handle = (string)UniteFunctionsUC::getVal($attribs, "handle");
+			
+			if($handle == "mootools")
+				continue;
+			
 			$local = (string)UniteFunctionsUC::getVal($attribs, "local");
 			$remote = (string)UniteFunctionsUC::getVal($attribs, "remote");
 			$condition = (string)UniteFunctionsUC::getVal($attribs, "condition");

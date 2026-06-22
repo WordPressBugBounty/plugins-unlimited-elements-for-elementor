@@ -6,6 +6,13 @@
 class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 	
 	private $isSerp = false;
+
+	/**
+	 * When true, use Places API (New) instead of legacy Place Details.
+	 *
+	 * @var bool
+	 */
+	private $usePlacesApiNew = true;
 	
 	/**
 	 * Get the place details.
@@ -18,42 +25,76 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 	public function getDetails($placeId, $params = array(),$showDebug = false){
 		
 		$this->isSerp = false;
-		
-		$params["place_id"] = $placeId;
-		
+
 		$lang = UniteFunctionsUC::getVal($params, "lang");
-		
+
+		if($this->usePlacesApiNew === true){
+
+			$queryParams = array();
+
+			if(!empty($lang))
+				$queryParams["languageCode"] = $lang;
+
+			$fieldMask = "reviews,rating,userRatingCount,displayName,formattedAddress,reviews.authorAttribution,reviews.text,reviews.originalText,reviews.rating,reviews.relativePublishTimeDescription,reviews.publishTime,reviews.googleMapsUri";
+			$endpoint = "/places/" . $placeId;
+
+			$response = $this->getPlacesNew($endpoint, $queryParams, $fieldMask);
+			
+			if($showDebug == true){
+
+				HelperHtmlUC::putHtmlDataDebugBox_start();
+
+				dmp("Places API (New) Request Debug");
+
+				dmp("Endpoint");
+				dmp($endpoint);
+
+				dmp("Query Params");
+				dmp($queryParams);
+
+				dmp("Field Mask");
+				dmp($fieldMask);
+
+				$dataShow = UniteFunctionsUC::modifyDataArrayForShow($response);
+
+				dmp("Response Data");
+				dmp($dataShow);
+
+				HelperHtmlUC::putHtmlDataDebugBox_end();
+			}
+
+			return UEGoogleAPIPlace::transformNew($response);
+		}
+
+		$params["place_id"] = $placeId;
+
 		if(!empty($lang))
 			$params["language"] = $lang;
 		else
 			$params["reviews_no_translations"] = true;
-					
+
 		$response = $this->get("/details/json", $params);
 
-		//debug
 		if($showDebug == true){
-			
+
 			HelperHtmlUC::putHtmlDataDebugBox_start();
-						
+
 			dmp("Official API Request Debug");
-			
+
 			$paramsForDebug = $params;
-			
+
 			dmp("Send Params");
 			dmp($paramsForDebug);
-			
+
 			$dataShow = UniteFunctionsUC::modifyDataArrayForShow($response);
-			
+
 			dmp("Response Data");
 			dmp($dataShow);
-			
+
 			HelperHtmlUC::putHtmlDataDebugBox_end();
 		}
-		
-		$response = UEGoogleAPIPlace::transform($response["result"]);
-		
-		
-		return $response;
+
+		return UEGoogleAPIPlace::transform($response["result"]);
 	}
 	
 	/**

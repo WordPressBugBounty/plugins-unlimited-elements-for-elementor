@@ -4,6 +4,8 @@ abstract class UEGoogleAPIClient{
 
 	const PARAM_QUERY = "__query__";
 
+	const PLACES_API_NEW_BASE_URL = "https://places.googleapis.com/v1";
+
 	private $accessToken;
 	private $apiKey;
 	private $cacheTime = 0; // in seconds
@@ -66,6 +68,23 @@ abstract class UEGoogleAPIClient{
 	}
 
 	/**
+	 * Make a GET request to Places API (New).
+	 *
+	 * @link https://developers.google.com/maps/documentation/places/web-service/place-details
+	 *
+	 * @param string $endpoint e.g. "/places/ChIJ..."
+	 * @param array $params Query parameters (e.g. languageCode).
+	 * @param string $fieldMask Comma-separated value for the X-Goog-FieldMask header.
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	protected function getPlacesNew($endpoint, $params = array(), $fieldMask = ""){
+
+		return $this->requestPlacesNew(UEHttpRequest::METHOD_GET, $endpoint, $params, $fieldMask);
+	}
+
+	/**
 	 * Make a PUT request to the API.
 	 *
 	 * @param $endpoint
@@ -99,29 +118,38 @@ abstract class UEGoogleAPIClient{
 	 * @param string $method
 	 * @param string $endpoint
 	 * @param array $params
+	 * @param array $options Optional: base_url, auth_headers (bool), headers (array).
 	 *
 	 * @return array
 	 * @throws Exception
 	 */
-	private function request($method, $endpoint, $params = array()){
+	private function request($method, $endpoint, $params = array(), $options = array()){
 
-		$url = $this->getBaseUrl() . $endpoint;
+		$baseUrl = UniteFunctionsUC::getVal($options, "base_url");
+		if(empty($baseUrl))
+			$baseUrl = $this->getBaseUrl();
+
+		$url = $baseUrl . $endpoint;
 		$query = ($method === UEHttpRequest::METHOD_GET) ? $params : array();
-			$body = ($method !== UEHttpRequest::METHOD_GET) ? $params : array();
+		$body = ($method !== UEHttpRequest::METHOD_GET) ? $params : array();
 
 		if(empty($params[self::PARAM_QUERY]) === false){
 			$query = array_merge($query, $params[self::PARAM_QUERY]);
 
 			unset($params[self::PARAM_QUERY]);
 		}
-		
-		$query = array_merge($query, $this->getAuthParams());
 
-		$headers = array();
-		
+		$useAuthHeaders = UniteFunctionsUC::getVal($options, "auth_headers", false);
+		$headers = UniteFunctionsUC::getVal($options, "headers", array());
+
+		if($useAuthHeaders === true)
+			$headers = array_merge($headers, $this->getAuthHeaders());
+		else
+			$query = array_merge($query, $this->getAuthParams());
+
 		$request = UEHttp::make();
-		
-		if(!empty($headers))
+
+		if(empty($headers) === false)
 			$request->withHeaders($headers);
 				
 		$request->asJson();
@@ -155,6 +183,48 @@ abstract class UEGoogleAPIClient{
 		$data = $response->json();
 
 		return $data;
+	}
+
+	/**
+	 * Make a request to Places API (New).
+	 *
+	 * @param string $method
+	 * @param string $endpoint
+	 * @param array $params
+	 * @param string $fieldMask
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	private function requestPlacesNew($method, $endpoint, $params = array(), $fieldMask = ""){
+
+		$headers = array();
+
+		if(empty($fieldMask) === false)
+			$headers["X-Goog-FieldMask"] = $fieldMask;
+
+		return $this->request($method, $endpoint, $params, array(
+			"base_url" => self::PLACES_API_NEW_BASE_URL,
+			"auth_headers" => true,
+			"headers" => $headers,
+		));
+	}
+
+	/**
+	 * Get authorization headers for Places API (New).
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	private function getAuthHeaders(){
+
+		if(empty($this->accessToken) === false)
+			return array("Authorization" => "Bearer " . $this->accessToken);
+
+		if(empty($this->apiKey) === false)
+			return array("X-Goog-Api-Key" => $this->apiKey);
+
+		$this->throwError("Either an access token or an API key must be specified.");
 	}
 
 	/**

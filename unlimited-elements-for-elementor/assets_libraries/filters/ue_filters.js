@@ -3361,19 +3361,20 @@ function UEDynamicFilters(){
 					//add terms
 					
 					var dataTerms = getVal(filterData,"terms");
-					
+										
 					if(dataTerms && dataTerms.length){	
 
 						var isOperatoeAdded = false;
 
 						if(filterRole == "main"){
+							
 							var operator = getVal(filterData,"operator");
 										
 							if(operator === "and" || operator === "or"){									
 								var objOperatorTerm = getObjOperatorTerm(operator, dataTerms);
-
+						
 								dataTerms.push(objOperatorTerm);	
-						    isOperatoeAdded = true;
+								isOperatoeAdded = true;
 							}
 						}
 
@@ -3396,6 +3397,7 @@ function UEDynamicFilters(){
 							
 							arrTerms.push(dataTerms);	//multiple (grouping)
 						}
+						
 						
 						//set selected terms string if init mode
 						

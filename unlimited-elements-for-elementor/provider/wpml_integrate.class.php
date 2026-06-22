@@ -256,7 +256,6 @@ class UniteCreatorWpmlIntegrate{
 		if(empty($arrAddonsRecords))
 			return(false);
 		
-		
 		foreach($arrAddonsRecords as $record){
 			
 			$addon = new UniteCreatorAddon();

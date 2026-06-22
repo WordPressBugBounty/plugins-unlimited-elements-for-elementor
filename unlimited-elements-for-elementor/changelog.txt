@@ -2,12 +2,12 @@
 
 == Changelog ==
 
-version 2.0.10 - 2026-05-14 =
+
+= 2.0.10 - 2026-05-14 =
 
 * Fix - fixed the pro version missing files
 
-
-version 2.0.9 - 2026-05-13 =
+= 2.0.9 - 2026-05-13 =
 
 Plugin Changes:
 
@@ -43,7 +43,7 @@ Widgets Changes:
 * Fix: Video Carousel (Free) - Resolved a scope issue with the "Outside Click" feature where the "Stop Video" functionality would only trigger for the final instance on pages containing multiple Video Carousel widgets.
 * Fix: Sorting Filter (Pro) - Resolved a bug where the "Ascending" text option failed to populate within the select element, ensuring all sorting parameters are correctly visible and selectable.
 
-version 2.0.8 - 2026-04-23 =
+= 2.0.8 - 2026-04-23 =
 
 * Fix: fixed some more security issues with addons search
 * Fix: fixed the time ago string, use it from date and not from modified date of the post

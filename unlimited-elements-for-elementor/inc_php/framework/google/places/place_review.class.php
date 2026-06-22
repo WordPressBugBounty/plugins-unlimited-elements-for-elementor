@@ -11,6 +11,106 @@ class UEGoogleAPIPlaceReview extends UEGoogleAPIModel{
 		
 		$this->isSerp = true;
 	}
+
+	/**
+	 * Transform list of Places API (New) reviews into normalized attributes.
+	 *
+	 * @param array $items
+	 *
+	 * @return array
+	 */
+	public static function transformAllNew($items){
+
+		$data = array();
+
+		foreach($items as $attributes){
+			$data[] = self::normalizeNew($attributes);
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Transform Places API (New) review fields into legacy-compatible attributes.
+	 *
+	 * @param array $attributes
+	 *
+	 * @return UEGoogleAPIPlaceReview
+	 */
+	public static function transformNew($attributes){
+
+		return self::transform(self::normalizeNew($attributes));
+	}
+
+	/**
+	 * Normalize Places API (New) review fields.
+	 *
+	 * @param array $attributes
+	 *
+	 * @return array
+	 */
+	private static function normalizeNew($attributes){
+
+		$authorAttribution = UniteFunctionsUC::getVal($attributes, "authorAttribution", array());
+
+		return array(
+			"author_name" => UniteFunctionsUC::getVal($authorAttribution, "displayName"),
+			"profile_photo_url" => UniteFunctionsUC::getVal($authorAttribution, "photoUri"),
+			"author_uri" => UniteFunctionsUC::getVal($authorAttribution, "uri"),
+			"text" => self::getLocalizedTextValue($attributes, "text"),
+			"original_text" => self::getLocalizedTextValue($attributes, "originalText"),
+			"rating" => UniteFunctionsUC::getVal($attributes, "rating"),
+			"relative_time_description" => UniteFunctionsUC::getVal($attributes, "relativePublishTimeDescription"),
+			"time" => self::getPublishTimeValue($attributes),
+			"review_name" => UniteFunctionsUC::getVal($attributes, "name"),
+			"google_maps_uri" => UniteFunctionsUC::getVal($attributes, "googleMapsUri"),
+			"flag_content_uri" => UniteFunctionsUC::getVal($attributes, "flagContentUri"),
+			"authorAttribution" => $authorAttribution,
+		);
+	}
+
+	/**
+	 * Get plain text from a Places API (New) LocalizedText field.
+	 *
+	 * @param array $attributes
+	 * @param string $key
+	 *
+	 * @return string
+	 */
+	private static function getLocalizedTextValue($attributes, $key){
+
+		$value = UniteFunctionsUC::getVal($attributes, $key);
+
+		if(is_array($value))
+			return UniteFunctionsUC::getVal($value, "text", "");
+
+		if($value === null)
+			return "";
+
+		return (string)$value;
+	}
+
+	/**
+	 * Get unix timestamp from Places API (New) publishTime.
+	 *
+	 * @param array $attributes
+	 *
+	 * @return int
+	 */
+	private static function getPublishTimeValue($attributes){
+
+		$publishTime = UniteFunctionsUC::getVal($attributes, "publishTime");
+
+		if(empty($publishTime))
+			return 0;
+
+		$timestamp = strtotime($publishTime);
+
+		if($timestamp === false)
+			return 0;
+
+		return $timestamp;
+	}
 	
 	
 	/**
@@ -39,6 +139,28 @@ class UEGoogleAPIPlaceReview extends UEGoogleAPIModel{
 			$name = "snippet";
 		
 		$text = $this->getAttribute($name);
+
+		// Places API (New) returns "text" as a structured object / array.
+		// Try to normalize it into a plain string before formatting.
+		if(is_array($text)){
+
+			// Common shapes:
+			// - [ 'text' => '...' ]
+			// - [ 'originalText' => [ 'text' => '...' ] ]
+			if(array_key_exists("text", $text)){
+				$text = $text["text"];
+			}elseif(isset($text["originalText"]["text"])){
+				$text = $text["originalText"]["text"];
+			}else{
+				$first = reset($text);
+				$text = is_array($first) ? "" : $first;
+			}
+		}
+
+		if($text === null)
+			$text = "";
+		else
+			$text = (string)$text;
 		
 		if($asHtml === true)
 			$text = nl2br($text);

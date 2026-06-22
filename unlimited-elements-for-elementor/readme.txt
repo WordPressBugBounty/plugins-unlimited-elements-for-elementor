@@ -3,7 +3,7 @@ Contributors: unitecms, valiano, iritmega, amitkeren, axmusic, freemius
 Donate link: http://unlimited-elements.com/
 Tags: elementor, elementor addons, elementor templates, elementor widgets, widgets for elementor
 Requires at least: 3.5
-Tested up to: 6.8.2
+Tested up to: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Stable tag: 1.0.2
@@ -942,12 +942,40 @@ The choice depends on your design preferences. If you want complete control, go 
 == Changelog ==
 
 
-version 2.0.10 - 2026-05-14 =
+= 2.0.11 - 2026-06-22 =
 
-* Fix - fixed the pro version missing files
+Plugin Changes:
+
+* Fix - checkbox filter logic or/end fix
+* Fix - fixed some gallery item output issues
+* fix - fixed some small security issues 
+* fix - fixed wpml visibility issues
+* Change - chaned to the new google places api
+* Change - removed the mootools library from the plugin at all. it's legacy
+* Change - make some adjustment to sync with the blocks version
+* Change - updated owl carousel js script with some enhancements
+
+Widgets Changes:
+
+* Feature: Rhombus Grid (Pro) - Introduced a "Corner Radius" option, giving you full control over rounding the edges of your elements to match your design's styling.
+* Feature: Hexagon Grid (Pro) - Added a Hex Radius option for Hexagon Grid items, allowing you to choose between No, Subtle, Medium, and Heavy border radius presets to smoothly round out the grid corners.
+* Feature: Conditions (Free) - Introduced a new URL Match trigger type, allowing you to automatically execute actions when the browser URL matches a specific string, trailing slug, or target anchor.
+* Feature: Typewriter Text Effect (Pro) - Introduced a "Cursor Color" option, giving you full control over the color of the typing animation cursor to ensure it aligns with your design's color palette.
+* Feature: Categorized Posts List (Free) - Introduced a Background Blur Effect option, allowing to easily add a modern glassmorphism style or frosted glass look to your elements by blurring the content behind them.
+* Feature: Woo Category Grid (Free) - Added an "Image Position" option for better control over image positioning.
+* Change: Stacking Cards (Free) - Added a troubleshooting instruction to the widget, explaining that if cards are not stacking properly, it is likely due to the theme blocking the effect with a hidden overflow setting; users are advised to ensure the sections containing the widget are set to overflow: visible.
+* Change: Date Field (Pro) - Added explanatory instructions directly within the widget options, guiding users on how to properly set up a formula to calculate the exact number of days between two dates.
+* Change: Number Field (Free) - Added a description to the "Enable Date Field in Formula" option, clarifying that it allows you to transform the calculation result into a standard date format.
+* Fix: Quantity Increment Buttons (Pro) - Resolved an issue where the "Increment buttons" failed to function properly when placed inside Loop Carousel widgets, ensuring smooth and responsive counter or quantity adjustments within looping sliders.
+* Fix: Content Tabs (Free) - Fixed missing # prefix in accordion tab anchor href generation, which caused panel IDs to be output as invalid relative URLs and triggered false-positive 404 errors in SEO crawlers.
+* Fix: Icon Carousel (Pro) - Resolved an issue where the "Icon Size" option failed to apply correctly when using custom SVG icons, ensuring full scaling control works consistently across all icon types.
+* Fix: Dynamic Post Popup (Pro) - Resolved an issue where the "Close popup after adding to cart" option failed to trigger properly on archive pages, ensuring consistent checkout behavior across all product listings.
+* Fix: Checkboxes Filter (Pro) - Resolved an issue where a child filter remained visible even when its parent term wasn't selected, ensuring proper conditional hierarchy and cleaner filter behavior.
+* Fix: Content Ticker (Pro) - Added a CSS reset rule to protect link elements within the widgets, preventing global theme styles or default browser behavior from automatically adding an unwanted text underline.
+* Fix: Post Grid (Free) - Resolved an issue where image attributes (such as alt, title, or dimensions) were missing from the fallback image, ensuring proper SEO compliance, accessibility, and layout stability.
 
 
-version 2.0.9 - 2026-05-13 =
+= 2.0.9 - 2026-05-13 =
 
 Plugin Changes:
 
@@ -983,7 +1011,7 @@ Widgets Changes:
 * Fix: Sorting Filter (Pro) - Resolved a bug where the "Ascending" text option failed to populate within the select element, ensuring all sorting parameters are correctly visible and selectable.
 
 
-version 2.0.8 - 2026-04-23 =
+= 2.0.8 - 2026-04-23 =
 
 * Fix: fixed some more security issues with addons search
 * Fix: fixed the time ago string, use it from date and not from modified date of the post

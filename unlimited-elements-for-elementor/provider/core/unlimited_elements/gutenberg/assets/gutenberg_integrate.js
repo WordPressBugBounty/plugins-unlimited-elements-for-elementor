@@ -549,6 +549,9 @@ var uelm_WidgetSettingsCacheFlags = [];
             ucSettings.init($settingsElement, { cacheValues: values });
             initedSettingsElementRef.current = elem;
 
+            // apply show/hide rules based on initial setting values
+            ucSettings.runInitialControls();
+
             ucSettings.setSelectorWrapperID(widgetId);
             ucSettings.setResponsiveType(previewDeviceType.toLowerCase());
 
@@ -663,6 +666,574 @@ var uelm_WidgetSettingsCacheFlags = [];
             }
         }
 
+        /**
+         * generate settings panel HTML from server JSON (json.settings / json.saps / json.controls / json.render_options)
+         */
+        function generateSettingsHtmlFromJson(json, isForDialog) {
+            if (isForDialog === undefined) isForDialog = false;
+
+            function expandResponsiveSettings(arr) {
+                var result = [];
+                arr.forEach(function(s) {
+                    var hasTab = s._tablet !== undefined;
+                    var hasMob = s._mobile !== undefined;
+                    if (!hasTab && !hasMob) { result.push(s); return; }
+                    var base = Object.assign({}, s);
+                    delete base._tablet;
+                    delete base._mobile;
+                    result.push(base);
+                    if (hasTab) {
+                        var t = Object.assign({}, base, s._tablet);
+                        Object.keys(s._tablet).forEach(function(k) { if (t[k] === null) delete t[k]; });
+                        result.push(t);
+                    }
+                    if (hasMob) {
+                        var m = Object.assign({}, base, s._mobile);
+                        Object.keys(s._mobile).forEach(function(k) { if (m[k] === null) delete m[k]; });
+                        result.push(m);
+                    }
+                });
+                return result;
+            }
+
+            var settings          = expandResponsiveSettings(json.settings || []);
+            var saps              = json.saps               || [];
+            var controls          = json.controls           || {};
+            var renderOptions     = json.render_options     || {};
+            var repeaterTemplates = json.repeater_templates || {};
+
+            var idPrefix    = renderOptions.id_prefix  || '';
+            var showSaps    = (renderOptions.show_saps !== false);
+            var isAccordion = ((renderOptions.saps_type || '') === 'saps_type_accordion');
+
+            var serial    = String(Date.now()).slice(-8) + String(Math.random()).slice(2, 5);
+            var wrapperID = 'uc_form_settings_addon_' + serial;
+
+            // escape HTML attribute value
+            function ea(v) {
+                return String(v == null ? '' : v)
+                    .replace(/&/g,'&amp;').replace(/"/g,'&quot;')
+                    .replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            }
+            // escape HTML text
+            function eh(v) {
+                return String(v == null ? '' : v)
+                    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            }
+
+            // build data-test / data-default / data-initval + responsive + selectors attrs
+            function defaultAttrs(s) {
+                var def = s.default_value;
+
+                var val = (s.value !== undefined) ? s.value : s.default_value;
+                if (def !== null && typeof def === 'object') def = JSON.stringify(def);
+                if (val !== null && typeof val === 'object') val = JSON.stringify(val);
+                var str = ' data-test="' + ea(def) + '" data-default="' + ea(def) + '" data-initval="' + ea(val) + '"';
+                if (s.is_responsive) {
+                    str += ' data-isresponsive="true"';
+                    str += ' data-responsivetype="' + ea(s.responsive_type || '') + '"';
+                    str += ' data-responsiveid="'   + ea(s.responsive_id   || '') + '"';
+                }
+
+                var selData = {};
+                Object.keys(s).forEach(function(k) {
+                    if (k.indexOf('selector') !== -1 && s[k]) selData[k] = s[k];
+                });
+                if (Object.keys(selData).length) {
+                    str += ' data-selectors="' + ea(JSON.stringify(selData)) + '"';
+                }
+                return str;
+            }
+
+            // render the type-specific input element(s)
+            function renderInput(s) {
+                var t    = s.type;
+
+                var id   = s.id   || (idPrefix + (s.name || ''));
+                var name = s.name || '';
+                var val  = (s.value !== undefined) ? s.value
+                         : (s.default_value !== null && s.default_value !== undefined ? s.default_value : '');
+
+                // --- color ---
+                if (t === 'color') {
+                    var v = String(val).replace('0x', '#');
+                    return '<div class="unite-color-picker-wrapper">' +
+                        '<input type="text" class="unite-color-picker"' +
+                        ' id="' + ea(id) + '" name="' + ea(name) + '" value="' + ea(v) + '"' +
+                        defaultAttrs(s) + '></input></div>';
+                }
+
+                // --- text ---
+                if (t === 'text') {
+                    var inputType = 'text';
+                    if (s.type_number) inputType = 'number';
+                    if (s.ispassword)  inputType = 'password';
+                    var units = s.units || (s.unit ? [s.unit] : []);
+                    var wrapCls  = units.length ? ' with-units' : '';
+                    var inputCls = units.length ? 'unite-input-number' : 'unite-input-regular';
+                    if(s.class) {
+                        inputCls = s.class;
+                    }
+                    var h = '<div class="unite-input-wrapper' + wrapCls + '">';
+                    h += '<input class="' + inputCls + '"';
+                    h += ' id="' + ea(id) + '" type="' + inputType + '"';
+                    h += ' name="' + ea(name) + '" value="' + ea(String(val)) + '"';
+                    h += defaultAttrs(s);
+                    if (s.placeholder) h += ' placeholder="' + ea(s.placeholder) + '"';
+                    if (s.disabled)    h += ' disabled';
+                    if (s.readonly)    h += ' readonly';
+                    h += ' /></div>';
+
+                    if(name == 'number_of_items') { 
+                        console.log('D: ');
+                        console.log(units);
+                        console.log(s);
+                    }
+                    return h;
+                }
+
+                // --- list (select) ---
+                if (t === 'list') {
+                    var items = s.items || {};
+                    // for font_family, use global fonts if items not provided
+                    if (name === 'font_family' && !s.items && typeof g_ucGoogleFonts !== 'undefined' && g_ucGoogleFonts.fonts) {
+                        items = Object.keys(g_ucGoogleFonts.fonts).reduce(function(acc, font) {
+                            acc[font] = font;
+                            return acc;
+                        }, {});
+                    }
+                    var h = '<select id="' + ea(id) + '" name="' + ea(name) + '"' + defaultAttrs(s) + '>';
+                    Object.keys(items).forEach(function(label) {
+                        var optVal = items[label];
+                        var sel = (String(optVal) === String(val)) ? ' selected' : '';
+                        h += '<option value="' + ea(optVal) + '"' + sel + '>' + eh(label) + '</option>';
+                    });
+                    h += '</select>';
+                    return h;
+                }
+
+                // --- switcher ---
+                if (t === 'switcher') {
+                    var items     = s.items || [];
+                    var itemVals  = Array.isArray(items) ? items : Object.values(items);
+                    var uncheckVal = itemVals.length > 0 ? itemVals[0] : '';
+                    var checkVal   = itemVals.length > 1 ? itemVals[1] : '1';
+                    return '<div id="' + ea(id) + '" class="unite-setting-switcher unite-setting-input-object"' +
+                        ' data-settingtype="switcher" data-name="' + ea(name) + '"' +
+                        ' data-value="' + ea(String(val)) + '"' +
+                        ' data-checkedvalue="' + ea(checkVal) + '"' +
+                        ' data-uncheckedvalue="' + ea(uncheckVal) + '"' +
+                        defaultAttrs(s) + '>' +
+                        '<div class="unite-setting-switcher-toggle"></div></div>';
+                }
+
+                // --- range ---
+                if (t === 'range') {
+                    var rawVal    = val;
+                    var min       = s.min  !== undefined ? s.min  : 0;
+                    var max       = s.max  !== undefined ? s.max  : 0;
+                    var step      = s.step !== undefined ? s.step : 1;
+                    var units     = s.units || [];
+                    var unit      = units.length ? units[0] : 'px';
+                    var showSlider = (s.show_slider !== false);
+
+                    var sCopy = Object.assign({}, s, {
+                        default_value: {size: s.default_value, unit: unit},
+                        value:         {size: rawVal,          unit: unit}
+                    });
+                    var wrapCls = 'unite-setting-range unite-setting-input-object unite-settings-exclude';
+                    if (showSlider)   wrapCls += ' with-slider';
+                    if (units.length) wrapCls += ' with-units';
+                    var h = '<div id="' + ea(id) + '" class="' + wrapCls + '"' +
+                        ' data-settingtype="range" data-name="' + ea(name) + '"' +
+                        defaultAttrs(sCopy) + '>';
+                    if (showSlider) {
+                        h += '<div class="unite-setting-range-slider t1"' +
+                            ' data-value="' + ea(rawVal) + '"' +
+                            ' data-min="' + ea(min) + '" data-max="' + ea(max) + '" data-step="' + ea(step) + '"' +
+                            '></div>';
+                    }
+                    h += '<input class="unite-setting-range-input" type="number" value="' + ea(rawVal) + '" />';
+                    if (units.length) {
+                        h += '<div class="unite-setting-range-units">';
+                        h += '<select class="unite-units-picker" data-value="' + ea(unit) + '"></select>';
+                        h += '</div>';
+                    }
+                    h += '</div>';
+                    return h;
+                }
+
+                // --- dimentions ---
+                if (t === 'dimentions') {
+                    var defVal = s.default_value;
+                    var curVal = val;
+                    if (typeof curVal === 'string') { try { curVal = JSON.parse(curVal); } catch(e) { curVal = {}; } }
+                    if (!curVal || typeof curVal !== 'object') curVal = {};
+                    if (!defVal || typeof defVal !== 'object') defVal = {};
+                    var emptyDim = {top:'',right:'',bottom:'',left:'',unit:'px',is_linked:true};
+                    curVal = Object.assign({}, emptyDim, defVal, curVal);
+
+                    var dims   = ['top','right','bottom','left'];
+                    var labels = {top:'Top',right:'Right',bottom:'Bottom',left:'Left'};
+                    var isLinked = (curVal.is_linked !== false && curVal.is_linked !== 'false');
+
+                    var h = '<div class="unite-dimentions unite-setting-input-object unite-settings-exclude"' +
+                        ' data-settingtype="dimentions" data-name="' + ea(name) + '"' +
+                        defaultAttrs(s) + '>';
+                    dims.forEach(function(key) {
+                        var fid  = id + '-' + key;
+                        var fval = curVal[key] !== undefined ? curVal[key] : '';
+                        h += '<div class="unite-dimentions-field">';
+                        h += '<input class="unite-dimentions-field-input"' +
+                            ' id="' + ea(fid) + '" type="number" name="" value="' + ea(fval) + '"' +
+                            ' data-key="' + key + '" />';
+                        h += '<label class="unite-dimentions-field-label" for="' + ea(fid) + '">' + labels[key] + '</label>';
+                        h += '</div>';
+                    });
+                    h += '<div class="unite-dimentions-units">';
+                    h += '<select class="unite-units-picker" data-value="' + ea(curVal.unit || 'px') + '"></select>';
+                    h += '</div>';
+                    h += '<div class="unite-dimentions-link unite-setting-button uc-tip' + (isLinked ? ' unite-active' : '') + '"' +
+                        ' data-key="is_linked" data-title-link="Link Values" data-title-unlink="Unlink Values">';
+                    h += '<svg class="unite-dimentions-icon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">' +
+                        '<path d="m3.5 8.5 5-5M5 3l1.672-1.672a2.829 2.829 0 0 1 4 4L9 7M3 5 1.328 6.672a2.829 2.829 0 0 0 4 4L7 9" /></svg>';
+                    h += '<svg class="unite-dimentions-icon-unlink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">' +
+                        '<path d="m5.5 2.5 1.172-1.172a2.829 2.829 0 0 1 4 4L9.5 6.5M2.5 5.5 1.328 6.672a2.829 2.829 0 0 0 4 4L6.5 9.5M3.5 8.5l1-1M7.5 4.5l1-1M.5.5l11 11" /></svg>';
+                    h += '</div>';
+                    h += '</div>';
+                    return h;
+                }
+
+                // --- button ---
+                if (t === 'button') {
+                    var href    = s.url || '#';
+                    var btnCls  = s['class'] || 'unite-button-secondary';
+                    var target  = s.newwindow ? ' target="_blank"' : '';
+                    return '<a id="' + ea(id) + '" href="' + ea(href) + '" name="' + ea(name) + '"' +
+                        target + ' class="' + ea(btnCls) + '">' + eh(String(val)) + '</a>';
+                }
+
+                // --- image ---
+                if (t === 'image') {
+                    var toImgObj = function(v) {
+                        if (v && typeof v === 'object') return Object.assign({id: null, url: ''}, v);
+                        return {id: null, url: (v && typeof v === 'string' ? v : '')};
+                    };
+                    var imgDef = toImgObj(s.default_value);
+                    var imgVal = toImgObj(s.value !== undefined ? s.value : s.default_value);
+                    var sCopyImg = Object.assign({}, s, {default_value: imgDef, value: imgVal});
+                    return '<div id="' + ea(id) + '"' +
+                        ' class="unite-setting-image unite-setting-input-object unite-settings-exclude"' +
+                        ' data-settingtype="image" data-name="' + ea(name) + '"' +
+                        ' data-urlname="" data-urlvalue="" data-sizename="" data-sizevalue="full"' +
+                        defaultAttrs(sCopyImg) + '> </div>';
+                }
+
+                // --- icon ---
+                if (t === 'icon') {
+                    var iconsType = s.icons_type || '';
+                    var iconsTypeAttr = iconsType ? ' data-icons_type="' + ea(iconsType) + '"' : '';
+                    var h = '<div class="unite-iconpicker">';
+                    h += '<div class="unite-setting-buttons-group">';
+                    h += '<div class="unite-iconpicker-button unite-setting-button uc-tip" title="None" data-action="none">';
+                    h += '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">';
+                    h += '<path d="m2.111 9.889 7.778-7.778" />';
+                    h += '<path d="M6 11.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11Z" /></svg></div>';
+                    h += '<div class="unite-iconpicker-button unite-setting-button uc-tip" title="Upload SVG" data-action="upload">';
+                    h += '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12">';
+                    h += '<path d="M2.5.5H2A1.5 1.5 0 0 0 .5 2v8A1.5 1.5 0 0 0 2 11.5h8a1.5 1.5 0 0 0 1.5-1.5V2A1.5 1.5 0 0 0 10 .5h-.5M.5 8.5h11" />';
+                    h += '<path d="M3.5 3 6 .5 8.5 3M6 6.5v-6" /></svg>';
+                    h += '<img class="unite-iconpicker-uploaded-icon" src="" alt="" /></div>';
+                    h += '<div class="unite-iconpicker-button unite-setting-button uc-tip" title="Icon Library" data-action="library">';
+                    h += '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 11">';
+                    h += '<path d="m5.5 2.5-1-2h-4v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-7h-6Z" /></svg>';
+                    h += '<div class="unite-iconpicker-library-icon"></div></div>';
+                    h += '</div>'; 
+                    h += '<div class="unite-iconpicker-error unite-setting-error"></div>';
+                    h += '<input id="' + ea(id) + '" type="hidden" name="' + ea(name) + '"';
+                    h += ' value="' + ea(String(val)) + '" class="unite-iconpicker-input"';
+                    h += defaultAttrs(s) + iconsTypeAttr + ' />';
+                    h += '</div>'; 
+                    return h;
+                }
+
+                // --- hidden ---
+                if (t === 'hidden') {
+                    return '<input type="hidden" id="' + ea(id) + '" name="' + ea(name) + '"' +
+                        ' value="' + ea(String(val)) + '"' + defaultAttrs(s) + ' />';
+                }
+
+                // --- textarea ---
+                if (t === 'textarea') {
+                    return '<textarea id="' + ea(id) + '" name="' + ea(name) + '"' +
+                        defaultAttrs(s) + '>' + eh(String(val)) + '</textarea>';
+                }
+
+                // --- editor (rendered as plain textarea; TinyMCE not available client-side) ---
+                if (t === 'editor') {
+                    return '<div class="unite-editor-setting-wrapper">' +
+                        '<textarea id="' + ea(id) + '" name="' + ea(name) + '"' +
+                        defaultAttrs(s) + '>' + eh(String(val)) + '</textarea>' +
+                        '</div>';
+                }
+
+                // --- repeater ---
+                if (t === 'repeater') {
+                    var i18n = (wp && wp.i18n && wp.i18n.__) ? wp.i18n.__ : function(v) { return v; };
+                    var itemTitle     = s.item_title          || i18n('Item',            'unlimited-elements-for-elementor');
+                    var addText       = s.add_button_text     || i18n('Add Item',        'unlimited-elements-for-elementor');
+                    var emptyText     = s.empty_text          || i18n('No items found.', 'unlimited-elements-for-elementor');
+                    var deleteText    = s.delete_button_text  || i18n('Delete',          'unlimited-elements-for-elementor');
+                    var duplicateText = s.duplicate_button_text || i18n('Duplicate',     'unlimited-elements-for-elementor');
+                    var templateHtml  = repeaterTemplates[name] || '';
+                    var itemsVal      = s.items_values;
+                    var itemsJson     = (itemsVal && itemsVal.length) ? JSON.stringify(itemsVal) : '';
+                    var h = '<div id="' + ea(id) + '" class="unite-setting-repeater unite-setting-input-object"';
+                    h += ' data-settingtype="repeater" data-name="' + ea(name) + '"';
+                    h += ' data-item-title="' + ea(itemTitle) + '"';
+                    h += ' data-text-delete="' + ea(deleteText) + '"';
+                    h += ' data-text-duplicate="' + ea(duplicateText) + '"';
+                    if (itemsJson) h += ' data-itemvalues="' + ea(itemsJson) + '"';
+                    h += '>';
+                    h += '<div class="unite-repeater-template unite-hidden">' + templateHtml + '</div>';
+                    h += '<div class="unite-repeater-empty">' + eh(emptyText) + '</div>';
+                    h += '<div class="unite-repeater-items"></div>';
+                    h += '<div class="unite-repeater-actions">';
+                    h += '<button class="unite-button-primary unite-repeater-add" type="button">' + eh(addText) + '</button>';
+                    h += '</div>';
+                    h += '</div>';
+                    return h;
+                }
+
+                // --- buttons group ---
+                if (t === 'buttons_group') {
+                    var items = s.items || {};
+                    var deselectable = (s.deselectable === true || s.deselectable === 'true') ? 'true' : 'false';
+                    var h = '<div id="' + ea(id) + '" class="unite-setting-buttons-group unite-setting-input-object unite-settings-exclude"';
+                    h += ' data-settingtype="buttons_group" data-name="' + ea(name) + '"';
+                    h += ' data-deselectable="' + deselectable + '"';
+                    h += defaultAttrs(s) + '>';
+                    Object.keys(items).forEach(function(itemVal) {
+                        var item = items[itemVal];
+                        var itemTitle = (item && item.title) ? item.title : itemVal;
+                        var itemIcon  = (item && item.icon)  ? item.icon  : '';
+                        h += '<div class="unite-setting-button uc-tip" title="' + ea(itemTitle) + '" data-value="' + ea(itemVal) + '">';
+                        h += itemIcon; // raw SVG — trusted server output
+                        h += '</div>';
+                    });
+                    h += '</div>';
+                    return h;
+                }
+
+                // --- sub-settings (typography, textshadow, textstroke, boxshadow, css_filters) ---
+                if (SUB_SETTINGS_TYPES[t]) {
+                    var resetSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"><path d="M10.606 9.008a5.5 5.5 0 1 1 .68-4.535"/><path d="M11.5.5v4l-3.969-.493"/></svg>';
+                    var editSvg  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"><path d="m9 1 2 2-7 7-3 1 1-3 7-7Z" /></svg>';
+                    var i18n_ss  = (wp && wp.i18n && wp.i18n.__) ? wp.i18n.__ : function(v) { return v; };
+                    var h = '<div id="' + ea(id) + '" class="unite-sub-settings unite-setting-input-object"';
+                    h += ' data-settingtype="' + ea(t) + '" data-name="' + ea(name) + '" data-dialog-id="' + ea(t) + '"';
+                    h += defaultAttrs(s) + '>';
+                    h += '<button class="unite-sub-settings-reset unite-setting-button uc-tip unite-hidden" type="button"';
+                    h += ' title="' + ea(i18n_ss('Reset', 'unlimited-elements-for-elementor')) + '">' + resetSvg + '</button>';
+                    h += '<button class="unite-sub-settings-edit unite-setting-button uc-tip" type="button"';
+                    h += ' title="' + ea(i18n_ss('Edit', 'unlimited-elements-for-elementor')) + '">' + editSvg + '</button>';
+                    h += '</div>';
+                    return h;
+                }
+
+                return '';
+            }
+
+            var SKIP_TYPES = {
+                items:1, font_panel:1, gallery:1,
+                tabs:1, group_selector:1, custom:1, addon:1, map:1,
+                post:1, link:1, mp3:1, checkbox:1, radio:1,
+                file:1, date_time:1, multiselect:1, boolean:1
+            };
+
+            var SUB_SETTINGS_TYPES = {
+                typography:1, textshadow:1, textstroke:1, boxshadow:1, css_filters:1
+            };
+
+            // render a single <li> setting row
+            function renderRow(s) {
+                var t    = s.type;
+
+                var id   = s.id   || (idPrefix + (s.name || ''));
+                var name = s.name || '';
+                var text = s.text || '';
+                var description = s.description || '';
+
+                // hr
+                if (t === 'hr') {
+                    var hrClass = s.hidden ? ' class="unite-setting-hidden"' : '';
+                    return '<li id="' + ea(id) + '_row"' + hrClass + '><hr id="' + ea(id) + '"></li>';
+                }
+                // static text / html
+                if (t === 'statictext' || t === 'html') {
+                    var stClass = s.hidden ? ' class="unite-setting-hidden"' : '';
+                    return '<li id="' + ea(id) + '_row"' + stClass + '>' +
+                        '<span class="unite-settings-static-text">' +
+                        (t === 'html' ? (s.text || '') : eh(text)) + '</span></li>';
+                }
+                // skip complex / unsupported types
+                if (SKIP_TYPES[t]) return '';
+
+                var labelBlock  = !!s.label_block;
+                var isResponsive = !!s.is_responsive;
+                var isHidden    = !!s.hidden;
+
+                var baseClass = 'unite-setting-row';
+                if (!labelBlock)  baseClass += ' unite-inline-setting';
+                if (isHidden)     baseClass += ' unite-setting-hidden';
+
+                var addAttr = '';
+                if (isResponsive) {
+                    addAttr += ' data-responsive-id="'   + ea(s.responsive_id   || '') + '"';
+                    addAttr += ' data-responsive-type="' + ea(s.responsive_type || 'desktop') + '"';
+                }
+
+                var hasText = !!(text) && (t !== 'button');
+
+                var h = '<li id="' + ea(id) + '_row" class="' + ea(baseClass) + '"' + addAttr;
+                h += ' data-name="' + ea(name) + '" data-type="' + ea(t) + '">';
+                h += '<div class="unite-setting-field">';
+
+                if (hasText) {
+                    h += '<div class="unite-setting-text-wrapper">';
+                    h += '<div id="' + ea(id) + '_text" class="unite-setting-text">' + eh(text) + '</div>';
+                    if (isResponsive) h += '<select class="unite-responsive-picker"></select>';
+                    h += '</div>';
+                }
+
+                h += '<div class="unite-setting-input">';
+                h += renderInput(s);
+                h += '</div>';
+                h += '</div>'; 
+
+                if (description) {
+                    h += '<div class="unite-setting-helper">' + description + '</div>';
+                }
+
+                h += '</li>';
+                return h;
+            }
+
+            // group settings by SAP index
+            var sapGroups = {};
+            settings.forEach(function(s) {
+                var idx = (s.sap !== undefined && s.sap !== null) ? s.sap : -1;
+                if (!sapGroups[idx]) sapGroups[idx] = [];
+                sapGroups[idx].push(s);
+            });
+
+            // build html
+            var html = '';
+            html += '<div id="' + ea(wrapperID) + '" autofocus="true"';
+            html += ' class="unite_settings_wrapper unite-settings-sidebar unite-settings unite-inputs">';
+
+            // only output controls template when non-empty — mirrors PHP drawWrapperStart() behavior.
+            // empty controls template causes settings.js to set g_arrControls = undefined.
+            if (controls && Object.keys(controls).length > 0) {
+                html += '<template id="' + ea(wrapperID) + '-controls" class="tpl-controls">';
+                html += JSON.stringify(controls);
+                html += '</template>';
+            }
+
+            html += '<template id="' + ea(wrapperID) + '-options" class="tpl-options">';
+            html += JSON.stringify(renderOptions);
+            html += '</template>';
+
+            // tabs navigation
+            var hasStyleTab = saps.some(function(sap) { return sap.tab === 'style'; });
+            if (hasStyleTab) {
+                var i18n   = (wp && wp.i18n && wp.i18n.__) ? wp.i18n.__ : function(s) { return s; };
+                var tLabel = i18n('Content',  'unlimited-elements-for-elementor');
+                var sLabel = i18n('Style',    'unlimited-elements-for-elementor');
+                var aLabel = i18n('Advanced', 'unlimited-elements-for-elementor');
+                html += '<div class="unite-settings-accordion-saps-tabs">';
+                html += '<a href="javascript:void(0)" class="unite-settings-tab unite-active" data-id="content">' + eh(tLabel) + '</a>';
+                html += '<a href="javascript:void(0)" class="unite-settings-tab" data-id="style">'               + eh(sLabel) + '</a>';
+                html += '<a href="javascript:void(0)" class="unite-settings-tab" data-id="advanced">'            + eh(aLabel) + '</a>';
+                html += '</div>';
+            }
+
+            var firstContentSapIdx = -1;
+            if (hasStyleTab) {
+                saps.forEach(function(sap, idx) {
+                    if (firstContentSapIdx === -1 && (sap.tab || 'content') === 'content') {
+                        firstContentSapIdx = idx;
+                    }
+                });
+            }
+
+            // if no saps defined (e.g. dialog settings), render all settings directly
+            if (saps.length === 0) {
+                var allRows = [];
+                Object.keys(sapGroups).forEach(function(k) {
+                    allRows = allRows.concat(sapGroups[k]);
+                });
+                if (allRows.length) {
+                    html += '<div class="unite-postbox-inside">';
+                    html += '<ul class="unite-list-settings">';
+                    allRows.forEach(function(s) { html += renderRow(s); });
+                    html += '</ul>';
+                    html += '</div>';
+                }
+            }
+
+            saps.forEach(function(sap, idx) {
+                var sapName = sap.name || '';
+                var sapText = sap.text || '';
+                var sapTab  = sap.tab  || 'content';
+                var sapRows = sapGroups[idx] || [];
+
+                var sapID = idPrefix + 'ucsap_' + sapName;
+
+                var isHiddenPostbox = hasStyleTab && (sapTab !== 'content');
+                var isFirstActive   = hasStyleTab && (idx === firstContentSapIdx);
+                var postboxStyle    = isHiddenPostbox ? ' style="display:none"' : '';
+                var postboxClass    = 'unite-postbox' + (isFirstActive ? ' unite-active' : '');
+
+                var insideStyle     = (hasStyleTab && !isFirstActive) ? ' style="display:none"' : '';
+
+                html += '<div id="' + ea(sapID) + '" class="' + postboxClass + '" data-tab="' + ea(sapTab) + '"' + postboxStyle + '>';
+
+                if (showSaps) {
+                    html += '<div class="unite-postbox-title">';
+                    html += '<span>' + eh(sapText) + '</span>';
+                    if (isAccordion) html += '<div class="unite-postbox-arrow"></div>';
+                    html += '</div>';
+                }
+
+                html += '<div class="unite-postbox-inside"' + insideStyle + '>';
+                html += '<ul class="unite-list-settings">';
+                sapRows.forEach(function(s) { html += renderRow(s); });
+                html += '</ul>';
+                html += '</div>'; 
+                html += '</div>'; 
+            });
+
+            // append sub-settings dialogs (typography, textshadow, etc.)
+            // prefer global (loaded once at page init); fall back to per-request json.dialog_settings
+            if (!isForDialog) {
+                var dialogSettings = (typeof g_uelm_dialogSettings !== 'undefined' && g_uelm_dialogSettings)
+                    ? g_uelm_dialogSettings
+                    : (json.dialog_settings || {});
+                Object.keys(dialogSettings).forEach(function(type) {
+                    var dialogHtml = generateSettingsHtmlFromJson(dialogSettings[type], true);
+                    html += '<div class="unite-sub-settings-dialog unite-settings-exclude" data-id="' + ea(type) + '">';
+                    html += '<div class="unite-settings">';
+                    html += dialogHtml;
+                    html += '</div>';
+                    html += '</div>';
+                });
+            }
+
+            html += '</div>';
+            return html;
+        }
+
         // AJAX: load settings HTML
         var loadSettingsContent = function () {
             var widgetCacheKey = cacheKeyBase + '_settings';
@@ -691,7 +1262,19 @@ var uelm_WidgetSettingsCacheFlags = [];
 
             g_ucAdmin.ajaxRequest("get_addon_settings_html", requestData, function (response) {
 
-                var html = g_ucAdmin.getVal(response, "html");
+                var json = g_ucAdmin.getVal(response, "json");
+                var html;
+
+                // use JSON to generate HTML client-side; fall back to server HTML if not available
+                if (json && json.settings && json.settings.length > 0) {
+                    // set global dialog settings if not already set
+                    if (typeof window.g_uelm_dialogSettings === 'undefined' && json.dialog_settings) {
+                        window.g_uelm_dialogSettings = json.dialog_settings;
+                    }
+                    html = generateSettingsHtmlFromJson(json);
+                } else {
+                    html = g_ucAdmin.getVal(response, "html");
+                }
 
                 uelm_WidgetSettingsCache[widgetCacheKey] = html;
                 uelm_WidgetSettingsCacheFlags[widgetCacheKey] = true;
@@ -807,6 +1390,12 @@ var uelm_WidgetSettingsCacheFlags = [];
 
             applyStylePreviewOnce();
         };
+
+        we.useEffect(function () {
+            if (!props.attributes._rootId) {
+                props.setAttributes({ _rootId: 'ue-' + props.clientId });
+            }
+        }, []);
 
         we.useEffect(function () {
             debug('[effect 1]');

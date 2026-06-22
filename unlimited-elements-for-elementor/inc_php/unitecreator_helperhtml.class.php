@@ -199,7 +199,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			//output elementor icons
 			$jsonElementorIcons = UniteFontManagerUC::elementor_getJsonIcons();
 			$js .= self::TAB2.'var g_ucElIcons = '.$jsonElementorIcons.';'.self::BR;
-
+			// output google fonts data (used by settings scripts)
+			$fontData = HelperUC::getFontPanelData();
+			$googleFonts = UniteFunctionsUC::getVal($fontData, "arrGoogleFonts");
+			$googleFontsBaseUrl = HelperHtmlUC::getGoogleFontBaseUrl();
+			$js .= self::TAB2.'if(typeof g_ucGoogleFonts === "undefined"){ var g_ucGoogleFonts = '.UniteFunctionsUC::jsonEncodeForClientSide(array(
+				"fonts" => $googleFonts,
+				"base_url" => $googleFontsBaseUrl,
+			)).'; }'.self::BR;
 
 			//get nonce
 			if(method_exists("UniteProviderFunctionsUC", "getNonce"))
@@ -233,7 +240,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 		/**
-		 * get version text (first changelog section, e.g. "= 2.0.7 - 2026-04-12 =" through the line before the next "= x.x.x =")
+		 * get version text (first changelog section, or first two when the first is under 200 characters)
 		 */
 		public static function getVersionText(){
 
@@ -253,7 +260,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		}
 
 		/**
-		 * Extract first version block from changelog.txt body (readme-style lines: "= 1.2.3 - date =").
+		 * Extract first version block from changelog.txt (readme-style lines: "= 1.2.3 - date =").
+		 * If that block is under 200 characters, include the following version block as well.
 		 *
 		 * @param string $content
 		 * @return string|null
@@ -275,15 +283,43 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			if($startIndex === null)
 				return null;
 
-			$sectionLines = array($lines[$startIndex]);
 			$count = count($lines);
-			for($j = $startIndex + 1; $j < $count; $j++){
-				if(preg_match($versionLinePattern, $lines[$j]))
+			$first = self::extractSingleChangelogVersionSection($lines, $count, $versionLinePattern, $startIndex);
+
+			$firstLen = function_exists("mb_strlen") ? mb_strlen($first["text"], "UTF-8") : strlen($first["text"]);
+			if($firstLen < 200 && $first["next_heading_index"] !== null){
+				$second = self::extractSingleChangelogVersionSection($lines, $count, $versionLinePattern, $first["next_heading_index"]);
+				if($second["text"] !== "")
+					return $first["text"] . "\n\n" . $second["text"];
+			}
+
+			return $first["text"];
+		}
+
+		/**
+		 * @param array $lines
+		 * @param int $lineCount
+		 * @param string $versionLinePattern
+		 * @param int $sectionStartIndex
+		 * @return array
+		 */
+		private static function extractSingleChangelogVersionSection($lines, $lineCount, $versionLinePattern, $sectionStartIndex){
+
+			$sectionLines = array($lines[$sectionStartIndex]);
+			$nextHeadingIndex = null;
+
+			for($j = $sectionStartIndex + 1; $j < $lineCount; $j++){
+				if(preg_match($versionLinePattern, $lines[$j])){
+					$nextHeadingIndex = $j;
 					break;
+				}
 				$sectionLines[] = $lines[$j];
 			}
 
-			return trim(implode("\n", $sectionLines));
+			return array(
+				"text" => trim(implode("\n", $sectionLines)),
+				"next_heading_index" => $nextHeadingIndex,
+			);
 		}
 
 		/**

@@ -2643,8 +2643,6 @@ class UniteCreatorElementorWidget extends Widget_Base {
          	$isNoSettings = true;
 
          $arrCatsAndParams = $this->sortParamsByCats($arrCats, $allParams);
-
-         //remove me
    		
          $hasPostsList = false;
 	     $postListParam = null;
