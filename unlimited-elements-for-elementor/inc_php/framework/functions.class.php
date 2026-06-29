@@ -2849,6 +2849,8 @@ class UniteFunctionsUC{
         // Remove potentially harmful attributes
         $html = preg_replace('/\s*(autofocus|formaction|fscommand|seekSegmentTime|xmlns)\s*=\s*["\'][^"\']*["\']?/i', '', $html);		
 
+		$html = wp_kses_post( $html );
+
         return trim($html);		
 	}
 
@@ -2871,7 +2873,6 @@ class UniteFunctionsUC{
     	return($str);
     }
 	
-    
 	/**
 	 * sanitize color string
 	 */

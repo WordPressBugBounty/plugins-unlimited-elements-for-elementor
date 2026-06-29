@@ -835,7 +835,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 			//strip tags but not cut
 			$introFull = UniteFunctionsUC::normalizeContentForText($introFull);
-			
+
+			$exceprt = UniteFunctionsUC::normalizeContentForText($exceprt);
 			
 			$arrData["excerpt"] = $exceprt;
 			$arrData["intro"] = $intro;
@@ -3737,7 +3738,20 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			break;
 		}
 		
-		
+		//sanitize string output before return
+		if(is_string($title) && $title !== ''){
+			
+			switch($source){
+				case "post_title":
+				case "image_title":
+				case "image_alt":
+					$title = esc_html($title);
+				break;
+				default:
+					$title = UniteFunctionsUC::normalizeContentForText($title);
+				break;
+			}
+		}
 		
 		return($title);
 	}	

@@ -162,8 +162,10 @@ class UEGoogleAPIPlaceReview extends UEGoogleAPIModel{
 		else
 			$text = (string)$text;
 		
-		if($asHtml === true)
+		if($asHtml === true){
+			$text = UniteFunctionsUC::normalizeContentForText($text);
 			$text = nl2br($text);
+		}
 
 		return $text;
 	}

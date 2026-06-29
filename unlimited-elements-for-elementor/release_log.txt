@@ -1,5 +1,12 @@
 
 
+version 2.0.12:
+
+* Fix: improved api requests. it should not cache the requests if some error response. 
+* Change: increased the limit of get selected terms option to 60 from 10 inside the editor
+* Change: streighten some security related places functions. 
+
+
 version 2.0.11:
 
 * Fix - checkbox filter logic or/end fix

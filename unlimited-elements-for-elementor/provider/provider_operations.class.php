@@ -160,7 +160,7 @@ class ProviderOperationsUC extends UCOperations{
 	 */
 	public function getTermsListForSelectFromData($data){
 
-		$limit = 10;
+		$limit = 60;
 		
 		$search = $this->getSearchFromData($data);
 		$taxonomy = UniteFunctionsUC::getVal($data, "taxonomy");
@@ -177,8 +177,6 @@ class ProviderOperationsUC extends UCOperations{
 		if(empty($taxonomy)){ 
 			
 			$taxonomy = get_taxonomies([], 'names');
-			
-
 		} 
 
 		$query["taxonomy"] = $taxonomy;
@@ -269,7 +267,7 @@ class ProviderOperationsUC extends UCOperations{
 	 */
 	public function getUsersListForSelectFromData($data){
 		
-		$limit = 50;
+		$limit = 60;
 		
 		$search = $this->getSearchFromData($data);
 

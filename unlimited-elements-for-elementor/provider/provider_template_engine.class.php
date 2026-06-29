@@ -10,26 +10,45 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 		
-	
+
 	/**
 	 * put post date
 	 */
 	public function putPostDate($postID, $dateFormat = ""){
 		
+		$postID = absint($postID);
+		if (empty($postID)) {
+			return;
+		}
+		
 		$date = get_the_date($dateFormat, $postID);
-		uelm_echo($date);
-	}
-	
+		
+		uelm_echo(esc_html($date));
+	}	
 	
 	/**
-	 * put font override
+	 * put post meta
 	 */
 	public function putPostMeta($postID, $key){
-		
+
+		$postID = absint($postID);
+		if (empty($postID)) {
+			return;
+		}
+
+		$key = sanitize_text_field($key);
+		if ($key === '') {
+			return;
+		}
+
 		$metaValue = get_post_meta($postID, $key, true);
-		uelm_echo($metaValue);
+		if (!is_string($metaValue) || $metaValue === '') {
+			return;
+		}
+
+		uelm_echo(wp_kses_post($metaValue));
 	}
-	
+
 	/**
 	 * put font override
 	 */
@@ -166,9 +185,9 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 		
 		if(is_string($value) == false)
 			return(true);
-		uelm_echo($value);
+		
+		uelm_echo(wp_kses_post($value));
 	}
-	
 	
 	
 	/**

@@ -1139,7 +1139,7 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 			//make the last imported addons list
 			self::$arrImportedAddons[$addonName] = true;
 		}else
-			$textLog .= " overwrited";
+			$textLog .= " overwritten";
 
 		$this->addLog($textLog);
 

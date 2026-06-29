@@ -100,7 +100,7 @@ class InstaObjItemUC{
 		$text = preg_replace('/#(\w+)/', '<a href="https://instagram.com/explore/tags/$1" target="_blank">#$1</a>', $text);
 		$text = preg_replace('/@(\w+)/', '<a href="https://instagram.com/$1" target="_blank">@$1</a>', $text);
 		
-		return($text);
+		return UniteFunctionsUC::normalizeContentForText($text);
 	}
 	
 	

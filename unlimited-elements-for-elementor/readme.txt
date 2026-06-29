@@ -942,6 +942,15 @@ The choice depends on your design preferences. If you want complete control, go 
 == Changelog ==
 
 
+= 2.0.12 - 2026-06-29 =
+
+Plugin Changes:
+
+* Fix: improved api requests. it should not cache the requests if some error response. 
+* Change: increased the limit of get selected terms option to 60 from 10 inside the editor
+* Change: streighten some security related places functions. 
+
+
 = 2.0.11 - 2026-06-22 =
 
 Plugin Changes:

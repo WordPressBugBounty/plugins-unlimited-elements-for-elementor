@@ -158,7 +158,7 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 		
 		$error = UniteFunctionsUC::getVal($data, "error");
 		if(!empty($error)){
-			dmp($data);
+			
 			UniteFunctionsUC::throwError($error);
 		}
 		
