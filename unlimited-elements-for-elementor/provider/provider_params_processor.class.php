@@ -3738,6 +3738,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			break;
 		}
 		
+		
 		//sanitize string output before return
 		if(is_string($title) && $title !== ''){
 			
@@ -3752,7 +3753,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				break;
 			}
 		}
-		
+
 		return($title);
 	}	
 

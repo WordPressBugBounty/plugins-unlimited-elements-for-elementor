@@ -2849,8 +2849,8 @@ class UniteFunctionsUC{
         // Remove potentially harmful attributes
         $html = preg_replace('/\s*(autofocus|formaction|fscommand|seekSegmentTime|xmlns)\s*=\s*["\'][^"\']*["\']?/i', '', $html);		
 
-		$html = wp_kses_post( $html );
-
+		//$html = wp_kses_post( $html );	//harm gallery output, will think later where to put it
+		
         return trim($html);		
 	}
 

@@ -941,6 +941,11 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+= 2.0.13 - 2026-07-01 =
+
+* Fix: fixed gallery output
+* Fix: fixed small security issue
+
 
 = 2.0.12 - 2026-06-29 =
 

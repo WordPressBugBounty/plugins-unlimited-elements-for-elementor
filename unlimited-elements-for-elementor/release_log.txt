@@ -1,4 +1,8 @@
 
+version 2.0.13:
+
+* Fix: fixed gallery output
+* Fix: fixed small security issue
 
 version 2.0.12:
 

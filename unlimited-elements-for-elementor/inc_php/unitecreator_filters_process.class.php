@@ -681,7 +681,7 @@ class UniteCreatorFiltersProcess{
 		//validation
 		if(!empty($titleStart)){
 			if(!UniteFunctionsUC::isAlphaNumeric($titleStart))
-				UniteFunctionsUC::throwError("Wrong title start: \"$titleStart\", please check the alphabit filter, should be some letter only");
+				UniteFunctionsUC::throwError("Wrong title start. please check the alphabit filter, should be some letter only");
 			
 			$arrOutput["titlestart"] = strtolower($titleStart);
 		}
