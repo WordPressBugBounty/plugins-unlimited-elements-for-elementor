@@ -1299,7 +1299,7 @@ class HelperProviderCoreUC_EL{
 	 * put dynamic loop element style if exists
 	 */
 	public static function putDynamicLoopElementStyle($element){
-
+	
 		if(empty(GlobalsUnlimitedElements::$renderingDynamicData))
 			return(false);
 
@@ -1318,6 +1318,9 @@ class HelperProviderCoreUC_EL{
 
   		if(empty($dynamicSettings))
   			return(false);
+		
+		//allow all the controls to be used for dynamic loop
+		\Elementor\Core\Frontend\Performance::set_use_style_controls(true);
 
  		$arrControls = $element->get_controls();
   		if(empty($arrControls))
@@ -1357,7 +1360,6 @@ class HelperProviderCoreUC_EL{
   			return(false);
 
   		try{
-
 
   			$settings = @$element->parse_dynamic_settings( $dynamicSettings, $arrControls);
 

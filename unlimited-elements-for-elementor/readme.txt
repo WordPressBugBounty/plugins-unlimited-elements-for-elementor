@@ -941,6 +941,37 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+= 2.0.14 - 2026-07-21 =
+
+Plugin Changes
+
+* Feature: added option: number of requests for serp api
+* Fix: fixed dynamic controls color for dynamic loop
+* Fix: fixed "and" clouser inside a filter checkbox group
+* Fix: fixed the "get_items" bug for ajax 
+* Fix: fixed the response code issue in ajax calls 
+
+
+Widgets Changes:
+
+* Feature: Post Scroll (Pro) - Added an Item Minimum Height option, allowing you to enforce a consistent minimum height across items for uniform card and grid layouts
+* Feature: Icon Accordion (Free) - Added a Trigger Type option, allowing you to choose between Click or Hover actions to control how the widget interacts with users
+* Feature: Split Hero (Free) - Added an Image Size select option, allowing you to choose from standard WordPress image sizes (e.g., Thumbnail, Medium, Large, Full) for better layout control and performance optimization
+* Feature: Unlimited Google Maps (Free) - Added a 'Cluster Icon Type' option to the marker clustering settings, allowing to choose between the default built-in cluster icon set and a custom uploaded image for full control over cluster appearance.
+* Feature: Repeater Table (Pro) - Added a "Column Width" option, allowing you to set the width in either pixels or percentage for flexible, responsive layout control.
+* Feature: Background Slider (Pro) - Added a Ken Burns Effect Direction option, allowing you to change the CSS transform-origin property to control the focal point and direction of the pan-and-zoom animation
+* Feature: Post Tile (Pro) - Added a Link Full Item option, allowing you to make the entire grid or list card clickable instead of limiting the link to just the title or button.
+* Feature: Categorized Posts List (Free) - Added a Terms Order Type option, allowing to control exactly how taxonomy terms are sorted and structured within lists or queries.
+* Fix: Dynamic Post Popup (Pro) - Resolved an issue where the "Loading text" element disappeared prematurely before the popup content had fully finished loading, ensuring a smoother and more seamless transition for users.
+* Fix: Hotspots (Free), Google Reviews (Free), Video Carousel (Free), Scroll Marquee (Free), Item Popups (Pro), Video on Hover (Free), Content Toggle (Free), Recipe (Free), Testimonial Grid (Free), Stacked Images (Pro), Icon Box Accordion (Pro), Flip Box (Free), Post Accordion (Free), Image Tooltip (Free), Post Grid (Free), Content Grid (Free), Notification (Free), Timeline Bullets (Free), How To (Free) - Resolved an issue where the "src" attribute of an image element was rendered incomplete on the page, ensuring full image URLs are output and images load correctly.
+* Fix: Categorized Posts List (Free) - Added a uc_ajax_refreshed event listener to reinitialize the accordion after AJAX content refresh, ensuring click handlers are rebound to the newly rendered DOM elements
+* Fix: Lordicon: Animated Icons (Free) - Updated CDN script URL from the deprecated lordicon-1.1.0.js to the current lordicon.js to restore compatibility with the latest Lordicon player and icon format.
+* Fix: Background Slider (Pro) - Fixed the Ken Burns effect snapping back to its original scale during slide transitions by setting all slides to the zoomed-in end state by default, so the outgoing slide remains visually stable while the incoming slide animates from its starting scale
+* Fix: Repeater Table (Pro) - Fixed an incorrect column-skipping condition in the repeater loop where field values were compared against the row index instead of the field key name, causing columns whose values matched their row index to be incorrectly excluded from the table output.
+* Fix: Fullscreen Menu (Free) - Resolved an issue where the "Menu Hamburger icon" lacked an accessibility name, improving screen reader compatibility and compliance with web accessibility standards.
+* Fix: QR Code (Pro) - Resolved an issue where QR codes failed to generate inside the widget, ensuring they now render reliably based on your input data.
+
+
 = 2.0.13 - 2026-07-01 =
 
 * Fix: fixed gallery output
@@ -987,164 +1018,6 @@ Widgets Changes:
 * Fix: Checkboxes Filter (Pro) - Resolved an issue where a child filter remained visible even when its parent term wasn't selected, ensuring proper conditional hierarchy and cleaner filter behavior.
 * Fix: Content Ticker (Pro) - Added a CSS reset rule to protect link elements within the widgets, preventing global theme styles or default browser behavior from automatically adding an unwanted text underline.
 * Fix: Post Grid (Free) - Resolved an issue where image attributes (such as alt, title, or dimensions) were missing from the fallback image, ensuring proper SEO compliance, accessibility, and layout stability.
-
-
-= 2.0.9 - 2026-05-13 =
-
-Plugin Changes:
-
-* Fix: added translation for sorting filter fields for wpml
-* Fix: fixed some filter tabs security issues
-* Fix: fixed the hard coded wpp orderby
-* Feature: added option to show demo data in google reviews to save serp api credits
-
-
-Widgets Changes:
-
-* Feature: List Marquee (Pro) - Introduced a Speed Type option for the Marquee widget, offering two distinct movement behaviors: Regular - the animation speed is determined by the content width. Under this setting, a wider Marquee will move faster to complete its full cycle within the same allocated timeframe. Pixels Per Second - the movement maintains a constant, uniform speed regardless of the content's width, ensuring a consistent visual pace across different elements.
-* Feature: Flip Box Carousel (Pro) - Introduced Image Border Radius and Image Border options, providing comprehensive control over corner rounding and border styling.
-* Feature: Remote Bullets (Free) - Added Bullet Background Color Hover option, providing granular control over the visual feedback of the Bullets when hovered by a user
-* Feature: Video on Hover (Free) - Implemented a Stop Video on Outside Click functionality, ensuring that video playback automatically terminates when a user clicks anywhere outside the widget
-* Feature: Unlimited Timeline (Free) - Introduced an Item ID option, enabling the assignment of unique identifiers to individual elements for more precise CSS styling and targeted JavaScript interactions.
-* Feature: Taxonomy Terms (Pro) - Implemented a comprehensive "Show All" button feature that grants the ability to integrate a custom global action button with fully configurable text and destination links.
-* Feature: Before After (Free) - Implemented a vertical swipe gesture support for the Before After widget when configured in horizontal mode, ensuring intuitive interaction and accessibility across all touch-enabled devices.
-* Feature: Instagram Feed (Free) - Implemented a new functionality that automatically detects video content within Instagram posts and displays it in a lightbox for an enhanced viewing experience.
-* Feature: Video Carousel (Free) - Introduced a Loop option for video content, enabling continuous playback to create a seamless, repetitive viewing experience for users.
-* Fix: Scroll Accordion (Pro) - Resolved a UI accessibility bug where buttons within cards were unreachable or unclickable in specific layouts, ensuring consistent interactivity regardless of the card's container or positioning.
-* Fix: Content Accordion (Free) - Implemented support for the Before After widget when used within Elementor templates as Accordion items,
-* Fix: Flip Box (Free) - Resolved a navigation bug where the Back Link and Back Button link elements failed to function
-* Fix: Image Scroll (Free) - Resolved a rendering issue where the bottom SVG image failed to display correctly due to low CSS specificity
-* Fix: Video on Hover (Free) - Resolved a race condition in the Elementor editor where video playback would initiate before the necessary JavaScript assets had fully loaded
-* Fix: Content Tabs (Free) - Resolved a synchronization issue where clicking an anchor link would occasionally fail to trigger a switch to the corresponding active tab, ensuring consistent navigation and tab state alignment
-* Fix: Unlimited Timeline (Free) - Resolved a styling bug where the active state background color failed to render
-* Fix: SVG Animation (Free) - Resolved a redundancy conflict where widgets would erroneously duplicate or fail to maintain a single instance when placed within a sticky container.
-* Fix: Justified Image Carousel (Pro) - Resolved a rendering issue where content background styles would persist or display incorrectly in scenarios where all nested content elements were set to "display: none."
-* Fix: Scroll Text Animation (Free) - Enhanced performance and improved compatibility with other GSAP widgets.
-* Fix: Scroll Image Comparison (Pro) - Improved performance and compatibility when used within iframes.
-* Fix: Video Carousel (Free) - Resolved a scope issue with the "Outside Click" feature where the "Stop Video" functionality would only trigger for the final instance on pages containing multiple Video Carousel widgets.
-* Fix: Sorting Filter (Pro) - Resolved a bug where the "Ascending" text option failed to populate within the select element, ensuring all sorting parameters are correctly visible and selectable.
-
-
-= 2.0.8 - 2026-04-23 =
-
-* Fix: fixed some more security issues with addons search
-* Fix: fixed the time ago string, use it from date and not from modified date of the post
-* Fix: in google reviews - don't run the serp request
-
-
-= 2.0.7 - 2026-04-12 =
-
-
-Plugin Changes:
-
-* Fix: fixed some search related bug
-* Feature: added "view objects" page in settings->troubleshooter
-* Feature: added action and filter for request in get repeater from url
-* Fix: improved the time ago string
-* Fix: set the elementor dynamic settings under ajax
-* Fix: fixed the typography fatal error with new elementor editor
-* Fix: main role filter was inited after load in some cases. 
-* Fix: fixed bug with synced grids inside simple popup widget
-* Fix: image title get from "alt" when the caption is empty
-* Fix: fixed some security issues with repeater url
-* Fix: fixed some security issues get addons ajax url
-
-Widgets Changes:
-
-* Feature: Conditions (Free) - Added a Custom User Role trigger type so actions can run based on the logged-in user's role for access control and personalization.
-* Feature: Place (Free) - Added custom title options for Price Range, Rating, Reviews, and Week Days (Monday-Sunday) so labels can be renamed or translated.
-* Feature: Checkboxes Filter (Pro) - Added margin options for parent and child terms for finer spacing and layout hierarchy.
-* Feature: Coverflow Carousel (Free) - Added opacity options for normal and active states for smoother transitions and transparency control.
-* Feature: Simple Popup (Free) - Added Popup Vertical Offset and Popup Horizontal Offset for finer positioning.
-* Feature: Unfold Content (Free) - Added support for the Content Tabs widget for more flexible, organized layouts.
-* Feature: Recipe (Free) - Added title options for Instructions, Ingredients, and Video for custom labeling and styling.
-* Feature: Before After (Free) - Added support for using the Before/After widget inside Elementor Tabs so the comparison slider initializes correctly when switching tabs.
-* Feature: Flip Box Carousel (Pro) - Added support for the Override Item BG Image setting in Multi-source options for more flexible backgrounds across sources.
-* Feature: Load More / Infinite Scroll (Pro) - Made the Alignment option fully responsive (desktop, tablet, mobile).
-* Feature: Scroll Text Animation (Free) - Added a Text Align option.
-* Feature: Tabs Filter (Free) - Added styling options for child terms (padding, margin, text color, background color).
-* Feature: Google Reviews (Free) - Added Max Reviews Number to limit how many reviews are shown.
-* Feature: Glowing Content Card (Free) - Added Show Outer Glow Animation for a pulsing glow around the element.
-* Feature: Woo Category Grid (Free) - Added an Image Size option for better performance.
-* Feature: Woo Category Carousel (Free) - Added an Image Size option for better performance.
-* Feature: Post Grid (Free) - Added content background options for hover and active states, plus transition duration control.
-* Feature: How To (Free) - Replaced hardcoded titles with customizable Instructions and Video title fields for localization.
-* Feature: Video Carousel (Free) - Updated the Icon Selection control to the native Font Awesome library, with standard icons and custom SVG upload support.
-* Fix: Sorting Filter (Pro) - Fixed compatibility with third-party translation plugins so widget strings are fully translatable.
-* Fix: Post List (Free) - Fixed the Time Ago feature so relative dates display correctly.
-* Fix: Video on Hover (Free) - Fixed auto-play failing with cookie consent plugins after the user accepts cookies.
-* Fix: Pie chart (Free) - Fixed the ampersand (&) not displaying correctly.
-* Fix: Justified Image Carousel (Pro) - Fixed navigation positioning conflicting with native Elementor widgets.
-* Fix: Dynamic Post Popup (Pro) - Fixed missing loading text while content is fetched.
-* Fix: Flip Box Carousel (Pro) - Fixed Marquee mode on iPad missing cloned items so the loop is continuous.
-* Fix: Video Carousel (Free) - Resolved a script conflict with Video on Hover so both widgets work on the same page.
-* Fix: Multi Level Sliding Menu (Pro) - Fixed minimum height when nested in an Elementor Accordion so height is correct on load.
-* Fix: Repeater Table (Pro) - Applied overflow: auto so a horizontal scrollbar appears when content exceeds the container.
-* Fix: Stacking Cards (Free) - Fixed the widget alternating cards when that option was disabled.
-* Fix: Masonry Post Grid (Pro) - Fixed column count on initial load (including iOS before scroll).
-* Fix: Loop Carousel (Pro) - Fixed Equal Item Height not calculating correctly in some layouts.
-* Fix: Woo Mini Cart (Free) - Fixed the widget JavaScript not loading on the front end.
-* Fix: Video Carousel (Free) - Fixed SVG icons not respecting height and width controls.
-* Fix: Icon Pointer Button (Pro) - Fixed SVG icons not respecting height and width controls.
-* Fix: Video Carousel (Free) - Refactored JavaScript for performance and fixed a conflict with the carousel library that blocked playback in some cases.
-* Fix: Scroll Marquee (Free) - Fixed Gallery source images not rendering so gallery items display correctly.
-
-
-= 2.0.6 - 2026-02-22 =
-
-Plugin Changes:
-
-* Feature: added new option: allow empty in items settings
-* Feature: Added "File" attribute
-* Feature: added option in general settings: "allow upload file types"
-* Feature: added order by functionality in the most popular posts plugin
-* Feature: added one more schema type: News Article
-* Feature: added autocorrection option in ajax search
-* Feature: added support for popular posts plugin for the sorting filter
-* Fix: make sure that gallery has item title always, in product item also
-* Fix: fixed some logical bug with the filters
-* Fix: fixed mini cart pricing issue
-* Fix: fixed some small form related vulnurability
-* Fix: fixed the authors fetch, to get only author roles and not all roles with exclude
-* Fix: fixed some breadcrumbs issues
-
-
-Widgets Changes:
-
-* Feature: Post Carousel Lite (Free) - Performed a comprehensive review of widget options and enabled responsive controls (Desktop, Tablet, and Mobile) for all applicable settings to ensure better layout flexibility across devices
-* Feature: Off Canvas Filters (Pro) - A new feature has been added allowing the Simple Popup widget to be included within the Offcanvas Filters widget. It now functions seamlessly alongside other filter widgets, providing more flexible layout options.
-* Feature: Simple Popup (Free) - A new feature has been added allowing the Simple Popup widget to be included within the Offcanvas Filters widget. It now functions seamlessly alongside other filter widgets, providing more flexible layout options.
-* Feature: Conditions (Free) - A new Is Logged In User trigger type has been added, allowing you to set up conditional actions or visibility rules based on whether a user is currently authenticated or browsing as a guest.
-* Feature: Woo Mini Cart (Free) - A new Show Subtotal Type option has been added, allowing users to choose whether to display prices inclusive of tax or exclusive of tax.
-* Feature: Post Carousel Lite (Free) - A new Link Entire Item Type option has been added, allowing users to choose specific link sources such as a Dynamic Post Popup, a Link from a Custom Field, and other dynamic destinations for the item-wide click action.
-* Feature: Active Filters (Pro) - A new Flex Wrap option has been added, giving users the ability to control whether elements within a container should wrap onto multiple lines or stay on a single row.
-* Feature: Post Grid (Free) - A new Order option has been added for each Additional Data element.
-* Feature: Post Magazine Grid (Pro) - A new Order option has been added for each Additional Data element
-* Feature: Post Carousel (Free) - A new Order option has been added for each Additional Data element
-* Feature: Video on Hover (Free) - A new Show Controls option has been added, giving users the ability to display or hide native video player controls
-* Feature: Post Magazine Grid (Pro) - A new Show Post Views option has been added, allowing users to display the total view count for individual posts within the widget.
-* Feature: Post Carousel (Free) - A new Show Post Views option has been added, allowing users to display the total view count for individual posts within the widget.
-* Feature: Video on Hover (Free) - new Play on Click value has been added to the Video Play Mode option, allowing videos to remain static until a user specifically interacts with them with a click event.
-* Feature: Text Field (Free) - A new Hidden option has been implemented that allows a field to be visually concealed while ensuring that Form Entries still receive and record data from it
-* Feature: AJAX Search (Free) - Added Autocorrection option that allows to display a suggestion with a clickable link when the initial search returns no results due to a potential typo.
-* Feature: Video Carousel (Free) - A new YouTube video source option has been added to allow users to directly integrate and display video content from the platform within the widget.
-* Feature: Repeater Table (Pro) - A new feature has been enabled within the widget that allows users to remove all existing items, bypassing the typical restriction in item-based widgets that requires at least one item to remain.
-* Change: Icon Pointer Button (Pro) - Updated the Icon Selection attribute to utilize the native Icon Library, enabling support for both standard font icons and custom SVG graphics
-* Change: Masonry &amp; Justified Gallery (Free) - To improve clarity and avoid user confusion, the Column gallery type has been renamed to Masonry, more accurately reflecting its layout behavior.
-* Fix: Button Icon Hover Effect (Pro) - Removed the Visibility Conditions options. These settings were previously added in error, as they are only compatible with form field logic and cannot function within standard widget layouts
-* Fix: Background Switcher (Free) - An issue was resolved where disabling the First Selected option caused the widget to render as a blank space with no images visible. The widget now correctly initializes its display state even when no item is pre-selected.
-* Fix: Background Switcher (Free) - An issue was resolved where the Hover Blur Effect only applied while the mouse was physically over a widget item. The effect has been corrected to persist on the active/selected item even when the mouse leaves the widget area
-* Fix: Linear Progress Bar (Free) - An issue was resolved where browser background optimization features, such as bfcache and tab throttling, would freeze the widget's execution state. This caused the progress bar to remain stuck in a finished or desynchronized state upon page revisit or tab reactivation
-* Fix: Post Carousel Lite (Free) - An issue was resolved where the Link Entire Item option was not functioning as expected
-* Fix: WordPress Menu (Free) - An issue was resolved in the Elementor editor where the dropdown menu failed to display after clicking the burger icon, ensuring that navigation previews now function correctly within the editing interface.
-* Fix: Huge Shapes Background (Pro) - An issue was resolved where the clearRect function utilized outdated or mismatched canvas dimensions, causing previous animation frames to persist and accumulate as visual &quot;ghosting&quot; or &quot;smearing&quot; artifacts.
-* Fix: WordPress Menu (Free) - An issue was resolved in the Menu widget where the Clickable Parent Item option was incorrectly hidden when the Responsive Behavior was set to &quot;Slide.&quot; This setting now logic-gates correctly: parent items remain visible and clickable on desktop, while automatically adjusting only at the responsive breakpoint to ensure sub-menus function properly on mobile devices.
-* Fix: Alphabet Filter (Pro) - An issue was resolved where users were required to click the Close icon twice to unselect an active filter, ensuring that filters now deactivate as expected with a single click.
-* Fix: Post Carousel (Free) - An issue was resolved where the Author element failed to inherit the color value defined in the Meta Data Color option
-* Fix: Conditions (Free) - An issue was resolved where ACF Field trigger types were not functioning correctly, ensuring that conditional logic or actions tied to Advanced Custom Fields now trigger as expected
-* Fix: Post Carousel (Free) - The CSS priority of the title selector has been increased to ensure that its specific styling consistently overrides any conflicting general styles
-* Fix: Animated Split Text (Pro) - An issue was resolved where the Splitting library was being initialized before the necessary JavaScript files had fully loaded on the page, preventing proper execution.
-
 
 
 

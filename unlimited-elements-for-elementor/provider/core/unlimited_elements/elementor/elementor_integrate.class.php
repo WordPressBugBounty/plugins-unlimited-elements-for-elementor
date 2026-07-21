@@ -600,7 +600,7 @@ class UniteCreatorElementorIntegrate{
 				$this->objBackgroundWidget = new UniteCreatorElementorBackgroundWidget();
 
 			$arrAddonValues = $this->objBackgroundWidget->getBGSettings($settings, $backgroundType);
-
+			
 			if(!empty($arrAddonValues))
 				$objAddon = $this->objBackgroundWidget->setAddonSettingsFromElementorSettings($objAddon, $arrAddonValues);
 			

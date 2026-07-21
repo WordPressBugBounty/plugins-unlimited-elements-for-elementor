@@ -16,7 +16,7 @@ class UCAdminNoticeDoubly extends UCAdminNoticeAbstract{
 	 */
 	public function getId(){
 
-		return 'doubly';
+		return 'doubly1';
 	}
 
 	/**

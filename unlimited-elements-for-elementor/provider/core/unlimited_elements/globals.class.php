@@ -132,10 +132,7 @@ class GlobalsUnlimitedElements{
 		self::$urlAccount = admin_url("admin.php?page=unlimitedelements-account");
 
 		UniteProviderFunctionsUC::addAction('admin_init', array("GlobalsUnlimitedElements", 'initAdminNotices'));
-		
-		if(GlobalsUC::$is_admin == true && HelperUC::hasPermissionsFromQuery("showadminnotices"))
-			self::$debugAdminNotices = true;
-		
+				
 			
 		//set paths
 		
@@ -208,7 +205,8 @@ class GlobalsUnlimitedElements{
 		
 		if(self::$isGutenbergOnly == true)
 			GlobalsUC::$url_buy_platform = GlobalsUC::URL_BUY."?platform=wordpress";
-		
+
+
 	}
 	
 	
@@ -216,18 +214,27 @@ class GlobalsUnlimitedElements{
 	 * init the admin notices
 	 */
 	public static function initAdminNotices(){
-		
+				
 		if(GlobalsUnlimitedElements::$showAdminNotices === false)
 			return;
 		
+	   //debug admin notices toggle in query string	
+	   if(HelperUC::hasPermissionsFromQuery("showadminnotices"))
+		self::$debugAdminNotices = true;
+
+
 		$arrBanners = array();
 		
 		if(self::$blackFridayMode == true)
 			$arrBanners[] = new UCAdminNoticeBFBanner();
 		
-//			new UCAdminNoticeSimpleExample(),
-//			new UCAdminNoticeDoubly(),
-//			new UCAdminNoticeRating(),
+			//new UCAdminNoticeSimpleExample();
+		
+		//$arrBanners[] = new UCAdminNoticeDoubly();
+
+		$arrBanners[] = new UCAdminNoticeSheetsPilot();
+		
+//		new UCAdminNoticeRating(),
 		
 		UCAdminNotices::init($arrBanners);
 

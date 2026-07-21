@@ -114,15 +114,38 @@ class UEGoogleAPIPlaceReview extends UEGoogleAPIModel{
 	
 	
 	/**
-	 * Get the identifier.
+	 * Get a stable unique identifier for the review.
 	 *
-	 * @return int
+	 * @return string
 	 */
 	public function getId(){
 
-		$id = $this->getTime();
+		if($this->isSerp == true){
 
-		return $id;
+			$reviewId = $this->getAttribute("review_id");
+			if(!empty($reviewId))
+				return (string)$reviewId;
+
+			$link = $this->getAttribute("link");
+			if(!empty($link))
+				return md5((string)$link);
+		}
+
+		$reviewName = $this->getAttribute("review_name");
+		if(!empty($reviewName))
+			return (string)$reviewName;
+
+		$googleMapsUri = $this->getAttribute("google_maps_uri");
+		if(!empty($googleMapsUri))
+			return md5((string)$googleMapsUri);
+
+		$parts = array(
+			(string)$this->getAuthorName(),
+			(string)$this->getTime(),
+			substr((string)$this->getText(false), 0, 80),
+		);
+
+		return md5(implode("|", $parts));
 	}
 
 	/**

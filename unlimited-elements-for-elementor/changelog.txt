@@ -2,6 +2,36 @@
 
 == Changelog ==
 
+= 2.0.14 - 2026-07-21 =
+
+Plugin Changes
+
+* Feature: added option: number of requests for serp api
+* Fix: fixed dynamic controls color for dynamic loop
+* Fix: fixed "and" clouser inside a filter checkbox group
+* Fix: fixed the "get_items" bug for ajax 
+* Fix: fixed the response code issue in ajax calls 
+
+
+Widgets Changes:
+
+* Feature: Post Scroll (Pro) - Added an Item Minimum Height option, allowing you to enforce a consistent minimum height across items for uniform card and grid layouts
+* Feature: Icon Accordion (Free) - Added a Trigger Type option, allowing you to choose between Click or Hover actions to control how the widget interacts with users
+* Feature: Split Hero (Free) - Added an Image Size select option, allowing you to choose from standard WordPress image sizes (e.g., Thumbnail, Medium, Large, Full) for better layout control and performance optimization
+* Feature: Unlimited Google Maps (Free) - Added a 'Cluster Icon Type' option to the marker clustering settings, allowing to choose between the default built-in cluster icon set and a custom uploaded image for full control over cluster appearance.
+* Feature: Repeater Table (Pro) - Added a "Column Width" option, allowing you to set the width in either pixels or percentage for flexible, responsive layout control.
+* Feature: Background Slider (Pro) - Added a Ken Burns Effect Direction option, allowing you to change the CSS transform-origin property to control the focal point and direction of the pan-and-zoom animation
+* Feature: Post Tile (Pro) - Added a Link Full Item option, allowing you to make the entire grid or list card clickable instead of limiting the link to just the title or button.
+* Feature: Categorized Posts List (Free) - Added a Terms Order Type option, allowing to control exactly how taxonomy terms are sorted and structured within lists or queries.
+* Fix: Dynamic Post Popup (Pro) - Resolved an issue where the "Loading text" element disappeared prematurely before the popup content had fully finished loading, ensuring a smoother and more seamless transition for users.
+* Fix: Hotspots (Free), Google Reviews (Free), Video Carousel (Free), Scroll Marquee (Free), Item Popups (Pro), Video on Hover (Free), Content Toggle (Free), Recipe (Free), Testimonial Grid (Free), Stacked Images (Pro), Icon Box Accordion (Pro), Flip Box (Free), Post Accordion (Free), Image Tooltip (Free), Post Grid (Free), Content Grid (Free), Notification (Free), Timeline Bullets (Free), How To (Free) - Resolved an issue where the "src" attribute of an image element was rendered incomplete on the page, ensuring full image URLs are output and images load correctly.
+* Fix: Categorized Posts List (Free) - Added a uc_ajax_refreshed event listener to reinitialize the accordion after AJAX content refresh, ensuring click handlers are rebound to the newly rendered DOM elements
+* Fix: Lordicon: Animated Icons (Free) - Updated CDN script URL from the deprecated lordicon-1.1.0.js to the current lordicon.js to restore compatibility with the latest Lordicon player and icon format.
+* Fix: Background Slider (Pro) - Fixed the Ken Burns effect snapping back to its original scale during slide transitions by setting all slides to the zoomed-in end state by default, so the outgoing slide remains visually stable while the incoming slide animates from its starting scale
+* Fix: Repeater Table (Pro) - Fixed an incorrect column-skipping condition in the repeater loop where field values were compared against the row index instead of the field key name, causing columns whose values matched their row index to be incorrectly excluded from the table output.
+* Fix: Fullscreen Menu (Free) - Resolved an issue where the "Menu Hamburger icon" lacked an accessibility name, improving screen reader compatibility and compliance with web accessibility standards.
+* Fix: QR Code (Pro) - Resolved an issue where QR codes failed to generate inside the widget, ensuring they now render reliably based on your input data.
+
 
 = 2.0.13 - 2026-07-01 =
 

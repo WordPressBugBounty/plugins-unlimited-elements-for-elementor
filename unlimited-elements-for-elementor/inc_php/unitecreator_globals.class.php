@@ -52,7 +52,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		const DEFAULT_JPG_QUALITY = 81;
 		const THUMB_WIDTH = 300;
 		const THUMB_WIDTH_LARGE = 700;
-
+		
 		const THUMB_SIZE_NORMAL = "size_normal";
 		const THUMB_SIZE_LARGE = "size_large";
 
@@ -352,6 +352,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$isGeneralDebug = HelperUC::hasPermissionsFromQuery("ucdebug");
 			if($isGeneralDebug == true)
 				GlobalsUC::$isDebug = true;
+
+			
 			
 		}
 

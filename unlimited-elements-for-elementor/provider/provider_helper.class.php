@@ -1280,6 +1280,11 @@ class HelperProviderUC{
 					
 					$settingsManager->addTextBox($paramName, $paramDefault, $field["text"], $params);
 				break;
+				case UniteCreatorDialogParam::PARAM_NUMBER:
+					$params["origtype"] = UniteCreatorDialogParam::PARAM_NUMBER;
+					$params["add_dynamic"] = true;
+					$settingsManager->addTextBox($paramName, $paramDefault, $field["text"], $params);
+				break;
 				case UniteCreatorDialogParam::PARAM_DROPDOWN:
 					$params["add_dynamic"] = true;
 					$settingsManager->addSelect($paramName, array_flip($field["options"]), $field["text"], $paramDefault, $params);

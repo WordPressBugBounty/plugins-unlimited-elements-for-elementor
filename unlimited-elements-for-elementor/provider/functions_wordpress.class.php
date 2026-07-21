@@ -3666,6 +3666,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	 */
 	public static function isCurrentUserHasPermissions(){
 		
+		if (!function_exists('wp_get_current_user'))
+			return false;
+
 		if(function_exists("current_user_can") == false)
 			return(false);
 		

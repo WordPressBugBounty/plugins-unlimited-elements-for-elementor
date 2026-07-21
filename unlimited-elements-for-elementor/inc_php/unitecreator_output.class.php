@@ -2643,10 +2643,85 @@ $css
 	}
 
 	/**
+	 * check if the widget html uses get_items() loop instead of put_items()
+	 */
+	private function isHtmlItemsUsesGetItems($html){
+
+		if(empty($html))
+			return(false);
+
+		if(stripos($html, "get_items") === false)
+			return(false);
+
+		if(stripos($html, "put_items") !== false)
+			return(false);
+
+		return(true);
+	}
+
+
+	/**
+	 * extract inner html of items wrapper for filters ajax refresh
+	 */
+	private function extractItemsWrapperHtml($html, $wrapperClass){
+
+		if(empty($html))
+			return("");
+
+		if(class_exists("DOMDocument") == false)
+			return("");
+
+		libxml_use_internal_errors(true);
+
+		$dom = new DOMDocument();
+		$dom->loadHTML('<?xml encoding="utf-8" ?>' . $html);
+
+		$xpath = new DOMXPath($dom);
+		$classToken = " {$wrapperClass} ";
+		$query = "//*[contains(concat(' ', normalize-space(@class), ' '), '{$classToken}')]";
+		$nodes = $xpath->query($query);
+
+		if(empty($nodes) || $nodes->length == 0){
+			libxml_clear_errors();
+			return("");
+		}
+
+		$node = $nodes->item(0);
+		$innerHTML = "";
+
+		foreach($node->childNodes as $child)
+			$innerHTML .= $dom->saveHTML($child);
+
+		libxml_clear_errors();
+
+		return($innerHTML);
+	}
+
+
+	/**
+	 * get items html from full widget template (for get_items twig loop)
+	 */
+	private function getHtmlItemsFromGetItemsTemplate(){
+
+		$html = $this->getProcessedHtmlTemplate();
+
+		$output = array();
+		$output["html_items1"] = $this->extractItemsWrapperHtml($html, "uc-items-wrapper");
+		$output["html_items2"] = $this->extractItemsWrapperHtml($html, "uc-items-wrapper2");
+
+		return($output);
+	}
+
+
+	/**
 	 * get items html
 	 */
 	public function getHtmlItems(){
 
+		$htmlMain = $this->addon->getHtml();
+
+		if(GlobalsProviderUC::$isUnderAjax == true && $this->isHtmlItemsUsesGetItems($htmlMain) == true)
+			return($this->getHtmlItemsFromGetItemsTemplate());
 
 		$keyTemplate = "uc_template_items_special";
 		$htmlTemplate = "{{put_items()}}";

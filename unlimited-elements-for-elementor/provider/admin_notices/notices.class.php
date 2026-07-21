@@ -88,7 +88,7 @@ abstract class UCAdminNotices{
 
 		if(GlobalsUC::$is_admin === false)
 			return false;
-
+		
 		if(current_user_can('administrator') === false)
 			return false;
 

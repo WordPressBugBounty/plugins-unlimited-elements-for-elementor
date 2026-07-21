@@ -1849,6 +1849,8 @@ function UEDynamicFilters(){
 		
 		//build group slugs, in case that there is a group
 		
+		var isMultipleGroups = (arrGroupTax.length > 1);
+		
 		jQuery.each(arrGroupTax, function(index, objGroupTaxonomies){
 			
 			jQuery.each(objGroupTaxonomies, function(taxonomy, objSlugs){
@@ -1856,8 +1858,8 @@ function UEDynamicFilters(){
 			var strSlugs = buildTermsQuery_getStrSlugs(objSlugs, true);
 			
 			var strAdd = strSlugs;
-			if(strSlugs.indexOf(".") !== -1){
-				strAdd = "|"+strSlugs+"|";	//OR inside the group
+			if(isMultipleGroups === true && strSlugs.indexOf(".") !== -1){
+				strAdd = "|"+strSlugs+"|";	//OR inside the group - only when multiple groups
 			}
 				
 				var objTax = getVal(arrTax, taxonomy);
@@ -1868,6 +1870,7 @@ function UEDynamicFilters(){
 		
 				arrTax[taxonomy] = objTax;
 			});
+
 		});
 
 		

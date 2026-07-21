@@ -13,6 +13,7 @@ require_once $path . 'notices/notice_abstract.class.php';
 require_once $path . 'notices/bf_banner.class.php';
 //require_once $path . 'notices/simple_example.class.php';
 require_once $path . 'notices/doubly.class.php';
+require_once $path . 'notices/sheetspilot.class.php';
 //require_once $path . 'notices/black_friday.class.php';
 //require_once $path . 'notices/rating.class.php';
 

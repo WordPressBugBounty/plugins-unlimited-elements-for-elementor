@@ -1,4 +1,15 @@
 
+
+
+version 2.0.14:
+
+* Feature: added option: number of requests for serp api
+* Fix: fixed dynamic controls color for dynamic loop
+* Fix: fixed "and" clouser inside a filter checkbox group
+* Fix: fixed the "get_items" bug for ajax 
+* Fix: fixed the response code issue in ajax calls 
+
+
 version 2.0.13:
 
 * Fix: fixed gallery output

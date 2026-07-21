@@ -97,10 +97,11 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 		return UEGoogleAPIPlace::transform($response["result"]);
 	}
 	
+
 	/**
 	 * get details using serp function
 	 */
-	public function getDetailsSerp($placeID, $apiKey, $params = array(),$showDebug = false, $cacheTime = 86400){
+	public function getDetailsSerp($placeID, $apiKey, $params = array(),$showDebug = false, $cacheTime = 86400, $numRequests = 2){
 		
 		if(empty($apiKey))
 			UniteFunctionsUC::throwError("No serp api key");
@@ -146,12 +147,14 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 			
 			$paramsForDebug["api_key"] = substr($apiKey, 0, 10) . '********';
 			
-			dmp("Send Params");
+			dmp("Number of requests to make: " . $numRequests);
+
+			dmp("Request #1 - Send Params");
 			dmp($paramsForDebug);
 			
 			$dataShow = UniteFunctionsUC::modifyDataArrayForShow($data);
 			
-			dmp("Response Data");
+			dmp("Request #1 - Response Data");
 			dmp($dataShow);
 			
 		}
@@ -162,46 +165,164 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 			UniteFunctionsUC::throwError($error);
 		}
 		
-		$pagination = UniteFunctionsUC::getVal($data, "serpapi_pagination");
-		$nextPageToken = UniteFunctionsUC::getVal($pagination, "next_page_token");
-		
-		//second call:
-		
-		if(!empty($nextPageToken)){
-			
+		$maxRequests = 5;	//some limit
+		$numRequests = (int)$numRequests;
+
+		if($numRequests < 1)
+			$numRequests = 1;
+
+		if($numRequests > $maxRequests)
+			$numRequests = $maxRequests;
+
+		// First request is already made; remaining are pagination requests only
+		$remainingRequests = $numRequests - 1;
+		$requestIndex = 0;
+
+		while($requestIndex < $remainingRequests){
+
+			$pagination = UniteFunctionsUC::getVal($data, "serpapi_pagination");
+			$nextPageToken = UniteFunctionsUC::getVal($pagination, "next_page_token");
+
+			if(empty($nextPageToken))
+				break;
+
 			$params["next_page_token"] = $nextPageToken;
 			$params["num"] = 20;
-			
+
 			$request->withQuery($params);
-			
+
 			$response = $request->request(UEHttpRequest::METHOD_GET, $url);
-			$data2 = $response->json();
+			$dataNext = $response->json();
 
 			if($showDebug == true){
-				
-				dmp("Second Request - Send Params2");
+
+				dmp("Request #" . ($requestIndex + 2) . " - Send Params");
 				dmp($params);
-				
-				$dataShow2 = UniteFunctionsUC::modifyDataArrayForShow($data);
-				
-				dmp("Second Request - Response Data");
-				dmp($dataShow2);
-				
+
+				$dataShowNext = UniteFunctionsUC::modifyDataArrayForShow($dataNext);
+
+				dmp("Request #" . ($requestIndex + 2) . " - Response Data");
+				dmp($dataShowNext);
+
 			}
-			
-			$arrReviews2 = UniteFunctionsUC::getVal($data2, "reviews");
-			
-			if(!empty($arrReviews2))
-				$data["reviews"] += $arrReviews2;
-			
+
+			$error = UniteFunctionsUC::getVal($dataNext, "error");
+			if(!empty($error))
+				UniteFunctionsUC::throwError($error);
+
+			$arrReviewsNext = UniteFunctionsUC::getVal($dataNext, "reviews");
+
+			if(!empty($arrReviewsNext)){
+				if(empty($data["reviews"]))
+					$data["reviews"] = array();
+
+				$data["reviews"] = $this->mergeUniqueSerpReviews($data["reviews"], $arrReviewsNext);
+			}
+
+			// Always replace pagination from the latest response so an empty
+			// next page cannot reuse the previous token and fetch duplicates.
+			$data["serpapi_pagination"] = UniteFunctionsUC::getVal($dataNext, "serpapi_pagination");
+
+			$requestIndex++;
 		}
+
+		// Final pass in case the first page itself had duplicates
+		$arrReviews = UniteFunctionsUC::getVal($data, "reviews", array());
+		if(!empty($arrReviews))
+			$data["reviews"] = $this->mergeUniqueSerpReviews(array(), $arrReviews);
 		
+		if($showDebug == true){
+			$arrReviews = UniteFunctionsUC::getVal($data, "reviews", array());
+			$numreviews = count($arrReviews);
+			dmp("Number of total fetched reviews: " . $numreviews);
+		}
+
+
 		if($showDebug == true)
 			HelperHtmlUC::putHtmlDataDebugBox_end();
 				
 		$place = UEGoogleAPIPlace::transform($data);		
 		
 		return($place);
+	}
+
+	/**
+	 * Merge Serp review lists and skip duplicates (by review_id / link / fingerprint).
+	 *
+	 * @param array $existing
+	 * @param array $incoming
+	 *
+	 * @return array
+	 */
+	private function mergeUniqueSerpReviews($existing, $incoming){
+
+		if(empty($existing))
+			$existing = array();
+
+		if(empty($incoming) || is_array($incoming) == false)
+			return $existing;
+
+		$seen = array();
+
+		foreach($existing as $review){
+			$key = $this->getSerpReviewUniqueKey($review);
+			if($key !== null)
+				$seen[$key] = true;
+		}
+
+		foreach($incoming as $review){
+
+			if(is_array($review) == false)
+				continue;
+
+			$key = $this->getSerpReviewUniqueKey($review);
+
+			if($key !== null && isset($seen[$key]))
+				continue;
+
+			if($key !== null)
+				$seen[$key] = true;
+
+			$existing[] = $review;
+		}
+
+		return $existing;
+	}
+
+	/**
+	 * Build a stable unique key for a Serp review item.
+	 *
+	 * @param array $review
+	 *
+	 * @return string|null
+	 */
+	private function getSerpReviewUniqueKey($review){
+
+		if(is_array($review) == false)
+			return null;
+
+		$reviewId = UniteFunctionsUC::getVal($review, "review_id");
+		if(!empty($reviewId))
+			return "id:" . $reviewId;
+
+		$link = UniteFunctionsUC::getVal($review, "link");
+		if(!empty($link))
+			return "link:" . $link;
+
+		$user = UniteFunctionsUC::getVal($review, "user", array());
+		$contributorId = UniteFunctionsUC::getVal($user, "contributor_id");
+		$isoDate = UniteFunctionsUC::getVal($review, "iso_date");
+		$snippet = UniteFunctionsUC::getVal($review, "snippet");
+
+		if(is_array($snippet))
+			$snippet = UniteFunctionsUC::getVal($snippet, "original", "");
+
+		$fingerprint = $contributorId . "|" . $isoDate . "|" . substr((string)$snippet, 0, 100);
+
+		if(trim($fingerprint, "|") === "")
+			return null;
+
+		return "fb:" . md5($fingerprint);
 	}
 	
 	

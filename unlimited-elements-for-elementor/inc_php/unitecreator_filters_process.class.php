@@ -425,6 +425,7 @@ class UniteCreatorFiltersProcess{
 		if($isTermsAnd == true)
 			$arrValues["relation"] = "AND";
 
+
 		return($arrValues);
 	}
 
@@ -495,9 +496,7 @@ class UniteCreatorFiltersProcess{
 			$arrValues = $this->parseStrTerms_values($strValues);
 
 			$arrTerms[$key] = $arrValues;
-
 		}
-
 
 		//show debug terms
 
@@ -883,19 +882,14 @@ class UniteCreatorFiltersProcess{
 		foreach($arrTax as $taxonomy=>$arrTerms){
 
 			$relation = UniteFunctionsUC::getVal($arrTerms, "relation");
-
+			
 			if($relation == "AND"){		//multiple
 
 				unset($arrTerms["relation"]);
 
 				foreach($arrTerms as $term){
-
-					$item = array();
-					$item["taxonomy"] = $taxonomy;
-					$item["field"] = "slug";
-					$item["terms"] = $term;
-
-					$arrQuery[] = $item;
+					$arrTermItems = $this->getTaxQuery_getTermItems($taxonomy, $term);
+					$arrQuery = array_merge($arrQuery, $arrTermItems);
 				}
 
 			}else{		//single  (or)
@@ -904,7 +898,7 @@ class UniteCreatorFiltersProcess{
 				$item["taxonomy"] = $taxonomy;
 				$item["field"] = "slug";
 				$item["terms"] = $arrTerms;
-
+					
 				$arrQuery[] = $item;
 			}
 
@@ -913,6 +907,49 @@ class UniteCreatorFiltersProcess{
 		$arrQuery["relation"] = "AND";
 
 		return($arrQuery);
+	}
+
+
+	/**
+	 * get tax query items from parsed term (slug string or nested group array)
+	 */
+	private function getTaxQuery_getTermItems($taxonomy, $term){
+
+		if(is_array($term) == false){
+			return(array(
+				array(
+					"taxonomy" => $taxonomy,
+					"field" => "slug",
+					"terms" => $term,
+				)
+			));
+		}
+
+		$innerRelation = UniteFunctionsUC::getVal($term, "relation");
+
+		if($innerRelation == "AND"){
+			unset($term["relation"]);
+
+			$arrItems = array();
+
+			foreach($term as $subTerm){
+				$arrSubItems = $this->getTaxQuery_getTermItems($taxonomy, $subTerm);
+				$arrItems = array_merge($arrItems, $arrSubItems);
+			}
+
+			return($arrItems);
+		}
+
+		if(isset($term["relation"]))
+			unset($term["relation"]);
+
+		return(array(
+			array(
+				"taxonomy" => $taxonomy,
+				"field" => "slug",
+				"terms" => array_values($term),
+			)
+		));
 	}
 
 	/**
@@ -2028,7 +2065,8 @@ class UniteCreatorFiltersProcess{
 
 		if($responseCode != 200){
 			http_response_code(200);
-			UniteFunctionsUC::throwError("Request not allowed, please make sure the ajax is allowed for the ajax grid");
+			//$responseCode = (int)$responseCode;
+			//UniteFunctionsUC::throwError("Request not allowed, please make sure the ajax is allowed for the ajax grid. the response code is: $responseCode");
 		}
 
 		//init widget by post id and element id
