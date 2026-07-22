@@ -826,6 +826,11 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 				UniteCreatorAPIIntegrations::getInstance()->addServiceSettingsFields($this, UniteCreatorAPIIntegrations::TYPE_GOOGLE_REVIEWS, $name, $condition);
 				
 			break;
+			case "youtube_playlist":
+
+				UniteCreatorAPIIntegrations::getInstance()->addServiceSettingsFields($this, UniteCreatorAPIIntegrations::TYPE_YOUTUBE_PLAYLIST, $name, $condition);
+
+			break;
 			default:
 				UniteFunctionsUC::throwError("Add special param error: wrong attribute type: $attributeType, please check that the plugin version is up to date");
 			break;

@@ -4165,6 +4165,9 @@ class UniteCreatorElementorWidget extends Widget_Base {
 	        if($isDebugFromGet === true)
 	        	$isShowDebugData = true;
 
+	        if($isShowDebugData == true && HelperUC::canShowDebugOutput() == false)
+	        	$isShowDebugData = false;
+
 	        if($isShowDebugData == true){
 
 	        	$debugDataType = UniteFunctionsUC::getVal($arrValues, "widget_debug_data_type");

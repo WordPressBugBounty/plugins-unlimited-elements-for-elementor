@@ -364,6 +364,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			
 			return($value);
 		}
+
+		/**
+		 * check if current user can see widget debug output
+		 */
+		public static function canShowDebugOutput(){
+
+			if(class_exists("UniteFunctionsWPUC") == false)
+				return(false);
+
+			return UniteFunctionsWPUC::isCurrentUserHasPermissions();
+		}
 		
 		
 		/**

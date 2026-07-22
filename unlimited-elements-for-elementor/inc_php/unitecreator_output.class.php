@@ -2148,6 +2148,9 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 		if($isShowData == false)
 			return(false);
 
+		if(HelperUC::canShowDebugOutput() == false)
+			return(false);
+
 		$dataType = UniteFunctionsUC::getVal($arrValues, "widget_debug_data_type");
 
 		$this->showDebugData($isShowData, $dataType, $arrValues);
@@ -2159,6 +2162,9 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 	 * set to show debug data of the addon
 	 */
 	public function showDebugData($isShow = true, $dataType = null, $arrValues = null){
+
+		if($isShow == true && HelperUC::canShowDebugOutput() == false)
+			$isShow = false;
 
 		$this->isShowDebugData = $isShow;
 		$this->debugDataType = $dataType;

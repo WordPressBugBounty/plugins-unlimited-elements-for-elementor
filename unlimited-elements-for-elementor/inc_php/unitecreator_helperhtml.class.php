@@ -240,7 +240,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 		/**
-		 * get version text (first changelog section, or first two when the first is under 200 characters)
+		 * get version text:
+		 * - always include the first 3 changelog sections
+		 * - if combined text is under 400 characters, also include up to 2 more (max 5 total)
 		 */
 		public static function getVersionText(){
 
@@ -260,8 +262,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		}
 
 		/**
-		 * Extract first version block from changelog.txt (readme-style lines: "= 1.2.3 - date =").
-		 * If that block is under 200 characters, include the following version block as well.
+		 * Extract first changelog sections from `changelog.txt` (readme-style lines: "= 1.2.3 - date =").
+		 * Always returns at least the first 3 sections (if available).
+		 * If the combined text of the first 3 sections is under 400 characters, append up to 2 more sections.
 		 *
 		 * @param string $content
 		 * @return string|null
@@ -284,16 +287,51 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				return null;
 
 			$count = count($lines);
-			$first = self::extractSingleChangelogVersionSection($lines, $count, $versionLinePattern, $startIndex);
 
-			$firstLen = function_exists("mb_strlen") ? mb_strlen($first["text"], "UTF-8") : strlen($first["text"]);
-			if($firstLen < 200 && $first["next_heading_index"] !== null){
-				$second = self::extractSingleChangelogVersionSection($lines, $count, $versionLinePattern, $first["next_heading_index"]);
-				if($second["text"] !== "")
-					return $first["text"] . "\n\n" . $second["text"];
+			$minSections = 3;
+			$maxSections = 5;
+			$maxCharsAfterMin = 5000;
+
+			$arrSectionsText = array();
+			$nextSectionStartIndex = $startIndex;
+
+			// 1) Always pull first N sections (default 3)
+			for($secIndex = 0; $secIndex < $minSections; $secIndex++){
+				if($nextSectionStartIndex === null)
+					break;
+
+				$section = self::extractSingleChangelogVersionSection($lines, $count, $versionLinePattern, $nextSectionStartIndex);
+				if(!empty($section["text"]))
+					$arrSectionsText[] = $section["text"];
+
+				$nextSectionStartIndex = $section["next_heading_index"];
 			}
 
-			return $first["text"];
+			if(empty($arrSectionsText))
+				return null;
+
+			$joinedText = implode("\n\n", $arrSectionsText);
+			$joinedLen = function_exists("mb_strlen") ? mb_strlen($joinedText, "UTF-8") : strlen($joinedText);
+
+			// If we couldn't collect enough sections, just return what we have.
+			if(count($arrSectionsText) < $minSections)
+				return $joinedText;
+
+			// 2) If short enough, append up to (max - min) more sections (default +2)
+			if($joinedLen < $maxCharsAfterMin){
+				for($secIndex = count($arrSectionsText); $secIndex < $maxSections; $secIndex++){
+					if($nextSectionStartIndex === null)
+						break;
+
+					$section = self::extractSingleChangelogVersionSection($lines, $count, $versionLinePattern, $nextSectionStartIndex);
+					if(!empty($section["text"]))
+						$arrSectionsText[] = $section["text"];
+
+					$nextSectionStartIndex = $section["next_heading_index"];
+				}
+			}
+
+			return implode("\n\n", $arrSectionsText);
 		}
 
 		/**

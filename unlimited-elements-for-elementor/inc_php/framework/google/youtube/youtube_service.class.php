@@ -15,13 +15,40 @@ class UEGoogleAPIYouTubeService extends UEGoogleAPIClient{
 	 */
 	public function getPlaylistItems($playlistId, $params = array()){
 
+		$playlistId = $this->normalizePlaylistId($playlistId);
+
 		$params["playlistId"] = $playlistId;
 		$params["part"] = "snippet,contentDetails";
 
 		$response = $this->get("/playlistItems", $params);
-		$response = UEGoogleAPIPlaylistItem::transformAll($response["items"]);
+		$items = UniteFunctionsUC::getVal($response, "items", array());
 
-		return $response;
+		if(empty($items) === true)
+			return array();
+
+		return UEGoogleAPIPlaylistItem::transformAll($items);
+	}
+
+	/**
+	 * Normalize playlist id (accept full YouTube URL or raw id).
+	 *
+	 * @param string $playlistId
+	 *
+	 * @return string
+	 */
+	private function normalizePlaylistId($playlistId){
+
+		$playlistId = trim($playlistId);
+
+		if(empty($playlistId) === true)
+			return $playlistId;
+
+		// https://www.youtube.com/playlist?list=PLxxx
+		// https://www.youtube.com/watch?v=xxx&list=RDxxx
+		if(preg_match('/[?&]list=([^&]+)/', $playlistId, $matches))
+			return urldecode($matches[1]);
+
+		return $playlistId;
 	}
 
 	/**
@@ -30,7 +57,7 @@ class UEGoogleAPIYouTubeService extends UEGoogleAPIClient{
 	 * @return string
 	 */
 	protected function getBaseUrl(){
-
+		
 		return "https://www.googleapis.com/youtube/v3";
 	}
 

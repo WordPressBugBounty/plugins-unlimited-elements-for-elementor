@@ -24,8 +24,8 @@ class UCAdminNoticeSheetsPilot extends UCAdminNoticeAbstract{
 	 */
 	public function getHtml(){
 
-		$heading = __('Bulk Edit WooCommerce Products in a Spreadsheet', 'unlimited-elements-for-elementor');
-		$content = __('Turn your product catalog into a live spreadsheet with instant editing, built-in AI, and powerful filters.<br />✓ Live editing with instant saves<br />✓ Powerful filters & built-in AI<br />✓ Update thousands of products in minutes', 'unlimited-elements-for-elementor');
+		$heading = __('New! Automate Your WordPress Workflow With AI', 'unlimited-elements-for-elementor');
+		$content = __('Edit your WordPress content in a live spreadsheet, save AI prompts, and fully automate your entire workflow.<br />⚡ Edit thousands of posts in one live spreadsheet<br />🤖 Save reusable AI prompts and generate content in seconds<br />🔄 Automate repetitive WordPress tasks', 'unlimited-elements-for-elementor');
 
 		$installText = __('Install SheetsPilot Now', 'unlimited-elements-for-elementor');
 		$installUrl = UniteFunctionsWPUC::getInstallPluginLink('sheetspilot');
@@ -33,11 +33,14 @@ class UCAdminNoticeSheetsPilot extends UCAdminNoticeAbstract{
 
 		$id = $this->getId();
 
+		$logoUrl = GlobalsUC::$urlPluginImages . 'banners/logo-sheetspilot.jpg';
+
 		$builder = new UCAdminNoticeBuilder($id);
 		$builder = $this->initBuilder($builder);
 
 		$builder->dismissible();
 		$builder->color(UCAdminNoticeBuilder::COLOR_INFO);
+		$builder->withLogo($logoUrl);
 		$builder->withHeading($heading);
 		$builder->withContent($content);
 		$builder->withLinkAction($installText, $installUrl);
@@ -61,9 +64,6 @@ class UCAdminNoticeSheetsPilot extends UCAdminNoticeAbstract{
 	protected function isConditionAllowed(){
 
 		if($this->isSheetsPilotInstalled() === true)
-			return false;
-
-		if(class_exists('WooCommerce') === false)
 			return false;
 
 		return true;

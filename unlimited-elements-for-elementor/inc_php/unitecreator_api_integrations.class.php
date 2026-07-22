@@ -227,6 +227,9 @@ class UniteCreatorAPIIntegrations{
 			case self::TYPE_GOOGLE_REVIEWS:
 				$data = UniteFunctionsUC::getVal($data, "reviews");
 			break;
+			case self::TYPE_YOUTUBE_PLAYLIST:
+				$data = UniteFunctionsUC::getVal($data, "videos");
+			break;
 		}
 
 		return $data;
@@ -253,6 +256,9 @@ class UniteCreatorAPIIntegrations{
 				switch($paramType){
 					case "reviews":
 						$apiType = "google_reviews";
+					break;
+					case "youtube_playlist":
+						$apiType = "youtube_playlist";
 					break;
 				}
 			}
@@ -1664,7 +1670,9 @@ class UniteCreatorAPIIntegrations{
 
 		$data = $this->sortData($data, $orderDirection);
 
-		return $data;
+		return array(
+			"videos" => $data,
+		);
 	}
 
 	/**

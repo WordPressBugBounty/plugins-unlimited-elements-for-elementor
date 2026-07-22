@@ -944,6 +944,7 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 		$arrTypes["rss_feed"] = __("Rss Feed Fields","unlimited-elements-for-elementor");
 		$arrTypes["repeater"] = __("Repeater","unlimited-elements-for-elementor");
 		$arrTypes["reviews"] = __("Google Reviews","unlimited-elements-for-elementor");
+		$arrTypes["youtube_playlist"] = __("Youtube Playlist","unlimited-elements-for-elementor");
 		
 		$optionsClass = "uc-special-attribute-options";
 		

@@ -1933,6 +1933,7 @@ class UniteCreatorParamsProcessorWork{
 			case "currency_api":
 			case "weather_api":
 			case "reviews":
+			case "youtube_playlist":
 				$data = UniteCreatorAPIIntegrations::getInstance()->addDataToParams($data, $name, $type);
             break;
             case "rss_feed":

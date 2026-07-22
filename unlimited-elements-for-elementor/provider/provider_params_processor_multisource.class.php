@@ -1290,7 +1290,7 @@ class UniteCreatetorParamsProcessorMultisource{
 		$isShowInputData = UniteFunctionsUC::getVal($this->arrValues, $this->name . "_show_input_data");
 		$isShowInputData = UniteFunctionsUC::strToBool($isShowInputData);
 
-		$this->showDebugData = $isShowInputData;
+		$this->showDebugData = ($isShowInputData == true && HelperUC::canShowDebugOutput());
 		$this->showDataType = UniteFunctionsUC::getVal($this->arrValues, $this->name . "_input_data_type");
 
 		if(empty($this->showDataType))
@@ -1352,6 +1352,9 @@ class UniteCreatetorParamsProcessorMultisource{
 	public static function checkShowItemsDebug($arrItemData){
 
 		if(self::$showItemsDebug == false)
+			return(false);
+
+		if(HelperUC::canShowDebugOutput() == false)
 			return(false);
 
 		self::$showItemsDebug = false;

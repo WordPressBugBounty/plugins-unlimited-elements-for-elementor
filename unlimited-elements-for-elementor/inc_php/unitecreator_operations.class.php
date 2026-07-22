@@ -673,15 +673,27 @@ class UCOperations extends UniteElementsBaseUC{
 		if(empty($pathFile))
 			return (null);
 
+		$filetype = wp_check_filetype(basename($pathFile));
+		$extIsImage = !empty($filetype["type"]) && strpos($filetype["type"], "image/") === 0;
+
+		$mimeType = wp_get_image_mime($pathFile);
+		if(empty($mimeType) && function_exists("mime_content_type"))
+			$mimeType = mime_content_type($pathFile);
+
+		$mimeIsImage = !empty($mimeType) && strpos($mimeType, "image/") === 0;
+
+		if($extIsImage == false || $mimeIsImage == false)
+			return (null);
+
 		$content = UniteFunctionsUC::fileGetContents($pathFile);
 
 		return ($content);
 	}
 
 	/**
-	 * get url contents from file or url with cache
+	 * get url contents via HTTP with cache
 	 *
-	 * HTTP hooks (remote URLs only): ue_http_pre_request, ue_http_response.
+	 * HTTP hooks: ue_http_pre_request, ue_http_response.
 	 *
 	 * @param mixed $httpContext Optional context passed to hooks (e.g. repeater / addon metadata).
 	 */
@@ -689,7 +701,7 @@ class UCOperations extends UniteElementsBaseUC{
 		
 		if($debug === true)
 			dmp("get contents from url: $url");
-						
+		
 		$url = UniteFunctionsUC::sanitize($url, UniteFunctionsUC::SANITIZE_URL_TRAVERSE);
 		
 		if(!empty($url))
@@ -698,47 +710,6 @@ class UCOperations extends UniteElementsBaseUC{
 		if(empty($url) && $debug == true){
 			dmp("url don't pass the security");
 			return(null);
-		}
-		
-		$urlRelative = HelperUC::URLtoRelative($url);
-		
-		$isFile = $urlRelative != $url;
-
-		if($isFile === true){
-			
-			$pathFile = HelperUC::urlToPath($url);
-			
-			$isUnderBase = HelperUC::isFileUnderBase($pathFile);
-			
-			if($isUnderBase == false){
-				
-				if($debug === true){
-					
-					dmp("file not exists, or not pass security");
-					exit;
-				}
-				
-				return(false);
-			}
-			
-			
-			if(empty($pathFile)){
-				
-				if($debug === true){
-					$pathFile = GlobalsUC::$path_base . $urlRelative;
-					
-					dmp("empty file path:  $pathFile");
-				}
-
-				return null;
-			}
-
-			if($debug === true)
-				dmp("file detected: $pathFile");
-
-			$content = UniteFunctionsUC::fileGetContents($pathFile);
-
-			return $content;
 		}
 
 		try{

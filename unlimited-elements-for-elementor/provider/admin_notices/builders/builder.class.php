@@ -23,6 +23,7 @@ class UCAdminNoticeBuilder extends UCAdminNoticeBuilderAbstract{
 	private $color = self::COLOR_INFO;
 	private $heading;
 	private $content;
+	private $logoUrl;
 	private $actions = array();
 
 	/**
@@ -41,6 +42,16 @@ class UCAdminNoticeBuilder extends UCAdminNoticeBuilderAbstract{
 	public function withHeading($heading){
 
 		$this->heading = $heading;
+
+		return $this;
+	}
+
+	/**
+	 * set the notice logo
+	 */
+	public function withLogo($logoUrl){
+
+		$this->logoUrl = $logoUrl;
 
 		return $this;
 	}
@@ -132,9 +143,12 @@ class UCAdminNoticeBuilder extends UCAdminNoticeBuilderAbstract{
 	 */
 	private function getLogoHtml(){
 
-		$logoUrl = GlobalsUC::$urlPluginImages . 'logo-circle.svg';
+		$logoUrl = $this->logoUrl;
 
-		return '<img class="uc-notice-logo" src="' . esc_attr($logoUrl) . '" alt="Logo" width="40" height="40" />';
+		if(empty($logoUrl))
+			$logoUrl = GlobalsUC::$urlPluginImages . 'logo-circle.svg';
+
+		return '<img class="uc-notice-logo" src="' . esc_url($logoUrl) . '" alt="Logo" width="40" height="40" />';
 	}
 
 	/**

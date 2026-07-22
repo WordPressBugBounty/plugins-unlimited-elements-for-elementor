@@ -1596,7 +1596,7 @@ class UniteCreatorTemplateEngineWork{
 			case "get_encoded_image":
 
 				$content = HelperUC::$operations->getLocalFileContentsByUrl($arg1);
-
+				
 				if(empty($content))
 					return(null);
 
