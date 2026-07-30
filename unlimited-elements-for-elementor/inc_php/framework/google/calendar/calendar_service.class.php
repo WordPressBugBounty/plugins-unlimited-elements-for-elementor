@@ -111,7 +111,7 @@ class UEGoogleAPICalendarService extends UEGoogleAPIClient{
 	 * @return UEGoogleAPICalendarEvent[]
 	 */
 	public function getEvents($calendarId, $params = array(),$timezone = null){
-		
+	
 		$calendarId = urlencode($calendarId);
 		
 		if(empty($timezone))
@@ -120,7 +120,7 @@ class UEGoogleAPICalendarService extends UEGoogleAPIClient{
 		//$params["timeZone"] = $timezone;
 		
 		$response = $this->get("/calendars/$calendarId/events", $params);
-		
+
 		$response = $this->convertTimezones($response, $timezone);
 		
 		$response = UEGoogleAPICalendarEvent::transformAll($response["items"]);

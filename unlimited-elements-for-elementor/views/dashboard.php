@@ -62,6 +62,14 @@ if($showBFBanner == true){
 	$urlBannerImage = GlobalsUC::$urlPluginImages."banners/ue-dashboard-bf-banner.png";	
 }
 
+$showSheetsPilotBanner = (defined('SHEETSPILOT_INC') == false || HelperUC::hasPermissionsFromQuery("showadminnotices"));
+
+
+if($showSheetsPilotBanner == true){
+	$urlSheetsPilotBanner = GlobalsUC::$urlPluginImages."banners/banner-sheetspilot.jpeg";
+	$urlSheetsPilotInstall = UniteFunctionsWPUC::getInstallPluginLink('sheetspilot');
+}
+
 ?>
 
 <div class="ue-root ue-dash-content">
@@ -264,6 +272,13 @@ if($showBFBanner == true){
 				</div>
 			<?php endif; ?>
 
+			<?php if($showSheetsPilotBanner == true): ?>
+			<div class="ue-content-card ue-dashboard-banner">
+				<a class="ue-dashboard-banner__link" href="<?php echo esc_url($urlSheetsPilotInstall); ?>">
+					<img class="ue-dashboard-banner__image" src="<?php echo esc_url($urlSheetsPilotBanner); ?>?ver=<?php echo esc_attr($version); ?>" alt="<?php echo esc_attr__("SheetsPilot", "unlimited-elements-for-elementor"); ?>">
+				</a>
+			</div>
+			<?php endif; ?>
 			<?php if(!empty($blogItems)):?>
 
 			<div class="ue-content-card ue-blog-section">

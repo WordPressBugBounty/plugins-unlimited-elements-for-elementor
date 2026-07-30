@@ -584,12 +584,6 @@ class UniteCreatorActions{
 						HelperUC::ajaxResponseSuccess(esc_html__("Widget Updated", "unlimited-elements-for-elementor"));
 
 				break;
-				case "save_screenshot":
-
-					$response = $operations->saveScreenshotFromData($data);
-
-					HelperUC::ajaxResponseSuccess(esc_html__("Screenshot Saved", "unlimited-elements-for-elementor"), $response);
-				break;
 				case "save_section_tolibrary":
 
 					HelperProviderUC::verifyAdminPermission();
@@ -599,6 +593,8 @@ class UniteCreatorActions{
 					HelperUC::ajaxResponseSuccess(esc_html__("Section Saved", "unlimited-elements-for-elementor"), $response);
 				break;
 				case "get_grid_import_layout_data":
+					
+					HelperProviderUC::verifyAdminPermission();
 
 					$response = $layouts->getLayoutGridDataForEditor($data);
 
@@ -613,42 +609,64 @@ class UniteCreatorActions{
 					HelperUC::ajaxResponseSuccess(esc_html__("Settings Saved", "unlimited-elements-for-elementor"));
 				break;
 				case "get_link_autocomplete":
+					
+					HelperProviderUC::verifyAdminPermission();
+
 					$response = $operations->getLinkAutocompleteFromData($data);
 
 					HelperUC::ajaxResponseData($response);
 				break;
 				case "get_users_list_forselect":
+					
+					HelperProviderUC::verifyAdminPermission();
+					
 					$arrUsersList = $operations->getUsersListForSelectFromData($data);
 
 					HelperUC::ajaxResponseData($arrUsersList);
 				break;
 				case "get_terms_list_forselect":
 					
+					HelperProviderUC::verifyAdminPermission();
+					
 					$arrTermsList = $operations->getTermsListForSelectFromData($data);
 
 					HelperUC::ajaxResponseData($arrTermsList);
 				break;
 				case "get_posts_list_forselect":
+					
+					HelperProviderUC::verifyAdminPermission();
+
 					$arrPostList = $operations->getPostListForSelectFromData($data);
 
 					HelperUC::ajaxResponseData($arrPostList);
 				break;
 				case "get_select2_post_titles":
+					
+					HelperProviderUC::verifyAdminPermission();
+
 					$arrData = $operations->getSelect2PostTitles($data);
 
 					HelperUC::ajaxResponseData(array("select2_data" => $arrData));
 				break;
 				case "get_select2_terms_titles":
+					
+					HelperProviderUC::verifyAdminPermission();
+
 					$arrData = $operations->getSelect2TermsTitles($data);
 
 					HelperUC::ajaxResponseData(array("select2_data" => $arrData));
 				break;
 				case "get_select2_users_titles":
+					
+					HelperProviderUC::verifyAdminPermission();
+
 					$arrData = $operations->getSelect2UsersTitles($data);
 
 					HelperUC::ajaxResponseData(array("select2_data" => $arrData));
 				break;
 				case "get_post_child_params":
+					
+					HelperProviderUC::verifyAdminPermission();
 
 					$response = $operations->getPostAttributesFromData($data);
 

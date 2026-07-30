@@ -1,5 +1,11 @@
 
 
+version 2.0.16:
+
+* Feature: added option for youtube playlist
+* Feature: added option for google calendar
+* Feature: added option for filter by meta 
+* Fix: fixed some security issue
 
 version 2.0.15:
 

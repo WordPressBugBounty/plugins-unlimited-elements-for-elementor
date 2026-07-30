@@ -1709,63 +1709,70 @@ function UEDynamicFilters(){
 
 
 	/**
-	 * handle term, add to taxonomy array
+	 * handle item, add to key->values map
+	 * keyName/valueName: "taxonomy"/"slug" for terms, "meta_key"/"meta_value" for meta
 	 */
-	function buildTermsQuery_handleTerm(objTerm, arrTax1){
+	function buildGroupedValuesQuery_handleItem(objItem, arrGrouped, keyName, valueName){
 
-		var taxonomy = objTerm["taxonomy"];
-		var slug = objTerm["slug"];
+		var key = objItem[keyName];
+		var value = objItem[valueName];
 
-		var objTax = getVal(arrTax1, taxonomy);
-		if(!objTax)
-			objTax = {};
+		if(!key)
+			return(arrGrouped);
 
-		objTax[slug] = true;
-		arrTax1[taxonomy] = objTax;
+		if(value === null || typeof value === "undefined")
+			value = "";
 
-		return(arrTax1);
+		var objValues = getVal(arrGrouped, key);
+		if(!objValues)
+			objValues = {};
+
+		objValues[value] = true;
+		arrGrouped[key] = objValues;
+
+		return(arrGrouped);
 	}
 
 	/**
-	 * get slugs string
+	 * get values string (dot separated)
+	 * adds .* for AND relation when multiple values
 	 */
-	function buildTermsQuery_getStrSlugs(objSlugs, isGroup){
+	function buildGroupedValuesQuery_getStrValues(objValues, isGroup){
 		
 		var isDebug = false;
 		
 		if(isDebug == true){
-			trace("get str slugs");
-			trace(objSlugs);
+			trace("get str values");
+			trace(objValues);
 			trace("is group:" + isGroup);
 		}
 		
-		var strSlugs = "";
+		var strValues = "";
 
 		var moreThenOne = false;
 		var isEndSlugFound = false;
 		var isOrSlugFound = false;
 		
-		for (var slug in objSlugs){
+		for (var value in objValues){
 				
-			if(slug === "__ucand__"){
+			if(value === "__ucand__"){
 				isEndSlugFound = true;
 				continue
 			}
 			
-			if(slug === "__ucor__"){
+			if(value === "__ucor__"){
 				isOrSlugFound = true;
 				continue
 			}
 
-			if(strSlugs){
+			if(strValues){
 				moreThenOne = true;
-				strSlugs += ".";
+				strValues += ".";
 			}
 
-			strSlugs += slug;
+			strValues += value;
 		}
 
-		//add "and"
 		if(isDebug == true){
 			trace("more then one: "+moreThenOne);
 			trace("is end found: "+isEndSlugFound);
@@ -1777,120 +1784,119 @@ function UEDynamicFilters(){
 			addAnd = false;
 		
 		if(addAnd)
-			strSlugs += ".*";
+			strValues += ".*";
 
 		if(isDebug)
-			trace("str slugs: "+strSlugs);
+			trace("str values: "+strValues);
 		
-		return(strSlugs);
+		return(strValues);
 	}
 
 
 	/**
-	 * build terms query
-	 * ucterms=product_cat~shoes.dress;cat~123.43;
+	 * build grouped values query string
+	 * format: key:value1.value2.*;key2:value3
+	 * used for ucterms (taxonomy:slugs) and ucmeta (meta_key:values)
 	 */
-	function buildTermsQuery(arrTerms){
+	function buildGroupedValuesQuery(arrItems, keyName, valueName){
 		
 		var isDebug = false;
 
+		if(!keyName)
+			keyName = "taxonomy";
+
+		if(!valueName)
+			valueName = "slug";
+
 		var query = "";
 
-		//break by taxonomy
-
-		var arrTax = {};
-		var arrGroupTax = [];
+		var arrGrouped = {};
+		var arrGroupItems = [];
 
 		if(isDebug == true){
-			trace("arr terms");
-			trace(arrTerms);
+			trace("arr items");
+			trace(arrItems);
 		}
 		
-		jQuery.each(arrTerms, function(index, objTerm){
+		jQuery.each(arrItems, function(index, objItem){
 
-			//group term
-			if(jQuery.isArray(objTerm) && objTerm.length != 0){
+			//group
+			if(jQuery.isArray(objItem) && objItem.length != 0){
 				
-				if(objTerm.length == 1){
-					arrTax = buildTermsQuery_handleTerm(objTerm[0], arrTax);
+				if(objItem.length == 1){
+					arrGrouped = buildGroupedValuesQuery_handleItem(objItem[0], arrGrouped, keyName, valueName);
 					return;
 				}
 
-				var arrGroupTaxonomy = {};
+				var arrGroupMap = {};
 				
-				jQuery.each(objTerm, function(index, groupTerm){
+				jQuery.each(objItem, function(index, groupItem){
 					
-					arrGroupTaxonomy = buildTermsQuery_handleTerm(groupTerm, arrGroupTaxonomy);
+					arrGroupMap = buildGroupedValuesQuery_handleItem(groupItem, arrGroupMap, keyName, valueName);
 				});
 
-				arrGroupTax.push(arrGroupTaxonomy);
+				arrGroupItems.push(arrGroupMap);
 
-			}else{	//single term
+			}else{	//single
 
-				arrTax = buildTermsQuery_handleTerm(objTerm, arrTax);
+				arrGrouped = buildGroupedValuesQuery_handleItem(objItem, arrGrouped, keyName, valueName);
 			}
 
 		});
 		
 		if(isDebug == true){
-			trace("first arr tax");
-			trace(arrTax);
+			trace("first arr grouped");
+			trace(arrGrouped);
 		}
 
-		//combine the query
-
-		if(jQuery.isEmptyObject(arrTax) && jQuery.isEmptyObject(arrGroupTax))
+		if(jQuery.isEmptyObject(arrGrouped) && jQuery.isEmptyObject(arrGroupItems))
 			return(null);
 
 		if(isDebug == true){
-			trace("group tax");
-			trace(arrGroupTax);
+			trace("group items");
+			trace(arrGroupItems);
 		}
 		
-		//build group slugs, in case that there is a group
+		var isMultipleGroups = (arrGroupItems.length > 1);
 		
-		var isMultipleGroups = (arrGroupTax.length > 1);
-		
-		jQuery.each(arrGroupTax, function(index, objGroupTaxonomies){
+		jQuery.each(arrGroupItems, function(index, objGroupKeys){
 			
-			jQuery.each(objGroupTaxonomies, function(taxonomy, objSlugs){
+			jQuery.each(objGroupKeys, function(key, objValues){
 				
-			var strSlugs = buildTermsQuery_getStrSlugs(objSlugs, true);
+			var strValues = buildGroupedValuesQuery_getStrValues(objValues, true);
 			
-			var strAdd = strSlugs;
-			if(isMultipleGroups === true && strSlugs.indexOf(".") !== -1){
-				strAdd = "|"+strSlugs+"|";	//OR inside the group - only when multiple groups
+			var strAdd = strValues;
+			if(isMultipleGroups === true && strValues.indexOf(".") !== -1){
+				strAdd = "|"+strValues+"|";	//OR inside the group - only when multiple groups
 			}
 				
-				var objTax = getVal(arrTax, taxonomy);
-				if(!objTax)
-					objTax = {};
+				var objKeyValues = getVal(arrGrouped, key);
+				if(!objKeyValues)
+					objKeyValues = {};
 		
-				objTax[strAdd] = true;
+				objKeyValues[strAdd] = true;
 		
-				arrTax[taxonomy] = objTax;
+				arrGrouped[key] = objKeyValues;
 			});
 
 		});
 
 		
 		if(isDebug == true){
-			trace("The result taxonomy after grouping");
-			trace(arrTax);
+			trace("The result after grouping");
+			trace(arrGrouped);
 		}
 
-		//add group to tax
-
-		jQuery.each(arrTax, function(taxonomy, objSlugs){
+		jQuery.each(arrGrouped, function(key, objValues){
 			
-			var strSlugs = buildTermsQuery_getStrSlugs(objSlugs);
+			var strValues = buildGroupedValuesQuery_getStrValues(objValues);
 				
-			var strTax = taxonomy + g_options.urlkey_taxsap + strSlugs;
+			var strPart = key + g_options.urlkey_taxsap + strValues;
 			
 			if(query)
 				query += ";";
 
-			query += strTax;
+			query += strPart;
 
 		});
 
@@ -1900,6 +1906,65 @@ function UEDynamicFilters(){
 		}
 
 		return(query);
+	}
+
+	/**
+	 * build terms query
+	 * ucterms=category:blog.cocktails.design.*
+	 */
+	function buildTermsQuery(arrTerms){
+
+		return buildGroupedValuesQuery(arrTerms, "taxonomy", "slug");
+	}
+
+	/**
+	 * build meta query - same format as terms
+	 * ucmeta=meta_key:value1.value2.*
+	 */
+	function buildMetaQuery(arrMeta){
+
+		//normalize: ensure meta_key exists (fallback from slug)
+		var arrNormalized = [];
+
+		jQuery.each(arrMeta, function(index, item){
+
+			if(jQuery.isArray(item)){
+
+				var arrGroup = [];
+
+				jQuery.each(item, function(groupIndex, groupItem){
+
+					if(!groupItem)
+						return(true);
+
+					if(!groupItem.meta_key && groupItem.slug)
+						groupItem.meta_key = groupItem.slug;
+
+					if(typeof groupItem.meta_value === "undefined" || groupItem.meta_value === null)
+						groupItem.meta_value = "";
+
+					arrGroup.push(groupItem);
+				});
+
+				arrNormalized.push(arrGroup);
+
+			}else{
+
+				if(!item)
+					return(true);
+
+				if(!item.meta_key && item.slug)
+					item.meta_key = item.slug;
+
+				if(typeof item.meta_value === "undefined" || item.meta_value === null)
+					item.meta_value = "";
+
+				arrNormalized.push(item);
+			}
+
+		});
+
+		return buildGroupedValuesQuery(arrNormalized, "meta_key", "meta_value");
 	}
 
 	/**
@@ -1946,6 +2011,30 @@ function UEDynamicFilters(){
 				};
 				return(objAuthor);
 			
+		break;
+		case "meta":
+
+			var slug = objElement.data("slug");
+			var metaKey = objElement.data("metakey");
+			var metaValue = objElement.data("metavalue");
+
+			if(!metaKey)
+				metaKey = slug;
+
+			if(!metaValue)
+				metaValue = "";
+
+			var objMeta = {
+				"type": type,
+				"id": id,
+				"slug": slug,
+				"meta_key": metaKey,
+				"meta_value": metaValue,
+				"title": title,
+				"key": key
+			};
+			return(objMeta);
+
 		break;
 		}
 		
@@ -3029,6 +3118,27 @@ function UEDynamicFilters(){
 	}
 
 	/**
+	 * get operator marker for meta items (same as terms __ucand__/__ucor__)
+	 */
+	function getObjOperatorMeta(operator, dataMeta){
+
+		var opValue = (operator == "and") ? "__ucand__" : "__ucor__";
+		var firstMeta = dataMeta[0];
+		var metaKey = getVal(firstMeta, "meta_key");
+
+		if(!metaKey)
+			metaKey = getVal(firstMeta, "slug");
+
+		return({
+			type: "meta",
+			meta_key: metaKey,
+			meta_value: opValue,
+			slug: opValue,
+			id: null
+		});
+	}
+
+	/**
 	 * get grid ajax options
 	 */
 	function getGridAjaxOptions(objFilters, objGrid, isFiltersInitMode, isLoadMoreMode, params){
@@ -3112,9 +3222,11 @@ function UEDynamicFilters(){
 		var objAuthorIDs = {};
 		var strSelectedTerms = "";
 		var strSelectedAuthors = "";
+		var strSelectedMeta = "";
 		var search = "";
 		var price_from, price_to;
 		var arrAuthors = [];
+		var arrMeta = [];
 		var orderby = null;
 		var orderby_metaname = null;
 		var orderby_metatype = null;
@@ -3264,6 +3376,8 @@ function UEDynamicFilters(){
 							
 							if(filterSource == "authors")
 								arrAuthors.push(objTerm);
+							else if(filterSource == "meta")
+								arrMeta.push(objTerm);
 							else
 								arrTerms.push(objTerm);
 						}
@@ -3282,6 +3396,8 @@ function UEDynamicFilters(){
 									
 									if(filterSource == "authors")
 										arrAuthors.push(objTerm);
+									else if(filterSource == "meta")
+										arrMeta.push(objTerm);
 									else
 										arrTerms.push(objTerm);
 									
@@ -3297,6 +3413,25 @@ function UEDynamicFilters(){
 									strSelectedAuthors +=",";
 								
 								strSelectedAuthors += termID;
+							}
+							else if(filterSource == "meta"){
+
+								var metaKey = getVal(objTerm, "meta_key");
+								if(!metaKey)
+									metaKey = getVal(objTerm, "slug");
+
+								if(metaKey){
+									var metaValue = getVal(objTerm, "meta_value");
+									if(!metaValue)
+										metaValue = "";
+
+									var metaPair = metaKey + g_options.urlkey_taxsap + metaValue;
+
+									if(strSelectedMeta)
+										strSelectedMeta +=",";
+
+									strSelectedMeta += metaPair;
+								}
 							}
 							else{
 								if(strSelectedTerms)
@@ -3454,6 +3589,69 @@ function UEDynamicFilters(){
 								strSelectedAuthors += authorID;
 							});
 							
+						}
+					}
+
+					//add meta - same grouping as terms (checkbox OR = group, no .*)
+					var dataMeta = getVal(filterData,"meta");
+
+					if(dataMeta && dataMeta.length){
+
+						var isMetaOperatorAdded = false;
+
+						if(filterRole == "main"){
+
+							var metaOperator = getVal(filterData,"operator");
+
+							if(metaOperator === "and" || metaOperator === "or"){
+								dataMeta.push(getObjOperatorMeta(metaOperator, dataMeta));
+								isMetaOperatorAdded = true;
+							}
+						}
+
+						if(dataMeta.length == 1){
+							arrMeta.push(dataMeta[0]);
+						}
+
+						if(dataMeta.length > 1){
+
+							var metaOperator = getVal(filterData,"operator");
+
+							if(isMetaOperatorAdded == false){
+
+								if(metaOperator === "and" || metaOperator === "or")
+									dataMeta.push(getObjOperatorMeta(metaOperator, dataMeta));
+							}
+
+							arrMeta.push(dataMeta);	//multiple (grouping) - OR by default
+						}
+
+						if(isFiltersInitMode == true){
+
+							jQuery.each(dataMeta, function(index, metaItem){
+
+								var metaKey = getVal(metaItem,"meta_key");
+								if(!metaKey)
+									metaKey = getVal(metaItem,"slug");
+
+								if(!metaKey)
+									return(true);
+
+								var metaValue = getVal(metaItem,"meta_value");
+								if(!metaValue)
+									metaValue = "";
+
+								if(metaValue === "__ucand__" || metaValue === "__ucor__")
+									return(true);
+
+								var metaPair = metaKey + g_options.urlkey_taxsap + metaValue;
+
+								if(strSelectedMeta)
+									strSelectedMeta +=",";
+
+								strSelectedMeta += metaPair;
+							});
+
 						}
 					}
 					
@@ -3752,6 +3950,18 @@ function UEDynamicFilters(){
 				urlFilterString = addUrlParam(urlFilterString, "ucauthors="+strAuthors);
 			}
 		}
+
+		//add meta
+		if(arrMeta.length){
+
+			var strMeta = buildMetaQuery(arrMeta);
+
+			if(strMeta){
+				urlAjax += "&ucmeta="+strMeta;
+				urlReplace = addUrlParam(urlReplace, "ucmeta="+strMeta);
+				urlFilterString = addUrlParam(urlFilterString, "ucmeta="+strMeta);
+			}
+		}
 		
 		 if(child_auto && arrTerms.length && childAutoString != ""){
 			 urlAjax += childAutoString;
@@ -3785,6 +3995,9 @@ function UEDynamicFilters(){
 		
 		if(isFiltersInitMode && strSelectedAuthors && strSelectedAuthors !== "undefined")
 			urlAjax += "&ucinitselectedauthors="+strSelectedAuthors;
+
+		if(isFiltersInitMode && strSelectedMeta && strSelectedMeta !== "undefined")
+			urlAjax += "&ucinitselectedmeta="+strSelectedMeta;
 		
 		//add refresh ids
 		if(strRefreshIDs)

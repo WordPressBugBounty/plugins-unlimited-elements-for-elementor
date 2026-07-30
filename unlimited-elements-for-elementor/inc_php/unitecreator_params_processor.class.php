@@ -1304,6 +1304,7 @@ class UniteCreatorParamsProcessorWork{
 		switch($filterSource){
 			case "terms":
 			case "authors":
+			case "meta":
 			break;
 			default:
 				return($arrParams);
@@ -1314,17 +1315,27 @@ class UniteCreatorParamsProcessorWork{
 			return($arrParams);
 		
 		$isAuthors = ($filterSource == "authors");
+		$isMeta = ($filterSource == "meta");
 		$arrParamsNew = array();
 		
 		foreach($arrParams as $param){
 			$type = UniteFunctionsUC::getVal($param, "type");
 			$name = UniteFunctionsUC::getVal($param, "name");
 			
-			if($isAuthors == true){
+			if($isMeta == true){
 				if($type == UniteCreatorDialogParam::PARAM_POST_TERMS || $name == "taxonomy")
+					continue;
+				if($type == UniteCreatorDialogParam::PARAM_USERS || $name == "authors")
+					continue;
+			}elseif($isAuthors == true){
+				if($type == UniteCreatorDialogParam::PARAM_POST_TERMS || $name == "taxonomy")
+					continue;
+				if($type == UniteCreatorDialogParam::PARAM_META_SELECT || $name == "metaselect")
 					continue;
 			}else{
 				if($type == UniteCreatorDialogParam::PARAM_USERS || $name == "authors")
+					continue;
+				if($type == UniteCreatorDialogParam::PARAM_META_SELECT || $name == "metaselect")
 					continue;
 			}
 			
@@ -1934,6 +1945,24 @@ class UniteCreatorParamsProcessorWork{
 			case "weather_api":
 			case "reviews":
 			case "youtube_playlist":
+			case "google_events":
+				$params = array();
+
+				if(is_array($value))
+					$params = $value;
+				elseif(!empty($value))
+					$params[$name] = $value;
+
+				$arrOrig = $this->addon->getOriginalValues();
+
+				if(!empty($arrOrig)){
+					foreach($arrOrig as $key => $val){
+						if(is_string($key) && strpos($key, $name."_") === 0)
+							$params[$key] = $val;
+					}
+				}
+
+				$data[$name] = $params;
 				$data = UniteCreatorAPIIntegrations::getInstance()->addDataToParams($data, $name, $type);
             break;
             case "rss_feed":

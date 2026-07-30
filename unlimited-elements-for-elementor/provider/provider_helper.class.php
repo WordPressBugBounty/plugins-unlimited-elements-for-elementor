@@ -137,6 +137,41 @@ class HelperProviderUC{
 
 
 	/**
+	 * get meta select repeater default values
+	 */
+	public static function getMetaSelectDefaultValues(){
+
+		return(array());
+	}
+
+
+	/**
+	 * get meta select repeater fields
+	 */
+	public static function getMetaSelectRepeaterFields(){
+
+		$settings = new UniteCreatorSettings();
+
+		$params = array();
+		$params["origtype"] = UniteCreatorDialogParam::PARAM_TEXTFIELD;
+
+		$settings->addTextBox("title", "", __("Title", "unlimited-elements-for-elementor"), $params);
+
+		$params = array();
+		$params["origtype"] = UniteCreatorDialogParam::PARAM_TEXTFIELD;
+
+		$settings->addTextBox("meta_key", "", __("Meta Key", "unlimited-elements-for-elementor"), $params);
+
+		$params = array();
+		$params["origtype"] = UniteCreatorDialogParam::PARAM_TEXTFIELD;
+
+		$settings->addTextBox("meta_value", "", __("Meta Value", "unlimited-elements-for-elementor"), $params);
+
+		return($settings);
+	}
+
+
+	/**
 	 * get data for meta compare select
 	 */
 	public static function getArrMetaCompareSelect(){

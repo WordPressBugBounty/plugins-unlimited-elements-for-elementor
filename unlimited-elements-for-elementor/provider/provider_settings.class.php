@@ -415,6 +415,29 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$this->addSelect($name."_depth", $arrDepth, __("Max Depth", "unlimited-elements-for-elementor"), $depth, $params);
 
 	}
+	
+	private function __________META_______(){}
+
+	/**
+	 * add meta select settings
+	 */
+	protected function addMetaSelectPicker($name, $value, $title, $extra){
+
+		$params = array();
+		$params["origtype"] = UniteCreatorDialogParam::PARAM_REPEATER;
+		$params["hide_label"] = true;
+		$params["title_field"] = "{{{title}}} ({{{meta_key}}}:{{{meta_value}}})";
+
+		$settingsItems = HelperProviderUC::getMetaSelectRepeaterFields();
+
+		$settingsValues = UniteFunctionsUC::getVal($value, $name."_items");
+		if(empty($settingsValues))
+			$settingsValues = HelperProviderUC::getMetaSelectDefaultValues();
+
+		$repeaterTitle = !empty($title) ? $title : __("MetaSelect Items", "unlimited-elements-for-elementor");
+
+		$this->addRepeater($name."_items", $settingsItems, $settingsValues, $repeaterTitle, $params);
+	}
 
 	private function __________TERMS_______(){}
 

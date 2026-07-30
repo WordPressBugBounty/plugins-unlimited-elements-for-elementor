@@ -23,7 +23,7 @@ class UEGoogleAPICalendarEvent extends UEGoogleAPIModel{
 
 		$title = $this->getAttribute("summary");
 
-		return $title;
+		return empty($title) ? "" : $title;
 	}
 
 	/**
@@ -31,11 +31,12 @@ class UEGoogleAPICalendarEvent extends UEGoogleAPIModel{
 	 *
 	 * @param bool $asHtml
 	 *
-	 * @return string|null
+	 * @return string
 	 */
 	public function getDescription($asHtml = false){
 
 		$description = $this->getAttribute("description");
+		$description = UniteFunctionsUC::sanitizeHTMLRemoveJS($description);
 
 		if($asHtml === true)
 			$description = nl2br($description);
@@ -46,13 +47,13 @@ class UEGoogleAPICalendarEvent extends UEGoogleAPIModel{
 	/**
 	 * Get the location.
 	 *
-	 * @return string|null
+	 * @return string
 	 */
 	public function getLocation(){
 
 		$location = $this->getAttribute("location");
 
-		return $location;
+		return empty($location) ? "" : $location;
 	}
 
 	/**
@@ -64,7 +65,7 @@ class UEGoogleAPICalendarEvent extends UEGoogleAPIModel{
 
 		$url = $this->getAttribute("htmlLink");
 
-		return $url;
+		return empty($url) ? "" : $url;
 	}
 
 	/**
@@ -108,15 +109,23 @@ class UEGoogleAPICalendarEvent extends UEGoogleAPIModel{
 	 */
 	private function getDate($time, $format){
 
+		if(empty($time))
+			return "";
+
 		$date = UniteFunctionsUC::getVal($time, "date", null);
 		$dateTime = UniteFunctionsUC::getVal($time, "dateTime", null);
 
 		$date = $date ?: $dateTime;
-		$time = strtotime($date);
-		$date = uelm_date($format, $time);
-		
-		
-		return $date;
+
+		if(empty($date))
+			return "";
+
+		$timestamp = strtotime($date);
+
+		if($timestamp === false)
+			return "";
+
+		return uelm_date($format, $timestamp);
 	}
 
 }

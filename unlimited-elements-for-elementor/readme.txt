@@ -942,6 +942,13 @@ The choice depends on your design preferences. If you want complete control, go 
 == Changelog ==
 
 
+= 2.0.16 - 2026-07-30 =
+
+* Feature: added option for google calendar
+* Feature: added option for filter by meta 
+* Fix: fixed another security issue
+
+
 = 2.0.15 - 2026-07-22 =
 
 * Feature: added option for youtube playlist

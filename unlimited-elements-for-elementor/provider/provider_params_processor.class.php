@@ -6034,6 +6034,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	        case UniteCreatorDialogParam::PARAM_POST_TERMS:
 	        case UniteCreatorDialogParam::PARAM_WOO_CATS:
 	        case UniteCreatorDialogParam::PARAM_USERS:
+	        case UniteCreatorDialogParam::PARAM_META_SELECT:
 	        case UniteCreatorDialogParam::PARAM_CONTENT:
 	        case UniteCreatorDialogParam::PARAM_BACKGROUND:
 	        case UniteCreatorDialogParam::PARAM_MENU:

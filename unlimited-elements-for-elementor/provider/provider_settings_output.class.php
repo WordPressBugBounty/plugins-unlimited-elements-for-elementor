@@ -64,6 +64,9 @@ class UniteSettingsOutputUC extends UniteSettingsOutputUCWork{
 				case "term":
 					$placeholder = __("All Terms", "unlimited-elements-for-elementor");
 				break;
+				case "meta":
+					$placeholder = __("All Meta Values", "unlimited-elements-for-elementor");
+				break;
 				case "user":
 					$placeholder = __("All Users", "unlimited-elements-for-elementor");
 				break;

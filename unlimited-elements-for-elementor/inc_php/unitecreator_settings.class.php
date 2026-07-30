@@ -603,6 +603,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 			case UniteCreatorDialogParam::PARAM_CONTENT:
 			case UniteCreatorDialogParam::PARAM_INSTAGRAM:
 			case UniteCreatorDialogParam::PARAM_POST_TERMS:
+			case UniteCreatorDialogParam::PARAM_META_SELECT:
 			case UniteCreatorDialogParam::PARAM_WOO_CATS:
 			case UniteCreatorDialogParam::PARAM_USERS:
 			case UniteCreatorDialogParam::PARAM_TEMPLATE:
@@ -829,6 +830,11 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 			case "youtube_playlist":
 
 				UniteCreatorAPIIntegrations::getInstance()->addServiceSettingsFields($this, UniteCreatorAPIIntegrations::TYPE_YOUTUBE_PLAYLIST, $name, $condition);
+
+			break;
+			case "google_events":
+
+				UniteCreatorAPIIntegrations::getInstance()->addServiceSettingsFields($this, UniteCreatorAPIIntegrations::TYPE_GOOGLE_EVENTS, $name, $condition);
 
 			break;
 			default:
@@ -1244,6 +1250,11 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 				$extra["post_select_type"] = "term";
 
 				$this->addMultiSelect($name, array(), $title, $value, $extra);
+			break;
+			case UniteCreatorDialogParam::PARAM_META_SELECT:
+				$extra["meta_key"] = UniteFunctionsUC::getVal($param, "meta_key");
+
+				$this->addMetaSelectPicker($name, $value, $title, $extra);
 			break;
 			case UniteCreatorDialogParam::PARAM_POST_SELECT:
 				$extra["post_select"] = true;

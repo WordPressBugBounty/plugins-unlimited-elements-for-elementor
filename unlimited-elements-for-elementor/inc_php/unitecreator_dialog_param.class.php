@@ -68,6 +68,7 @@ class UniteCreatorDialogParamWork{
 	const PARAM_SPECIAL = "uc_special";
 	const PARAM_POST_SELECT = "uc_post_select";
 	const PARAM_TERM_SELECT = "uc_term_select";
+	const PARAM_META_SELECT = "uc_meta_select";
 	const PARAM_RAW_HTML = "uc_raw_html";
 	const PARAM_HIDDEN = "uc_hidden";
 
@@ -239,6 +240,7 @@ class UniteCreatorDialogParamWork{
 
 		$this->addParam(self::PARAM_POST_SELECT, esc_html__("Post Select", "unlimited-elements-for-elementor"));
 		$this->addParam(self::PARAM_TERM_SELECT, esc_html__("Term Select", "unlimited-elements-for-elementor"));
+		$this->addParam(self::PARAM_META_SELECT, esc_html__("Meta Select", "unlimited-elements-for-elementor"));
 
 		$this->addParam(self::PARAM_SPECIAL, esc_html__("Special Attribute", "unlimited-elements-for-elementor"));
 
@@ -301,6 +303,7 @@ class UniteCreatorDialogParamWork{
 				self::PARAM_FILE,
 				self::PARAM_SPECIAL,
 				self::PARAM_ICON,
+				self::PARAM_META_SELECT,
 			),
 		);
 
@@ -1303,6 +1306,16 @@ class UniteCreatorDialogParamWork{
 
 	}
 
+	/**
+	 * function for override
+	 */
+	protected function putMetaSelectAttribute(){
+
+		dmp("putMetaSelectAttribute: function for override");
+		exit();
+
+	}
+
 
 	private function a___________DROPDOWN_PARAM________(){}
 
@@ -1695,6 +1708,9 @@ class UniteCreatorDialogParamWork{
 			break;
 			case self::PARAM_POST_TERMS:
 				$this->putPostTermsParam();
+			break;
+			case self::PARAM_META_SELECT:
+				$this->putMetaSelectAttribute();
 			break;
 			case self::PARAM_WOO_CATS:
 				$this->putWooCatsParam();

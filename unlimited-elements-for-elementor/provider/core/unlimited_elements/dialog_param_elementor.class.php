@@ -945,6 +945,7 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 		$arrTypes["repeater"] = __("Repeater","unlimited-elements-for-elementor");
 		$arrTypes["reviews"] = __("Google Reviews","unlimited-elements-for-elementor");
 		$arrTypes["youtube_playlist"] = __("Youtube Playlist","unlimited-elements-for-elementor");
+		$arrTypes["google_events"] = __("Google Calendar","unlimited-elements-for-elementor");
 		
 		$optionsClass = "uc-special-attribute-options";
 		
@@ -1080,6 +1081,15 @@ class UniteCreatorDialogParamElementor extends UniteCreatorDialogParam{
 	 * function for override
 	 */
 	protected function putTermSelectAttribute(){
+
+		$this->putNoDefaultValueText();
+	}
+
+	/**
+	 * function for override
+	 */
+	protected function putMetaSelectAttribute(){
+
 
 		$this->putNoDefaultValueText();
 	}

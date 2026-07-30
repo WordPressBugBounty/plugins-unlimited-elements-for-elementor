@@ -42,6 +42,7 @@ class UniteCreatorAPIIntegrations{
 	const GOOGLE_EVENTS_FIELD_ORDER = "google_events_order";
 	const GOOGLE_EVENTS_FIELD_LIMIT = "google_events_limit";
 	const GOOGLE_EVENTS_FIELD_CACHE_TIME = "google_events_cache_time";
+	const GOOGLE_EVENTS_FIELD_REQUIRE_TITLE = "google_events_require_title";
 	const GOOGLE_EVENTS_DEFAULT_LIMIT = 250;
 	const GOOGLE_EVENTS_DEFAULT_CACHE_TIME = 10;
 	const GOOGLE_EVENTS_RANGE_UPCOMING = "upcoming";
@@ -230,6 +231,9 @@ class UniteCreatorAPIIntegrations{
 			case self::TYPE_YOUTUBE_PLAYLIST:
 				$data = UniteFunctionsUC::getVal($data, "videos");
 			break;
+			case self::TYPE_GOOGLE_EVENTS:
+				$data = UniteFunctionsUC::getVal($data, "events");
+			break;
 		}
 
 		return $data;
@@ -243,6 +247,15 @@ class UniteCreatorAPIIntegrations{
 	public function addDataToParams($data, $name, $paramType = null){
 
 		$params = UniteFunctionsUC::getVal($data, $name, array());
+
+		if(!is_array($params))
+			$params = array();
+
+		foreach($data as $key => $value){
+			if(is_string($key) && strpos($key, $name."_") === 0 && !array_key_exists($key, $params))
+				$params[$key] = $value;
+		}
+
 		$params = UniteFunctionsUC::clearKeysFirstUnderscore($params);
 				
 		try{
@@ -259,6 +272,9 @@ class UniteCreatorAPIIntegrations{
 					break;
 					case "youtube_playlist":
 						$apiType = "youtube_playlist";
+					break;
+					case "google_events":
+						$apiType = "google_events";
 					break;
 				}
 			}
@@ -369,6 +385,7 @@ class UniteCreatorAPIIntegrations{
 			"google_events:order" => self::GOOGLE_EVENTS_FIELD_ORDER,
 			"google_events:limit" => self::GOOGLE_EVENTS_FIELD_LIMIT,
 			"google_events:cache_time" => self::GOOGLE_EVENTS_FIELD_CACHE_TIME,
+			"google_events:require_title" => self::GOOGLE_EVENTS_FIELD_REQUIRE_TITLE,
 
 			"google_reviews:place_id" => self::GOOGLE_REVIEWS_FIELD_PLACE_ID,
 			"google_reviews:cache_time" => self::GOOGLE_REVIEWS_FIELD_CACHE_TIME,
@@ -611,6 +628,13 @@ class UniteCreatorAPIIntegrations{
 				"default" => self::GOOGLE_EVENTS_DEFAULT_LIMIT,
 			),
 			array(
+				"id" => self::GOOGLE_EVENTS_FIELD_REQUIRE_TITLE,
+				"type" => UniteCreatorDialogParam::PARAM_RADIOBOOLEAN,
+				"text" => __("Hide Events Without Title", "unlimited-elements-for-elementor"),
+				"desc" => __("Skip events that have no title in the calendar.", "unlimited-elements-for-elementor"),
+				"default" => true,
+			),
+			array(
 				"id" => self::GOOGLE_EVENTS_FIELD_TIMEZONE,
 				"type" => UniteCreatorDialogParam::PARAM_TEXTFIELD,
 				"text" => __("Timezone", "unlimited-elements-for-elementor"),
@@ -651,6 +675,7 @@ class UniteCreatorAPIIntegrations{
 				"text" => __("Playlist ID", "unlimited-elements-for-elementor"),
 				// translators: %1$s is page url, %2$s is page url
 				"desc" => sprintf(__("You can find the playlist ID in a YouTube URL: <br />— %1\$s<br />— %2\$s", "unlimited-elements-for-elementor"), "https://youtube.com/playlist?list=<b>[YOUR_PLAYLIST_ID]</b>", "https://youtube.com/watch?v=aBC-123xYz&list=<b>[YOUR_PLAYLIST_ID]</b>"),
+				"default" => "PLRz741VTawEo"
 			),
 			array(
 				"id" => self::YOUTUBE_PLAYLIST_FIELD_ORDER,
@@ -772,8 +797,10 @@ class UniteCreatorAPIIntegrations{
 			$this->validateGoogleCredentials();
 		else
 			$this->validateGoogleApiKey();
+		
 
 		$calendarId = $this->getRequiredParam(self::GOOGLE_EVENTS_FIELD_CALENDAR_ID, "Calendar ID");
+
 		$eventsRange = $this->getParam(self::GOOGLE_EVENTS_FIELD_RANGE);
 		$eventsRange = $this->getGoogleEventsDatesRange($eventsRange);
 		$eventsOrder = $this->getParam(self::GOOGLE_EVENTS_FIELD_ORDER);
@@ -781,6 +808,9 @@ class UniteCreatorAPIIntegrations{
 		$eventsLimit = intval($eventsLimit);
 		$cacheTime = $this->getCacheTimeParam(self::GOOGLE_EVENTS_FIELD_CACHE_TIME, self::GOOGLE_EVENTS_DEFAULT_CACHE_TIME);
 		$timezone = $this->getParam(self::GOOGLE_EVENTS_FIELD_TIMEZONE);
+		$requireTitle = $this->getParam(self::GOOGLE_EVENTS_FIELD_REQUIRE_TITLE, true);
+		$requireTitle = UniteFunctionsUC::strToBool($requireTitle);
+
 				
 		$orderFieldMap = array(
 			self::GOOGLE_EVENTS_ORDER_DATE_ASC => "date",
@@ -818,14 +848,27 @@ class UniteCreatorAPIIntegrations{
 		$events = $calendarService->getEvents($calendarId, $eventsParams, $timezone);
 		
 		foreach($events as $event){
+
+			if($requireTitle === true && $event->getTitle() === "")
+				continue;
+
 			$orderValue = ($orderField === "date")
 				? $event->getStartDate(self::FORMAT_MYSQL_DATETIME)
 				: null;
+
+			$startMysql = $event->getStartDate(self::FORMAT_MYSQL_DATETIME);
+			$endMysql = $event->getEndDate(self::FORMAT_MYSQL_DATETIME);
+			$startStamp = empty($startMysql) ? "" : strtotime($startMysql);
+			$endStamp = empty($endMysql) ? "" : strtotime($endMysql);
 
 			$data[] = array(
 				"id" => $event->getId(),
 				"start_date" => $event->getStartDate(self::FORMAT_DATETIME),
 				"end_date" => $event->getEndDate(self::FORMAT_DATETIME),
+				"start_date_stamp" => $startStamp,
+				"end_date_stamp" => $endStamp,
+				"start_time" => $event->getStartDate("H:i"),
+				"end_time" => $event->getEndDate("H:i"),
 				"title" => $event->getTitle(),
 				"description" => $event->getDescription(true),
 				"location" => $event->getLocation(),
@@ -836,7 +879,9 @@ class UniteCreatorAPIIntegrations{
 
 		$data = $this->sortData($data, $orderDirection);
 
-		return $data;
+		return array(
+			"events" => $data,
+		);
 	}
 
 	/**

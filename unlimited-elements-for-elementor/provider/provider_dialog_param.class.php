@@ -41,6 +41,7 @@ class UniteCreatorDialogParam extends UniteCreatorDialogParamWork{
 		$this->arrParams[] = self::PARAM_DATETIME;
 		$this->arrParams[] = self::PARAM_POST_SELECT;
 		$this->arrParams[] = self::PARAM_TERM_SELECT;
+		$this->arrParams[] = self::PARAM_META_SELECT;
 
 		// CSS
 		$this->arrParams[] = self::PARAM_BACKGROUND;

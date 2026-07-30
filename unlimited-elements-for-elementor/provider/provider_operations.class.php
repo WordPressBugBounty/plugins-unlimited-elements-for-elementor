@@ -330,8 +330,8 @@ class ProviderOperationsUC extends UCOperations{
 		global $wpdb;
 
 		$where = "post_type in ($strPostTypes)";
-		$where .= " and post_status in ('publish','draft','private')";
-
+		$where .= " and post_status in ('publish','draft')";
+		
 		$isStartWord = (strlen($search) == 1);
 
 		$likeStart = $wpdb->esc_like($search) . '%';
