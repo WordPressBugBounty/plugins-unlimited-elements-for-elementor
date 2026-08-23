@@ -108,6 +108,7 @@ class UniteCreatorAdmin extends UniteBaseAdminClassUC{
 
 				//clear third party includes
 				UniteFunctionsWPUC::findAndRemoveInclude("dropzone.min");
+				UniteFunctionsWPUC::findAndRemoveInclude("dropzone");
 
 				//dropzone
 				HelperUC::addScript("dropzone", "dropzone_js","js/dropzone");

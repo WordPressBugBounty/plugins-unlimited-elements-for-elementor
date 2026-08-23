@@ -4435,41 +4435,139 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				
 		}
 		
+		/**
+		 * check if include belongs to this plugin
+		 */
+		private static function isOwnPluginInclude($src){
+			
+			if(empty($src) || is_string($src) == false)
+				return(false);
+			
+			if(strpos($src, GlobalsUC::$urlPlugin) !== false)
+				return(true);
+			
+			$pathPluginRel = GlobalsUC::$pathPluginRel;
+			
+			if(!empty($pathPluginRel) && strpos($src, "/".$pathPluginRel) !== false)
+				return(true);
+			
+			return(false);
+		}
+		
 		
 		/**
 		 *
 		 * unregister styles and scripts after all includes formed
 		 */
 		public static function onStylesAndScriptsDeregister(){
-						
+		
+			$showDebug = false;
+
 			if(empty(self::$toDeregisterScripts) && empty(self::$toDeregisterStyles))
 				return(false);
 			
 			global $wp_scripts, $wp_styles;
 			
+			if($showDebug == true){
+				
+				dmp("---- Deregister Styles and Scripts ----");
+				
+				dmp("Scripts to deregister:");
+				dmp(array_keys(self::$toDeregisterScripts));
+				
+				dmp("Styles to deregister:");
+				dmp(array_keys(self::$toDeregisterStyles));
+			}
+			
+			$arrDeregisteredScripts = array();
+			$arrDeregisteredStyles = array();
+			$arrSkippedScripts = array();
+			$arrSkippedStyles = array();
+			
 			// scripts
 			foreach(self::$toDeregisterScripts as $filename=>$nothing) {
-				
+			
+				$found = false;
+				$skipped = false;
+			
 				foreach ($wp_scripts->registered as $handle => $script) {
 					
-					if($handle == $filename || strpos($script->src, $filename))
+					if($handle == $filename || strpos($script->src, $filename)){
+						
+						if(self::isOwnPluginInclude($script->src) == true){
+							
+							$skipped = true;
+							
+							if($showDebug == true)
+								$arrSkippedScripts[] = "$handle | ".$script->src." | search: $filename";
+							
+							continue;
+						}
+						
+						$found = true;
+						
+						if($showDebug == true)
+							$arrDeregisteredScripts[] = "$handle | ".$script->src." | search: $filename";
+						
 						wp_deregister_script( $handle );
+					}
 				
 				}
 				
+				if($showDebug == true && $found == false && $skipped == false)
+					dmp("script not found: $filename");
+				
 			}
-			
 			
 			// styles
 			foreach(self::$toDeregisterStyles as $filename=>$nothing) {
 				
-				foreach ($wp_scripts->registered as $handle => $style) {
+				$found = false;
+				$skipped = false;
+				
+				foreach ($wp_styles->registered as $handle => $style) {
 					
-					if($handle == $filename || strpos($style->src, $filename))
+					if($handle == $filename || strpos($style->src, $filename)){
+						
+						if(self::isOwnPluginInclude($style->src) == true){
+							
+							$skipped = true;
+							
+							if($showDebug == true)
+								$arrSkippedStyles[] = "$handle | ".$style->src." | search: $filename";
+							
+							continue;
+						}
+						
+						$found = true;
+						
+						if($showDebug == true)
+							$arrDeregisteredStyles[] = "$handle | ".$style->src." | search: $filename";
+						
 						wp_deregister_style( $handle );
+					}
 				}
+				
+				if($showDebug == true && $found == false && $skipped == false)
+					dmp("style not found: $filename");
 			}
 			
+			if($showDebug == true){
+				
+				dmp("Skipped plugin scripts:");
+				dmp($arrSkippedScripts);
+				
+				dmp("Skipped plugin styles:");
+				dmp($arrSkippedStyles);
+				
+				dmp("Deregistered scripts:");
+				dmp($arrDeregisteredScripts);
+				
+				dmp("Deregistered styles:");
+				dmp($arrDeregisteredStyles);
+				exit();
+			}
+
 		}
 	
 	
@@ -4552,9 +4650,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		if (empty($script) || !is_string($script)) {
 			return;
 		}
-	
+		
 		// Register and enqueue dummy script
-		wp_register_script($handle, '', ["jquery"]);
+		wp_register_script($handle, '', ["jquery"], null, true);
 		wp_add_inline_script($handle, $script);
 		wp_enqueue_script($handle);
 	

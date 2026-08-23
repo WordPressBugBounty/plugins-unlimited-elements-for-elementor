@@ -67,9 +67,32 @@ if($isBFMode == true){
 	<div class="ue-header__inner">
 	<?php endif?>
 	
-	<a href="<?php echo esc_url($logoUrl); ?>" title="<?php echo esc_attr($logoTitle); ?>" class="ue-header__logo">
-		<img class="ue-header-logo" src="<?php echo esc_url($logoImage); ?>" alt="" />
-	</a>
+	<div class="ue-header__brand">
+		<a href="<?php echo esc_url($logoUrl); ?>" title="<?php echo esc_attr($logoTitle); ?>" class="ue-header__logo">
+			<img class="ue-header-logo" src="<?php echo esc_url($logoImage); ?>" alt="" />
+		</a>
+		<?php if($isProVersion === true && GlobalsUC::$isProductActive == false): ?>
+			<span class="ue-header__activate-msg">
+				<?php
+				$urlAccount = GlobalsUnlimitedElements::$urlAccount;
+				$linkAccount = '<a href="' . esc_url($urlAccount) . '">' . esc_html__("here", "unlimited-elements-for-elementor") . '</a>';
+
+				echo wp_kses(
+					sprintf(
+						/* translators: %s: link to the Unlimited Elements account page */
+						__("Activate the license for pro version %s", "unlimited-elements-for-elementor"),
+						$linkAccount
+					),
+					array(
+						"a" => array(
+							"href" => array(),
+						),
+					)
+				);
+				?>
+			</span>
+		<?php endif; ?>
+	</div>
 
 	<?php if($isBFMode == true):
 		//Black Friday Inner Elements

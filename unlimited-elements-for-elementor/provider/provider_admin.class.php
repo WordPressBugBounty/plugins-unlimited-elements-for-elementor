@@ -302,7 +302,6 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 	protected function addActionAjax($ajaxAction, $eventFunction){
 
 		$this->addAction('wp_ajax_' . GlobalsUC::PLUGIN_NAME . "_" . $ajaxAction, $eventFunction, true);
-		$this->addAction('wp_ajax_nopriv_' . GlobalsUC::PLUGIN_NAME . "_" . $ajaxAction, $eventFunction, true);
 	}
 
 	/**

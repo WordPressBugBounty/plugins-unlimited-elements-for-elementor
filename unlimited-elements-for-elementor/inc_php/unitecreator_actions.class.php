@@ -85,8 +85,6 @@ class UniteCreatorActions{
 		$webAPI = new UniteCreatorWebAPI();
 
 		$data = $this->getDataFromRequest();
-		$addonType = $addons->getAddonTypeFromData($data);
-
 		$data = UniteProviderFunctionsUC::normalizeAjaxInputData($data);
 	
 				
@@ -97,6 +95,7 @@ class UniteCreatorActions{
 			$nonce = UniteFunctionsUC::getPostGetVariable("nonce", "", UniteFunctionsUC::SANITIZE_NOTHING);
 			UniteProviderFunctionsUC::verifyNonce($nonce);
 
+			$addonType = $addons->getAddonTypeFromData($data);
 
 			switch($action){
 				case "remove_category":
@@ -342,6 +341,8 @@ class UniteCreatorActions{
 					HelperUC::ajaxResponseSuccess(esc_html__("Duplicated Successfully", "unlimited-elements-for-elementor"), $response);
 				break;
 				case "get_addon_config_html":  //from elementor
+
+					HelperProviderUC::verifyAdminPermission();
 
 					$response = $addons->getAddonConfigHTML($data);
 
@@ -635,7 +636,7 @@ class UniteCreatorActions{
 				case "get_posts_list_forselect":
 					
 					HelperProviderUC::verifyAdminPermission();
-
+					
 					$arrPostList = $operations->getPostListForSelectFromData($data);
 
 					HelperUC::ajaxResponseData($arrPostList);

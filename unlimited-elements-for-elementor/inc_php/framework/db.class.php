@@ -187,16 +187,46 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		
 		
 		/**
+		 * validate where field name
+		 */
+		private function validateWhereField($key){
+			
+			if(is_string($key) == false || preg_match("/^[a-zA-Z_][a-zA-Z0-9_]*$/", $key) != 1)
+				$this->throwError("Wrong where field");
+		}
+		
+		
+		/**
+		 * validate where comparison operator
+		 */
+		private function getWhereSign($sign){
+			
+			$arrAllowedSigns = array("=", "!=", "<>", "<", ">", "<=", ">=", "LIKE", "NOT LIKE");
+			
+			if(is_string($sign) == false)
+				$this->throwError("Wrong where operator");
+			
+			$sign = strtoupper(trim($sign));
+			
+			if(in_array($sign, $arrAllowedSigns, true) == false)
+				$this->throwError("Wrong where operator");
+			
+			return($sign);
+		}
+		
+		
+		/**
 		 * 
 		 * get where string from where array
 		 */
 		private function getWhereString($where){
-						
-			$where_format = null;
-						
+			
+			$wheres = array();
+			
 			foreach ( $where as $key=>$value ) {
 				
 				if($value == self::ISNULL){
+					$this->validateWhereField($key);
 					$wheres[] = "($key = '' or $key is null)";
 					continue;
 				}
@@ -206,16 +236,22 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 					continue;
 				}
 				
-				// array('sign',values);
+				$this->validateWhereField($key);
 				
+				// array('sign', value);
 				$sign = "=";
-					
-				$isEscape = true;
 				
 				if(is_array($value)){
-					$sign = $value[0];
+					
+					if(isset($value[0]) == false || isset($value[1]) == false)
+						$this->throwError("Wrong where format");
+					
+					$sign = $this->getWhereSign($value[0]);
 					$value = $value[1];
 				}
+				
+				if(is_array($value) || is_object($value) || is_bool($value))
+					$this->throwError("Wrong where value");
 				
 				if(is_numeric($value) == false){
 					$value = $this->escape($value);

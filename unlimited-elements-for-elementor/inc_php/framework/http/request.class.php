@@ -13,6 +13,8 @@ class UEHttpRequest{
 	const METHOD_POST = "POST";
 
 	const REQUEST_TIMEOUT = 120;
+	const LAST_GOOD_CACHE_TIME = 2592000; // 30 days
+	const FAILURE_COOLDOWN_TIME = 300; // 5 minutes
 
 	private $debug = false;
 	private $cacheTime = 0;
@@ -214,6 +216,8 @@ class UEHttpRequest{
 		
 		$cacheKey = $this->prepareCacheKey($url, $body);
 		$cacheTime = $this->prepareCacheTime($method);
+		$lastGoodKey = $cacheKey . "_lastgood";
+		$cooldownKey = $cacheKey . "_cooldown";
 		
 		if($cacheTime > 0){
 			
@@ -236,6 +240,15 @@ class UEHttpRequest{
 				delete_transient($cacheKey);
 			}
 			
+			// Recently failed? Serve last good without touching the API.
+			if(UniteProviderFunctionsUC::getTransient($cooldownKey) !== false){
+				
+				$lastGoodResponse = $this->getLastGoodHttpResponse($lastGoodKey);
+				
+				if($lastGoodResponse !== null)
+					return $lastGoodResponse;
+			}
+			
 		}
 		
 		$arrRequest = array(
@@ -252,9 +265,16 @@ class UEHttpRequest{
 		
 		$wpResponse = wp_remote_request($url, $arrRequest);
 		
-		if(is_wp_error($wpResponse) === true)
+		if(is_wp_error($wpResponse) === true){
+			
+			$lastGoodResponse = $this->serveLastGoodAfterFailure($cacheTime, $cooldownKey, $lastGoodKey);
+			
+			if($lastGoodResponse !== null)
+				return $lastGoodResponse;
+			
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw new UEHttpRequestException($wpResponse->get_error_message(), $this);
+		}
 
 		$status = wp_remote_retrieve_response_code($wpResponse);
 		$headers = wp_remote_retrieve_headers($wpResponse);
@@ -276,9 +296,16 @@ class UEHttpRequest{
 			$response = new UEHttpResponse($requestResponse);
 			$validResponse = call_user_func($this->validateResponse, $response);
 
-			if($validResponse === false)
+			if($validResponse === false){
+				
+				$lastGoodResponse = $this->serveLastGoodAfterFailure($cacheTime, $cooldownKey, $lastGoodKey);
+				
+				if($lastGoodResponse !== null)
+					return $lastGoodResponse;
+				
 				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 				throw new UEHttpResponseException("Response validation failed.", $response);
+			}
 		}
 			
 		//show debug
@@ -298,8 +325,20 @@ class UEHttpRequest{
 			$cacheTime = 10;
 		}
 		
-		if($cacheTime > 0 && $this->isCacheableResponseBody($body) === true)
+		if($cacheTime > 0 && $this->isCacheableResponseBody($body) === true){
+			
 			UniteProviderFunctionsUC::setTransient($cacheKey, $requestResponse, $cacheTime);
+			
+			if(empty($body) === false)
+				UniteProviderFunctionsUC::setTransient($lastGoodKey, $requestResponse, self::LAST_GOOD_CACHE_TIME);
+			
+		}elseif($cacheTime > 0){
+			
+			$lastGoodResponse = $this->serveLastGoodAfterFailure($cacheTime, $cooldownKey, $lastGoodKey);
+			
+			if($lastGoodResponse !== null)
+				return $lastGoodResponse;
+		}
 		
 		return new UEHttpResponse($requestResponse);
 	}
@@ -412,6 +451,47 @@ class UEHttpRequest{
 			return false;
 		
 		return true;
+	}
+
+	/**
+	 * Get the long-lived last-good cached response, if any.
+	 *
+	 * @param string $lastGoodKey
+	 *
+	 * @return UEHttpResponse|null
+	 */
+	private function getLastGoodHttpResponse($lastGoodKey){
+
+		$lastGood = UniteProviderFunctionsUC::getTransient($lastGoodKey);
+
+		if(empty($lastGood))
+			return null;
+
+		if($this->isDebug() === true){
+			dmp("get the response from last-good cache");
+			$this->printResponseDebug($lastGood);
+		}
+
+		return new UEHttpResponse($lastGood);
+	}
+
+	/**
+	 * After a failed/error response: set a short cooldown and try last-good.
+	 *
+	 * @param int $cacheTime
+	 * @param string $cooldownKey
+	 * @param string $lastGoodKey
+	 *
+	 * @return UEHttpResponse|null
+	 */
+	private function serveLastGoodAfterFailure($cacheTime, $cooldownKey, $lastGoodKey){
+
+		if($cacheTime <= 0)
+			return null;
+
+		UniteProviderFunctionsUC::setTransient($cooldownKey, 1, self::FAILURE_COOLDOWN_TIME);
+
+		return $this->getLastGoodHttpResponse($lastGoodKey);
 	}
 
 	/**

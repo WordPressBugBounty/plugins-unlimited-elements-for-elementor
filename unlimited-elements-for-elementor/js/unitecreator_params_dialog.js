@@ -1944,6 +1944,10 @@ function UniteCreatorParamsDialog(){
 			return(false);
 
 		var contentID = jQuery(this).val();
+		
+		if(contentID == "")
+			return(false);
+
 		var objContent = jQuery("#" + contentID);
 
 		//show current content

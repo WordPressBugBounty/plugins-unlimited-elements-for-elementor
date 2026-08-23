@@ -67,11 +67,44 @@ function UERemoteGeneralAPI(){
 	}
 
 	/**
+	 * skip items from nested sliders / carousels
+	 */
+	function filterOwnItems(objItems){
+
+		if(!objItems || objItems.length == 0)
+			return(objItems);
+
+		var objParent = g_objParent.eq(0);
+		var parentEl = objParent[0];
+		var parentWidgetEl = objParent.closest(".elementor-widget")[0];
+
+		objItems = objItems.filter(function(){
+
+			var objItem = jQuery(this);
+			var objRemote = objItem.closest(".uc-remote-parent");
+
+			if(objRemote.length && objRemote[0] !== parentEl)
+				return(false);
+
+			var itemWidgetEl = objItem.closest(".elementor-widget")[0];
+
+			if(itemWidgetEl && parentWidgetEl && itemWidgetEl !== parentWidgetEl)
+				return(false);
+
+			return(true);
+		});
+
+		return(objItems);
+	}
+
+	/**
 	 * get items objet
 	 */
 	function getObjItems(){
 
 		var objItems = g_objParent.find("."+g_vars.class_items);
+
+		objItems = filterOwnItems(objItems);
 
 		return(objItems);
 	}
@@ -82,7 +115,7 @@ function UERemoteGeneralAPI(){
 	 */
 	function getNumTotal(){
 		
-		var objItems = g_objParent.find("."+g_vars.class_items);
+		var objItems = getObjItems();
 		
 		var numTotal = objItems.length;
 				
@@ -95,9 +128,7 @@ function UERemoteGeneralAPI(){
 	 */
 	function getObjCurrentItem(){
 
-		var selector = "."+g_vars.class_items+"."+g_vars.class_active;
-
-		var objCurrent = g_objParent.find(selector);
+		var objCurrent = getObjItems().filter("."+g_vars.class_active);
 
 		return(objCurrent);
 	}
@@ -758,7 +789,14 @@ function UERemoteCarouselAPI(){
 	 */
 	function getTotalItems(){
 
-		var total = g_owlCarousel.find(".owl-item:not(.cloned)").length;
+		var objCarousel = g_owlCarousel.eq(0);
+
+		var objItems = objCarousel.find(".owl-item:not(.cloned)").filter(function(){
+
+			return(jQuery(this).closest(".owl-carousel")[0] === objCarousel[0]);
+		});
+
+		var total = objItems.length;
 
 		return(total);
 	}
@@ -852,7 +890,7 @@ function UERemoteCarouselAPI(){
 			break;
 			case "get_total_text":
 
-				var owlTotalItems = g_owlCarousel.find(".owl-item:not(.cloned)").length;
+				var owlTotalItems = getTotalItems();
 				if(owlTotalItems.toString().length < 2){
                     owlTotalItems = "0" + owlTotalItems;
                    }
@@ -969,6 +1007,9 @@ function UERemoteCarouselAPI(){
 
 		if(typeof ucRemoteDebugEnabled != "undefined")
 			g_enableDebug = true;
+
+		if(objParent.length > 1)
+			objParent = objParent.first();
 		
 		if(objParent.hasClass("owl-carousel") == false)
 			throw new Error("owl-carousel class not found");
@@ -2618,6 +2659,17 @@ function UERemoteWidgets(){
 			return(false);
 		}
 
+		//skip nested slider/carousel that sits inside another synced parent with the same group
+		var objOuterSync = g_objParent.parent().closest(".uc-remote-parent[data-sync='true']");
+
+		if(objOuterSync.length && objOuterSync.data("syncid") == syncID){
+
+			if(g_vars.trace_debug == true)
+				trace("skip nested sync parent, same group: "+syncID);
+
+			return(false);
+		}
+
 		var objSync = g_remoteConnection.getSyncObject(syncID);
 		
 		var isEditorMode = isInsideEditor();
@@ -2675,6 +2727,9 @@ function UERemoteWidgets(){
 
 			if(g_objParent.length == 0)
 				return(false);
+
+			if(g_objParent.length > 1)
+				g_objParent = g_objParent.first();
 
 			g_vars.is_parent_mode = true;
 

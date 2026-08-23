@@ -194,6 +194,20 @@ class UniteFunctionsUC{
 		return($altVal);
 	}
 
+	/**
+	 * get scalar string, reject arrays and objects
+	 */
+	public static function getScalarString($val, $fieldName = "value"){
+
+		if(is_array($val) || is_object($val))
+			self::throwError("Wrong ".$fieldName);
+
+		if($val === null)
+			return("");
+
+		return((string)$val);
+	}
+
 
 	/**
 	 * get first item value
@@ -2225,6 +2239,10 @@ class UniteFunctionsUC{
 		$scheme = UniteFunctionsUC::getVal($arrUrl, "scheme","http");
 		$host = UniteFunctionsUC::getVal($arrUrl, "host");
 		$path = UniteFunctionsUC::getVal($arrUrl, "path");
+		$port = UniteFunctionsUC::getVal($arrUrl, "port");
+
+		if(!empty($port))
+			$host .= ":".$port;
 
 		$url = "{$scheme}://{$host}{$path}";
 
@@ -2832,7 +2850,7 @@ class UniteFunctionsUC{
         $html = preg_replace('/\s*on\w+\s*=\s*["\']?\s*javascript\s*:[^"\'>]*["\']?/i', '', $html);
 
 		// Remove event handlers (incl. chained/malformed: onerror/onload="", onerror/**/=, etc.)
-		$eventHandlerPattern = '/\s*\/?on\w+(?:\s*\/\s*on\w+)*[^>]*?=\s*["\']?[^"\'>]*["\']?/i';
+		$eventHandlerPattern = '/\s+\/?on\w+(?:\s*\/\s*on\w+)*\s*=\s*["\']?[^"\'>]*["\']?/i';		
 		$prevHtml = null;
 		$maxPasses = 10;
 		while($html !== $prevHtml && $maxPasses-- > 0){
@@ -4599,6 +4617,7 @@ class UniteFunctionsUC{
     }
 
     private static function processJS($scriptTag) {
+		
         if (preg_match('/^(<script[^>]*>)(.*?)(<\/script>)$/is', $scriptTag, $m)) {
             $header = $m[1];
             $code = $m[2];

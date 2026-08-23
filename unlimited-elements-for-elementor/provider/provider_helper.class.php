@@ -1192,6 +1192,10 @@ class HelperProviderUC{
 
 		$arrRepeaterItems = UniteFunctionsUC::getVal($arrCustomFields, $repeaterName);
 		
+		if(is_string($arrRepeaterItems))
+			$arrRepeaterItems = UniteFunctionsUC::maybeUnserialize($arrRepeaterItems);
+
+	
 		//show debug data text
 
 		if($showDebugData == true){

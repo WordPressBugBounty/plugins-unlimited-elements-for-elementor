@@ -1,7 +1,43 @@
 
 
 
+
 == Changelog ==
+
+= 2.0.17 - 2026-08-23 =
+
+Plugin Changes:
+
+* Fix: made some small security related fix  
+* Fix: disabled the public ajax action for logged out users
+* Fix: added permission check to get addon config html
+* Fix: keep the port in base url so post filters ajax works on localhost with non-standard ports
+* Fix: sync ignore nested sliders and carousels when counting items
+* Fix: http request cache - fall back to last good response with short cooldown on API errors
+* Fix: fixed some html attributes cut of 
+* Fix: made the repeater table work with jet repeater 
+* Fix: made some better protection against dropzone include by other plugins
+* Fix: fixed some small js bug that appears in custom widgets creation
+
+
+Widgets Changes: 
+
+* Feature: Load More / Infinite Scroll (Pro) - Added per-device loading mode — replaced the Infinite Scroll toggle with a responsive dropdown so Load More Button and Infinite Scroll can be set independently for desktop, tablet, and mobile.
+* Feature: Post Blocks (Free) - Added the Show Empty Message option to display a clear notification whenever no posts match or answer the specified query.
+* Feature: Gradient Button (Free) - Updated the Button Style option to support responsive settings across different screen sizes and device breakpoints for better visual consistency.
+* Feature: Youtube Playlist (Free) - Added support for the safe HTML tags in description text option including br, b, strong, i, em, u, strike, s, and p while automatically converting plain text URLs starting with https into active hyperlink elements.
+* Feature: Youtube Playlist (Free) - Added the Show Responsive Playlist Toggle Button option to allow users to easily control the visibility and display of the playlist toggle interface.
+* Feature: Interactive Circle Infographic (Free) - Added item link option for regular circle item layouts (in addition to segment items)
+* Fix: Load More / Infinite Scroll (Pro) - Fixed Load More button visibility not updating on viewport resize — button visibility is now controlled by a runtime CSS class toggled by JavaScript instead of a server-side template condition.
+* Fix: Load More / Infinite Scroll (Pro) - Fixed infinite scroll triggering in hidden tabs and containers — the widget now checks actual visibility before auto-loading and uses MutationObserver/IntersectionObserver to wake up correctly when a hidden parent becomes visible.
+* Fix: Vertical Curved Timeline (Free) - Resolved an issue where the Graphic element border radius option was not working correctly, ensuring that visual corner styling applies properly to graphic elements.
+* Fix: Scroll Text Animation (Free) - Fixed compatibility conflict with audio/video player widgets when used on the same page; improved stability when multiple GSAP-based widgets are active simultaneously.
+* Fix: Unlimited Google Maps (Free) - Fixed an issue where the theme's default styles were overriding map button styles, ensuring that custom button appearance settings render correctly across all themes.
+* Fix: Icon Tabs (Free) - Fixed an issue with the Icon Tabs widget where images failed to render properly when placed inside embedded carousel widgets, ensuring seamless visual display across nested layout components.
+* Fix: Dynamic Post Popup (Pro) - Resolved an issue where the popup resized visibly multiple times when opening posts with dynamic content, by delaying the reveal until the iframe height has fully stabilized.
+* Fix: Unlimited Google Maps (Free) - Resolved an issue where searching by categories in the navigation bar was not working correctly
+* Fix: Load More / Infinite Scroll (Pro) - Fixed an infinite scroll loop on mobile devices caused by browser scroll anchoring automatically repositioning the viewport after new items were inserted, and resolved a related issue where infinite scroll failed to trigger on tablet and mobile when responsive offset fields were left empty.
+
 
 = 2.0.16 - 2026-07-30 =
 

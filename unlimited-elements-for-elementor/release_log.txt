@@ -1,11 +1,26 @@
 
 
+version 2.0.17:
+
+* Fix: made some small security related fix  
+* Fix: disabled the public ajax action for logged out users
+* Fix: added permission check to get addon config html
+* Fix: keep the port in base url so post filters ajax works on localhost with non-standard ports
+* Fix: sync ignore nested sliders and carousels when counting items
+* Fix: http request cache - fall back to last good response with short cooldown on API errors
+* Fix: fixed some html attributes cut of 
+* Fix: made the repeater table work with jet repeater 
+* Fix: made some better protection against dropzone include by other plugins
+* Fix: fixed some small js bug that appears in custom widgets creation
+
+
 version 2.0.16:
 
 * Feature: added option for youtube playlist
 * Feature: added option for google calendar
 * Feature: added option for filter by meta 
 * Fix: fixed some security issue
+
 
 version 2.0.15:
 

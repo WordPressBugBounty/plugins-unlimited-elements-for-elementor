@@ -258,6 +258,8 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	 * for this function there is cache get
 	 */
 	public function initByName($name, $checkCache = true){
+
+		$name = UniteFunctionsUC::getScalarString($name, "name");
 				
 		try{
 			//try to get from cache
@@ -278,6 +280,9 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	 * for this function there is cache get
 	 */
 	public function initByAlias($alias, $type, $checkCache = true){
+
+		$alias = UniteFunctionsUC::getScalarString($alias, "alias");
+		$type = UniteCreatorAddonType::getValidAddonType($type);
 
 		if($type == GlobalsUC::ADDON_TYPE_REGULAR_ADDON)
 			$type = "";
@@ -316,6 +321,8 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	 * init by block name, in gutenberg
 	 */
 	public function initByBlockName($blockName, $addonType){
+
+		$blockName = UniteFunctionsUC::getScalarString($blockName, "block name");
 		
 		UniteFunctionsUC::validateNotEmpty($blockName,"block name");
 
@@ -336,6 +343,9 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 	 * init by name or alias
 	 */
 	public function initByMixed($name, $type = null){
+
+		$name = UniteFunctionsUC::getScalarString($name, "name");
+		$type = UniteCreatorAddonType::getValidAddonType($type);
 
 		if($type == GlobalsUC::ADDON_TYPE_REGULAR_ADDON)
 			$type = "";

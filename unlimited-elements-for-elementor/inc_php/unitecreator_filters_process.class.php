@@ -2839,7 +2839,7 @@ class UniteCreatorFiltersProcess{
 	 * get the base url
 	 */
 	private function getFiltersJSData(){
-
+		
 		$urlBase = UniteFunctionsUC::getBaseUrl(GlobalsUC::$current_page_url, true);		//strip pagination
 
 		//include some common url filters

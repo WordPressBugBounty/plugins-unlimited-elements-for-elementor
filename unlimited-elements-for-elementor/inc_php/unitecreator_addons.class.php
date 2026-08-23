@@ -407,6 +407,8 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 		if(empty($type))
 			$type = UniteFunctionsUC::getVal($data, "type");
 
+		$type = UniteCreatorAddonType::getValidAddonType($type);
+
 		HelperUC::runProviderFunc("validateDataAddonsType", $type, $data);
 
 		return ($type);
@@ -1381,10 +1383,10 @@ public function prepareAddonByData($addonData, $isForOutput = false){
 		}
 
 		$addonID = UniteFunctionsUC::getVal($data, "id");
-		$addonName = UniteFunctionsUC::getVal($data, "name");
+		$addonName = UniteFunctionsUC::getScalarString(UniteFunctionsUC::getVal($data, "name"), "name");
 		$arrConfig = UniteFunctionsUC::getVal($data, "config");
 		$arrItemsData = UniteFunctionsUC::getVal($data, "items");
-		$addonType = UniteFunctionsUC::getVal($data, "addontype");
+		$addonType = UniteCreatorAddonType::getValidAddonType(UniteFunctionsUC::getVal($data, "addontype"));
 		$arrFonts = UniteFunctionsUC::getVal($data, "fonts");
 		$arrOptions = UniteFunctionsUC::getVal($data, "options");
 
@@ -1457,8 +1459,8 @@ public function prepareAddonByData($addonData, $isForOutput = false){
 			$objAddon = new UniteCreatorAddon();
 			$objAddon->initByID($addonID);
 		}else{
-			$addonName = UniteFunctionsUC::getVal($data, "name");
-			$addontype = UniteFunctionsUC::getVal($data, "addontype");
+			$addonName = UniteFunctionsUC::getScalarString(UniteFunctionsUC::getVal($data, "name"), "name");
+			$addontype = UniteCreatorAddonType::getValidAddonType(UniteFunctionsUC::getVal($data, "addontype"));
 
 			$config = UniteFunctionsUC::getVal($data, "config", array());
 			$items = UniteFunctionsUC::getVal($data, "items", array());

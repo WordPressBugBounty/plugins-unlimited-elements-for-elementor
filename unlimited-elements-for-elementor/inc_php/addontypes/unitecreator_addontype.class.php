@@ -124,6 +124,45 @@ class UniteCreatorAddonType{
 	
 	
 	/**
+	 * validate addon type from request / lookup data
+	 */
+	public static function getValidAddonType($type){
+
+		if(is_array($type) || is_object($type))
+			UniteFunctionsUC::throwError("Wrong addon type");
+
+		if($type === null)
+			$type = "";
+
+		$type = (string)$type;
+
+		$arrAllowed = array(
+			"",
+			GlobalsUC::ADDON_TYPE_REGULAR_ADDON,
+			GlobalsUC::ADDON_TYPE_ELEMENTOR,
+			GlobalsUC::ADDON_TYPE_SHAPE_DEVIDER,
+			GlobalsUC::ADDON_TYPE_SHAPES,
+			GlobalsUC::ADDON_TYPE_REGULAR_LAYOUT,
+			GlobalsUC::ADDON_TYPE_LAYOUT_SECTION,
+			GlobalsUC::ADDON_TYPE_LAYOUT_PAGE_TEMPLATE,
+			GlobalsUC::ADDON_TYPE_LAYOUT_GENERAL,
+			GlobalsUC::ADDON_TYPE_BGADDON,
+			"vc",
+			"elementor_template",
+			"posttype",
+		);
+
+		if(in_array($type, $arrAllowed, true) == true)
+			return($type);
+
+		if(preg_match("/^[a-zA-Z0-9_-]+$/", $type) == 1)
+			return($type);
+
+		UniteFunctionsUC::throwError("Wrong addon type");
+	}
+
+
+	/**
 	 * get addon type object
 	 */
 	public static function getAddonTypeObject($type, $isLayout = false){
