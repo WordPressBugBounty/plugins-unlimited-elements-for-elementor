@@ -2157,13 +2157,13 @@ class HelperProviderUC{
 		$queryVars = $wp_query->query;
 		
 		dmp("Last Posts Query:");
-		dmp($queryVars);
+		dmpHtml($queryVars);
 		
 		//dmp("is main query: ".$wp_query->isMain());
 		
 		dmp("The Request: ");
 		
-		dmp($wp_query->request);
+		dmpHtml($wp_query->request);
 		
 		
 	}

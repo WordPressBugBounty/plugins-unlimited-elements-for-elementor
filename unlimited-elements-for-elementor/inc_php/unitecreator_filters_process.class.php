@@ -271,7 +271,7 @@ class UniteCreatorFiltersProcess{
 			if(self::$showDebug == true){
 				
 				dmp("error get terms");
-				dmp($args);
+				dmpHtml($args);
 				dmp($arrTerms);
 			}
 
@@ -1264,7 +1264,7 @@ class UniteCreatorFiltersProcess{
 
 			$arrNotIn = array_merge($arrNotIn, $arrExclude);
 
-			$args["post__not_in"] = $arrExclude;
+			$args["post__not_in"] = $arrNotIn;
 
 		}
 
@@ -1371,7 +1371,7 @@ class UniteCreatorFiltersProcess{
 		if(self::$showDebug == true){
 
 			dmp("args:");
-			dmp($args);
+			dmpHtml($args);
 
 			dmp("filters:");
 			dmp($arrFilters);
@@ -1428,7 +1428,7 @@ class UniteCreatorFiltersProcess{
 		
 		if(self::$showDebug == true){
 			dmp("--- Last Query Args:");
-			dmp($args);
+			dmpHtml($args);
 		}
 			
 		$query = new WP_Query($args);
@@ -2282,7 +2282,7 @@ class UniteCreatorFiltersProcess{
 			
 			if(self::$showDebug == true){
 				dmp("--- Last Query Args:");
-				dmp($args);
+				dmpHtml($args);
 			}
 						
 			if(!empty(GlobalsProviderUC::$lastQueryRequest)){
@@ -2329,7 +2329,7 @@ class UniteCreatorFiltersProcess{
 				
 				if($countLen < 500){
 					dmp("<div style='color:red;'>Note - request count is too low!</div>");
-					dmp($taxRequest);
+					dmpHtml($taxRequest);
 				}
 				
 			}
@@ -2369,7 +2369,7 @@ class UniteCreatorFiltersProcess{
 			
 			if(self::$showDebug == true){
 				dmp("--- Last Query Args (Authors):");
-				dmp($args);
+				dmpHtml($args);
 			}
 						
 			if(!empty(GlobalsProviderUC::$lastQueryRequest)){
@@ -2414,7 +2414,7 @@ class UniteCreatorFiltersProcess{
 				
 				if($countLen < 100){
 					dmp("<div style='color:red;'>Note - request count is too low!</div>");
-					dmp($authorRequest);
+					dmpHtml($authorRequest);
 				}
 				
 			}
@@ -3955,7 +3955,7 @@ class UniteCreatorFiltersProcess{
 
 		dmp("MAIN QUERY DEBUG");
 
-		dmp($argsForDebug);
+		dmpHtml($argsForDebug);
 
 	}
 

@@ -4267,7 +4267,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		$queryVars = self::cleanQueryArgsForDebug($queryVars);
 
 		dmp("Current Query Is: ");
-		dmp($queryVars);
+		dmpHtml($queryVars);
 	}
 
 	/**

@@ -171,9 +171,13 @@ class UniteCreatorForm{
 		foreach($arrFields as $arrField){
 			// get field input
 			$fieldId = UniteFunctionsUC::getVal($arrField, "id");
+			$fieldId = is_string($fieldId) ? sanitize_key($fieldId) : "";
 			$fieldType = UniteFunctionsUC::getVal($arrField, "type");
 			$fieldValue = UniteFunctionsUC::getVal($arrField, "value");
 			$fieldParams = array();
+
+			if(empty($fieldId) === true)
+				UniteFunctionsUC::throwError("Invalid form field id.");
 
 			// get saved settings from layout
 			$fieldSettings = HelperProviderCoreUC_EL::getAddonValuesWithDataFromContent($arrContent, $fieldId);

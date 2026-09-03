@@ -1,4 +1,9 @@
 
+version 2.0.18:
+
+* Fix: fixed 2 small security issue  
+* Fix: fixed avoid duplicates with filters on synced grids
+
 
 version 2.0.17:
 

@@ -365,9 +365,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 */
 		public static function getErrorMessageHtml($message, $trace = "", $withCSS = false){
 
+			$allowedHtml = array(
+				"b" => array(),
+				"strong" => array(),
+				"em" => array(),
+				"i" => array(),
+				"br" => array(),
+			);
+
 			$html = '<div class="unite-error-message">';
 			$html .= '<div style="unite-error-message-inner">';
-			$html .= $message;
+			$html .= wp_kses($message, $allowedHtml);
 
 			if($withCSS == true){
 				$html .= "<style> .unite-error-message{color:red;}  </style>";
@@ -375,7 +383,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 			if(!empty($trace)){
 				$html .= '<div class="unite-error-message-trace">';
-				$html .= "<pre>{$trace}</pre>";
+				$html .= "<pre>" . esc_html($trace) . "</pre>";
 				$html .= "</div>";
 			}
 

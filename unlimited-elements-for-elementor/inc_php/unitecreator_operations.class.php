@@ -207,14 +207,22 @@ class UCOperations extends UniteElementsBaseUC{
 	 */
 	public function getErrorMessageHtml($message, $trace = ""){
 
+		$allowedHtml = array(
+			"b" => array(),
+			"strong" => array(),
+			"em" => array(),
+			"i" => array(),
+			"br" => array(),
+		);
+
 		$html = '<div class="unite-error-message">';
 		$html .= '<div class="unite-error-message-inner">';
-		$html .= $message;
+		$html .= wp_kses($message, $allowedHtml);
 		$html .= '</div>';
 
 		if(!empty($trace)){
 			$html .= '<div class="unite-error-trace">';
-			$html .= "<pre>{$trace}</pre>";
+			$html .= "<pre>" . esc_html($trace) . "</pre>";
 			$html .= "</div>";
 		}
 

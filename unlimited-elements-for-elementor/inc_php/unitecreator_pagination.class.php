@@ -515,7 +515,7 @@ class UniteCreatorElementorPagination{
 
 		if($isDebug == true){
 			dmp("pagination query:");
-			dmp(GlobalsProviderUC::$lastPostQuery->query);
+			dmpHtml(GlobalsProviderUC::$lastPostQuery->query);
 			
 			$totalPosts = GlobalsProviderUC::$lastPostQuery->found_posts;
 			
@@ -824,7 +824,7 @@ class UniteCreatorElementorPagination{
 					$queryVars = UniteFunctionsWPUC::cleanQueryArgsForDebug($queryVars);
 
 					dmp("Current query vars");
-					dmp($queryVars);
+					dmpHtml($queryVars);
 
 					dmp("max pages: ".$wp_query->max_num_pages);
 

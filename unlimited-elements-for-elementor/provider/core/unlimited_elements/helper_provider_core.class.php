@@ -743,7 +743,7 @@ class HelperProviderCoreUC_EL{
 		$arrElement = self::getArrElementFromContent($arrContent, $elementID);
 
 		if(empty($arrElement)){
-			UniteFunctionsUC::throwError("Elementor Widget with id: $elementID not found");
+			UniteFunctionsUC::throwError("Elementor Widget with id: " . esc_html($elementID) . " not found");
 		}
 
 		$type = UniteFunctionsUC::getVal($arrElement, "elType");

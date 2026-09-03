@@ -172,7 +172,7 @@ class UniteCreatorAjaxSeach{
 
 			dmp("<strong>Search By Meta Fields</strong>");
 			dmp("Query:");
-			dmp($args);
+			dmpHtml($args);
 			dmp("Found Posts: ".count($arrPostsByMeta));
 			dmp("Total Query Posts: ".(int)$query->found_posts);
 
@@ -267,7 +267,7 @@ class UniteCreatorAjaxSeach{
 			dmp("Query:");
 			$strTerms = UniteFunctionsWPUC::getTermsTitlesString($arrTermsFound, true);
 			dmp($strTerms);
-			dmp($args);
+			dmpHtml($args);
 			dmp("Found Terms: ".count($arrTermsFound));
 			dmp("Found Posts: ".count($arrPostsByTerms));
 			dmp("Total Query Posts: ".(int)$query->found_posts);

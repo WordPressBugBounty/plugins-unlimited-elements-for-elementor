@@ -271,7 +271,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 			$this->initByDBRecord($record);
 			
 		}catch(Exception $e){
-			UniteFunctionsUC::throwError("Widget with name:<b> {$name} </b> not found");
+			UniteFunctionsUC::throwError("Widget with name:<b> " . esc_html($name) . " </b> not found");
 		}
 	}
 
@@ -313,7 +313,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 			$this->initByDBRecord($record);
 
 		}catch(Exception $e){
-			UniteFunctionsUC::throwError("Widget with alias:<b> {$alias} </b> not found");
+			UniteFunctionsUC::throwError("Widget with alias:<b> " . esc_html($alias) . " </b> not found");
 		}
 	}
 	

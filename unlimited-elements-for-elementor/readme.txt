@@ -1,5 +1,5 @@
 === Unlimited Elements For Elementor ===
-Contributors: unitecms, valiano, iritmega, amitkeren, axmusic, freemius
+Contributors: unitecms, odin9den, valiano, iritmega, amitkeren, axmusic, freemius
 Donate link: http://unlimited-elements.com/
 Tags: elementor, elementor addons, elementor templates, elementor widgets, widgets for elementor
 Requires at least: 3.5
@@ -941,6 +941,16 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+
+
+=  2.0.18 - 2026-09-03 =
+
+Plugin Changes:
+
+* Fix: fixed 2 small security issue  
+* Fix: fixed avoid duplicates with filters on synced grids
+
+
 = 2.0.17 - 2026-08-23 =
 
 Plugin Changes:
@@ -976,12 +986,20 @@ Widgets Changes:
 * Fix: Load More / Infinite Scroll (Pro) - Fixed an infinite scroll loop on mobile devices caused by browser scroll anchoring automatically repositioning the viewport after new items were inserted, and resolved a related issue where infinite scroll failed to trigger on tablet and mobile when responsive offset fields were left empty.
 
 
-
 = 2.0.16 - 2026-07-30 =
+
+Plugin Changes:
 
 * Feature: added option for google calendar
 * Feature: added option for filter by meta 
 * Fix: fixed another security issue
+
+Widgets Changes:
+
+* Feature: Radio Button Field (Free) - Added a Radio Layout Type - Buttons option with support for a Grid layout type, including customizable Grid Columns controls for precise button alignment across screen sizes.
+* Feature: Background Switcher (Free) - Added a Vertical Direction On Mobile Breakpoint option, which displays when Vertical Direction On Mobile is enabled, allowing you to choose the exact breakpoint where the layout switches to a vertical direction.
+* Fix: Typewriter Text Effect (Pro) - Resolved a compatibility issue where widgets were not functioning correctly with the TranslatePress plugin
+* Feature: Post Accordion (Free) - Added a Placeholder Image option, allowing you to set a default fallback image when primary image sources are missing or broken
 
 
 = 2.0.15 - 2026-07-22 =

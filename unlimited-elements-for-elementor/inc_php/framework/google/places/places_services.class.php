@@ -50,7 +50,7 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 				dmp($endpoint);
 
 				dmp("Query Params");
-				dmp($queryParams);
+				dmpHtml($queryParams);
 
 				dmp("Field Mask");
 				dmp($fieldMask);

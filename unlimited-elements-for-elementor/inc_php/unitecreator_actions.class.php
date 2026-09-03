@@ -377,6 +377,8 @@ class UniteCreatorActions{
 				break;
 				case "show_preview":
 
+					HelperProviderUC::verifyAdminPermission();
+
 					$addons->showAddonPreviewFromData($data);
 					exit;
 				break;

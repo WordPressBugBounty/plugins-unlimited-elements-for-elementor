@@ -362,10 +362,11 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 	 */
 	protected function validateAdminPermissions(){
 		
-		if(UniteFunctionsWPUC::isAdminPermissions() == false){
-			echo "access denied, no admin permissions";
-
-			return (false);
+		if(current_user_can($this->capability) == false){
+			wp_die(
+				esc_html__("You do not have sufficient permissions to access this page.", "unlimited-elements-for-elementor"),
+				403
+			);
 		}
 	}
 
@@ -953,6 +954,8 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 
 		// run blank mode
 		if(GlobalsUC::$blankWindowMode == true){
+
+			$this->validateAdminPermissions();
 
 			$isSuperClear = UniteFunctionsUC::getGetVar("superclear", "", UniteFunctionsUC::SANITIZE_KEY);
 			$isSuperClear = UniteFunctionsUC::strToBool($isSuperClear);

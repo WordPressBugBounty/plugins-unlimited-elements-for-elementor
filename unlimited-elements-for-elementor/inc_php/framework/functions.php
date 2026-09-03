@@ -22,7 +22,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	
 	if(!function_exists("dmpHtml")){
 		function dmpHtml($str){
-			dmp(htmlspecialchars($str));
+			if(is_array($str) || is_object($str))
+				$str = print_r($str, true);
+
+			dmp(htmlspecialchars((string)$str, ENT_QUOTES, 'UTF-8'));
 		}
 	}
 	 

@@ -996,7 +996,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		if($showDebugQuery == true){
 			dmp("args after custom query");
-			dmp($args);
+			dmpHtml($args);
 		}
 
 		return($args);
@@ -2520,7 +2520,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				$argsForDebug = UniteFunctionsWPUC::cleanQueryArgsForDebug($argsForDebug);
 			
 			dmp("<strong>Custom Post. The Query Is:</strong>");
-			dmp($argsForDebug);
+			dmpHtml($argsForDebug);
 			
 		}
 		
@@ -2618,10 +2618,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$originalQueryVars = UniteFunctionsWPUC::cleanQueryArgsForDebug($originalQueryVars);
 			
 			dmp("<strong>The Query Request Is:</strong>");
-			dmp($query->request);
+			dmpHtml($query->request);
 		
 			dmp("<strong>The Final Query Vars:</strong>");
-			dmp($originalQueryVars);
+			dmpHtml($originalQueryVars);
 					
 			$this->showPostsDebugCallbacks($isForWoo);
 			
@@ -2630,9 +2630,9 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		/*
 	 	dmp("request debug output");
 
-		dmp($query->request);
+		dmpHtml($query->request);
 		dmp("the query");
-		dmp($query->query);
+		dmpHtml($query->query);
 		dmp($query->post_count);
 		dmp($query->found_posts);
 		exit();
@@ -2858,7 +2858,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 		if($isDebug == true){
 			dmp("Save query - query saved");
-			dmp($queryVars);
+			dmpHtml($queryVars);
 		}
 		
 		$perPage = UniteFunctionsUC::getVal($queryVars, "posts_per_page");
@@ -3018,7 +3018,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$argsForDebug = UniteFunctionsWPUC::cleanQueryArgsForDebug($currentQueryVars);
 			if(GlobalsUC::$showQueryDebugByUrl == true)
 				$argsForDebug = UniteFunctionsWPUC::expandTaxQueryTermsForDebug($argsForDebug);
-			dmp($argsForDebug);
+			dmpHtml($argsForDebug);
 
 			$debugType = UniteFunctionsUC::getVal($value, "{$name}_query_debug_type");
 
@@ -3083,10 +3083,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				$originalQueryVars = UniteFunctionsWPUC::expandTaxQueryTermsForDebug($originalQueryVars);
 			
 			dmp("The Query Request Is:");
-			dmp($query->request);
+			dmpHtml($query->request);
 			
 			dmp("The finals query vars:");
-			dmp($originalQueryVars);
+			dmpHtml($originalQueryVars);
 		
 			$this->showPostsDebugCallbacks($isForWoo);
 
@@ -3213,7 +3213,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		
 		if($showDebugQuery == true){
 			dmp("Manual Selection. The Query Is:");
-			dmp($args);
+			dmpHtml($args);
 		}
 
 		GlobalsProviderUC::$lastQueryArgs = $args;
@@ -3252,10 +3252,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$originalQueryVars = UniteFunctionsWPUC::cleanQueryArgsForDebug($originalQueryVars);
 
 			dmp("The Query Request Is:");
-			dmp($query->request);
+			dmpHtml($query->request);
 
 			dmp("The finals query vars:");
-			dmp($originalQueryVars);
+			dmpHtml($originalQueryVars);
 
 			$this->showPostsDebugCallbacks(false);
 
@@ -3360,7 +3360,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			dmp("UE Templates. The Query Is:");
 
-			dmp($args);
+			dmpHtml($args);
 
 			dmp("Found Posts: ".count($arrPosts));
 			dmp("Total Query Posts: ".(int)$queryUeTemplates->found_posts);
@@ -5395,7 +5395,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if($showDebug == true){
 			echo "<div class='uc-div-ajax-debug'>";
 			dmp("The terms query is:");
-			dmp($args);
+			dmpHtml($args);
 		}
 
 		$args = $this->getPostListData_getCustomQueryFilters($args, $value, $name, $data, false);
@@ -5419,10 +5419,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				$originalQueryVars = UniteFunctionsWPUC::expandTaxQueryTermsForDebug($originalQueryVars);
 
 			dmp("The Query Request Is:");
-			dmp($term_query->request);
+			dmpHtml($term_query->request);
 
 			dmp("The finals query vars:");
-			dmp($originalQueryVars);
+			dmpHtml($originalQueryVars);
 
 
 			$arrActions = UniteFunctionsWPUC::getFilterCallbacks("get_terms_args");
@@ -5728,7 +5728,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if($showDebug == true){
 			echo "<div class='uc-div-ajax-debug'>";
 			dmp("The users query is:");
-			dmp($args);
+			dmpHtml($args);
 		}
 
 		HelperUC::addDebug("Get Users Args", $args);
@@ -5759,10 +5759,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				$originalQueryVars = UniteFunctionsWPUC::expandTaxQueryTermsForDebug($originalQueryVars);
 			
 			dmp("The Query Request Is:");
-			dmp($user_query->request);
+			dmpHtml($user_query->request);
 
 			dmp("The finals query vars:");
-			dmp($originalQueryVars);
+			dmpHtml($originalQueryVars);
 		}
 
 		if($showDebug == true)
