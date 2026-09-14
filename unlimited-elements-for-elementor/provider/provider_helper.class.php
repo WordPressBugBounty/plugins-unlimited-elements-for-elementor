@@ -163,7 +163,19 @@ class HelperProviderUC{
 		$settings->addTextBox("meta_key", "", __("Meta Key", "unlimited-elements-for-elementor"), $params);
 
 		$params = array();
+		$params["origtype"] = UniteCreatorDialogParam::PARAM_DROPDOWN;
+		$params["description"] = __("LIKE is treated as contains. For IN, NOT IN, BETWEEN, NOT BETWEEN use comma separated values.", "unlimited-elements-for-elementor");
+
+		$arrCompare = self::getArrMetaCompareSelect();
+		$arrCompare = array_flip($arrCompare);
+
+		$settings->addSelect("compare", $arrCompare, __("Compare", "unlimited-elements-for-elementor"), "=", $params);
+
+		$params = array();
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_TEXTFIELD;
+		$params["elementor_condition"] = array(
+			"compare" => array("=", "!=", ">", "<", ">=", "<=", "LIKE", "NOT LIKE", "IN", "NOT IN", "BETWEEN", "NOT BETWEEN"),
+		);
 
 		$settings->addTextBox("meta_value", "", __("Meta Value", "unlimited-elements-for-elementor"), $params);
 
@@ -195,6 +207,70 @@ class HelperProviderUC{
 		$arrItems["NOT EXISTS"] = "NOT EXISTS";
 
 		return($arrItems);
+	}
+
+
+	/**
+	 * map meta_query compare operators to URL words
+	 */
+	public static function getArrMetaCompareUrlWords(){
+
+		$arrItems = array();
+		$arrItems["="] = "equals";
+		$arrItems["!="] = "notequals";
+		$arrItems[">"] = "greater";
+		$arrItems["<"] = "less";
+		$arrItems[">="] = "greaterequal";
+		$arrItems["<="] = "lessequal";
+		$arrItems["LIKE"] = "like";
+		$arrItems["NOT LIKE"] = "notlike";
+		$arrItems["IN"] = "in";
+		$arrItems["NOT IN"] = "notin";
+		$arrItems["BETWEEN"] = "between";
+		$arrItems["NOT BETWEEN"] = "notbetween";
+		$arrItems["EXISTS"] = "exists";
+		$arrItems["NOT EXISTS"] = "notexists";
+
+		return($arrItems);
+	}
+
+
+	/**
+	 * get URL word for a compare operator, empty for equals
+	 */
+	public static function getMetaCompareUrlWord($compare){
+
+		if(empty($compare) || $compare == "=")
+			return("");
+
+		$arrItems = self::getArrMetaCompareUrlWords();
+
+		return(UniteFunctionsUC::getVal($arrItems, $compare, ""));
+	}
+
+
+	/**
+	 * get compare operator from URL word, null if not a known word
+	 */
+	public static function getMetaCompareFromUrlWord($word){
+
+		if(is_string($word) == false)
+			return(null);
+
+		$word = strtolower(trim($word));
+
+		if($word === "")
+			return(null);
+
+		$arrItems = self::getArrMetaCompareUrlWords();
+
+		foreach($arrItems as $compare => $urlWord){
+
+			if(strtolower($urlWord) === $word)
+				return($compare);
+		}
+
+		return(null);
 	}
 
 

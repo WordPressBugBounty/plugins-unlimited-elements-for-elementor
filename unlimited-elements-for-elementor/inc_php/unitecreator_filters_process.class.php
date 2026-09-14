@@ -517,6 +517,101 @@ class UniteCreatorFiltersProcess{
 		return($arrOutput);
 	}
 
+
+	/**
+	 * parse meta filters string
+	 * format: key:value1.value2;key2:value:notequals
+	 */
+	private function parseStrMeta($strFilters){
+
+		$arrUrlKeys = $this->getUrlPartsKeys();
+
+		$taxSapSign = UniteFunctionsUC::getVal($arrUrlKeys, "tax_sap");
+
+		if($taxSapSign != "~" && strpos($strFilters, "~") !== false)
+			$taxSapSign = "~";
+
+		$strFilters = trim($strFilters);
+
+		$arrFilters = explode(";", $strFilters);
+
+		$arrGroups = array();
+
+		foreach($arrFilters as $strFilter){
+
+			$strFilter = trim($strFilter);
+
+			if($strFilter === "")
+				continue;
+
+			$arrFilter = explode($taxSapSign, $strFilter);
+			$numParts = count($arrFilter);
+
+			if($numParts < 2)
+				continue;
+
+			$compare = "=";
+			$key = $arrFilter[0];
+			$strValues = $arrFilter[1];
+
+			if($numParts >= 3){
+
+				$lastPart = $arrFilter[$numParts - 1];
+				$compareFromWord = HelperProviderUC::getMetaCompareFromUrlWord($lastPart);
+
+				if($compareFromWord !== null){
+
+					$compare = $compareFromWord;
+
+					array_pop($arrFilter);
+					$key = array_shift($arrFilter);
+					$strValues = implode($taxSapSign, $arrFilter);
+				}else{
+					$key = $arrFilter[0];
+					$strValues = implode($taxSapSign, array_slice($arrFilter, 1));
+				}
+			}
+
+			$key = sanitize_key($key);
+
+			if(empty($key))
+				continue;
+
+			$arrValues = $this->parseStrTerms_values($strValues);
+
+			$groupKey = $key."\0".$compare;
+
+			if(isset($arrGroups[$groupKey])){
+
+				$existing = $arrGroups[$groupKey]["values"];
+				$relation = UniteFunctionsUC::getVal($arrValues, "relation");
+				$existingRelation = UniteFunctionsUC::getVal($existing, "relation");
+
+				if(isset($arrValues["relation"]))
+					unset($arrValues["relation"]);
+
+				foreach($arrValues as $val)
+					$existing[] = $val;
+
+				if($relation == "AND" || $existingRelation == "AND")
+					$existing["relation"] = "AND";
+
+				$arrGroups[$groupKey]["values"] = $existing;
+
+			}else{
+
+				$arrGroups[$groupKey] = array(
+					"key" => $key,
+					"compare" => $compare,
+					"values" => $arrValues,
+				);
+			}
+		}
+
+		return(array_values($arrGroups));
+	}
+
+
 	/**
 	 * get orderby input filter
 	 */
@@ -713,7 +808,7 @@ class UniteCreatorFiltersProcess{
 			}
 		}
 
-		//meta - same string format as terms: key:value1.value2.*;key2:value3
+		//meta - key:value or key:value:compare
 		$strMeta = UniteFunctionsUC::getVal($request, "ucmeta");
 
 		if($strMeta === "undefined:undefined")
@@ -724,8 +819,7 @@ class UniteCreatorFiltersProcess{
 			if(self::$showDebug == true)
 				dmp("input meta filters found: $strMeta");
 
-			$arrParsedMeta = $this->parseStrTerms($strMeta);
-			$arrMeta = UniteFunctionsUC::getVal($arrParsedMeta, self::TYPE_TABS);
+			$arrMeta = $this->parseStrMeta($strMeta);
 
 			if(!empty($arrMeta))
 				$arrOutput["meta"] = $arrMeta;
@@ -978,87 +1072,381 @@ class UniteCreatorFiltersProcess{
 
 	/**
 	 * get meta query from parsed meta filters (same structure as terms)
-	 * arrMeta = [meta_key => [value1, value2, "relation"=>"AND"]]
+	 * arrMeta = list of groups: [{key, compare, values}]
+	 * old format also supported: [meta_key => [value1, value2, "relation"=>"AND"]]
 	 */
 	private function getMetaQuery($arrMeta){
 
 		if(empty($arrMeta) || is_array($arrMeta) == false)
 			return(array());
 
+		$arrMeta = $this->normalizeMetaFilterGroups($arrMeta);
+
 		$arrQuery = array();
 
-		foreach($arrMeta as $metaKey => $arrValues){
+		foreach($arrMeta as $group){
 
-			$metaKey = sanitize_key($metaKey);
+			$arrClauses = $this->getMetaQuery_getGroupClauses($group);
+			$arrClauses = $this->wrapNotCompareClauses($arrClauses);
 
-			if(empty($metaKey))
+			if(empty($arrClauses))
 				continue;
 
-			$relation = null;
-
-			if(is_array($arrValues))
-				$relation = UniteFunctionsUC::getVal($arrValues, "relation");
-
-			if(is_array($arrValues) && isset($arrValues["relation"]))
-				unset($arrValues["relation"]);
-
-			if(is_array($arrValues) == false)
-				$arrValues = array($arrValues);
-
-			$arrCleanValues = array();
-
-			foreach($arrValues as $metaValue){
-
-				if(is_array($metaValue))
-					continue;
-
-				$metaValue = sanitize_text_field($metaValue);
-
-				if($metaValue === "" || $metaValue === null)
-					continue;
-
-				$arrCleanValues[] = $metaValue;
-			}
-
-			if(empty($arrCleanValues))
-				continue;
-
-			if($relation == "AND"){
-
-				foreach($arrCleanValues as $metaValue){
-
-					$arrQuery[] = array(
-						"key" => $metaKey,
-						"value" => $metaValue,
-						"compare" => "=",
-					);
-				}
-
-			}else{
-
-				if(count($arrCleanValues) == 1){
-
-					$arrQuery[] = array(
-						"key" => $metaKey,
-						"value" => $arrCleanValues[0],
-						"compare" => "=",
-					);
-
-				}else{
-
-					$arrQuery[] = array(
-						"key" => $metaKey,
-						"value" => $arrCleanValues,
-						"compare" => "IN",
-					);
-				}
-			}
+			foreach($arrClauses as $clause)
+				$arrQuery[] = $clause;
 		}
 
 		if(count($arrQuery) > 1)
 			$arrQuery["relation"] = "AND";
 
 		return($arrQuery);
+	}
+
+
+	/**
+	 * convert old key=>values meta filters to group list
+	 */
+	private function normalizeMetaFilterGroups($arrMeta){
+
+		$first = reset($arrMeta);
+
+		if(is_array($first) && isset($first["key"]))
+			return($arrMeta);
+
+		$arrGroups = array();
+
+		foreach($arrMeta as $metaKey => $arrValues){
+
+			$arrGroups[] = array(
+				"key" => $metaKey,
+				"compare" => "=",
+				"values" => $arrValues,
+			);
+		}
+
+		return($arrGroups);
+	}
+
+
+	/**
+	 * != / NOT IN / NOT LIKE only match rows that have the meta key.
+	 * Include posts where the key is missing as well.
+	 */
+	private function wrapNotCompareClauses($arrClauses){
+
+		if(empty($arrClauses) || is_array($arrClauses) == false)
+			return($arrClauses);
+
+		$arrNotCompares = array("!=", "NOT IN", "NOT LIKE", "NOT BETWEEN");
+		$arrOut = array();
+
+		foreach($arrClauses as $clause){
+
+			if(is_array($clause) == false){
+				$arrOut[] = $clause;
+				continue;
+			}
+
+			if(isset($clause["relation"])){
+				$arrOut[] = $clause;
+				continue;
+			}
+
+			$compare = UniteFunctionsUC::getVal($clause, "compare");
+			$metaKey = UniteFunctionsUC::getVal($clause, "key");
+
+			if(empty($metaKey) || in_array($compare, $arrNotCompares) == false){
+				$arrOut[] = $clause;
+				continue;
+			}
+
+			$arrOut[] = array(
+				$clause,
+				array(
+					"key" => $metaKey,
+					"compare" => "NOT EXISTS",
+				),
+				"relation" => "OR",
+			);
+		}
+
+		return($arrOut);
+	}
+
+
+	/**
+	 * true if all values look numeric
+	 */
+	private function isMetaFilterValueNumeric($value){
+
+		if(is_array($value)){
+
+			if(empty($value))
+				return(false);
+
+			foreach($value as $item){
+
+				if($item === "" || is_numeric($item) == false)
+					return(false);
+			}
+
+			return(true);
+		}
+
+		if($value === "" || $value === null)
+			return(false);
+
+		return(is_numeric($value));
+	}
+
+
+	/**
+	 * add NUMERIC type when values are numbers
+	 */
+	private function addMetaQueryTypeIfNumeric($arrItem, $value){
+
+		$compare = UniteFunctionsUC::getVal($arrItem, "compare");
+
+		$arrSkip = array("LIKE", "NOT LIKE", "EXISTS", "NOT EXISTS");
+
+		if(in_array($compare, $arrSkip) == true)
+			return($arrItem);
+
+		if($this->isMetaFilterValueNumeric($value) == true)
+			$arrItem["type"] = "NUMERIC";
+
+		return($arrItem);
+	}
+
+
+	/**
+	 * explode comma lists for IN / BETWEEN compares
+	 */
+	private function expandMetaFilterArrayValues($arrValues, $compare){
+
+		$arrArrayCompares = array("IN", "NOT IN", "BETWEEN", "NOT BETWEEN");
+
+		if(in_array($compare, $arrArrayCompares) == false)
+			return($arrValues);
+
+		$arrOut = array();
+
+		foreach($arrValues as $val){
+
+			if(strpos($val, ",") !== false){
+
+				$arrParts = explode(",", $val);
+
+				foreach($arrParts as $part){
+
+					$part = trim($part);
+
+					if($part !== "")
+						$arrOut[] = $part;
+				}
+
+			}else{
+				$arrOut[] = $val;
+			}
+		}
+
+		return($arrOut);
+	}
+
+
+	/**
+	 * build meta_query clauses for one key+compare group
+	 */
+	private function getMetaQuery_getGroupClauses($group){
+
+		$metaKey = UniteFunctionsUC::getVal($group, "key");
+		$compare = UniteFunctionsUC::getVal($group, "compare", "=");
+		$arrValues = UniteFunctionsUC::getVal($group, "values");
+
+		$metaKey = sanitize_key($metaKey);
+
+		if(empty($metaKey))
+			return(array());
+
+		$arrAllowed = array_keys(HelperProviderUC::getArrMetaCompareSelect());
+
+		if(in_array($compare, $arrAllowed) == false)
+			$compare = "=";
+
+		if($compare == "EXISTS" || $compare == "NOT EXISTS"){
+
+			return(array(
+				array(
+					"key" => $metaKey,
+					"compare" => $compare,
+				)
+			));
+		}
+
+		$relation = null;
+
+		if(is_array($arrValues) && isset($arrValues["relation"])){
+
+			$relation = $arrValues["relation"];
+			unset($arrValues["relation"]);
+		}
+
+		if(is_array($arrValues) == false)
+			$arrValues = array($arrValues);
+
+		$arrCleanValues = array();
+
+		foreach($arrValues as $metaValue){
+
+			if(is_array($metaValue))
+				continue;
+
+			$metaValue = sanitize_text_field($metaValue);
+
+			if($metaValue === "" || $metaValue === null)
+				continue;
+
+			$arrCleanValues[] = $metaValue;
+		}
+
+		if(empty($arrCleanValues))
+			return(array());
+
+		$arrCleanValues = $this->expandMetaFilterArrayValues($arrCleanValues, $compare);
+
+		if($compare == "LIKE" || $compare == "NOT LIKE"){
+
+			foreach($arrCleanValues as $index => $val){
+
+				if(strpos($val, "%") === false)
+					$arrCleanValues[$index] = "%".$val."%";
+			}
+		}
+
+		$needArrayValue = in_array($compare, array("IN", "NOT IN", "BETWEEN", "NOT BETWEEN"));
+
+		if($needArrayValue == true){
+
+			if($compare == "BETWEEN" || $compare == "NOT BETWEEN"){
+
+				if(count($arrCleanValues) < 2)
+					return(array());
+
+				$value = array($arrCleanValues[0], $arrCleanValues[1]);
+			}else{
+				$value = $arrCleanValues;
+			}
+
+			$arrItem = array(
+				"key" => $metaKey,
+				"value" => $value,
+				"compare" => $compare,
+			);
+
+			$arrItem = $this->addMetaQueryTypeIfNumeric($arrItem, $value);
+
+			return(array($arrItem));
+		}
+
+		if($relation == "AND"){
+
+			$arrClauses = array();
+
+			foreach($arrCleanValues as $metaValue){
+
+				$arrItem = array(
+					"key" => $metaKey,
+					"value" => $metaValue,
+					"compare" => $compare,
+				);
+
+				$arrClauses[] = $this->addMetaQueryTypeIfNumeric($arrItem, $metaValue);
+			}
+
+			return($arrClauses);
+		}
+
+		if($compare == "="){
+
+			if(count($arrCleanValues) == 1){
+
+				$arrItem = array(
+					"key" => $metaKey,
+					"value" => $arrCleanValues[0],
+					"compare" => "=",
+				);
+
+				$arrItem = $this->addMetaQueryTypeIfNumeric($arrItem, $arrCleanValues[0]);
+
+				return(array($arrItem));
+			}
+
+			$arrItem = array(
+				"key" => $metaKey,
+				"value" => $arrCleanValues,
+				"compare" => "IN",
+			);
+
+			$arrItem = $this->addMetaQueryTypeIfNumeric($arrItem, $arrCleanValues);
+
+			return(array($arrItem));
+		}
+
+		if($compare == "!="){
+
+			if(count($arrCleanValues) == 1){
+
+				$arrItem = array(
+					"key" => $metaKey,
+					"value" => $arrCleanValues[0],
+					"compare" => "!=",
+				);
+
+				$arrItem = $this->addMetaQueryTypeIfNumeric($arrItem, $arrCleanValues[0]);
+
+				return(array($arrItem));
+			}
+
+			$arrItem = array(
+				"key" => $metaKey,
+				"value" => $arrCleanValues,
+				"compare" => "NOT IN",
+			);
+
+			$arrItem = $this->addMetaQueryTypeIfNumeric($arrItem, $arrCleanValues);
+
+			return(array($arrItem));
+		}
+
+		if(count($arrCleanValues) == 1){
+
+			$arrItem = array(
+				"key" => $metaKey,
+				"value" => $arrCleanValues[0],
+				"compare" => $compare,
+			);
+
+			$arrItem = $this->addMetaQueryTypeIfNumeric($arrItem, $arrCleanValues[0]);
+
+			return(array($arrItem));
+		}
+
+		$arrSub = array();
+
+		foreach($arrCleanValues as $metaValue){
+
+			$arrItem = array(
+				"key" => $metaKey,
+				"value" => $metaValue,
+				"compare" => $compare,
+			);
+
+			$arrSub[] = $this->addMetaQueryTypeIfNumeric($arrItem, $metaValue);
+		}
+
+		$arrSub["relation"] = "OR";
+
+		return(array($arrSub));
 	}
 
 
@@ -1298,7 +1686,7 @@ class UniteCreatorFiltersProcess{
         	);
 		}
 
-		//meta filter - same structure as terms (key => values)
+		//meta filter - groups of key / compare / values
 		if(!empty($arrMeta) && is_array($arrMeta)){
 
 			$arrMetaFromFilter = $this->getMetaQuery($arrMeta);
@@ -3660,6 +4048,10 @@ class UniteCreatorFiltersProcess{
 
 			$metaValue = UniteFunctionsUC::getVal($row, "meta_value");
 
+			$compare = UniteFunctionsUC::getVal($row, "compare");
+			if(empty($compare))
+				$compare = "=";
+
 			if(empty($title) && empty($metaKey))
 				continue;
 
@@ -3674,6 +4066,7 @@ class UniteCreatorFiltersProcess{
 			$item["slug"] = $metaKey;
 			$item["meta_key"] = $metaKey;
 			$item["meta_value"] = $metaValue;
+			$item["compare"] = $compare;
 			$item["link"] = "";
 			$item["taxonomy"] = "";
 			$item["addclass"] = "";
@@ -3698,6 +4091,7 @@ class UniteCreatorFiltersProcess{
 			$id = UniteFunctionsUC::getVal($item, "id");
 			$metaKey = UniteFunctionsUC::getVal($item, "meta_key");
 			$metaValue = UniteFunctionsUC::getVal($item, "meta_value");
+			$compare = UniteFunctionsUC::getVal($item, "compare", "=");
 			$slug = UniteFunctionsUC::getVal($item, "slug", $metaKey);
 			$title = UniteFunctionsUC::getVal($item, "name");
 
@@ -3710,13 +4104,18 @@ class UniteCreatorFiltersProcess{
 			$slug = esc_attr($slug);
 			$metaKey = esc_attr($metaKey);
 			$metaValue = esc_attr($metaValue);
+			$compare = esc_attr($compare);
 			$id = esc_attr($id);
 
 			$key = "{$type}|{$metaKey}";
 			if($metaValue !== "")
 				$key .= ":{$metaValue}";
 
-			$htmlData = " data-id=\"$id\" data-type=\"$type\" data-slug=\"$slug\" data-metakey=\"$metaKey\" data-metavalue=\"$metaValue\" data-title=\"{$title}\" data-key=\"{$key}\" ";
+			$compareWord = HelperProviderUC::getMetaCompareUrlWord($compare);
+			if(!empty($compareWord))
+				$key .= ":{$compareWord}";
+
+			$htmlData = " data-id=\"$id\" data-type=\"$type\" data-slug=\"$slug\" data-metakey=\"$metaKey\" data-metavalue=\"$metaValue\" data-compare=\"$compare\" data-title=\"{$title}\" data-key=\"{$key}\" ";
 
 			$item["html_data"] = $htmlData;
 

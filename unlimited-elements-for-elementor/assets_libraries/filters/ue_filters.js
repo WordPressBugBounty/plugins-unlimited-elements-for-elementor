@@ -1709,12 +1709,98 @@ function UEDynamicFilters(){
 
 
 	/**
-	 * handle item, add to key->values map
-	 * keyName/valueName: "taxonomy"/"slug" for terms, "meta_key"/"meta_value" for meta
+	 * map meta compare operator to URL word, empty for equals
 	 */
-	function buildGroupedValuesQuery_handleItem(objItem, arrGrouped, keyName, valueName){
+	function getMetaCompareUrlWord(compare){
+
+		if(!compare || compare === "=" || compare === "equals")
+			return("");
+
+		var map = {
+			"!=": "notequals",
+			">": "greater",
+			"<": "less",
+			">=": "greaterequal",
+			"<=": "lessequal",
+			"LIKE": "like",
+			"NOT LIKE": "notlike",
+			"IN": "in",
+			"NOT IN": "notin",
+			"BETWEEN": "between",
+			"NOT BETWEEN": "notbetween",
+			"EXISTS": "exists",
+			"NOT EXISTS": "notexists"
+		};
+
+		if(map[compare])
+			return(map[compare]);
+
+		var lower = ("" + compare).toLowerCase();
+
+		for(var op in map){
+			if(map[op] === lower)
+				return(map[op]);
+		}
+
+		return("");
+	}
+
+
+	/**
+	 * selected meta pair for init mode: key:value[:compare]
+	 */
+	function getMetaSelectedPair(objMeta){
+
+		var metaKey = getVal(objMeta, "meta_key");
+
+		if(!metaKey)
+			metaKey = getVal(objMeta, "slug");
+
+		if(!metaKey)
+			return("");
+
+		var metaValue = getVal(objMeta, "meta_value");
+
+		if(!metaValue)
+			metaValue = "";
+
+		var metaPair = metaKey + g_options.urlkey_taxsap + metaValue;
+		var compareWord = getMetaCompareUrlWord(getVal(objMeta, "compare"));
+
+		if(compareWord)
+			metaPair += g_options.urlkey_taxsap + compareWord;
+
+		return(metaPair);
+	}
+
+
+	/**
+	 * grouping key for meta items: key, or key + compare word
+	 */
+	function getMetaGroupedQueryKey(objItem, keyName, extraName){
 
 		var key = objItem[keyName];
+
+		if(!key || !extraName)
+			return(key);
+
+		var word = getMetaCompareUrlWord(objItem[extraName]);
+
+		if(!word)
+			return(key);
+
+		return(key + "\x1e" + word);
+	}
+
+
+	/**
+	 * handle item, add to key->values map
+	 * keyName/valueName: "taxonomy"/"slug" for terms, "meta_key"/"meta_value" for meta
+	 * extraName: optional, groups meta by compare as well
+	 */
+	function buildGroupedValuesQuery_handleItem(objItem, arrGrouped, keyName, valueName, extraName){
+
+		var key = getMetaGroupedQueryKey(objItem, keyName, extraName);
 		var value = objItem[valueName];
 
 		if(!key)
@@ -1796,9 +1882,9 @@ function UEDynamicFilters(){
 	/**
 	 * build grouped values query string
 	 * format: key:value1.value2.*;key2:value3
-	 * used for ucterms (taxonomy:slugs) and ucmeta (meta_key:values)
+	 * used for ucterms (taxonomy:slugs) and ucmeta (meta_key:values[:compare])
 	 */
-	function buildGroupedValuesQuery(arrItems, keyName, valueName){
+	function buildGroupedValuesQuery(arrItems, keyName, valueName, extraName){
 		
 		var isDebug = false;
 
@@ -1824,7 +1910,7 @@ function UEDynamicFilters(){
 			if(jQuery.isArray(objItem) && objItem.length != 0){
 				
 				if(objItem.length == 1){
-					arrGrouped = buildGroupedValuesQuery_handleItem(objItem[0], arrGrouped, keyName, valueName);
+					arrGrouped = buildGroupedValuesQuery_handleItem(objItem[0], arrGrouped, keyName, valueName, extraName);
 					return;
 				}
 
@@ -1832,14 +1918,14 @@ function UEDynamicFilters(){
 				
 				jQuery.each(objItem, function(index, groupItem){
 					
-					arrGroupMap = buildGroupedValuesQuery_handleItem(groupItem, arrGroupMap, keyName, valueName);
+					arrGroupMap = buildGroupedValuesQuery_handleItem(groupItem, arrGroupMap, keyName, valueName, extraName);
 				});
 
 				arrGroupItems.push(arrGroupMap);
 
 			}else{	//single
 
-				arrGrouped = buildGroupedValuesQuery_handleItem(objItem, arrGrouped, keyName, valueName);
+				arrGrouped = buildGroupedValuesQuery_handleItem(objItem, arrGrouped, keyName, valueName, extraName);
 			}
 
 		});
@@ -1887,11 +1973,23 @@ function UEDynamicFilters(){
 			trace(arrGrouped);
 		}
 
-		jQuery.each(arrGrouped, function(key, objValues){
+		jQuery.each(arrGrouped, function(groupKey, objValues){
 			
 			var strValues = buildGroupedValuesQuery_getStrValues(objValues);
+
+			var key = groupKey;
+			var compareWord = "";
+			var sepIndex = groupKey.indexOf("\x1e");
+
+			if(sepIndex !== -1){
+				key = groupKey.substring(0, sepIndex);
+				compareWord = groupKey.substring(sepIndex + 1);
+			}
 				
 			var strPart = key + g_options.urlkey_taxsap + strValues;
+
+			if(compareWord)
+				strPart += g_options.urlkey_taxsap + compareWord;
 			
 			if(query)
 				query += ";";
@@ -1918,8 +2016,8 @@ function UEDynamicFilters(){
 	}
 
 	/**
-	 * build meta query - same format as terms
-	 * ucmeta=meta_key:value1.value2.*
+	 * build meta query - same format as terms, optional compare word
+	 * ucmeta=meta_key:value1.value2;meta_key:value:notequals
 	 */
 	function buildMetaQuery(arrMeta){
 
@@ -1943,6 +2041,9 @@ function UEDynamicFilters(){
 					if(typeof groupItem.meta_value === "undefined" || groupItem.meta_value === null)
 						groupItem.meta_value = "";
 
+					if(!groupItem.compare)
+						groupItem.compare = "=";
+
 					arrGroup.push(groupItem);
 				});
 
@@ -1959,12 +2060,15 @@ function UEDynamicFilters(){
 				if(typeof item.meta_value === "undefined" || item.meta_value === null)
 					item.meta_value = "";
 
+				if(!item.compare)
+					item.compare = "=";
+
 				arrNormalized.push(item);
 			}
 
 		});
 
-		return buildGroupedValuesQuery(arrNormalized, "meta_key", "meta_value");
+		return buildGroupedValuesQuery(arrNormalized, "meta_key", "meta_value", "compare");
 	}
 
 	/**
@@ -2017,6 +2121,7 @@ function UEDynamicFilters(){
 			var slug = objElement.data("slug");
 			var metaKey = objElement.data("metakey");
 			var metaValue = objElement.data("metavalue");
+			var compare = objElement.data("compare");
 
 			if(!metaKey)
 				metaKey = slug;
@@ -2024,12 +2129,16 @@ function UEDynamicFilters(){
 			if(!metaValue)
 				metaValue = "";
 
+			if(!compare)
+				compare = "=";
+
 			var objMeta = {
 				"type": type,
 				"id": id,
 				"slug": slug,
 				"meta_key": metaKey,
 				"meta_value": metaValue,
+				"compare": compare,
 				"title": title,
 				"key": key
 			};
@@ -3133,6 +3242,7 @@ function UEDynamicFilters(){
 			type: "meta",
 			meta_key: metaKey,
 			meta_value: opValue,
+			compare: getVal(firstMeta, "compare", "="),
 			slug: opValue,
 			id: null
 		});
@@ -3416,17 +3526,9 @@ function UEDynamicFilters(){
 							}
 							else if(filterSource == "meta"){
 
-								var metaKey = getVal(objTerm, "meta_key");
-								if(!metaKey)
-									metaKey = getVal(objTerm, "slug");
+								var metaPair = getMetaSelectedPair(objTerm);
 
-								if(metaKey){
-									var metaValue = getVal(objTerm, "meta_value");
-									if(!metaValue)
-										metaValue = "";
-
-									var metaPair = metaKey + g_options.urlkey_taxsap + metaValue;
-
+								if(metaPair){
 									if(strSelectedMeta)
 										strSelectedMeta +=",";
 
@@ -3630,21 +3732,15 @@ function UEDynamicFilters(){
 
 							jQuery.each(dataMeta, function(index, metaItem){
 
-								var metaKey = getVal(metaItem,"meta_key");
-								if(!metaKey)
-									metaKey = getVal(metaItem,"slug");
-
-								if(!metaKey)
-									return(true);
-
 								var metaValue = getVal(metaItem,"meta_value");
-								if(!metaValue)
-									metaValue = "";
 
 								if(metaValue === "__ucand__" || metaValue === "__ucor__")
 									return(true);
 
-								var metaPair = metaKey + g_options.urlkey_taxsap + metaValue;
+								var metaPair = getMetaSelectedPair(metaItem);
+
+								if(!metaPair)
+									return(true);
 
 								if(strSelectedMeta)
 									strSelectedMeta +=",";
@@ -4079,6 +4175,8 @@ function UEDynamicFilters(){
 		output["ajax_url"] = urlAjax;
 		output["url_replace"] = urlReplace;
 		output["terms"] = arrTerms;
+		output["meta"] = arrMeta;
+		output["authors"] = arrAuthors;
 		output["search"] = search;
 		output["title_start"] = title_start;
 		output["filters_string"] = urlFilterString;
@@ -4559,8 +4657,22 @@ function UEDynamicFilters(){
 		if(!objAjaxOptions)
 			var objAjaxOptions = getGridAjaxOptions_simple(objGrid);
 		
+
 		var arrTerms = getVal(objAjaxOptions, "terms");
-	
+		var arrMeta = getVal(objAjaxOptions, "meta");
+		var arrAuthors = getVal(objAjaxOptions, "authors");
+
+		if(!jQuery.isArray(arrTerms))
+			arrTerms = [];
+
+		if(!jQuery.isArray(arrMeta))
+			arrMeta = [];
+
+		if(!jQuery.isArray(arrAuthors))
+			arrAuthors = [];
+
+		arrTerms = arrTerms.concat(arrMeta, arrAuthors);
+
 		if(jQuery.isArray(arrTerms))
 			arrTerms = arrTerms.flat();
 
@@ -4569,13 +4681,20 @@ function UEDynamicFilters(){
 		
 		jQuery.each(arrTerms, function(index, term) {
 			
-			// Skip if the term is an object with slug "__or__", "__and__", or "__ucor__"
-				if (term.slug === "__ucand__" || term.slug === "__ucor__") {
-					return(true);
-				}
+			if(!term)
+				return(true);
+
+			var slug = getVal(term, "slug");
+			var metaValue = getVal(term, "meta_value");
+
+			// Skip operator markers used for grouping (__ucand__/__ucor__)
+			if (slug === "__ucand__" || slug === "__ucor__" || slug === "__and__" || slug === "__or__")
+				return(true);
+
+			if (metaValue === "__ucand__" || metaValue === "__ucor__")
+				return(true);
 				
-				// Add the term to the filtered array
-				filteredTerms.push(term);
+			filteredTerms.push(term);
 		});
 
 		// Assign the filtered array back to arrTerms

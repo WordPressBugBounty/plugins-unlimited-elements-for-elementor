@@ -941,6 +941,21 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+=  2.0.19 - 2026-09-14 =
+
+Plugin Changes:
+
+* Feature - added compare sign to meta filter field 
+* Fix - fixed some security issue
+
+Widgets Changes:
+
+* Feature: Google Calendar (Pro) - Added the Details Display option to give users full control over whether event details are shown as an expandable accordion dropdown or as a standalone popup modal for enhanced display flexibility.
+* Feature: Google Calendar (Pro) - Added the Show Detail Button option to replace the previous click-to-expand event behavior with a dedicated and clearly visible toggle button, streamlining access to event details and improving overall interface usability.
+* Fix: Video Carousel (Free) - Resolved an issue where the Autoplay Center Video option failed to function properly, ensuring centered videos play automatically as intended when enabled.
+* Fix: Video Play Button (Free) - Fixed an issue where widget videos opened in a new URL instead of a popup modal when Elementor page transition animations were globally enabled on the site.
+* Fix: Post Carousel Lite (Free) - Added conditional visibility to style tabs for the Category, Date, Title, Intro, Button, Navigation Arrows, and Navigation Dots to reduce layout clutter and avoid unnecessary CSS rendering.
+* Fix: Remote Item Navigation (Pro) - Added conditional visibility for the Title, Label, and Inner Icon style tabs to reduce layout clutter and avoid unnecessary CSS rendering.
 
 
 =  2.0.18 - 2026-09-03 =

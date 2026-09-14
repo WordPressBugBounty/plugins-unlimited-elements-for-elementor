@@ -426,7 +426,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params = array();
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_REPEATER;
 		$params["hide_label"] = true;
-		$params["title_field"] = "{{{title}}} ({{{meta_key}}}:{{{meta_value}}})";
+		$params["title_field"] = "{{{title}}} ({{{meta_key}}} {{{compare}}} {{{meta_value}}})";
 
 		$settingsItems = HelperProviderUC::getMetaSelectRepeaterFields();
 

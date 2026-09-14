@@ -987,11 +987,15 @@ class UniteCreatorWooIntegrate{
 				$variationName = 'attribute_' . $value['taxonomy'];
 				$variationValue = $value['terms'][0];
 
-				$aliasVar = "pm_var_{$index}";
-				$variationJoinConditions[] = "INNER JOIN {$wpdb->postmeta} {$aliasVar} 
-                    ON p.ID = {$aliasVar}.post_id 
-                    AND {$aliasVar}.meta_key = '{$variationName}' 
-                    AND {$aliasVar}.meta_value = '{$variationValue}'";
+				$aliasVar = "pm_var_" . (int) $index;
+				$variationJoinConditions[] = $wpdb->prepare(
+					"INNER JOIN {$wpdb->postmeta} {$aliasVar}
+                    ON p.ID = {$aliasVar}.post_id
+                    AND {$aliasVar}.meta_key = %s
+                    AND {$aliasVar}.meta_value = %s",
+					$variationName,
+					$variationValue
+				);
 			}
 		}
 
