@@ -941,6 +941,10 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+=  2.0.20 - 2026-09-16 =
+
+* Fix - fixed some small security issues from patchstack site
+
 =  2.0.19 - 2026-09-14 =
 
 Plugin Changes:

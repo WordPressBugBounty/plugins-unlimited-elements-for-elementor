@@ -1643,10 +1643,16 @@ class HelperProviderCoreUC_EL{
 			
 			$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 			
-			if(isset($allowedMimes[$extension])){
-				$data["ext"] = $extension;
-				$data["type"] = $allowedMimes[$extension];
-			}
+			if(!isset($allowedMimes[$extension]))
+				return $data;
+			
+			// Honor the caller's allow-list. Do not force a type the caller did not ask for.
+			$allowed = wp_check_filetype($filename, $mimes);
+			if($allowed["ext"] === false || $allowed["type"] === false)
+				return $data;
+			
+			$data["ext"] = $extension;
+			$data["type"] = $allowedMimes[$extension];
 			
 			return $data;
 		}, 10, 4);

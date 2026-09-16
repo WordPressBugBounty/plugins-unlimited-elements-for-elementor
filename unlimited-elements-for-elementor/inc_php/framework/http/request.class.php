@@ -208,6 +208,11 @@ class UEHttpRequest{
 		$body = $this->prepareBody($method);
 		$url = $this->prepareUrl($url, $query);
 		
+		if(UniteFunctionsUC::isLocalUrl($url) == true){
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new UEHttpRequestException("The URL is not allowed.", $this);
+		}
+		
 		if($this->isDebug() === true){
 			dmp("Request data:");
 			dmp($url);
@@ -256,14 +261,27 @@ class UEHttpRequest{
 				"headers" => $headers,
 				"body" => $body,
 				"timeout" => self::REQUEST_TIMEOUT,
-				"sslverify" => false
+				"sslverify" => true,
+				"reject_unsafe_urls" => true
 		);
 
 		if($this->isDebug() === true){
 			dmp("do the request!");
 		}
-		
-		$wpResponse = wp_remote_request($url, $arrRequest);
+
+		$filterCallback = function($preempt, $args, $requestUrl){
+			if(UniteFunctionsUC::isLocalUrl($requestUrl) == true)
+				return new WP_Error("http_request_rejected", "The URL is not allowed.");
+			return $preempt;
+		};
+
+		add_filter("pre_http_request", $filterCallback, 10, 3);
+
+		try{
+			$wpResponse = wp_remote_request($url, $arrRequest);
+		}finally{
+			remove_filter("pre_http_request", $filterCallback, 10);
+		}
 		
 		if(is_wp_error($wpResponse) === true){
 			

@@ -1268,8 +1268,16 @@ class HelperProviderUC{
 
 		$arrRepeaterItems = UniteFunctionsUC::getVal($arrCustomFields, $repeaterName);
 		
-		if(is_string($arrRepeaterItems))
-			$arrRepeaterItems = UniteFunctionsUC::maybeUnserialize($arrRepeaterItems);
+		if(is_string($arrRepeaterItems)){
+
+			$arrNativeUserKeys = UniteFunctionsWPUC::getUserMetaKeys();
+
+			// Native profile fields (biography etc.) are user-editable strings, never repeater arrays.
+			if(!empty($userID) && in_array($repeaterName, $arrNativeUserKeys, true) == true)
+				$arrRepeaterItems = array();
+			else
+				$arrRepeaterItems = UniteFunctionsUC::maybeUnserialize($arrRepeaterItems);
+		}
 
 	
 		//show debug data text

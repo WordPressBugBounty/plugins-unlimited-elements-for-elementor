@@ -1,5 +1,9 @@
 
 
+version 2.0.20:
+
+* Fix - fixed some small security issues from patchstack site
+
 version 2.0.19:
 
 Plugin Changes:

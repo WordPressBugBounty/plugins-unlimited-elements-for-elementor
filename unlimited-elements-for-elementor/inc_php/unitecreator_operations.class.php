@@ -715,8 +715,9 @@ class UCOperations extends UniteElementsBaseUC{
 		if(!empty($url))
 			$url = UniteFunctionsUC::sanitize($url, UniteFunctionsUC::SANITIZE_URL);
 		
-		if(empty($url) && $debug == true){
-			dmp("url don't pass the security");
+		if(empty($url) || UniteFunctionsUC::isLocalUrl($url) == true){
+			if($debug == true)
+				dmp("url don't pass the security");
 			return(null);
 		}
 

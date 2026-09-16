@@ -1341,7 +1341,16 @@ class UniteFunctionsUC{
 		if(is_array($str))
 			return($str);
 
-		$arrOutput = @unserialize($str);
+		if(is_string($str) == false)
+			return(array());
+
+		$str = trim($str);
+
+		// Array-only contract: do not pass object payloads (O:/C:/E:) to unserialize().
+		if(preg_match("/^a:[0-9]+:\{/", $str) !== 1)
+			return(array());
+
+		$arrOutput = @unserialize($str, array("allowed_classes" => false));
 
 		if(empty($arrOutput))
 			return(array());
@@ -2980,7 +2989,167 @@ class UniteFunctionsUC{
 	    }
 	
 	    return esc_url($url);
-	}	
+	}
+
+	/**
+	 * Whether a URL targets this machine or a private/internal network.
+	 * Loopback, RFC1918, link-local (including 169.254.0.0/16), localhost.
+	 *
+	 * @param string $url
+	 * @return bool
+	 */
+	public static function isLocalUrl($url){
+
+		if(empty($url) || is_string($url) == false)
+			return(false);
+
+		$parts = wp_parse_url($url);
+
+		if(empty($parts) || empty($parts["host"]))
+			return(true);
+
+		$scheme = strtolower(self::getVal($parts, "scheme", ""));
+
+		if($scheme !== "http" && $scheme !== "https")
+			return(true);
+
+		$host = strtolower(trim($parts["host"], "[]"));
+		$host = rawurldecode($host);
+
+		if($host === "localhost" || $host === "localhost.localdomain" || $host === "metadata.google.internal")
+			return(true);
+
+		if(self::isNonCanonicalIpHost($host) == true)
+			return(true);
+
+		$ips = self::getUrlHostIps($host);
+
+		if(empty($ips))
+			return(true);
+
+		foreach($ips as $ip){
+			if(self::isLocalIp($ip) == true)
+				return(true);
+		}
+
+		return(false);
+	}
+
+	/**
+	 * Host looks like an IP but is not a canonical dotted IPv4 / IPv6
+	 * (octal 0177.0.0.1, hex 0x7f000001, dword 2130706433, leading zeros).
+	 *
+	 * @param string $host
+	 * @return bool
+	 */
+	private static function isNonCanonicalIpHost($host){
+
+		if(preg_match('/^\d+$/', $host) && strlen($host) >= 8)
+			return(true);
+
+		if(preg_match('/^0x[0-9a-f]+$/i', $host))
+			return(true);
+
+		if(preg_match('/^(?:0x[0-9a-f]+|\d+)(?:\.(?:0x[0-9a-f]+|\d+)){1,3}$/i', $host)){
+
+			if(filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) == false)
+				return(true);
+
+			$parts = explode(".", $host);
+
+			foreach($parts as $part){
+				if(strlen($part) > 1 && $part[0] === "0")
+					return(true);
+			}
+		}
+
+		return(false);
+	}
+
+	/**
+	 * Resolve a host to IPv4/IPv6 addresses.
+	 *
+	 * @param string $host
+	 * @return array
+	 */
+	private static function getUrlHostIps($host){
+
+		$ips = array();
+
+		if(filter_var($host, FILTER_VALIDATE_IP)){
+			$ips[] = $host;
+			return($ips);
+		}
+
+		if(function_exists("dns_get_record")){
+
+			$recordsA = @dns_get_record($host, DNS_A);
+			$recordsAAAA = @dns_get_record($host, DNS_AAAA);
+			$records = array();
+
+			if(is_array($recordsA))
+				$records = array_merge($records, $recordsA);
+
+			if(is_array($recordsAAAA))
+				$records = array_merge($records, $recordsAAAA);
+
+			foreach($records as $record){
+				if(empty($record["ip"]) == false)
+					$ips[] = $record["ip"];
+				if(empty($record["ipv6"]) == false)
+					$ips[] = $record["ipv6"];
+			}
+		}
+
+		if(empty($ips) && function_exists("gethostbynamel")){
+
+			$ipv4 = @gethostbynamel($host);
+
+			if(is_array($ipv4))
+				$ips = array_merge($ips, $ipv4);
+		}
+
+		return array_values(array_unique($ips));
+	}
+
+	/**
+	 * Whether an IP is loopback, private, link-local, or otherwise non-public.
+	 *
+	 * @param string $ip
+	 * @return bool
+	 */
+	private static function isLocalIp($ip){
+	
+		$ip = strtolower(trim($ip, "[]"));
+
+		if(strpos($ip, "::ffff:") === 0){
+			$mapped = substr($ip, 7);
+			if(filter_var($mapped, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))
+				$ip = $mapped;
+		}
+
+		if(filter_var($ip, FILTER_VALIDATE_IP) == false)
+			return(true);
+
+		if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) == false)
+			return(true);
+
+		if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
+
+			$long = ip2long($ip);
+
+			if($long !== false){
+				if(($long & ip2long("255.192.0.0")) === ip2long("100.64.0.0"))
+					return(true);
+				if(($long & ip2long("255.254.0.0")) === ip2long("198.18.0.0"))
+					return(true);
+				if(($long & ip2long("240.0.0.0")) === ip2long("224.0.0.0"))
+					return(true);
+			}
+		}
+
+		return(false);
+	}
 	
 	public static function z________FILE_SYSTEM________(){}
 

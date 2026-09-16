@@ -656,38 +656,36 @@ class UniteCreatorForm{
 					continue;
 				}
 				
-				$moved = false;
-				$uploaded_file = wp_handle_upload( $file );
-				
-				//error handling
-				$error = UniteFunctionsUC::getVal($uploaded_file, "error");
-				
-				if(!empty($error)){
-					
-					//tru to move the file different way
-					if ( isset($file['tmp_name']) && is_uploaded_file($file['tmp_name']) ) {
-						$moved = move_uploaded_file($file['tmp_name'], $filePath);
-					}
-										
-					if($moved == false){
-						$errors[] = "Direct upload failed: Unable to move " . $file['tmp_name'] . " to " . $filePath;
-						
-						continue;
-					}
-					
-				}
-				
-				
-				$uploadedFile = UniteFunctionsUC::getVal($uploaded_file, "file");
-				
-				if ( !empty($uploadedFile)) {
-					UniteFunctionsUC::move( $uploadedFile, $filePath, true );
-					$moved = true;
-				}
-				
-				if($moved === false){
-					$errors[] = "Unable to move uploaded file: $filePath";
+				$uploadOverrides = array(
+					"test_form" => false,
+				);
 
+				$fieldParams = UniteFunctionsUC::getVal($field, "params", array());
+				$allowedTypes = UniteFunctionsUC::getVal($fieldParams, "allowed_types", array());
+
+				if(!empty($allowedTypes) && is_array($allowedTypes))
+					$uploadOverrides["mimes"] = $allowedTypes;
+
+				$uploaded_file = wp_handle_upload($file, $uploadOverrides);
+
+				$error = UniteFunctionsUC::getVal($uploaded_file, "error");
+
+				if(!empty($error)){
+					$errors[] = $error;
+					continue;
+				}
+
+				$uploadedFile = UniteFunctionsUC::getVal($uploaded_file, "file");
+
+				if(empty($uploadedFile)){
+					$errors[] = "Unable to upload file";
+					continue;
+				}
+
+				UniteFunctionsUC::move($uploadedFile, $filePath, true);
+
+				if(UniteFunctionsUC::fileExists($filePath) === false){
+					$errors[] = "Unable to move uploaded file: $filePath";
 					continue;
 				}
 
