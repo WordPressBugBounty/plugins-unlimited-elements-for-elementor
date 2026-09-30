@@ -1589,7 +1589,8 @@ class UniteCreatorForm{
 		
 	    if ($score < $threshold) {
 	       	
-	    	$this->lastSpamError = $errorPrefix.__("score too low: $score, the threshold is: $threshold","unlimited-elements-for-elementor");
+	    	/* translators: 1: reCAPTCHA score, 2: score threshold */
+	    	$this->lastSpamError = $errorPrefix . sprintf(__("score too low: %1\$s, the threshold is: %2\$s", "unlimited-elements-for-elementor"), $score, $threshold);
 	    	
 	        return true; // Score too low, treat as spam
 	    }

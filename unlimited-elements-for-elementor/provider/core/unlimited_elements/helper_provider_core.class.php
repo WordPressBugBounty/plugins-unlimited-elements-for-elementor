@@ -101,7 +101,7 @@ class HelperProviderCoreUC_EL{
 		if($fileExists == false)
 			return(false);
 
-		@unlink($filepath);
+		wp_delete_file($filepath);
 	}
 
 
@@ -617,11 +617,47 @@ class HelperProviderCoreUC_EL{
 	private static function ______ELEMENTOR_CONTENT________(){}
 	
 	/**
+	 * whether the current visitor may read this post.
+	 * published public posts stay available to logged-out visitors.
+	 * private, draft, and other non-public posts require read_post.
+	 */
+	public static function isPostReadable($postID){
+		
+		$postID = (int)$postID;
+		
+		if($postID <= 0)
+			return(false);
+		
+		$post = get_post($postID);
+		
+		if(empty($post))
+			return(false);
+		
+		if($post->post_type === "revision")
+			return(false);
+		
+		if(post_password_required($post))
+			return(false);
+		
+		// Unregistered types have no read_post mapping. WordPress falls back to edit_others_posts and emits a notice.
+		if(get_post_type_object($post->post_type) == null)
+			return(current_user_can("edit_others_posts"));
+		
+		if(is_post_publicly_viewable($post))
+			return(true);
+		
+		return(current_user_can("read_post", $post->ID));
+	}
+	
+	/**
 	 * get elementor data from post id
 	 */
 	public static function getElementorContentByPostID($postID){
 
 		$postID = (int)$postID;
+
+		if(self::isPostReadable($postID) == false)
+			return(false);
 
 		$strData = get_post_meta($postID,"_elementor_data",true);
 
@@ -1048,6 +1084,9 @@ class HelperProviderCoreUC_EL{
 		if(empty($templateID) || is_numeric($templateID) == false)
 			return("");
 
+		if(self::isPostReadable($templateID) == false)
+			return("");
+
 		$output = \Elementor\Plugin::instance()->frontend->get_builder_content_for_display( $templateID, $withCss);
 
 
@@ -1266,7 +1305,7 @@ class HelperProviderCoreUC_EL{
 
 		$htmlTemplate = str_replace($source, $dest, $htmlTemplate);
 
-		$htmlTemplate = do_shortcode($htmlTemplate);
+		$htmlTemplate = HelperProviderUC::processOutputShortcodes($htmlTemplate);
 
 		uelm_echo($htmlTemplate);
 
@@ -1507,6 +1546,9 @@ class HelperProviderCoreUC_EL{
 	 * save post for dynamic template - used for dynamic popup cache
 	 */
 	public static function savePostForDynamic($postID){
+		
+		if(self::isPostReadable($postID) == false)
+			UniteFunctionsUC::throwError("Post not found");
 		
 		$post = get_post($postID);
 		

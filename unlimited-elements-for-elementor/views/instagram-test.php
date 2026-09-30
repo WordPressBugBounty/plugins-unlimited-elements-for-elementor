@@ -1,3 +1,4 @@
+<?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <h1>Unlimited Elements - Instagram Test</h1>
 
 <br>

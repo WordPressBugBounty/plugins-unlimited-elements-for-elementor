@@ -147,6 +147,68 @@ class UniteZipUC{
 	}
 
 	/**
+	 * reject absolute names and parent-directory segments in a zip entry
+	 */
+	private function validateZipEntryName($name){
+
+		if(!is_string($name) || $name === '')
+			UniteFunctionsUC::throwError('Invalid zip entry path');
+
+		if(strpos($name, "\0") !== false)
+			UniteFunctionsUC::throwError('Invalid zip entry path');
+
+		$normalized = str_replace('\\', '/', $name);
+
+		if($normalized[0] === '/')
+			UniteFunctionsUC::throwError('Invalid zip entry path');
+
+		if(preg_match('/^[a-zA-Z]:/', $normalized))
+			UniteFunctionsUC::throwError('Invalid zip entry path');
+
+		$parts = explode('/', $normalized);
+
+		foreach($parts as $part){
+			if($part === '..')
+				UniteFunctionsUC::throwError('Invalid zip entry path');
+		}
+	}
+
+	/**
+	 * join an entry onto the destination and require the result to stay inside it
+	 */
+	private function buildExtractFilepath($dest, $name){
+
+		$destFilepath = UniteFunctionsUC::cleanPath($dest.'/'.$name);
+
+		if($this->isPathInsideDirectory($destFilepath, $dest) == false)
+			UniteFunctionsUC::throwError('Invalid zip entry path');
+
+		return($destFilepath);
+	}
+
+	/**
+	 * true when $path is a file or folder strictly below $directory
+	 */
+	private function isPathInsideDirectory($path, $directory){
+
+		$path = UniteFunctionsUC::cleanPath($path);
+		$directory = rtrim(UniteFunctionsUC::cleanPath($directory), "/\\");
+
+		if($directory === '')
+			return(false);
+
+		$prefix = $directory.DIRECTORY_SEPARATOR;
+		$prefixLength = strlen($prefix);
+
+		if(DIRECTORY_SEPARATOR === '\\')
+			$isInside = (strncasecmp($path, $prefix, $prefixLength) === 0);
+		else
+			$isInside = (strncmp($path, $prefix, $prefixLength) === 0);
+
+		return($isInside);
+	}
+
+	/**
 	 * write some file
 	 */
 	private function writeFile($str, $filepath){
@@ -177,6 +239,22 @@ class UniteZipUC{
 					UniteFunctionsUC::throwError('checksum failed');
 				default:
 					UniteFunctionsUC::throwError('error ' . $result);
+			}
+		}
+
+		for($i = 0; $i < $zip->numFiles; $i++){
+			$name = $zip->getNameIndex($i);
+
+			if($name === false){
+				$zip->close();
+				UniteFunctionsUC::throwError('Invalid zip entry path');
+			}
+
+			try{
+				$this->validateZipEntryName($name);
+			}catch(Exception $e){
+				$zip->close();
+				throw $e;
 			}
 		}
 
@@ -400,13 +478,17 @@ class UniteZipUC{
 			UniteFunctionsUC::throwError('Get ZIP Information failed');
 
 		for($i = 0, $n = count($this->_metadata); $i < $n; $i++){
+			$this->validateZipEntryName($this->_metadata[$i]['name']);
+		}
+
+		for($i = 0, $n = count($this->_metadata); $i < $n; $i++){
 			$lastPathCharacter = substr($this->_metadata[$i]['name'], -1, 1);
 
 			if($lastPathCharacter !== '/' && $lastPathCharacter !== '\\'){
 				//write file
 
 				$buffer = $this->extract_custom_getFileData($i);
-				$destFilepath = UniteFunctionsUC::cleanPath($dest . '/' . $this->_metadata[$i]['name']);
+				$destFilepath = $this->buildExtractFilepath($dest, $this->_metadata[$i]['name']);
 
 				$this->writeFile($buffer, $destFilepath);
 			}
@@ -502,6 +584,7 @@ class UniteZipUC{
 			$maxTime = ini_get('max_execution_time');
 
 			if(!empty($maxTime) && is_numeric($maxTime))
+				// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- Reset the time limit while reading a zip without the PHP zip extension.
 				@set_time_limit($maxTime);
 		}while((($fhStart = strpos($data, $this->_ctrlDirHeader, $fhStart + 46)) !== false));
 

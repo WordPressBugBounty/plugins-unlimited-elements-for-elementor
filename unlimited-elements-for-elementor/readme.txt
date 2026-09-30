@@ -1,12 +1,12 @@
-=== Unlimited Elements For Elementor ===
+=== Unlimited Elements for Elementor ===
 Contributors: unitecms, odin9den, valiano, iritmega, amitkeren, axmusic, freemius
 Donate link: http://unlimited-elements.com/
 Tags: elementor, elementor addons, elementor templates, elementor widgets, widgets for elementor
-Requires at least: 3.5
-Tested up to: 7.0
+Requires at least: 5.7
+Tested up to: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 1.0.2
+Stable tag: 2.0.20
 
 Elementor all-in-one addons pack with the best widgets for Elementor, offering 100+ free widgets, templates, and tools to create stunning websites!
 
@@ -940,6 +940,39 @@ The choice depends on your design preferences. If you want complete control, go 
 
 
 == Changelog ==
+
+
+=  2.0.21 - 2026-09-30 =
+
+Plugin Changes: 
+
+* Fix - encode combined taxonomy and meta filters in the ajax url so hosts that strip a raw semicolon still apply every selected filter
+* Fix - Elementor template import no longer copies Unlimited Elements placeholder and demo images into the Media Library
+* Fix - fixed some security issues found by pachstack and wordfence
+* Fix - fixed empty data in ajax post grid after refresh with multiple avoid duplicates grids
+* Change - done some plugin check reccomendations in the code
+
+Widgets Changes:
+
+* Feature: Text Marquee Effect (Free) - Separated core JavaScript logic into a standalone external JS file while retaining only widget initialization within the template file, improving code maintainability and optimizing asset execution.
+* Feature: Scroll Image Comparison (Pro) - Added support for the widget to function seamlessly inside Elementor popups, ensuring proper script initialization and layout rendering when loaded within popup modals.
+* Feature: SVG Animation (Free) - Updated the Align option to be fully responsive, allowing users to adjust alignment settings independently across desktop, tablet, and mobile viewports.
+* Feature: Link Hover Effects (Free) - Updated the Alignment option to be fully responsive, allowing users to adjust alignment settings independently across desktop, tablet, and mobile viewports.
+* Feature: Video on Hover (Free) - Added "Image Background Color" option, useful when using transparent image.
+* Fix: Text Marquee Effect (Free) - Fixed an issue where the infinite effect failed to render on large screens, ensuring seamless visual looping and continuous display across high-resolution viewports.
+* Fix: Typewriter Text Effect (Pro) - Fixed the Typewriter Text Effect widget briefly showing the first word before typing it, so the word is now typed only once when the page loads.
+* Fix: Select Dropdown Filter (Free) - Fixed an issue where the Meta Selection option remained visible even when the Filter Source option was set to a non-meta selection, ensuring conditional control display logic functions correctly in the widget settings.
+* Fix: Caption Hover Effects (Free) - Fixed an issue where image elements failed to output all available HTML attributes and only rendered the `alt` attribute, ensuring complete image attributes are generated correctly.
+* Fix: Woo Product Grid (Free) - Added conditional visibility for the "Short Description" style tab. The tab is now displayed only when "Show Short Description" is enabled.
+* Fix: Colors Swatches Filter (Pro) - Fixed a Cross-Site Scripting (XSS) vulnerability in the widget by properly escaping tag names output within JavaScript contexts to prevent malicious script execution.
+* Fix: Route Planner (Pro) - Fixed a Cross-Site Scripting (XSS) vulnerability in the widget by properly escaping tag names output within JavaScript contexts to prevent malicious script execution.
+* Fix: vCard (Pro) - Fixed a Cross-Site Scripting (XSS) vulnerability in the widget by properly escaping tag names output within JavaScript contexts to prevent malicious script execution.
+* Fix: Author List (Pro) - Fixed a Cross-Site Scripting (XSS) vulnerability in the widget by properly escaping tag names output within JavaScript contexts to prevent malicious script execution.
+* Fix: Checkboxes Filter (Pro) - Fixed a Cross-Site Scripting (XSS) vulnerability in the widget by properly escaping tag names output within JavaScript contexts to prevent malicious script execution.
+* Fix: Tag Cloud (Pro) - Fixed a Cross-Site Scripting (XSS) vulnerability in the widget by properly escaping tag names output within JavaScript contexts to prevent malicious script execution.
+* Fix: Glare Button Effect (Free) - Fixed an issue where links with multiple query parameters were improperly escaped, ensuring URLs containing multiple parameters process and function correctly.
+
+
 
 =  2.0.20 - 2026-09-16 =
 

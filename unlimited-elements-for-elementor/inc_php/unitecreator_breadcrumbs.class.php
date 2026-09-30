@@ -515,7 +515,7 @@ class UniteCreatorBreadcrumbs {
         $items = array();
 
         $items[] = array(
-            'text' => html_entity_decode($search_page_text . ' "' . get_search_query() . '"', ENT_QUOTES, 'UTF-8'),
+            'text' => $search_page_text . ' "' . get_search_query() . '"',
             'url' => '',
         	'type' => ''
        	);

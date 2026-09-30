@@ -1,8 +1,18 @@
 
 
+version 2.0.21:
+
+* Fix - encode combined taxonomy and meta filters in the ajax url so hosts that strip a raw semicolon still apply every selected filter
+* Fix - Elementor template import no longer copies Unlimited Elements placeholder and demo images into the Media Library
+* Fix - fixed some security issues found by pachstack and wordfence
+* Fix - fixed empty data in ajax post grid after refresh with multiple avoid duplicates grids
+* Change - done some plugin check reccomendations in the code
+
+
 version 2.0.20:
 
 * Fix - fixed some small security issues from patchstack site
+* Fix - meta filter LIKE compare no longer wraps values with %, so contains search matches stored meta
 
 version 2.0.19:
 

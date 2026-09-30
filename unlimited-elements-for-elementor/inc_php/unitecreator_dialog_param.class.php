@@ -252,9 +252,9 @@ class UniteCreatorDialogParamWork{
 	 */
 	private function initSelectListMainAndItemParams(){
 		
-		$categoryParams1 = esc_html__("Basic", "unlimited-elements-for-elementor");
-		$categoryParams2 = esc_html__("Css", "unlimited-elements-for-elementor");
-		$categoryParams3 = esc_html__("Advanced", "unlimited-elements-for-elementor");
+		$categoryParams1 = __("Basic", "unlimited-elements-for-elementor");
+		$categoryParams2 = __("Css", "unlimited-elements-for-elementor");
+		$categoryParams3 = __("Advanced", "unlimited-elements-for-elementor");
 		
 		$arrCategoriesParams = array(
 			$categoryParams1 => array(
@@ -422,15 +422,11 @@ class UniteCreatorDialogParamWork{
 	 * put checkbox input
 	 */
 	protected function putCheckbox($name, $text, $isDefaultChecked = false){
-		
-		$checkedAttr = "";
-		if($isDefaultChecked === true)
-			$checkedAttr = ' data-defaultchecked="true" checked';
-		
+
 		?>
 			<label class="unite-inputs-label-inline-free">
 					<?php echo esc_html($text)?>:
-				 	<input type="checkbox" onfocus="this.blur()" name="<?php echo esc_attr($name)?>"<?php echo $checkedAttr?>>
+				 	<input type="checkbox" onfocus="this.blur()" name="<?php echo esc_attr($name)?>"<?php if($isDefaultChecked === true){ echo ' data-defaultchecked="true" checked'; } ?>>
 			</label>
 
 		<?php
@@ -1881,12 +1877,13 @@ class UniteCreatorDialogParamWork{
                 <ul>
 	                <?php
                         $i = 1;
+                        $contentID = "";
                         foreach($this->arrSelectListParams as $category => $params){
 
                                 echo "<div class='uc-li-column'>";
 
                                 if($category)
-                                    echo "<h3 class='uc-param-category-name'>".esc_html__($category, "unlimited-elements-for-elementor")."</h3>";
+                                    echo "<h3 class='uc-param-category-name'>".esc_html($category)."</h3>";
 
                                 echo "<div class='uc-scroll-li-column'>";
                                 if($i == 1)
@@ -1910,7 +1907,7 @@ class UniteCreatorDialogParamWork{
                 </ul>
             </div>
 
-            <input type="text" class="uc-paramdialog-select-type" value="<?php echo $contentID; ?>">
+            <input type="text" class="uc-paramdialog-select-type" value="<?php echo esc_attr($contentID); ?>">
         </div>
 
 		<?php

@@ -4019,8 +4019,9 @@ function UEDynamicFilters(){
 			var strTerms = buildTermsQuery(arrTerms);
 		
 			if(strTerms){
-				urlAjax += "&ucterms="+strTerms;
-				//set the url params as well
+				//ajax only: encode so a raw ";" is not stripped by hosts that split the query string.
+				//the browser url stays readable (category:slug;post_tag:slug)
+				urlAjax += "&ucterms="+encodeURIComponent(strTerms);
 				urlReplace = addUrlParam(urlReplace, "ucterms="+strTerms);
 				urlFilterString = addUrlParam(urlFilterString, "ucterms="+strTerms);
 			}
@@ -4053,7 +4054,7 @@ function UEDynamicFilters(){
 			var strMeta = buildMetaQuery(arrMeta);
 
 			if(strMeta){
-				urlAjax += "&ucmeta="+strMeta;
+				urlAjax += "&ucmeta="+encodeURIComponent(strMeta);
 				urlReplace = addUrlParam(urlReplace, "ucmeta="+strMeta);
 				urlFilterString = addUrlParam(urlFilterString, "ucmeta="+strMeta);
 			}
@@ -4120,21 +4121,18 @@ function UEDynamicFilters(){
 			
 		}
 		
-		//avoid duplicates - exclude, disable the offset
+		//avoid duplicates - exclude already shown posts on load more only
 		
-		if(objGrid.hasClass("uc-avoid-duplicates")){
+		var refreshType = getVal(params, "refresh_type");
+		
+		if(objGrid.hasClass("uc-avoid-duplicates") && refreshType == g_vars.REFRESH_MODE_LOADMORE){
 			
-			var objCurrentGrid = objGrid;
-			if(isLoadMoreMode == true)
-				objCurrentGrid = null;		//load with exclude but without offset
-			
-			var strExcludePostIDs = getExcludePostIDs(objCurrentGrid);		//exclude current grid
+			var strExcludePostIDs = getExcludePostIDs();
 			
 			if(strExcludePostIDs){
 				urlAjax += "&ucexclude="+strExcludePostIDs;
 				
-				if(isLoadMoreMode == true)
-					offset = null;
+				offset = null;
 	
 				urlFilterString = addUrlParam(urlFilterString, "ucexclude=" + strExcludePostIDs);
 			}

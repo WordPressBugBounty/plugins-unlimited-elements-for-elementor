@@ -97,7 +97,7 @@ class UCFormEntriesView extends WP_List_Table{
 				$url = wp_get_referer();
 				$url = remove_query_arg($actionQueryArgs, $url);
 
-				wp_redirect($url);
+				wp_safe_redirect($url);
 				exit;
 			}
 		}
@@ -108,7 +108,7 @@ class UCFormEntriesView extends WP_List_Table{
 			$url = wp_unslash($_SERVER["REQUEST_URI"]);
 			$url = remove_query_arg(array_merge($generalQueryArgs, $actionQueryArgs), $url);
 
-			wp_redirect($url);
+			wp_safe_redirect($url);
 			exit;
 		}
 	}
@@ -755,12 +755,12 @@ class UCFormEntriesView extends WP_List_Table{
 	private function getActionLink($action, $id, $label){
 
 		$url = array();
-		$url["page"] = $_REQUEST["page"];
+		$url["page"] = wp_unslash($_REQUEST["page"]);
 		$url["action"] = $action;
 		$url[self::FILTER_ID] = $id;
 
 		if(empty($_REQUEST["view"]) === false)
-			$url["view"] = $_REQUEST["view"];
+			$url["view"] = wp_unslash($_REQUEST["view"]);
 
 		if($action !== self::ACTION_VIEW)
 			$url["ucwindow"] = "blank";
@@ -1048,19 +1048,19 @@ class UCFormEntriesView extends WP_List_Table{
 	 */
 	private function displayHiddenFields(){
 
-		echo '<input type="hidden" name="page" value="' . esc_attr($_REQUEST["page"]) . '" />';
+		echo '<input type="hidden" name="page" value="' . esc_attr(wp_unslash($_REQUEST["page"])) . '" />';
 
 		if(empty($_REQUEST["view"]) === false)
-			echo '<input type="hidden" name="view" value="' . esc_attr($_REQUEST["view"]) . '" />';
+			echo '<input type="hidden" name="view" value="' . esc_attr(wp_unslash($_REQUEST["view"])) . '" />';
 
 		if(empty($_REQUEST["orderby"]) === false)
-			echo '<input type="hidden" name="orderby" value="' . esc_attr($_REQUEST["orderby"]) . '" />';
+			echo '<input type="hidden" name="orderby" value="' . esc_attr(wp_unslash($_REQUEST["orderby"])) . '" />';
 
 		if(empty($_REQUEST["order"]) === false)
-			echo '<input type="hidden" name="order" value="' . esc_attr($_REQUEST["order"]) . '" />';
+			echo '<input type="hidden" name="order" value="' . esc_attr(wp_unslash($_REQUEST["order"])) . '" />';
 
 		if(empty($_REQUEST["status"]) === false)
-			echo '<input type="hidden" name="status" value="' . esc_attr($_REQUEST["status"]) . '" />';
+			echo '<input type="hidden" name="status" value="' . esc_attr(wp_unslash($_REQUEST["status"])) . '" />';
 
 		echo '<input type="hidden" name="ucwindow" value="blank" />';
 	}

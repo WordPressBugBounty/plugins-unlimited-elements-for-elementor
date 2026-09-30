@@ -1531,8 +1531,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		self::$arrUsedHTMLHandles[$handle] = true;
 		
 		$htmlInclude = HelperHtmlUC::getHtmlJsInclude($url, $handle);
-		
-		echo $htmlInclude."\n";		
+
+		HelperHtmlUC::putAssetIncludeHtml($htmlInclude);		
 	}
 	
 	
@@ -1552,8 +1552,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		self::$arrUsedHTMLHandles[$handle] = true;
 		
 		$htmlInclude = HelperHtmlUC::getHtmlCssInclude($url, $handle);
-		
-		echo $htmlInclude."\n";
+
+		HelperHtmlUC::putAssetIncludeHtml($htmlInclude);
 		
 	}
 	

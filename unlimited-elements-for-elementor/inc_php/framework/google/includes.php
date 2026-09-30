@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 require_once __DIR__ . "/helper.class.php";
 require_once __DIR__ . "/client.class.php";

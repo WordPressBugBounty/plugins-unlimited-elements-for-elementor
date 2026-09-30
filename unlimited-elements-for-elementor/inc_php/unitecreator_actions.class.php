@@ -62,11 +62,9 @@ class UniteCreatorActions{
 	 */
 	public function onAjaxAction(){
 
-		if(GlobalsUC::$inDev == true || GlobalsUC::$debugAjaxErrors == true){
-
+		if(GlobalsUC::$inDev == true || GlobalsUC::$debugAjaxErrors == true)
+			// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- Show PHP errors in the Ajax response when developer mode or Ajax debugging is on.
 			ini_set("display_errors", "on");
-			error_reporting(E_ALL);
-		}
 
 		$actionType = UniteFunctionsUC::getPostGetVariable("action", "", UniteFunctionsUC::SANITIZE_KEY);
 
@@ -90,10 +88,13 @@ class UniteCreatorActions{
 				
 		try{
 
-			//protection - it's intended to logged in users only with the capabilities defined in the plugin
+			//protection - logged in users only; visitors never hit this wp_ajax_ action
 
 			$nonce = UniteFunctionsUC::getPostGetVariable("nonce", "", UniteFunctionsUC::SANITIZE_NOTHING);
 			UniteProviderFunctionsUC::verifyNonce($nonce);
+
+			if(current_user_can("edit_posts") == false)
+				UniteFunctionsUC::throwError("The user don't have permission to do this operation");
 
 			$addonType = $addons->getAddonTypeFromData($data);
 

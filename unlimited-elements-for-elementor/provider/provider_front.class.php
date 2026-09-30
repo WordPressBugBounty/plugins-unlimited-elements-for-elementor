@@ -109,40 +109,6 @@ class UniteProviderFrontUC{
 	}
 	
 	/**
-	 * show debug post data if available
-	 */
-	public function onFooterDebugPostData(){
-		
-		$showMetaFields = HelperUC::hasPermissionsFromQuery("ucpostmetadebug");
-		
-		if(empty($showMetaFields))
-			return(false);
-		
-		$isSingle = is_singular();
-		
-		if($isSingle == true){
-			
-			HelperProviderUC::showCurrentPostObjectDebug();
-			
-			HelperProviderUC::showCurrentPostMetaDebug();
-			
-			HelperProviderUC::showCurrentPostTermsDebug();
-			
-			HelperProviderUC::showElementorDataDebug();
-
-			return(false);
-		}
-
-		//if not single - show the main query
-			
-		HelperProviderUC::showLastQuery();
-		
-		
-		
-	}
-	
-	
-	/**
 	 * on plugins loaded
 	 */
 	public function onPluginsLoaded(){
@@ -185,8 +151,6 @@ class UniteProviderFrontUC{
 		$this->addFilter("template_include", "onTemplateInclude",12);	//after elementor and woo
 		
 		$this->addAction( 'plugins_loaded', 'onPluginsLoaded' );
-		
-		$this->addAction( 'wp_footer', 'onFooterDebugPostData' );
 		
 		$this->addAction( 'wp_footer', 'onFooterCheckShowSchema' );
 		

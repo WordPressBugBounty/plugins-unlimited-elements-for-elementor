@@ -50,10 +50,10 @@ class UCEmailTestView{
 	 */
 	private function displayHiddenFields(){
 
-		echo '<input type="hidden" name="page" value="' . esc_attr($_REQUEST["page"]) . '" />';
+		echo '<input type="hidden" name="page" value="' . esc_attr(wp_unslash($_REQUEST["page"])) . '" />';
 
 		if(empty($_REQUEST["view"]) === false)
-			echo '<input type="hidden" name="view" value="' . esc_attr($_REQUEST["view"]) . '" />';
+			echo '<input type="hidden" name="view" value="' . esc_attr(wp_unslash($_REQUEST["view"])) . '" />';
 	}
 
 	/**

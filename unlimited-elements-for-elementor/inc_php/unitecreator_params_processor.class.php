@@ -1131,13 +1131,13 @@ class UniteCreatorParamsProcessorWork{
 		}
 
 		//value is the icon name
-		$html = "<i class='{$value}'></i>";
+		$html = "<i class='" . esc_attr($value) . "'></i>";
 		if($isSVG == true){
 
 			if(!empty($svgContent))
 				$html = $svgContent;
 			else
-				$html ="<img src='$value' class='uc-svg-image'>";
+				$html = "<img src='" . esc_url($value) . "' class='uc-svg-image'>";
 		}
 
 		$data[$name."_html"] = $html;
@@ -1656,7 +1656,7 @@ class UniteCreatorParamsProcessorWork{
 		$customAttributes = $this->getLinkData_prepareAttributes($customAttributes);
 
 		$urlFull = $url;
-		$scheme = parse_url($url, PHP_URL_SCHEME);
+		$scheme = wp_parse_url($url, PHP_URL_SCHEME);
 
 		if(empty($scheme) === true){
 			$urlFull = "https://{$url}";

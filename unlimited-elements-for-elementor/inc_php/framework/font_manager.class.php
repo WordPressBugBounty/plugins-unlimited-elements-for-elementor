@@ -444,10 +444,8 @@ class UniteFontManagerUC{
 		
 		$icon = UniteFunctionsUC::getVal($arrIcons, $name);
 		
-		if(empty($icon)){
-			$strIcons = print_r($arrIcons, true);
-			UniteFunctionsUC::throwError("Icon $name not found. there are the icons: $strIcons");
-		}
+		if(empty($icon))
+			UniteFunctionsUC::throwError("Icon $name not found.");
 		
 		return($icon);
 		

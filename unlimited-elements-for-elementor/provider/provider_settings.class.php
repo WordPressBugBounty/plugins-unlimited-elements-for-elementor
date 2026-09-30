@@ -3741,9 +3741,9 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 
         // Responsive Switchers
         $responsive_types = [
-            'advanced_hide_on_desktop' => 'Hide On Desktop',
-            'advanced_hide_on_tablet' => 'Hide On Tablet Portrait',
-            'advanced_hide_on_mobile' => 'Hide On Mobile Portrait'
+            'advanced_hide_on_desktop' => esc_html__('Hide On Desktop', 'unlimited-elements-for-elementor'),
+            'advanced_hide_on_tablet' => esc_html__('Hide On Tablet Portrait', 'unlimited-elements-for-elementor'),
+            'advanced_hide_on_mobile' => esc_html__('Hide On Mobile Portrait', 'unlimited-elements-for-elementor'),
         ];
         $sapKey = $this->getSapKeyByName('__uc_adv_responsive__');
         $this->currentSapKey = $sapKey;
@@ -3752,7 +3752,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
                 $this->add(
                     $name,
                     0,
-                    esc_html__($label,'unlimited-elements-for-elementor'),
+                    $label,
                     self::TYPE_SWITCHER,
                     [
                         'tab'               => self::TAB_ADVANCED,

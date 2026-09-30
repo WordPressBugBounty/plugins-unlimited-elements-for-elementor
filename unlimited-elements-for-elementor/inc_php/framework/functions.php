@@ -9,23 +9,39 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 //---------------------------------------------------------------------------------------------------------------------	
 	
+	if(!function_exists("uelm_html_debug")){
+		function uelm_html_debug($value){
+
+			if(is_array($value) || is_object($value))
+				$value = wp_json_encode($value, JSON_PRETTY_PRINT);
+
+			return esc_html((string) $value);
+		}
+	}
+
 	if(!function_exists("dmp")){
-		function dmp($str){ 
-						
-			echo "<div align='left' style='direction:ltr;color:black;'>";
-			echo "<pre>";
-			print_r($str);
-			echo "</pre>";
-			echo "</div>";
+		function dmp($str){
+
+			$html = "<div align='left' style='direction:ltr;color:black;'><pre>" . uelm_html_debug($str) . "</pre></div>";
+
+			if(class_exists("HelperHtmlUC")){
+				HelperHtmlUC::putHtml($html);
+				return;
+			}
+
+			echo wp_kses($html, array(
+				"div" => array(
+					"align" => true,
+					"style" => true,
+				),
+				"pre" => array(),
+			));
 		}
 	}
 	
 	if(!function_exists("dmpHtml")){
 		function dmpHtml($str){
-			if(is_array($str) || is_object($str))
-				$str = print_r($str, true);
-
-			dmp(htmlspecialchars((string)$str, ENT_QUOTES, 'UTF-8'));
+			dmp($str);
 		}
 	}
 	 
@@ -38,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$html .= "<div align='left' style='direction:ltr;color:black;'>";
 			
 			$html .= "<pre>";
-			$html .= print_r($str, true);
+			$html .= uelm_html_debug($str);
 			$html .= "</pre>";
 			$html .= "</div>";
 			

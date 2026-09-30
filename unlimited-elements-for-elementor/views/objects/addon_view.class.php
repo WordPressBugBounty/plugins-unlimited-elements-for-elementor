@@ -2157,7 +2157,7 @@ class UniteCreatorAddonView{
 				</h2>
 				<p><?php echo esc_html__('Unlock Access To All Pro Blocks and Features.', "unlimited-elements-for-elementor"); ?></p>
 				<p>
-                    <a href="<?php echo GlobalsUC::$url_buy_platform?>" 
+                    <a href="<?php echo esc_url(GlobalsUC::$url_buy_platform); ?>" 
                     target="_blank" 
                     class="unite-button-primary"><?php echo esc_html__('Upgrade Now', "unlimited-elements-for-elementor"); ?></a>
                 </p>

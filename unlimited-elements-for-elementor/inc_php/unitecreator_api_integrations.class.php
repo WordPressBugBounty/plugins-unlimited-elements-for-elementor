@@ -1056,7 +1056,7 @@ class UniteCreatorAPIIntegrations{
 				else
 					$message .= "<br> Output google reviews data using Official Google API";
 				
-				echo HelperHtmlUC::getDebugWarningMessageHtml($message);
+				HelperHtmlUC::putDebugWarningMessage($message);
 			} 
 		
 			$placeId = $this->getRequiredParam(self::GOOGLE_REVIEWS_FIELD_PLACE_ID, "Place ID");
@@ -1108,7 +1108,7 @@ class UniteCreatorAPIIntegrations{
 					$review->setSerpSource();
 
 				// Skip rating-only reviews with no written text
-				$textPlain = trim(strip_tags((string)$review->getText(false)));
+				$textPlain = wp_strip_all_tags((string)$review->getText(false));
 				if($textPlain === "")
 					continue;
 				
@@ -1133,7 +1133,7 @@ class UniteCreatorAPIIntegrations{
 				
 				$message = $e->getMessage();
 				
-				echo HelperHtmlUC::getErrorMessageHtml($message,"",true);
+				HelperHtmlUC::putErrorMessageHtml($message,"",true);
 			}
 			
 			throw $e;
@@ -1164,9 +1164,17 @@ class UniteCreatorAPIIntegrations{
 		$isSerpEnabled = $this->isGoogleReviewsSerpEnabled();
 		
 		if($isSerpEnabled == false)
-			$text = sprintf(__("To get more then 5 reviews, enter %s key in general settings", "unlimited-elements-for-elementor"), "<a href='https://serpapi.com' target='_blank'>serpapi.com</a>");
+			$text = sprintf(
+				/* translators: %s = link to serpapi.com */
+				__("To get more then 5 reviews, enter %s key in general settings", "unlimited-elements-for-elementor"),
+				"<a href='https://serpapi.com' target='_blank'>serpapi.com</a>"
+			);
 		else
-			$text = sprintf(__("Fetching google reviews using %s service.", "unlimited-elements-for-elementor"), "<a href='https://serpapi.com' target='_blank'>serpapi.com</a>");
+			$text = sprintf(
+				/* translators: %s = link to serpapi.com */
+				__("Fetching google reviews using %s service.", "unlimited-elements-for-elementor"),
+				"<a href='https://serpapi.com' target='_blank'>serpapi.com</a>"
+			);
 		
 		//if there is no option - no need for text
 		if(GlobalsUnlimitedElements::$enableSerpAPI == true){
@@ -1833,12 +1841,12 @@ class UniteCreatorAPIIntegrations{
 		$html .= 'data-nonce="' . esc_attr($nonce) . '" ';
 		$html .= 'data-ajax-url="' . esc_attr($ajaxUrl) . '" ';
 		$html .= 'style="padding: 8px 16px; background: #0073aa; color: #fff; border: none; border-radius: 3px; cursor: pointer; font-size: 14px;">';
-		$html .= __('Manual Refresh Reviews', 'unlimited-elements-for-elementor');
+		$html .= esc_html(__('Manual Refresh Reviews', 'unlimited-elements-for-elementor'));
 		$html .= '</button>';
 		$html .= '<span class="uc-google-reviews-refresh-status" style="margin-left: 10px; display: none;"></span>';
 		$html .= '</div>';
-		
-		echo $html;
+
+		HelperHtmlUC::putHtml($html);
 	}
 
 }

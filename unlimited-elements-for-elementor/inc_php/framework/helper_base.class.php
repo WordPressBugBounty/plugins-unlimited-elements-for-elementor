@@ -8,7 +8,42 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
+class UniteAjaxCapturedResponseUC extends Error{
+
+	private $json;
+	private $buffer;
+
+	public function __construct($json, $buffer = ""){
+
+		$this->json = $json;
+		$this->buffer = $buffer;
+
+		parent::__construct("ajax captured");
+	}
+
+	public function getJson(){
+
+		return $this->json;
+	}
+
+	public function getBuffer(){
+
+		return $this->buffer;
+	}
+
+}
+
 class UniteHelperBaseUC extends HtmlOutputBaseUC{
+
+	private static $captureAjaxForTests = false;
+
+	/**
+	 * When set, ajax responses are thrown instead of ending the request.
+	 */
+	public static function setCaptureAjaxForTests($capture){
+
+		self::$captureAjaxForTests = ($capture == true);
+	}
 	
 	
 	/**
@@ -30,7 +65,12 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 		}
 						
 		$json = json_encode($response);
-		
+
+		if(self::$captureAjaxForTests == true){
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Test capture of the JSON body, not page output.
+			throw new UniteAjaxCapturedResponseUC($json);
+		}
+
 		// clean the buffier, 
 		// but return the content if exists for showing the warnings
 		
@@ -47,6 +87,7 @@ class UniteHelperBaseUC extends HtmlOutputBaseUC{
 		if($isJsonOutput == true)
 			header('Content-Type: application/json');
 		
+		// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- Keep PHP notices out of the JSON response.
 		ini_set("display_errors","off");
 		uelm_echo($json);
 		exit();

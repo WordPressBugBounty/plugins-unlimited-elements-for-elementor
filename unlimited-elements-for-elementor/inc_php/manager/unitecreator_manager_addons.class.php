@@ -1413,6 +1413,7 @@ class UniteCreatorManagerAddonsWork extends UniteCreatorManager{
 		$warningText = "";
 
 		if($maxExecutionTime > 0 && $maxExecutionTime <= 30){
+			// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- Raise the time limit so template import is not cut off, and detect hosts that refuse the change.
 			@ini_set("max_execution_time", 300);
 
 			$maxTime = @ini_get("max_execution_time");

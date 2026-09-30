@@ -2053,7 +2053,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 					if(isset($_COOKIE["woocommerce_recently_viewed"])){
 
-						$strRecentProducts = $_COOKIE["woocommerce_recently_viewed"];
+						$strRecentProducts = wp_unslash($_COOKIE["woocommerce_recently_viewed"]);
 						$strRecentProducts = trim($strRecentProducts);
 						$arrRecentProducts = explode("|", $strRecentProducts);
 						
@@ -2451,9 +2451,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		if($showDebugQuery == true){
 			
-			$style = HelperHtmlUC::getQueryDebugWrapperStyles();
-			
-			echo("<div class='uc-debug-query-wrapper' style='{$style}'>");	//start debug wrapper
+			HelperHtmlUC::putQueryDebugWrapperStart();	//start debug wrapper
 		}
 			
 		$args = $this->getPostListData_getPostGetFilters_pagination($args, $value, $name, $data, $param);
@@ -3008,10 +3006,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$postType = UniteFunctionsUC::getVal($currentQueryVars, "post_type");
 			if($postType == "product")
 				$isForWoo = true;
-			
-			$style = HelperHtmlUC::getQueryDebugWrapperStyles();
-			
-			echo "<div class='uc-debug-query-wrapper' style='{$style}'>";	//start debug wrapper
+
+			HelperHtmlUC::putQueryDebugWrapperStart();	//start debug wrapper
 
 			dmp("Current Posts. The Query Is:");
 
@@ -3324,9 +3320,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 			if($showDebugQuery == true){
 				
-				$style = HelperHtmlUC::getQueryDebugWrapperStyles();
-				
-				echo "<div class='uc-debug-query-wrapper' style='{$style}'>";	//start debug wrapper
+				HelperHtmlUC::putQueryDebugWrapperStart();	//start debug wrapper
 				
 				dmp("UE Templates. No template id's found, no query");
 
@@ -3354,9 +3348,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		if($showDebugQuery == true){
 
-			$style = HelperHtmlUC::getQueryDebugWrapperStyles();
-			
-			echo "<div class='uc-debug-query-wrapper' style='{$style}'>";	//start debug wrapper
+			HelperHtmlUC::putQueryDebugWrapperStart();	//start debug wrapper
 
 			dmp("UE Templates. The Query Is:");
 
@@ -3778,7 +3770,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$title = UniteFunctionsUC::getVal($data, $name."_alt");
 
 		if(empty($title) && !empty($urlImage)){
-			$filename = basename(parse_url($urlImage, PHP_URL_PATH));
+			$filename = basename(wp_parse_url($urlImage, PHP_URL_PATH));
 			$filename = preg_replace('/\.[^.]+$/', '', $filename);
 			if(!empty($filename))
 				$title = str_replace(array("-", "_"), " ", $filename);
@@ -5547,11 +5539,16 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 	 */
 	public function getDirectChildrenOfSelectedTerms($clauses) {
 
+		remove_filter('terms_clauses', array($this, "getDirectChildrenOfSelectedTerms"), 1, 1);
+
+		if(empty($this->arrIncludeDirectChildrenOfSelectedTermsIDs))
+			return $clauses;
+
 		$termsIDs = implode(', ', $this->arrIncludeDirectChildrenOfSelectedTermsIDs);
 
-		$clauses['where'] .= " AND tt.parent IN (" . $termsIDs . ")";
+		UniteFunctionsUC::validateIDsList($termsIDs, "parent terms id's");
 
-		remove_filter('terms_clauses', array($this, "getDirectChildrenOfSelectedTerms"), 1, 1);
+		$clauses['where'] .= " AND tt.parent IN (" . $termsIDs . ")";
 
 		return $clauses;
 	}

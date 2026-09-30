@@ -4,6 +4,8 @@
 /**
  * return if addon creator plugin exists and active
  */
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 function UCIsAddonLibraryPluginExists(){
 	
 	$alPlugin = "addon-library/addonlibrary.php";

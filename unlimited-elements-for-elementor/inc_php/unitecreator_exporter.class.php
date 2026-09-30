@@ -364,7 +364,7 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 				case 'png':
 					break;
 				default:
-					unlink($pathAssetsDest . $file);
+					wp_delete_file($pathAssetsDest . $file);
 				}
 			}	
 		break;
@@ -378,7 +378,7 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 					case 'svg':
 					case 'gif':
 					case 'png':
-						unlink($pathAssetsDest . $file);
+						wp_delete_file($pathAssetsDest . $file);
 					break;
 				}
 			}		

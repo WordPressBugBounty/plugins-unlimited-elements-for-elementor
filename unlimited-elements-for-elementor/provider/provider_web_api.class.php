@@ -211,6 +211,7 @@ class UniteCreatorWebAPI extends UniteCreatorWebAPIWork{
 	 */
 	public function installCatalogTemplateFromData($data){
 		
+		// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- Allow a large catalog template install to finish.
 		@ini_set("max_execution_time", 300);
 		
 		//get elementor template addon type
@@ -295,7 +296,7 @@ class UniteCreatorWebAPI extends UniteCreatorWebAPIWork{
 		}
 		
 		if(file_exists($filepath))
-			@unlink($filepath);
+			wp_delete_file($filepath);
 		
 		//create response
 		$arrLinks = HelperProviderUC::getImportedTemplateLinks($templateID);

@@ -20,7 +20,7 @@ class FilesystemHelper
             if ($fileInfo->isDir()) {
                 rmdir($filename);
             } else {
-                unlink($filename);
+                wp_delete_file($filename);
             }
         }
         rmdir($dir);

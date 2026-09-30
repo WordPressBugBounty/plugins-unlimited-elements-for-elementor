@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 $pathProvider = dirname(__FILE__) . '/';
 

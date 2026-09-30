@@ -196,6 +196,7 @@ private function checkingCatalogData(){
 		
 try{
 	
+		// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- Show the PHP error when the connectivity test fails.
 		ini_set("display_errors",1);
 		
 		$this->checkVariousOptions();
@@ -216,7 +217,7 @@ try{
 
 		$urlPHPFile = GlobalsUC::$urlPlugin."views/api-connect-test.php";
 	 	
-		$serverIP = $_SERVER["SERVER_ADDR"];
+		$serverIP = wp_unslash($_SERVER["SERVER_ADDR"]);
 				
 		?>
 		

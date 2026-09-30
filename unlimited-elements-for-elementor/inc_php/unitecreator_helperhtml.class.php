@@ -393,6 +393,89 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		}
 
 		/**
+		 * Tags and attributes allowed in plugin-built HTML.
+		 */
+		public static function getOutputAllowedHtml(){
+
+			static $allowed = null;
+
+			if($allowed !== null)
+				return $allowed;
+
+			$commonAttrs = array(
+				"class" => true,
+				"id" => true,
+				"style" => true,
+			);
+
+			$allowed = array(
+				"div" => array_merge($commonAttrs, array(
+					"align" => true,
+				)),
+				"span" => $commonAttrs,
+				"p" => $commonAttrs,
+				"pre" => array(
+					"style" => true,
+				),
+				"br" => array(),
+				"b" => array(),
+				"strong" => array(),
+				"em" => array(),
+				"i" => array(),
+				"style" => array(
+					"type" => true,
+				),
+				"a" => array(
+					"href" => true,
+					"class" => true,
+					"target" => true,
+				),
+				"button" => array_merge($commonAttrs, array(
+					"type" => true,
+					"data-*" => true,
+				)),
+			);
+
+			return $allowed;
+		}
+
+		/**
+		 * Print plugin-built HTML through wp_kses.
+		 */
+		public static function putHtml($html){
+
+			echo wp_kses((string)$html, self::getOutputAllowedHtml());
+		}
+
+		/**
+		 * Print a stylesheet or script include.
+		 */
+		public static function putAssetIncludeHtml($html){
+
+			echo wp_kses((string)$html, array(
+				"link" => array(
+					"rel" => true,
+					"type" => true,
+					"href" => true,
+					"id" => true,
+				),
+				"script" => array(
+					"type" => true,
+					"src" => true,
+					"id" => true,
+				),
+			)) . "\n";
+		}
+
+		/**
+		 * Print an error message.
+		 */
+		public static function putErrorMessageHtml($message, $trace = "", $withCSS = false){
+
+			self::putHtml(self::getErrorMessageHtml($message, $trace, $withCSS));
+		}
+
+		/**
 		 * get settings html
 		 */
 		public static function getHtmlSettings($filename, $formID, $arrValues = array()){
@@ -501,14 +584,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 * get css include
 		 */
 		public static function getHtmlCssInclude($url, $handle = null){
-			
+
+			$url = esc_url($url);
 			$addHTML = "";
 			if(!empty($handle))
-				$addHTML = " id='{$handle}'";
-			
+				$addHTML = " id='" . esc_attr($handle) . "'";
+
 			// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
-			$html = "<link rel=\"stylesheet\" type=\"text/css\" href=\"{$url}\" {$addHTML} >";
-			
+			$html = "<link rel=\"stylesheet\" type=\"text/css\" href=\"{$url}\"{$addHTML}>";
+
 			return($html);
 		}
 
@@ -517,14 +601,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 * get css include
 		 */
 		public static function getHtmlJsInclude($url, $handle=null){
-			
+
+			$url = esc_url($url);
 			$addHTML = "";
 			if(!empty($handle))
-				$addHTML = " id='{$handle}'";
-			
+				$addHTML = " id='" . esc_attr($handle) . "'";
+
 			// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
-			
-			$html = "<script type=\"text/javascript\" src=\"{$url}\" $addHTML></script>";
+			$html = "<script type=\"text/javascript\" src=\"{$url}\"{$addHTML}></script>";
 
 			return($html);
 		}
@@ -587,7 +671,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				if($isArray == true){
 					$html .= "$key:";
 					$html .= "<pre style='padding-left:60px;font-size:12px;'>";
-					$html .= print_r($value, true);
+					$html .= uelm_html_debug($value);
 					$html .= "</pre>";
 				}
 				else{
@@ -653,11 +737,24 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			
 			return("background: lightgrey; padding: 10px; margin-bottom: 10px; font-size: 12px; overflow:auto;");
 		}
+
+		/**
+		 * Print the opening debug-query wrapper.
+		 */
+		public static function putQueryDebugWrapperStart(){
+
+			$style = self::getQueryDebugWrapperStyles();
+			self::putHtml("<div class='uc-debug-query-wrapper' style='{$style}'>");
+		}
 		
 		/**
 		 * get debug message html output
 		 */
 		public static function getDebugWarningMessageHtml($message){
+
+			$message = wp_kses($message, array(
+				"br" => array(),
+			));
 			
 			$html = "
 				<div style='background-color:#e3af7b;
@@ -672,6 +769,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			";
 			
 			return($html);
+		}
+
+		/**
+		 * Print a debug warning message.
+		 */
+		public static function putDebugWarningMessage($message){
+
+			self::putHtml(self::getDebugWarningMessageHtml($message));
 		}
 		
 		
@@ -1408,31 +1513,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 */
 		public static function putPHPInfo(){
 
-			UniteFunctionsUC::obStart();
-			HelperHtmlUC::putAddonTypesBrowserDialogs();
+			echo "<p>" . esc_html__("PHP configuration details are not shown here because they include server file paths.", "unlimited-elements-for-elementor") . "</p>";
 
-			phpinfo();
-
-			$content = ob_get_contents();
-
-			ob_end_clean();
-
-			//clean css
-			$content = str_replace("body {background-color:", "xbody {background-color:", $content);
-			$content = str_replace("a:link", ".uc-phpino a:link", $content);
-
-			?>
-
-			<br>
-
-			<div class="uc-phpino" style="overflow-x:scroll;width:100%;">
-
-			<?php 
-			uelm_echo($content);
-			?>
-
-			</div>
-<?php
 		}
 
 		/**

@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 require_once __DIR__ . "/exceptions/exception.class.php";
 require_once __DIR__ . "/exceptions/request_exception.class.php";

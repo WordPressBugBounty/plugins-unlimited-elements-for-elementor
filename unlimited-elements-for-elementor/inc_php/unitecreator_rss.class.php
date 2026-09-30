@@ -314,6 +314,9 @@ class UniteCreatorRSS{
         if(empty($arrRss))
         	return($arrRss);
         
+        //one item is a field map. image extraction loops items, so wrap it as a one-element list.
+        $arrRss = $this->normalizeRssItemsList($arrRss);
+        
         //detect image url
         
         $firstRssElement = UniteFunctionsUC::getArrFirstValue($arrRss);
@@ -323,9 +326,12 @@ class UniteCreatorRSS{
         if($hasImageKey == true)
         	return($arrRss);
            	 	  
-        $isAddedImage = true;
+        $isAddedImage = false;
         	
         foreach ($arrRss as $rssKey => $rssItem) {
+        	
+        	if(is_array($rssItem) == false)
+        		continue;
         	
              $imageLink = $this->getFirstImageLinkFromContent($rssItem);
 		
@@ -341,6 +347,9 @@ class UniteCreatorRSS{
 		//add image key to others
 		if($isAddedImage == true){
         	foreach ($arrRss as $rssKey => $rssItem) {
+        		if(is_array($arrRss[$rssKey]) == false)
+        			continue;
+        		
         		if(array_key_exists("image_url", $arrRss[$rssKey]) == false)
         			$arrRss[$rssKey]["image_url"] = "";
         	}
@@ -348,6 +357,24 @@ class UniteCreatorRSS{
 		
 		
 		return($arrRss);
+	}
+
+	/**
+	 * several items are a numeric list of field maps.
+	 * a single item is the field map itself, which has to be wrapped before item loops.
+	 */
+	private function normalizeRssItemsList($arrRss){
+		
+		if(is_array($arrRss) == false || empty($arrRss))
+			return($arrRss);
+		
+		$firstKey = array_key_first($arrRss);
+		$firstValue = reset($arrRss);
+		
+		if(is_numeric($firstKey) && is_array($firstValue))
+			return($arrRss);
+		
+		return(array($arrRss));
 	}
 
 	/**
@@ -625,15 +652,15 @@ class UniteCreatorRSS{
      */
     private function hasImageKey($rssItem) {
     	
+    	if(is_array($rssItem) == false)
+    		return(false);
+    	
         $possibleImageKeys = UniteFunctionsUC::getVal($this->rssAutoDetectKeys, "image_key");    
 		
         if(empty($possibleImageKeys))
         	return(false);
         
         $rssKeys = explode('|', $possibleImageKeys);
-
-        if(empty($rssKeys) == false)
-        	return(false);
         
         foreach ($rssKeys as $rssKey) {
             if(array_key_exists($rssKey, $rssItem)) {
@@ -655,6 +682,9 @@ class UniteCreatorRSS{
      */
     private function getFirstImageLinkFromContent($rssItem) {
     	
+    	if(is_array($rssItem) == false)
+    		return(null);
+    	
         $possibleContentKeys = $this->rssAutoDetectKeys['content_key'];
         $possibleDescKeys = $this->rssAutoDetectKeys['description_key'];
 
@@ -672,6 +702,9 @@ class UniteCreatorRSS{
                 if (!is_array($rssItem[$rssKey])) {
                 	
                 	$content = $rssItem[$rssKey];
+                	
+                	if(is_string($content) == false || $content === '')
+                		continue;
                 	                	
                     if (preg_match($pattern, $content, $matches)) {
                     	                    	

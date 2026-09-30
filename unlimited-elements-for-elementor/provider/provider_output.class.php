@@ -18,7 +18,7 @@ class UniteCreatorOutput extends UniteCreatorOutputWork{
 	 */
 	protected function processHtml($html){
 		
-		$html = do_shortcode($html);
+		$html = HelperProviderUC::processOutputShortcodes($html);
 		
 		return($html);
 	}

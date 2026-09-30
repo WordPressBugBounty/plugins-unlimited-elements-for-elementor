@@ -26,6 +26,7 @@ class UniteCreatorElementorWidget extends Widget_Base {
     private $isNoMemory_addonName;
     private $listingName;
     private static $arrGlobalColors = array();
+    private static $importAssetUrls = array();
     protected $isBGWidget = false;
 	protected $objControls;
 	protected $isAddSapBefore = false;
@@ -4297,6 +4298,203 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
     }
     */
+
+
+    private function a_______IMPORT_ASSETS______(){}
+
+
+    /**
+     * elementor calls this while importing a template, before media controls download images
+     */
+    public function on_import( $element ){
+
+    	if(empty($element["settings"]) || is_array($element["settings"]) == false)
+    		return($element);
+
+    	$savedUrls = array();
+    	$element["settings"] = $this->blankUnlimitedElementsAssetUrls($element["settings"], "", $savedUrls);
+
+    	$elementID = UniteFunctionsUC::getVal($element, "id");
+
+    	if(empty($elementID) == false && empty($savedUrls) == false)
+    		self::$importAssetUrls[$elementID] = $savedUrls;
+
+    	$this->set_settings($element["settings"]);
+
+    	return($element);
+    }
+
+
+    /**
+     * put the local asset urls back after elementor has skipped the download
+     */
+    public static function restoreImportAssetUrls( $elements ){
+
+    	if(empty(self::$importAssetUrls) || is_array($elements) == false)
+    		return($elements);
+
+    	$elements = self::restoreImportAssetUrlsRecursive($elements);
+
+    	self::$importAssetUrls = array();
+
+    	return($elements);
+    }
+
+
+    /**
+     * restore saved asset urls inside nested elements
+     */
+    private static function restoreImportAssetUrlsRecursive( $elements ){
+
+    	foreach($elements as $index => $element){
+
+    		if(empty($element["elements"]) == false && is_array($element["elements"]))
+    			$elements[$index]["elements"] = self::restoreImportAssetUrlsRecursive($element["elements"]);
+
+    		$elementID = UniteFunctionsUC::getVal($element, "id");
+
+    		if(empty($elementID) || empty(self::$importAssetUrls[$elementID]))
+    			continue;
+
+    		if(empty($elements[$index]["settings"]) || is_array($elements[$index]["settings"]) == false)
+    			continue;
+
+    		foreach(self::$importAssetUrls[$elementID] as $path => $url)
+    			$elements[$index]["settings"] = self::setSettingsUrlByPath($elements[$index]["settings"], $path, $url);
+    	}
+
+    	return($elements);
+    }
+
+
+    /**
+     * set a media url inside settings by a slash-separated path
+     */
+    private static function setSettingsUrlByPath( $settings, $path, $url ){
+
+    	$keys = explode("/", $path);
+
+    	if(empty($keys))
+    		return($settings);
+
+    	$lastKey = array_pop($keys);
+    	$target = &$settings;
+
+    	foreach($keys as $key){
+
+    		if(is_array($target) == false || array_key_exists($key, $target) == false){
+    			unset($target);
+    			return($settings);
+    		}
+
+    		$target = &$target[$key];
+    	}
+
+    	if(is_array($target) && array_key_exists($lastKey, $target) && is_array($target[$lastKey]))
+    		$target[$lastKey]["url"] = $url;
+
+    	unset($target);
+
+    	return($settings);
+    }
+
+
+    /**
+     * clear plugin and widget asset urls so elementor will not import them
+     */
+    private function blankUnlimitedElementsAssetUrls( $value, $path, &$savedUrls ){
+
+    	if(is_string($value))
+    		return($this->replaceAssetUrlInText($value));
+
+    	if(is_array($value) == false)
+    		return($value);
+
+    	$url = UniteFunctionsUC::getVal($value, "url");
+
+    	if(is_string($url) && $this->isImportedAssetUrl($url)){
+
+    		$savedUrls[$path] = $this->toLocalAssetUrl($url);
+    		$value["url"] = "";
+    		$value["id"] = "";
+
+    		return($value);
+    	}
+
+    	foreach($value as $key => $item){
+
+    		$itemPath = ($path === "") ? (string)$key : $path."/".$key;
+    		$value[$key] = $this->blankUnlimitedElementsAssetUrls($item, $itemPath, $savedUrls);
+    	}
+
+    	return($value);
+    }
+
+
+    /**
+     * return if the url points at a plugin image or a widget asset
+     */
+    private function isImportedAssetUrl( $url ){
+
+    	if(strpos($url, "/plugins/unlimited-elements-") !== false)
+    		return(true);
+
+    	if(strpos($url, "/uploads/ac_assets/") !== false)
+    		return(true);
+
+    	if(strpos($url, "/uploads/blox_assets/") !== false)
+    		return(true);
+
+    	return(false);
+    }
+
+
+    /**
+     * point an asset url at the same path on this site
+     */
+    private function toLocalAssetUrl( $url ){
+
+    	$path = wp_parse_url($url, PHP_URL_PATH);
+
+    	if(empty($path))
+    		return($url);
+
+    	$localBase = untrailingslashit(home_url());
+    	$localPath = wp_parse_url($localBase, PHP_URL_PATH);
+
+    	if(empty($localPath) == false && strpos($path, $localPath) === 0)
+    		$path = substr($path, strlen($localPath));
+
+    	return($localBase.$path);
+    }
+
+
+    /**
+     * replace asset urls inside text fields such as image attributes
+     */
+    private function replaceAssetUrlInText( $text ){
+
+    	if(strpos($text, "http") === false)
+    		return($text);
+
+    	$text = preg_replace_callback("#https?://[^\"'\\s]+#", array($this, "replaceAssetUrlInText_match"), $text);
+
+    	return($text);
+    }
+
+
+    /**
+     * callback for replacing one asset url inside text
+     */
+    private function replaceAssetUrlInText_match( $match ){
+
+    	$url = $match[0];
+
+    	if($this->isImportedAssetUrl($url) == false)
+    		return($url);
+
+    	return($this->toLocalAssetUrl($url));
+    }
 
 
 }

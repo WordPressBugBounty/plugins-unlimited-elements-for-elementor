@@ -217,7 +217,7 @@ class UCFormEntryView{
 	 */
 	private function displayFooter(){
 
-		$page = (isset($_REQUEST['page']) ? sanitize_text_field($_REQUEST['page']) : '');
+		$page = (isset($_REQUEST['page']) ? sanitize_text_field(wp_unslash($_REQUEST['page'])) : '');
 
 		$url = wp_get_referer() ?: "?page=" . $page;
 

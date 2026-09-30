@@ -1314,12 +1314,12 @@ class UniteCreatorFiltersProcess{
 
 		$arrCleanValues = $this->expandMetaFilterArrayValues($arrCleanValues, $compare);
 
+		// Do not wrap LIKE values with %. WP_Meta_Query already does
+		// '%' . esc_like($value) . '%'. Extra % become literal \% and match nothing.
 		if($compare == "LIKE" || $compare == "NOT LIKE"){
 
 			foreach($arrCleanValues as $index => $val){
-
-				if(strpos($val, "%") === false)
-					$arrCleanValues[$index] = "%".$val."%";
+				$arrCleanValues[$index] = trim($val, "%");
 			}
 		}
 
@@ -2080,7 +2080,7 @@ class UniteCreatorFiltersProcess{
 
 		$currentUrl = GlobalsUC::$current_page_url;
 
-		$arrUrl = parse_url($currentUrl);
+		$arrUrl = wp_parse_url($currentUrl);
 
 		$query = "?".UniteFunctionsUC::getVal($arrUrl, "query");
 
@@ -2639,6 +2639,9 @@ class UniteCreatorFiltersProcess{
 			
 			if(class_exists("UniteCreatorGutenbergIntegrate") == false)
 				UniteFunctionsUC::throwError("no gutenberg platform enabled");
+			
+			if(HelperProviderCoreUC_EL::isPostReadable($layoutID) == false)
+				UniteFunctionsUC::throwError(self::$platform." content not found");
 			
 			self::$objGutenberg = new UniteCreatorGutenbergIntegrate();
 
@@ -4434,11 +4437,9 @@ s	 */
 		$setDisplayErrors = HelperProviderCoreUC_EL::getGeneralSetting("enable_display_errors_ajax");
 		$setDisplayErrors = UniteFunctionsUC::strToBool($setDisplayErrors);
 
-		if($setDisplayErrors == true){
-
+		if($setDisplayErrors == true)
+			// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- Show PHP errors in Ajax when the general setting is enabled.
 			ini_set("display_errors", "on");
-			error_reporting(E_ALL);
-		}
 
 	}
 

@@ -77,7 +77,7 @@ class InstagramAPIOfficialUC{
 	 */
 	private function validateRequestCredentials($url){
 
-		$info = parse_url($url);
+		$info = wp_parse_url($url);
 		$query = UniteFunctionsUC::getVal($info, "query");
 
 		parse_str($query, $params);

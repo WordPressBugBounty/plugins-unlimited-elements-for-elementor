@@ -1243,7 +1243,7 @@ class UniteCreatorElementorIntegrate{
     		$exporter = new UniteCreatorLayoutsExporterElementor();
 	    	$exporter->importElementorTemplateNew($arrTempFile);
 
-	    	wp_redirect(GlobalsUnlimitedElements::$urlTemplatesList);
+	    	wp_safe_redirect(GlobalsUnlimitedElements::$urlTemplatesList);
 	    	exit();
 
     	}catch(Exception $e){
@@ -1929,6 +1929,8 @@ class UniteCreatorElementorIntegrate{
 
     	if(is_admin() == false)
     		return(false);
+
+    	add_filter("elementor/template_library/sources/local/import/elements", array("UniteCreatorElementorWidget", "restoreImportAssetUrls"));
 
     	if($this->enableExportTemplate == true){
 

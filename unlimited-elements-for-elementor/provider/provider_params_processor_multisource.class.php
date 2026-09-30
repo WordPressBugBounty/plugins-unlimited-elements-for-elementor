@@ -610,7 +610,7 @@ class UniteCreatetorParamsProcessorMultisource{
 
 					$debugVal = $value;
 					if(is_array($value))
-						$debugVal = print_r($value, true);
+						$debugVal = uelm_html_debug($value);
 
 					$strDebug = "Get meta <b>$metaKey</b> for post: $title ($postID) is: <b>$debugVal</b>";
 

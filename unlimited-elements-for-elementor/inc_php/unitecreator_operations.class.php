@@ -99,7 +99,7 @@ class UCOperations extends UniteElementsBaseUC{
 
 		//----- invalid:
 
-		$strIntersect = print_r($arrIntersect, true);
+		$strIntersect = uelm_html_debug($arrIntersect);
 		UniteFunctionsUC::throwError("The custom settings should not contain general settings keys:" . $strIntersect);
 	}
 

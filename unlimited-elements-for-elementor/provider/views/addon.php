@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 defined('UNLIMITED_ELEMENTS_INC') or die;
 

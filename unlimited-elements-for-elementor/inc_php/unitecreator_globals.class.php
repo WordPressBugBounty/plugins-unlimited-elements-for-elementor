@@ -75,7 +75,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		const URL_SUPPORT = "http://unitecms.ticksy.com";
 		const URL_DOWNLOAD_PRO = "https://users.freemius.com/login";
 		const URL_PREVIEW_WIDGETS = "https://unlimited-elements.com/";
-		const URL_RATE = "https://wordpress.org/support/plugin/unlimited-elements-for-elementor/reviews/?filter=5";
+		const URL_RATE = "https://wordpress.org/support/plugin/unlimited-elements-for-elementor/reviews/";
 		const URL_FACEBOOK = "https://facebook.com/groups/468327430642626";
 		const URL_YOUTUBE = "https://youtube.com/channel/UCNYLnevs1ewIxKQqPiat0xQ";
 

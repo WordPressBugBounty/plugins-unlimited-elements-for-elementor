@@ -101,7 +101,8 @@ class UniteCreatorImportExportChangelog{
 
 		set_transient("uc_changelog_import_success", __("Change Log imported successfully!", "unlimited-elements-for-elementor"), 30);
 
-		wp_redirect($urlViewImport);
+		wp_safe_redirect($urlViewImport);
+		exit;
 	}
 
 	/**
@@ -181,7 +182,8 @@ class UniteCreatorImportExportChangelog{
 		$urlViewImport = HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_CHANGELOG_IMPORT);
 
 		set_transient($keyError, $errorMessage, 30);
-		wp_redirect($urlViewImport);
+		wp_safe_redirect($urlViewImport);
+		exit;
 	}
 
 }

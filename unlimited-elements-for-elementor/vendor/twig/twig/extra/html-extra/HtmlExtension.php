@@ -66,7 +66,7 @@ final class HtmlExtension extends AbstractExtension
                     $mime = 'text/plain';
                 }
             } finally {
-                @unlink($tmp);
+                wp_delete_file($tmp);
             }
         }
         $repr .= $mime;

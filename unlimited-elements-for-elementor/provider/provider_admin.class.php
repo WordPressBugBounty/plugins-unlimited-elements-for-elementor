@@ -652,7 +652,7 @@ class UniteProviderAdminUC extends UniteCreatorAdmin{
 
 		dmp("addons installed, redirecting...");
 
-		wp_redirect($urlRedirect);
+		wp_safe_redirect($urlRedirect);
 		
 		exit();
 	}

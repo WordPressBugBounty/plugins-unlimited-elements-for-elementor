@@ -403,10 +403,18 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 			$isValid = UniteFunctionsUC::isEmailValid($email);
 
 			if($isValid == true)
-				$textConnected = sprintf(__("Connected to: <b>%s</b>", "unlimited-elements-for-elementor"), $email);
+				$textConnected = sprintf(
+					/* translators: %s = connected Google account email */
+					__("Connected to: <b>%s</b>", "unlimited-elements-for-elementor"),
+					$email
+				);
 
             $expirationTime = UEGoogleAPIHelper::getExpirationDate();
-			$textExpirationTime = sprintf(__("Expires in <b>%s</b>, the time will auto extend.", "unlimited-elements-for-elementor"), $expirationTime);
+			$textExpirationTime = sprintf(
+				/* translators: %s = token expiration time */
+				__("Expires in <b>%s</b>, the time will auto extend.", "unlimited-elements-for-elementor"),
+				$expirationTime
+			);
 			?>
 
 			<div class="uc-google-connect-message">
@@ -440,7 +448,11 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		if(!empty($error)){
 		?>
 			<div class="uc-google-connect-error">
-				<div><?php  echo esc_html(sprintf(__("Error: %s", "unlimited-elements-for-elementor"), $error)); //Security Update 1 ?></div>
+				<div><?php echo esc_html(sprintf(
+					/* translators: %s = error message */
+					__("Error: %s", "unlimited-elements-for-elementor"),
+					$error
+				)); //Security Update 1 ?></div>
 			</div>
 		<?php
 

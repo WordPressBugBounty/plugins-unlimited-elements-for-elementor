@@ -20,55 +20,93 @@ class UniteCreatorAjaxSeach{
 	private $searchMetaKey = "";
 
 	/**
-	 * set post parts where clause
+	 * limit ajax search to selected post fields
+	 * rebuild the search SQL instead of cutting pieces out of the finished statement
 	 */
-	public function setWherePostParts($where, $wp_query){
-		
-		if (in_array('all', $this->searchPostFields))
-			return ($where);
+	public function setSearchPostParts($search, $wp_query){
+
+		remove_filter("posts_search", array($this, "setSearchPostParts"), 10, 2);
+
+		if(in_array("all", $this->searchPostFields))
+			return($search);
 
 		if(empty($this->searchPostFields))
-			return($where);
-		
-		//set fields to delete
-		$arrDelete = array("post_title"=>true,"post_excerpt"=>true,"post_content"=>true);
+			return($search);
+
+		if(empty($search))
+			return($search);
+
+		global $wpdb;
+
+		$allowedFields = array("post_title", "post_excerpt", "post_content");
+		$arrFields = array();
 
 		foreach($this->searchPostFields as $field){
-			
-			unset($arrDelete[$field]);
+			if(in_array($field, $allowedFields, true) == true)
+				$arrFields[] = $field;
 		}
-		
-		//AI Help :)
-		
-		// Remove fields specified in $arrDelete
-		
-	    foreach ($arrDelete as $field => $remove) {
-	        if ($remove) {
-	            // Pattern to match the specific condition
-	            $pattern = "/\(wp_posts\.$field LIKE '[^']*'\)\s*(OR\s*)?/";
-	            $where = preg_replace($pattern, '', $where);
-	        }
-	    }
-	
-	    // Clean up unnecessary OR and extra spaces left after removal
-	    $where = preg_replace('/\s+OR\s+\)/', ')', $where);
-	    $where = preg_replace('/\(\s+OR\s+/', '(', $where);
-	
-	    $where = trim($where);		
-		
+
+		if(empty($arrFields))
+			return($search);
+
+		$queryVars = $wp_query->query_vars;
+		$arrTerms = UniteFunctionsUC::getVal($queryVars, "search_terms");
+
+		if(empty($arrTerms)){
+			$searchValue = UniteFunctionsUC::getVal($queryVars, "s");
+			if(!empty($searchValue))
+				$arrTerms = array($searchValue);
+		}
+
+		if(empty($arrTerms))
+			return($search);
+
+		$wild = empty($queryVars["exact"]) ? "%" : "";
+		$exclusionPrefix = apply_filters("wp_query_search_exclusion_prefix", "-");
+
+		$searchAnd = "";
+		$newSearch = "";
+
+		foreach($arrTerms as $term){
+
+			$exclude = false;
+			if(!empty($exclusionPrefix) && is_string($term) && strpos($term, $exclusionPrefix) === 0){
+				$exclude = true;
+				$term = substr($term, 1);
+			}
+
+			$likeOp = $exclude ? "NOT LIKE" : "LIKE";
+			$andOrOp = $exclude ? "AND" : "OR";
+			$like = $wild . $wpdb->esc_like($term) . $wild;
+
+			$arrParts = array();
+			foreach($arrFields as $field){
+				$arrParts[] = $wpdb->prepare("{$wpdb->posts}.{$field} {$likeOp} %s", $like);
+			}
+
+			$newSearch .= $searchAnd . "(" . implode(" {$andOrOp} ", $arrParts) . ")";
+			$searchAnd = " AND ";
+		}
+
+		if(empty($newSearch))
+			return($search);
+
+		$output = " AND ({$newSearch}) ";
+
+		if(is_user_logged_in() == false)
+			$output .= " AND ({$wpdb->posts}.post_password = '') ";
+
 		if(GlobalsProviderUC::$showPostsQueryDebug == true){
-			
+
 			dmp("Mat the search for those fields: ");
 			dmp($this->searchPostFields);
-			
-			dmp($where);
+
+			dmp($output);
 		}
-	    
-		remove_filter( 'posts_where', array($this,'setWherePostParts'), 10, 2 );
-		
-		return($where);
+
+		return($output);
 	}
-	
+	 
 	/**
 	 * on posts response
 	 */
@@ -359,7 +397,7 @@ class UniteCreatorAjaxSeach{
 		}
 
 		//keys to leave
-		$arrKeys = array("uc_filter_posts_list","posts_where");
+		$arrKeys = array("uc_filter_posts_list", "posts_where", "posts_search");
 		
 		
 		$newFilters = array();
@@ -431,7 +469,7 @@ class UniteCreatorAjaxSeach{
 		
 		if(!empty($arrSearchPostFields) && in_array("all", $arrSearchPostFields) == false){
 			
-			add_filter( 'posts_where', array($this,'setWherePostParts'), 10, 2 );
+			add_filter( "posts_search", array($this, "setSearchPostParts"), 10, 2 );
 			
 			self::$customSearchEnabled = true;
 			

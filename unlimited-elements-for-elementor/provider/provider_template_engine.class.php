@@ -60,7 +60,7 @@ class UniteCreatorTemplateEngine extends UniteCreatorTemplateEngineWork{
 			dmp("no meta for this post");
 		else{
 			echo "<pre>";
-			$content = print_r($postMeta, true);
+			$content = uelm_html_debug($postMeta);
 			$content = str_replace("[", "[ ", $content);
 			$content = str_replace("]", " ]", $content);
 			uelm_echo($content);

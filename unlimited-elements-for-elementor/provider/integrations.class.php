@@ -6,6 +6,8 @@
  * @copyright Copyright (c) 2016 UniteCMS
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU/GPLv2 or later
 */
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 
 //no direct accees
 defined ('UNLIMITED_ELEMENTS_INC') or die ('restricted aceess');
@@ -135,7 +137,7 @@ class UniteCreatorPluginIntegrations{
 		
 			$strDebug .= "Popular posts query arguments:";
 			$strDebug .= "<pre>";
-			$strDebug .= print_r($params, true);
+			$strDebug .= uelm_html_debug($params);
 			$strDebug .= "</pre>";
 	
 			$numPosts = count($arrPosts);

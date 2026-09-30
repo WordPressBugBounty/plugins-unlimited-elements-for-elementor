@@ -1487,7 +1487,7 @@ class HelperProviderUC{
 		$arrDebug = HelperUC::getDebug();
 
 		if(!empty($arrDebug))
-			$message .= "<br>\nDebug: \n".print_r($arrDebug, true);
+			$message .= "<br>\nDebug: \n".uelm_html_debug($arrDebug);
 		else
 			$message .= "<br>\n no other debug provided";
 
@@ -1529,6 +1529,9 @@ class HelperProviderUC{
 		
 		add_action("plugins_loaded", array("HelperProviderUC", "onPluginsLoaded"));
 		add_action("init", array("HelperProviderUC", "onInitTrigger"));
+		
+		add_action("wp_footer", array("HelperProviderUC", "showPostMetaDebugFromQuery"));
+		add_action("admin_footer", array("HelperProviderUC", "showPostMetaDebugFromQuery"));
 				
 		//add_action("wp_loaded", array("HelperProviderUC", "onWPLoaded"));
 	}
@@ -1779,6 +1782,43 @@ class HelperProviderUC{
 				return false;		
 			
 		return($isUserHasPermission);
+	}
+
+	/**
+	 * editor / get_addon_output_data preview — not the live frontend
+	 */
+	public static function isWidgetOutputPreview(){
+		
+		if(GlobalsProviderUC::$isInsideEditor == true)
+			return(true);
+
+		if(GlobalsUC::$ajaxAction == "get_addon_output_data")
+			return(true);
+
+		return(false);
+	}
+
+	/**
+	 * live output always runs shortcodes.
+	 * preview / editor output only for plugin operators (not Contributor/Author).
+	 */
+	public static function canProcessOutputShortcodes(){
+
+		if(self::isWidgetOutputPreview() == true && self::isUserHasOperationsPermissions() == false)
+			return(false);
+
+		return(true);
+	}
+
+	/**
+	 * process shortcodes on rendered widget html
+	 */
+	public static function processOutputShortcodes($html){
+
+		if(self::canProcessOutputShortcodes() == false)
+			return($html);
+
+		return do_shortcode($html);
 	}
 
 	
@@ -2167,11 +2207,132 @@ class HelperProviderUC{
 	}
 	
 	/**
+	 * resolve the post for ucpostmetadebug on admin edit screens
+	 */
+	private static function getPostMetaDebugPost(){
+		
+		$postID = UniteFunctionsUC::getGetVar("post", "", UniteFunctionsUC::SANITIZE_ID);
+		
+		if(empty($postID))
+			$postID = UniteFunctionsUC::getGetVar("post_ID", "", UniteFunctionsUC::SANITIZE_ID);
+		
+		if(empty($postID))
+			return(null);
+		
+		$post = get_post($postID);
+		
+		if(!empty($post))
+			return($post);
+		
+		return(null);
+	}
+	
+	/**
+	 * show post meta debug from ?ucpostmetadebug=true on front and admin
+	 */
+	public static function showPostMetaDebugFromQuery(){
+		
+		$showMetaFields = HelperUC::hasPermissionsFromQuery("ucpostmetadebug");
+		
+		if($showMetaFields == false)
+			return(false);
+		
+		if(is_admin() == true){
+			$post = self::getPostMetaDebugPost();
+			
+			if(empty($post))
+				return(false);
+			
+			self::putPostMetaDebugOutput($post);
+			
+			return(true);
+		}
+		
+		if(is_singular() == true){
+			$post = get_post();
+			
+			if(!empty($post)){
+				self::putPostMetaDebugOutput($post);
+				
+				return(true);
+			}
+		}
+		
+		self::showLastQuery();
+		
+		return(true);
+	}
+	
+	/**
+	 * true when the admin editor covers footer output
+	 */
+	private static function isPostMetaDebugAdminOverlay(){
+		
+		if(is_admin() == false)
+			return(false);
+		
+		$action = UniteFunctionsUC::getGetVar("action", "", UniteFunctionsUC::SANITIZE_KEY);
+		
+		if($action == "elementor")
+			return(true);
+		
+		if(function_exists("get_current_screen")){
+			$screen = get_current_screen();
+			
+			if(!empty($screen) && !empty($screen->is_block_editor))
+				return(true);
+		}
+		
+		return(false);
+	}
+	
+	/**
+	 * print the same post debug dump on front and admin
+	 */
+	private static function putPostMetaDebugOutput($post){
+		
+		$wrapperClass = "uc-postmetadebug";
+		$isAdmin = is_admin();
+		$isOverlay = self::isPostMetaDebugAdminOverlay();
+		
+		if($isAdmin == true)
+			$wrapperClass .= " uc-postmetadebug-admin";
+		
+		if($isOverlay == true)
+			$wrapperClass .= " uc-postmetadebug-overlay";
+		
+		uelm_echo('<div class="'.esc_attr($wrapperClass).'" style="clear:both;background:#fff;color:#000;text-align:left;direction:ltr;">');
+		
+		if($isAdmin == true){
+			uelm_echo('<style>
+				.uc-postmetadebug-admin{box-sizing:border-box;padding:52px 20px 20px 180px !important;}
+				html.wp-toolbar.folded .uc-postmetadebug-admin{padding-left:56px !important;}
+				.uc-postmetadebug-overlay{position:fixed;z-index:100000;left:160px !important;right:0;bottom:0;max-height:45vh;overflow:auto;padding:20px !important;}
+				html.wp-toolbar.folded .uc-postmetadebug-overlay{left:36px !important;padding:20px !important;}
+				@media screen and (max-width:782px){
+					.uc-postmetadebug-admin,.uc-postmetadebug-overlay{left:0 !important;padding:52px 20px 20px 20px !important;}
+				}
+			</style>');
+		}
+		
+		self::showCurrentPostObjectDebug($post);
+		self::showCurrentPostMetaDebug($post);
+		self::showCurrentPostTermsDebug($post);
+		self::showElementorDataDebug($post);
+		
+		uelm_echo('</div>');
+	}
+	
+	/**
 	 * show post object debug
 	 */
-	public static function showCurrentPostObjectDebug(){
+	public static function showCurrentPostObjectDebug($post = null){
 		
-		$post = get_post();
+		if(empty($post))
+			$post = get_post();
+		
+		if(empty($post))
+			return(false);
 		
 		HelperUC::$operations->putPostObjectDebug($post);
 		
@@ -2180,9 +2341,13 @@ class HelperProviderUC{
 	/**
 	 * show current post meta debug
 	 */
-	public static function showCurrentPostMetaDebug(){
+	public static function showCurrentPostMetaDebug($post = null){
 		
-		$post = get_post();
+		if(empty($post))
+			$post = get_post();
+		
+		if(empty($post))
+			return(false);
 		
 		HelperUC::$operations->putPostCustomFieldsDebug($post->ID);
 				
@@ -2191,9 +2356,13 @@ class HelperProviderUC{
 	/**
 	 * show current post meta debug
 	 */
-	public static function showCurrentPostTermsDebug(){
+	public static function showCurrentPostTermsDebug($post = null){
 		
-		$post = get_post();
+		if(empty($post))
+			$post = get_post();
+		
+		if(empty($post))
+			return(false);
 		
 		$arrTermsTitles = UniteFunctionsWPUC::getPostTermsTitles($post, true);
 		
@@ -2207,9 +2376,10 @@ class HelperProviderUC{
 	/**
 	 * show current post Elementor data debug (decoded _elementor_data via core helper)
 	 */
-	public static function showElementorDataDebug(){
+	public static function showElementorDataDebug($post = null){
 		
-		$post = get_post();
+		if(empty($post))
+			$post = get_post();
 		
 		if(empty($post))
 			return(false);

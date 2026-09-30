@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-	// no direct access
+// no direct access
 	defined('UNLIMITED_ELEMENTS_INC') or die;
 
 	class UniteCreatorProviderMasterView{

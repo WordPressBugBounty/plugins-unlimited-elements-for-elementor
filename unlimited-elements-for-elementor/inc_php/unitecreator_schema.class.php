@@ -336,18 +336,18 @@ class UniteCreatorSchema {
 		));
 		
 		
-		$jsonItems = json_encode($arrSchema, JSON_UNESCAPED_UNICODE);
+		$jsonItems = wp_json_encode($arrSchema, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 		
 		if($jsonItems === false)
 			return(false);
-		
-		$strSchema = '<script type="application/ld+json">' . $jsonItems . '</script>';
 		
 		//show debug by url
 		if(self::$showDebug == true)
 			$this->showDebugSchema($schemaType, $arrSchema);
 		
-		echo $strSchema;
+		wp_print_inline_script_tag($jsonItems, array(
+			"type" => "application/ld+json",
+		));
 	}
 
 	
@@ -950,7 +950,11 @@ private function addFieldsMappingSettings($objSettings, $name, $paramsItems, $is
 			$descripiton .= "<a href='https://schema.org/Person' target='_blank'>schema.org</a>";
 			$descripiton .= __(" site","unlimited-elements-for-elementor");
 			
-			$descripiton .= __("<br>Posible Placeholders Are: %title%, %description%, %heading%, %link%, %content%, %image%, %field1%, %field2%, %field3%, %field4% ","unlimited-elements-for-elementor");
+			$descripiton .= "<br>" . sprintf(
+				/* translators: %s = placeholder names such as %title% and %description% */
+				__("Posible Placeholders Are: %s", "unlimited-elements-for-elementor"),
+				"%title%, %description%, %heading%, %link%, %content%, %image%, %field1%, %field2%, %field3%, %field4% "
+			);
 			
 			$arrParam["description"] = $descripiton;
 			

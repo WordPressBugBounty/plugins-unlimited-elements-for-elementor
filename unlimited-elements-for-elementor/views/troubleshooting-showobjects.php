@@ -122,8 +122,10 @@ class UETroubleshootingShowObjectsUC{
 	}
 
 	private function renderOption($value, $label){
-		$selected = selected($this->objectType, $value, false);
-		echo "<option value='".esc_attr($value)."' {$selected}>".esc_html($label)."</option>";
+
+		echo "<option value='" . esc_attr($value) . "'";
+		selected($this->objectType, $value);
+		echo ">" . esc_html($label) . "</option>";
 	}
 
 	private function renderResult(){

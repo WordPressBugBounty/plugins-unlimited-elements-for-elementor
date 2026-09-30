@@ -1,3 +1,4 @@
+<?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <div class="ue-root ue-menu">
 	<?php if(GlobalsUnlimitedElements::$enableDashboard === true): ?>
 		<a

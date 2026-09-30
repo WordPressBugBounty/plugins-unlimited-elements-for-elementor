@@ -1579,7 +1579,7 @@ class UniteCreatorWebAPIWork{
 		$importedLayoutID = $exporter->import($filepath, $layoutID, true, $params);
 
 		if(file_exists($filepath))
-			@unlink($filepath);
+			wp_delete_file($filepath);
 
 		$arrResponse = array();
 		$arrResponse["layoutid"] = $importedLayoutID;

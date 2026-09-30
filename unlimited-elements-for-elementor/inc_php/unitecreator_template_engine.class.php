@@ -282,7 +282,7 @@ class UniteCreatorTemplateEngineWork{
 		GlobalsProviderUC::$lastItemParams = $params;
 
 		$htmlItem = $this->twig->render($templateName, $params);
-		$htmlItem = do_shortcode($htmlItem);
+		$htmlItem = HelperProviderUC::processOutputShortcodes($htmlItem);
 
 		if(!empty($sap) && $index !== 0)
 			uelm_echo($sap);
@@ -708,10 +708,10 @@ class UniteCreatorTemplateEngineWork{
 
 		$value = UniteFunctionsUC::getPostGetVariable($varName, $default , UniteFunctionsUC::SANITIZE_TEXT_FIELD);
 
-		if(empty($value))
+		if($value === "" || $value === null)
 			$value = $default;
 
-		uelm_echo($value);
+		uelm_echo(esc_attr($value));
 	}
 
 
@@ -2037,6 +2037,92 @@ class UniteCreatorTemplateEngineWork{
 
 
 	/**
+	 * In the JS template, a print inside quotes must be JS-escaped.
+	 * |raw disables Twig escaping, so a quote in the value breaks out of the string.
+	 */
+	private function escapeRawFiltersInJsTemplate($template){
+
+		if(is_string($template) == false || $template === "")
+			return($template);
+
+		if(strpos($template, "raw") === false)
+			return($template);
+
+		$length = strlen($template);
+		$output = "";
+		$quote = "";
+		$index = 0;
+
+		while($index < $length){
+
+			$char = $template[$index];
+
+			if($quote === ""){
+
+				if($char === "'" || $char === '"')
+					$quote = $char;
+
+				$output .= $char;
+				$index++;
+				continue;
+			}
+
+			if($char === "\\" && ($index + 1) < $length){
+				$output .= $char.$template[$index + 1];
+				$index += 2;
+				continue;
+			}
+
+			if($char === $quote){
+				$quote = "";
+				$output .= $char;
+				$index++;
+				continue;
+			}
+
+			if($char === "{" && ($index + 1) < $length && $template[$index + 1] === "{"){
+
+				$end = strpos($template, "}}", $index + 2);
+
+				if($end === false){
+					$output .= $char;
+					$index++;
+					continue;
+				}
+
+				$print = substr($template, $index, ($end + 2) - $index);
+				$print = $this->replaceRawFilterWithJsEscape($print);
+
+				$output .= $print;
+				$index = $end + 2;
+				continue;
+			}
+
+			$output .= $char;
+			$index++;
+		}
+
+		return($output);
+	}
+
+	/**
+	 * Replace a trailing |raw on one Twig print with the JS escaper.
+	 */
+	private function replaceRawFilterWithJsEscape($print){
+
+		if(strpos($print, "|e(") !== false)
+			return($print);
+
+		$replaced = preg_replace('/\|\s*raw(\s*)\}\}$/', "|e('js')$1}}", $print, 1);
+
+		if(is_string($replaced) == false)
+			return($print);
+
+		return($replaced);
+	}
+
+
+	/**
 	 * add template
 	 */
 	public function addTemplate($name, $html, $showError = true){
@@ -2053,6 +2139,8 @@ class UniteCreatorTemplateEngineWork{
 			UniteFunctionsUC::throwError("template with name: $name already exists");
 		}
 
+		if($name === "js")
+			$html = $this->escapeRawFiltersInJsTemplate($html);
 
 		$this->arrTemplates[$name] = $html;
 	}

@@ -957,7 +957,7 @@ class UniteCreatorAssets{
 			if(is_dir($filepath))
 				UniteFunctionsUC::deleteDir($filepath);
 			else
-				unlink($filepath);
+				wp_delete_file($filepath);
 	
 		}
 

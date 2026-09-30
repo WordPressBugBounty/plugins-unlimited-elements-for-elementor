@@ -85,7 +85,7 @@ class UCChangelogView extends WP_List_Table{
 				$url = wp_get_referer();
 				$url = remove_query_arg($actionQueryArgs, $url);
 
-				wp_redirect($url);
+				wp_safe_redirect($url);
 				exit;
 			}
 		}
@@ -96,7 +96,7 @@ class UCChangelogView extends WP_List_Table{
 			$url = wp_unslash($_SERVER["REQUEST_URI"]);
 			$url = remove_query_arg(array_merge($generalQueryArgs, $actionQueryArgs), $url);
 
-			wp_redirect($url);
+			wp_safe_redirect($url);
 			exit;
 		}
 	}
@@ -469,6 +469,66 @@ class UCChangelogView extends WP_List_Table{
 
 
 	/**
+	 * Make changelog text safe to paste into the WordPress.org readme.
+	 * The directory parser double-encodes HTML entities, so quotes and tags
+	 * must stay as real characters. Editor characters (curly quotes, nbsp)
+	 * are normalized, and HTML tags are wrapped in backticks so they are kept.
+	 *
+	 * @param string $text
+	 *
+	 * @return string
+	 */
+	private function sanitizeExportText($text){
+
+		$text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, "UTF-8");
+
+		$replace = array(
+			"“" => "\"",
+			"”" => "\"",
+			"„" => "\"",
+			"‟" => "\"",
+			"«" => "\"",
+			"»" => "\"",
+			"‘" => "'",
+			"’" => "'",
+			"‚" => "'",
+			"‛" => "'",
+			"…" => "...",
+			"–" => "-",
+			"—" => "-",
+			"−" => "-",
+			"\xC2\xA0" => " ",
+			"\xE2\x80\xAF" => " ",
+			"\xE2\x80\x82" => " ",
+			"\xE2\x80\x83" => " ",
+			"\xE2\x80\x89" => " ",
+			"\xE2\x80\x8B" => "",
+			"\xEF\xBB\xBF" => "",
+			"\xC2\xAD" => "",
+		);
+
+		$text = str_replace(array_keys($replace), array_values($replace), $text);
+		$text = str_replace(array("\r\n", "\r"), "\n", $text);
+		$text = str_replace("\n", " ", $text);
+
+		$text = preg_replace_callback('/(?<!`)(<\/?[a-zA-Z][a-zA-Z0-9]*\b[^>\n]*>)(?!`)/', function($matches){
+
+			$tag = $matches[1];
+
+			if(strpos($tag, "://") !== false)
+				return $tag;
+
+			return "`".$tag."`";
+
+		}, $text);
+
+		$text = preg_replace('/[ ]{2,}/', " ", $text);
+
+		return trim($text);
+	}
+
+
+	/**
 	 * Process the export action.
 	 *
 	 * @return void
@@ -495,13 +555,13 @@ class UCChangelogView extends WP_List_Table{
 		usort($items, array($this,"sortExportItems"));
 
 		foreach($items as $item){
-			$title = $item["addon_title"];
+			$title = $this->sanitizeExportText($item["addon_title"]);
 
 			if(empty($item["addon_version"]) === false)
 				$title .= " ({$item["addon_version"]})";
 
-			$type = $item["type_title"];
-			$text = $item["text"];
+			$type = $this->sanitizeExportText($item["type_title"]);
+			$text = $this->sanitizeExportText($item["text"]);
 
 			$line = "* {$type}: {$title} - {$text}";
 
@@ -510,9 +570,7 @@ class UCChangelogView extends WP_List_Table{
 
 		$filename = "changelog-" . current_time("mysql") . ".txt";
 		$content = implode("\n", $lines);
-		
-		$content = htmlspecialchars($content);
-		
+
 		UniteFunctionsUC::downloadTxt($filename, $content);
 	}
 
@@ -649,13 +707,13 @@ class UCChangelogView extends WP_List_Table{
 	private function getActionLink($action, $id, $label){
 
 		$url = array();
-		$url["page"] = $_REQUEST["page"];
+		$url["page"] = wp_unslash($_REQUEST["page"]);
 		$url["action"] = $action;
 		$url["ucwindow"] = "blank";
 		$url[self::FILTER_ID] = $id;
 
 		if(empty($_REQUEST["view"]) === false)
-			$url["view"] = $_REQUEST["view"];
+			$url["view"] = wp_unslash($_REQUEST["view"]);
 
 		return '<a href="?' . http_build_query($url) . '" data-action="' . esc_attr($action) . '">' . esc_html($label) . '</a>';
 	}
@@ -800,10 +858,10 @@ class UCChangelogView extends WP_List_Table{
 	 */
 	private function displayHiddenFields(){
 
-		echo '<input type="hidden" name="page" value="' . esc_attr($_REQUEST["page"]) . '" />';
+		echo '<input type="hidden" name="page" value="' . esc_attr(wp_unslash($_REQUEST["page"])) . '" />';
 
 		if(empty($_REQUEST["view"]) === false)
-			echo '<input type="hidden" name="view" value="' . esc_attr($_REQUEST["view"]) . '" />';
+			echo '<input type="hidden" name="view" value="' . esc_attr(wp_unslash($_REQUEST["view"])) . '" />';
 
 		echo '<input type="hidden" name="ucwindow" value="blank" />';
 	}

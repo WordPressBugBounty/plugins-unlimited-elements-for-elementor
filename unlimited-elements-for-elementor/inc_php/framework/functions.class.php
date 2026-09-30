@@ -27,6 +27,16 @@ class UniteFunctionsUC{
 	
 	private static $serial = 0;
 	private static $arrCache = array();
+	private static $requestInputReader = null;
+
+	/**
+	 * Tests pass a reader so a filter_input() value can be checked on servers
+	 * where filter_input() cannot see values written into $_POST later.
+	 */
+	public static function setRequestInputReaderForTests($reader){
+
+		self::$requestInputReader = $reader;
+	}
 
 	/**
 	 * throw error
@@ -36,6 +46,7 @@ class UniteFunctionsUC{
 		if($code === null)
 			$code = 0;
 		
+		// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Printed later as escaped HTML, or returned as JSON.
 		throw new Exception($message, (int)$code);
 	}
 
@@ -95,20 +106,48 @@ class UniteFunctionsUC{
 	}
 
 	/**
+	 * Read a request variable via filter_input, with a superglobal fallback.
+	 *
+	 * filter_input() reads the raw request, so WordPress slashes are not applied
+	 * and the value must not be unslashed. It often returns null on CGI/FastCGI
+	 * and XAMPP even when $_POST or $_GET is set. Only that fallback is unslashed.
+	 */
+	private static function readFilteredInput($name, $inputType){
+
+		if(self::$requestInputReader !== null)
+			$value = call_user_func(self::$requestInputReader, $inputType, $name);
+		else
+			$value = filter_input($inputType, $name, FILTER_DEFAULT);
+
+		if($value !== null && $value !== false)
+			return($value);
+
+		// filter_input() fallback (XAMPP/CGI). Values are sanitized via sanitizeVar().
+		if($inputType === INPUT_POST && isset($_POST[$name]))
+			return wp_unslash($_POST[$name]);
+
+		if($inputType === INPUT_GET && isset($_GET[$name]))
+			return wp_unslash($_GET[$name]);
+
+		return null;
+	}
+
+	/**
 	 * get post or get variable
 	 */
 	public static function getPostGetVariable($name, $initVar = "", $sanitizeType = ""){
 
-		$var = $initVar;
+		$var = self::readFilteredInput($name, INPUT_POST);
 
-		if(isset($_POST[$name]))
-			$var = $_POST[$name];
-		elseif(isset($_GET[$name]))
-			$var = $_GET[$name];
+		if($var === null)
+			$var = self::readFilteredInput($name, INPUT_GET);
+
+		if($var === null)
+			$var = $initVar;
 
 		$var = UniteProviderFunctionsUC::sanitizeVar($var, $sanitizeType);
 
-		return ($var);
+		return($var);
 	}
 
 	/**
@@ -116,14 +155,14 @@ class UniteFunctionsUC{
 	 */
 	public static function getPostVariable($name, $initVar = "", $sanitizeType = ""){
 
-		$var = $initVar;
+		$var = self::readFilteredInput($name, INPUT_POST);
 
-		if(isset($_POST[$name]))
-			$var = $_POST[$name];
+		if($var === null)
+			$var = $initVar;
 
 		$var = UniteProviderFunctionsUC::sanitizeVar($var, $sanitizeType);
 
-		return ($var);
+		return($var);
 	}
 
 	/**
@@ -131,14 +170,14 @@ class UniteFunctionsUC{
 	 */
 	public static function getGetVar($name, $initVar = "", $sanitizeType = ""){
 
-		$var = $initVar;
+		$var = self::readFilteredInput($name, INPUT_GET);
 
-		if(isset($_GET[$name]))
-			$var = $_GET[$name];
+		if($var === null)
+			$var = $initVar;
 
 		$var = UniteProviderFunctionsUC::sanitizeVar($var, $sanitizeType);
 
-		return ($var);
+		return($var);
 	}
 
 	/**
@@ -1581,9 +1620,69 @@ class UniteFunctionsUC{
 
 		if(strpos($path,"?") !== false)
 			$path = strtok($path, '?');
-		
+
+		$path = self::collapsePathSegments($path, $ds);
 		
 		return $path;
+	}
+
+	/**
+	 * collapse "." and ".." so a joined path cannot hide a parent-directory segment
+	 */
+	private static function collapsePathSegments($path, $ds){
+
+		if($path === '' || $path === $ds)
+			return($path);
+
+		$hasTrailingSeparator = (substr($path, -1) === $ds);
+		$isUnc = ($ds === '\\' && strlen($path) >= 2 && $path[0] === '\\' && $path[1] === '\\');
+
+		$parts = explode($ds, $path);
+		$drive = '';
+		$isAbsolute = false;
+
+		if($isUnc == true){
+			$isAbsolute = true;
+		}elseif(isset($parts[0]) && preg_match('/^[a-zA-Z]:$/', $parts[0])){
+			$drive = array_shift($parts);
+			$isAbsolute = true;
+		}elseif(isset($parts[0]) && $parts[0] === ''){
+			$isAbsolute = true;
+		}
+
+		$stack = array();
+
+		foreach($parts as $part){
+
+			if($part === '' || $part === '.')
+				continue;
+
+			if($part === '..'){
+
+				if(!empty($stack))
+					array_pop($stack);
+				elseif($isAbsolute == false && $drive === '')
+					$stack[] = '..';
+
+				continue;
+			}
+
+			$stack[] = $part;
+		}
+
+		$collapsed = implode($ds, $stack);
+
+		if($drive !== '')
+			$collapsed = $drive.($collapsed === '' ? '' : $ds.$collapsed);
+		elseif($isUnc == true)
+			$collapsed = "\\\\".$collapsed;
+		elseif($isAbsolute == true)
+			$collapsed = $ds.$collapsed;
+
+		if($hasTrailingSeparator == true && $collapsed !== '' && substr($collapsed, -1) !== $ds)
+			$collapsed .= $ds;
+
+		return($collapsed);
 	}
 
 	/**
@@ -2243,7 +2342,7 @@ class UniteFunctionsUC{
 	 */
 	public static function getBaseUrl($url, $stripPagination = false){
 
-		$arrUrl = parse_url($url);
+		$arrUrl = wp_parse_url($url);
 
 		$scheme = UniteFunctionsUC::getVal($arrUrl, "scheme","http");
 		$host = UniteFunctionsUC::getVal($arrUrl, "host");
@@ -3399,7 +3498,7 @@ class UniteFunctionsUC{
 	public static function clearDebug($filepath = "debug.txt"){
 		
 		if(file_exists($filepath))
-			unlink($filepath);
+			wp_delete_file($filepath);
 	}
 
 	/**
@@ -3457,7 +3556,7 @@ class UniteFunctionsUC{
 			if(self::isDir($filepath))
 				self::deleteDir($filepath);
 			else
-				unlink($filepath);
+				wp_delete_file($filepath);
 		}
 
 	}
@@ -3506,8 +3605,9 @@ class UniteFunctionsUC{
 				}
 			}
 
-			$deleted = unlink($path);
-			if(!$deleted)
+			wp_delete_file($path);
+
+			if(self::fileExists($path) == true)
 				$arrNotDeleted[] = $path;
 
 			return($arrNotDeleted);
@@ -4204,6 +4304,7 @@ class UniteFunctionsUC{
 		$errorReporting = ini_get("error_reporting");
 
 		if(is_numeric($errorReporting))
+			// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- Hide deprecation notices when that general setting is enabled.
 			ini_set("error_reporting", $errorReporting & ~E_DEPRECATED);
 	}
 
@@ -4636,7 +4737,7 @@ class UniteFunctionsUC{
 	 */
 	public static function getUserAgent(){
 
-		return $_SERVER["HTTP_USER_AGENT"];
+		return wp_unslash($_SERVER["HTTP_USER_AGENT"]);
 	}
 
 	/**
@@ -4646,7 +4747,7 @@ class UniteFunctionsUC{
 	public static function getUserIp(){
 		
 		if(isset($_SERVER["REMOTE_ADDR"]))
-			return($_SERVER["REMOTE_ADDR"]);
+			return wp_unslash($_SERVER["REMOTE_ADDR"]);
 		
 		return("127.0.0.1");  
 	}
