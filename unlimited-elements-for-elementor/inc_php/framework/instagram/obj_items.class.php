@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class InstaObjUserUCItemsUC{
+class UELM_InstaObjUserUCItems{
 	
 	protected $isInited = false;
 	protected $istag = false;
@@ -29,7 +29,7 @@ class InstaObjUserUCItemsUC{
 	 */
 	public function __construct(){
 		
-		$this->objUser = new InstaObjUserUC();
+		$this->objUser = new UELM_InstaObjUser();
 		
 	}
 	
@@ -163,9 +163,9 @@ class InstaObjUserUCItemsUC{
 		$arr["username"] = $this->getUsername();
 		$arr["biography"] = $this->objUser->biography;
 		$arr["image_profile"] = $this->objUser->urlProfileImage;
-		$arr["num_followers"] = HelperInstaUC::convertNumberToText($this->objUser->numFollowedBy);
-		$arr["num_following"] = HelperInstaUC::convertNumberToText($this->objUser->numFollows);
-		$arr["num_posts"] = HelperInstaUC::convertNumberToText($this->objUser->numPosts);
+		$arr["num_followers"] = UELM_HelperInsta::convertNumberToText($this->objUser->numFollowedBy);
+		$arr["num_following"] = UELM_HelperInsta::convertNumberToText($this->objUser->numFollows);
+		$arr["num_posts"] = UELM_HelperInsta::convertNumberToText($this->objUser->numPosts);
 		
 		$arr["url_external"] = $this->objUser->externalUrl;
 		$arr["link"] = $this->getLink();
@@ -192,7 +192,7 @@ class InstaObjUserUCItemsUC{
 		
 		foreach($items as $item){
 						
-			$objItem = new InstaObjItemUC();
+			$objItem = new UELM_InstaObjItem();
 			$objItem->init($item);
 			
 			$this->arrItems[] = $objItem;
@@ -208,7 +208,7 @@ class InstaObjUserUCItemsUC{
 		$arrItems = array();
 		foreach($arrNodes as $item){
 			
-			$objItem = new InstaObjItemUC();
+			$objItem = new UELM_InstaObjItem();
 			$objItem->initNewAPI($item);
 						
 			$arrItems[] = $objItem;
@@ -392,7 +392,7 @@ class InstaObjUserUCItemsUC{
 		
 		foreach($arrItemsData as $item){
 			
-			$objItem = new InstaObjItemUC();
+			$objItem = new UELM_InstaObjItem();
 			$objItem->initOfficialAPI($item);
 			
 			$this->arrItems[] = $objItem;
@@ -427,3 +427,5 @@ class InstaObjUserUCItemsUC{
 	
 	
 }
+
+class_alias( UELM_InstaObjUserUCItems::class, 'InstaObjUserUCItemsUC' );

@@ -682,6 +682,7 @@ class UniteCreatorPluginIntegrations{
 			return(false);
 						
 		if(!defined("DONOTCDN"))
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Constant name read by CDN plugins.
 			define("DONOTCDN",true);
 		
 		add_filter('shortpixel/image/filecheck', '__return_false');
@@ -814,6 +815,7 @@ class UniteCreatorPluginIntegrations{
 		$this->activeLang  = $objWPML->getActiveLanguage();
 
 		if ($stickyPostDefaultLangOption == true && $this->activeLang != $this->defaultLang){
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 			do_action('wpml_switch_language', $this->defaultLang);
 			add_action("ue_after_custom_posts_query", array($this, "resetStickyPostsToActiveLanguage"), 10);
 		}
@@ -823,6 +825,7 @@ class UniteCreatorPluginIntegrations{
 	 * reset sticky posts to active language
 	 */
 	public function resetStickyPostsToActiveLanguage() {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 		do_action('wpml_switch_language', $this->activeLang);
 	}
 	

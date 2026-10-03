@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class InstaObjUserUC{
+class UELM_InstaObjUser{
 	
 	public $isInited = false;
 	public $username,$urlProfileImage,$id,$name,$externalUrl,$numFollows;
@@ -85,3 +85,5 @@ class InstaObjUserUC{
 	
 	
 }
+
+class_alias( UELM_InstaObjUser::class, 'InstaObjUserUC' );

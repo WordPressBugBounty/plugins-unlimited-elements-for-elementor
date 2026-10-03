@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class HelperInstaUC{
+class UELM_HelperInsta{
 
 	const RENEW_DELAY_SIX_HOURS = 21600;
 	const KEY_RENEW_BLOCKED = "unlimited_elements_instagram_renew_blocked";
@@ -147,9 +147,9 @@ class HelperInstaUC{
 	 */
 	public static function putConnectWithInstagramButton(){
 
-		$urlAuthorize = InstagramAPIOfficialUC::URL_AUTHORIZE;
-		$clientID = InstagramAPIOfficialUC::APP_CLIENT_ID;
-		$urlConnect = InstagramAPIOfficialUC::URL_APP_CONNECT;
+		$urlAuthorize = UELM_InstagramAPIOfficial::URL_AUTHORIZE;
+		$clientID = UELM_InstagramAPIOfficial::APP_CLIENT_ID;
+		$urlConnect = UELM_InstagramAPIOfficial::URL_APP_CONNECT;
 
 		$urlReturn = HelperUC::getUrlAjax("save_instagram_connect_data");
 
@@ -240,7 +240,7 @@ class HelperInstaUC{
 			return(false);
 
 		//get new access token
-		$objAPI = new InstagramAPIOfficialUC();
+		$objAPI = new UELM_InstagramAPIOfficial();
 		$response = $objAPI->renewToken($accessToken);
 
 		$data = array();
@@ -509,3 +509,5 @@ class HelperInstaUC{
 
 
 }
+
+class_alias( UELM_HelperInsta::class, 'HelperInstaUC' );

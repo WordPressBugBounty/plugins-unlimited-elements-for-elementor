@@ -156,8 +156,10 @@ class UniteCreatorVariablesOutput{
 			return("");
 
 		if(empty($filterParam))
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Filter name comes from the widget variable settings and is passed through.
 			$content = apply_filters($filterName, "");
 		else
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Filter name comes from the widget variable settings and is passed through.
 			$content = apply_filters($filterName, "", $filterParam);
 		
 		return($content);

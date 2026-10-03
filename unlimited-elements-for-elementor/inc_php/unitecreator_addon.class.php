@@ -78,7 +78,7 @@ class UniteCreatorAddonWork extends UniteElementsBaseUC{
 		$filepathAddonSettings = GlobalsUC::$pathSettings . "addon_fields.php";
 		require $filepathAddonSettings;
 
-		self::$defaultOptions = $generalSettings->getArrValues();
+		self::$defaultOptions = $uelm_generalSettings->getArrValues();
 
 		if(empty(self::$defaultOptions))
 			self::$defaultOptions = array();

@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEExchangeRateAPIClient{
+class UELM_ExchangeRateAPIClient{
 
 	const BASE_URL = "https://v6.exchangerate-api.com/v6";
 
@@ -48,7 +49,7 @@ class UEExchangeRateAPIClient{
 			$rates = array();
 
 			foreach($response["conversion_rates"] as $code => $rate){
-				$rates[] = UEExchangeRateAPIRate::transform(array(
+				$rates[] = UELM_ExchangeRateAPIRate::transform(array(
 					'code' => $code,
 					'rate' => $rate,
 				));
@@ -128,3 +129,5 @@ class UEExchangeRateAPIClient{
 	}
 
 }
+
+class_alias( UELM_ExchangeRateAPIClient::class, 'UEExchangeRateAPIClient' );

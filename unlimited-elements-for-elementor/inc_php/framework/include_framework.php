@@ -7,46 +7,46 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$folderIncludes = dirname(__FILE__)."/";
-$folderCreatorIncludes = $folderIncludes."../";
-$folderProvider = $folderIncludes."../../provider/";
+$uelm_folderIncludes = dirname(__FILE__)."/";
+$uelm_folderCreatorIncludes = $uelm_folderIncludes."../";
+$uelm_folderProvider = $uelm_folderIncludes."../../provider/";
 
 //include provider classes
-require_once $folderIncludes . 'functions.php';
-require_once $folderIncludes . 'functions.class.php';
-require_once $folderIncludes . 'html_output_base.class.php';
+require_once $uelm_folderIncludes . 'functions.php';
+require_once $uelm_folderIncludes . 'functions.class.php';
+require_once $uelm_folderIncludes . 'html_output_base.class.php';
 
-require_once $folderProvider."include_provider.php";
+require_once $uelm_folderProvider."include_provider.php";
 
-require_once $folderIncludes . 'http/includes.php';
-require_once $folderIncludes . 'db.class.php';
-require_once $folderIncludes . 'params_manager.class.php';
-require_once $folderIncludes . 'settings.class.php';
-require_once $folderIncludes . 'cssparser.class.php';
-require_once $folderIncludes . 'settings_advances.class.php';
-require_once $folderIncludes . 'settings_output.class.php';
-require_once $folderProvider . 'provider_settings_output.class.php';
-require_once $folderCreatorIncludes	. 'unitecreator_settings_output.class.php';
+require_once $uelm_folderIncludes . 'http/includes.php';
+require_once $uelm_folderIncludes . 'db.class.php';
+require_once $uelm_folderIncludes . 'params_manager.class.php';
+require_once $uelm_folderIncludes . 'settings.class.php';
+require_once $uelm_folderIncludes . 'cssparser.class.php';
+require_once $uelm_folderIncludes . 'settings_advances.class.php';
+require_once $uelm_folderIncludes . 'settings_output.class.php';
+require_once $uelm_folderProvider . 'provider_settings_output.class.php';
+require_once $uelm_folderCreatorIncludes	. 'unitecreator_settings_output.class.php';
 
-require_once $folderIncludes . 'settings_output_wide.class.php';
-require_once $folderIncludes . 'settings_output_inline.class.php';
-require_once $folderIncludes . 'settings_output_sidebar.class.php';
+require_once $uelm_folderIncludes . 'settings_output_wide.class.php';
+require_once $uelm_folderIncludes . 'settings_output_inline.class.php';
+require_once $uelm_folderIncludes . 'settings_output_sidebar.class.php';
 
-require_once $folderIncludes . 'image_proccess.class.php';
-require_once $folderIncludes . 'zip.class.php';
+require_once $uelm_folderIncludes . 'image_proccess.class.php';
+require_once $uelm_folderIncludes . 'zip.class.php';
 
-require_once $folderIncludes . 'base_admin.class.php';
+require_once $uelm_folderIncludes . 'base_admin.class.php';
 
-require_once $folderIncludes . 'elements_base.class.php';
-require_once $folderIncludes . 'base_output.class.php';
-require_once $folderIncludes . 'helper_base.class.php';
-require_once $folderIncludes . 'table.class.php';
-require_once $folderIncludes . 'font_manager.class.php';
-require_once $folderIncludes . 'services.class.php';
+require_once $uelm_folderIncludes . 'elements_base.class.php';
+require_once $uelm_folderIncludes . 'base_output.class.php';
+require_once $uelm_folderIncludes . 'helper_base.class.php';
+require_once $uelm_folderIncludes . 'table.class.php';
+require_once $uelm_folderIncludes . 'font_manager.class.php';
+require_once $uelm_folderIncludes . 'services.class.php';
 
 //include composer - twig
-$isTwigExists = interface_exists("Twig\\Loader\\LoaderInterface");
+$uelm_isTwigExists = interface_exists("Twig\\Loader\\LoaderInterface");
 
-if($isTwigExists == false){
-	require $folderIncludes."../../vendor/autoload.php";
+if($uelm_isTwigExists == false){
+	require $uelm_folderIncludes."../../vendor/autoload.php";
 }

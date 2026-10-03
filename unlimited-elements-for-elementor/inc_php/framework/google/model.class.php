@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-abstract class UEGoogleAPIModel{
+abstract class UELM_GoogleAPIModel{
 
 	private $attributes;
 
@@ -64,3 +65,5 @@ abstract class UEGoogleAPIModel{
 	}
 
 }
+
+class_alias( UELM_GoogleAPIModel::class, 'UEGoogleAPIModel' );

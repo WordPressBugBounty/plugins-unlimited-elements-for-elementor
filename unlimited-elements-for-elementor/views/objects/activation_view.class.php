@@ -7,7 +7,7 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UniteCreatorActivationView extends UniteElementsBaseUC{
+class UELM_CreatorActivationView extends UniteElementsBaseUC{
 
 	const CODE_TYPE_ACTIVATION = "activation";
 	const CODE_TYPE_ENVATO = "envato";
@@ -258,3 +258,5 @@ class UniteCreatorActivationView extends UniteElementsBaseUC{
 	}
 
 }
+
+class_alias( UELM_CreatorActivationView::class, 'UniteCreatorActivationView' );

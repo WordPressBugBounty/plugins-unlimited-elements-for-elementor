@@ -315,7 +315,7 @@ class UniteCreatorSettingsWork extends UniteSettingsAdvancedUC{
 		$objServies = new UniteServicesUC();
 		$objServies->includeInstagramAPI();
 
-		$accessData = HelperInstaUC::getInstagramSavedAccessData();
+		$accessData = UELM_HelperInsta::getInstagramSavedAccessData();
 		$accessToken = UniteFunctionsUC::getVal($accessData, "access_token");
 		$username = UniteFunctionsUC::getVal($accessData, "username");
 

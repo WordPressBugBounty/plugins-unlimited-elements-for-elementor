@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class UniteCreatorLibraryView{
+class UELM_CreatorLibraryView{
 
 	protected $showButtons = true;
 	protected $showHeader = true;
@@ -160,12 +160,14 @@ class UniteCreatorLibraryView{
 
 }
 
-$pathProviderAddons = GlobalsUC::$pathProvider."views/library.php";
+$uelm_pathProviderAddons = GlobalsUC::$pathProvider."views/library.php";
 
-if(file_exists($pathProviderAddons) == true){
-	require_once $pathProviderAddons;
+if(file_exists($uelm_pathProviderAddons) == true){
+	require_once $uelm_pathProviderAddons;
 	new UniteCreatorLibraryViewProvider();
 }
 else{
-	new UniteCreatorLibraryView();
+	new UELM_CreatorLibraryView();
 }
+
+class_alias( UELM_CreatorLibraryView::class, 'UniteCreatorLibraryView' );

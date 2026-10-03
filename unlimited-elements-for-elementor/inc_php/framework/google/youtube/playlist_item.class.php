@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEGoogleAPIPlaylistItem extends UEGoogleAPIModel{
+class UELM_GoogleAPIPlaylistItem extends UELM_GoogleAPIModel{
 
 	const IMAGE_SIZE_DEFAULT = "default";
 	const IMAGE_SIZE_MEDIUM = "medium";
@@ -180,3 +181,5 @@ class UEGoogleAPIPlaylistItem extends UEGoogleAPIModel{
 	}
 
 }
+
+class_alias( UELM_GoogleAPIPlaylistItem::class, 'UEGoogleAPIPlaylistItem' );

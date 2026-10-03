@@ -9,7 +9,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UCFormEntryView{
+class UELM_FormEntryView{
 
 	private $service;
 	private $entry;
@@ -23,7 +23,7 @@ class UCFormEntryView{
 	 */
 	public function __construct($id){
 
-		$this->service = new UCFormEntryService();
+		$this->service = new UELM_FormEntryService();
 		$this->entry = $this->getEntry($id);
 
 		$this->service->readEntry($id);
@@ -53,7 +53,8 @@ class UCFormEntryView{
 
 		global $wpdb; 
 
-		$table = $this->service->getTable();
+		$table = esc_sql($this->service->getTable());
+		$fieldsTable = esc_sql($this->service->getFieldsTable());
 		$sql = "
 			SELECT *
 			FROM {$table}
@@ -61,25 +62,23 @@ class UCFormEntryView{
 			LIMIT 1
 		";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped with esc_sql(). The id is a %d placeholder.
 		$sql = $wpdb->prepare($sql, array($id));
 		
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$entry = $wpdb->get_row($sql, ARRAY_A);
+		$entry = $wpdb->get_row($sql, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom form-entry table. Table name is internal and the id is a %d placeholder. WordPress has no API for this table.
 		
 		if(empty($entry) === true)
 			UniteFunctionsUC::throwError("Entry with ID {$id} not found.");
 
 		$sql = "
 			SELECT *
-			FROM {$this->service->getFieldsTable()}
+			FROM {$fieldsTable}
 			WHERE entry_id = %d
 		";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped with esc_sql(). The entry id is a %d placeholder.
 		$sql = $wpdb->prepare($sql, array($id));
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$entry["fields"] = $wpdb->get_results($sql, ARRAY_A);
+		$entry["fields"] = $wpdb->get_results($sql, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom form-entry table. Table name is internal and the entry id is a %d placeholder. WordPress has no API for this table.
 
 		return $entry;
 	}
@@ -217,7 +216,7 @@ class UCFormEntryView{
 	 */
 	private function displayFooter(){
 
-		$page = (isset($_REQUEST['page']) ? sanitize_text_field(wp_unslash($_REQUEST['page'])) : '');
+		$page = (isset($_REQUEST['page']) ? sanitize_text_field(wp_unslash($_REQUEST['page'])) : ''); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen page query arg, copied into the back link.
 
 		$url = wp_get_referer() ?: "?page=" . $page;
 
@@ -232,3 +231,5 @@ class UCFormEntryView{
 	}
 
 }
+
+class_alias( UELM_FormEntryView::class, 'UCFormEntryView' );

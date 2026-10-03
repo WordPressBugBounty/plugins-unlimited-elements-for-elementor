@@ -2,7 +2,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UCEmptyTemplate{
+class UELM_EmptyTemplate{
 	
 	const SHOW_DEBUG = false;
 	
@@ -445,14 +445,20 @@ class UCEmptyTemplate{
 				$isHidden = true;
 			}
 			
+			do_action("uelm_template_render_start");
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 			do_action("ue_template_render_start");
 			
 			$output = HelperProviderCoreUC_EL::getElementorTemplate($templateID, true);
 			
+			$arrTempalteWidgets = apply_filters("uelm_get_template_widgets",array());
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 			$arrTempalteWidgets = apply_filters("ue_get_template_widgets",array());
 			
 			$htmlTemplateWidgets = $this->getTemplateWidgetsHTML($arrTempalteWidgets);
 			
+			do_action("uelm_template_render_end");
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 			do_action("ue_template_render_end");
 			
 			//set hidden content
@@ -574,5 +580,6 @@ class UCEmptyTemplate{
 	
 }
 
-new UCEmptyTemplate();
+new UELM_EmptyTemplate();
 
+class_alias( UELM_EmptyTemplate::class, 'UCEmptyTemplate' );

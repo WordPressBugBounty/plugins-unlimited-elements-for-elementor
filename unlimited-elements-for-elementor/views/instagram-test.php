@@ -5,7 +5,7 @@
 
 <?php
 
-function UnlimitedElementsputInstagramTest(){
+function uelm_putInstagramTest(){
 	
 	$objServices = new UniteServicesUC();
 	
@@ -46,7 +46,7 @@ function UnlimitedElementsputInstagramTest(){
 
 try{
 
-	UnlimitedElementsputInstagramTest();
+	uelm_putInstagramTest();
 	
 }catch(Exception $e){
 	

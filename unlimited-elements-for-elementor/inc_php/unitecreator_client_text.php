@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * init client text
  */
-function ugelInitClientText(){
+function uelm_initClientText(){
 
 	
 GlobalsUC::$arrServerSideText = array(

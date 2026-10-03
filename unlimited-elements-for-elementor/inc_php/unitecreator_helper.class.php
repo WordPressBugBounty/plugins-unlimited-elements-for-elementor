@@ -1815,7 +1815,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	 */
 	public static function isElementorEditMode(){
 
-		if(isset($_GET["elementor-preview"]))
+		if(isset($_GET["elementor-preview"])) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Elementor adds this query arg in the editor preview. Only its presence is checked.
 			return (true);
 
 		$argPost = UniteFunctionsUC::getPostGetVariable("post", "", UniteFunctionsUC::SANITIZE_KEY);
@@ -1959,7 +1959,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			}else
 				$layout = $layoutID;    //if object passed
 
-			$outputLayout = new UniteCreatorLayoutOutput();
+			$outputLayout = new UELM_CreatorLayoutOutput();
 			$outputLayout->initByLayout($layout);
 
 			if(!empty($mode))
@@ -2034,4 +2034,5 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 }
 
 //init the operations
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Class property assignment, not a loose global.
 HelperUC::$operations = new UCOperations();

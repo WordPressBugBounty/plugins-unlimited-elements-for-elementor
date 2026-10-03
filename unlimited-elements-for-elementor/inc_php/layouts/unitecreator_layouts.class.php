@@ -652,6 +652,7 @@ class UniteCreatorLayoutsWork extends UniteElementsBaseUC{
 		if(!empty($layoutID))
 			$layoutID = (int)$layoutID;
 		
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce is verified in UniteCreatorActions::onAjaxAction() before this import runs.
 		$arrTempFile = UniteFunctionsUC::getVal($_FILES, "import_layout");
 		
 		$isOverwriteAddons = UniteFunctionsUC::getVal($data, "overwrite_addons");

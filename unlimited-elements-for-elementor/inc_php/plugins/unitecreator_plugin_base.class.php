@@ -148,10 +148,10 @@ class UniteCreatorPluginBase extends UniteCreatorFilters{
 	 */
 	public function registerLayoutOutputMode($mode, UniteCreatorLayoutOutputConfigBase $objConfig){
 		
-		if(isset(UniteCreatorLayoutOutput::$arrOutputModes[$mode]))
+		if(isset(UELM_CreatorLayoutOutput::$arrOutputModes[$mode]))
 			UniteFunctionsUC::throwError("Layout output mode already exists: ".$mode);
 		
-		UniteCreatorLayoutOutput::$arrOutputModes[$mode] = $objConfig;
+		UELM_CreatorLayoutOutput::$arrOutputModes[$mode] = $objConfig;
 		
 		
 	}

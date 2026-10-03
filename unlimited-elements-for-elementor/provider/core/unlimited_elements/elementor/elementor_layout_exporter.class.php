@@ -937,7 +937,7 @@ class UniteCreatorLayoutsExporterElementor extends UniteCreatorLayoutsExporter{
 				}
 				
 				$isUniteAddon = false;
-				if($element instanceof UniteCreatorElementorWidget)
+				if($element instanceof UELM_CreatorElementorWidget)
 					$isUniteAddon = true;
 				
 				if($isUniteAddon == false)
@@ -1061,7 +1061,7 @@ class UniteCreatorLayoutsExporterElementor extends UniteCreatorLayoutsExporter{
 			
 			//delete global colors
 			if(empty(self::$arrGlobalColors))
-				self::$arrGlobalColors = UniteCreatorElementorWidget::getGlobalColors();
+				self::$arrGlobalColors = UELM_CreatorElementorWidget::getGlobalColors();
 			
 			if(self::PRINT_EXPORTED_CONTENT){
 				

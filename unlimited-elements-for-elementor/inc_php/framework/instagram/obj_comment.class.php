@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class InstaObjCommentUC{
+class UELM_InstaObjComment{
 	
 	public $commentID;
 	
@@ -59,7 +59,7 @@ class InstaObjCommentUC{
 		//get date
 		$this->createdDateStamp = UniteFunctionsUC::getVal($comment, "created_time");
 		
-		$this->createdDate = HelperInstaUC::stampToDate($this->createdDateStamp);
+		$this->createdDate = UELM_HelperInsta::stampToDate($this->createdDateStamp);
 		
 		//get text
 		$this->text = UniteFunctionsUC::getVal($comment, "text");
@@ -67,7 +67,7 @@ class InstaObjCommentUC{
 		//get from user
 		$fromUser = UniteFunctionsUC::getVal($comment, "from");
 		
-		$this->fromUser = new InstaObjUserUC();
+		$this->fromUser = new UELM_InstaObjUser();
 		$this->fromUser->init($fromUser);
 		
 		
@@ -98,7 +98,7 @@ class InstaObjCommentUC{
 		if(empty($dataUser))
 			$dataUser = UniteFunctionsUC::getVal($data, "user");
 		
-		$this->fromUser = new InstaObjUserUC();
+		$this->fromUser = new UELM_InstaObjUser();
 		$this->fromUser->initByComment($dataUser);
 		
 		$this->username = $dataUser["username"];
@@ -111,3 +111,5 @@ class InstaObjCommentUC{
 	
 	
 }
+
+class_alias( UELM_InstaObjComment::class, 'InstaObjCommentUC' );

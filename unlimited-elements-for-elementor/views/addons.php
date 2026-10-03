@@ -10,13 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 require HelperUC::getPathViewObject("addons_view.class");
 
-$pathProviderAddons = GlobalsUC::$pathProvider."views/addons.php";
+$uelm_pathProviderAddons = GlobalsUC::$pathProvider."views/addons.php";
 
-if(file_exists($pathProviderAddons) == true){
-	require_once $pathProviderAddons;
-	new UniteCreatorAddonsViewProvider();
+if(file_exists($uelm_pathProviderAddons) == true){
+	require_once $uelm_pathProviderAddons;
+	new UELM_CreatorAddonsViewProvider();
 }
 else{
-	new UniteCreatorAddonsView();
+	new UELM_CreatorAddonsView();
 }
 

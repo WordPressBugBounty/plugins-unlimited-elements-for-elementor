@@ -161,7 +161,7 @@ class UniteProviderCoreAdminUC_Elementor extends UniteProviderAdminUC{
 	 */
 	private function initFeedbackUninstall(){
 
-		$this->objFeedback = new UnlimitedElementsFeedbackUC();
+		$this->objFeedback = new UELM_FeedbackUC();
 		$this->objFeedback->init();
 	}
 

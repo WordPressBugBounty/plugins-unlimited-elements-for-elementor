@@ -7,7 +7,7 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEConnectivityTestView{
+class UELM_ConnectivityTestView{
 	
 	/**
 	 * construction
@@ -217,7 +217,7 @@ try{
 
 		$urlPHPFile = GlobalsUC::$urlPlugin."views/api-connect-test.php";
 	 	
-		$serverIP = wp_unslash($_SERVER["SERVER_ADDR"]);
+		$serverIP = isset($_SERVER["SERVER_ADDR"]) ? sanitize_text_field(wp_unslash($_SERVER["SERVER_ADDR"])) : "";
 				
 		?>
 		
@@ -260,5 +260,6 @@ try{
 }
 
 
-new UEConnectivityTestView();
+new UELM_ConnectivityTestView();
 
+class_alias( UELM_ConnectivityTestView::class, 'UEConnectivityTestView' );

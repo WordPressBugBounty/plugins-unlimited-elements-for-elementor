@@ -192,6 +192,8 @@ class UniteCreatorParamsProcessorWork{
 		$options = $this->checkModifyParamOptions_manual($options, $phpFilter);
 
 		//general modify
+		$options = apply_filters("uelm_modify_dropdown_" . $phpFilter, $options);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		$options = apply_filters("ue_modify_dropdown_" . $phpFilter, $options);
 
 		if(empty($options) === true)
@@ -1201,7 +1203,7 @@ class UniteCreatorParamsProcessorWork{
 
 		$filepathPickerObject = GlobalsUC::$pathViewsObjects."mappicker_view.class.php";
 		require_once $filepathPickerObject;
-		$objView = new UniteCreatorMappickerView();
+		$objView = new UELM_CreatorMappickerView();
 
 		if(!empty($value))
 			$objView->setData($value);
@@ -1415,6 +1417,8 @@ class UniteCreatorParamsProcessorWork{
 
 			$type = UniteFunctionsUC::getVal($param, "type");
 
+			$param = apply_filters("uelm_unite_creator_process_param_for_output", $param);
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 			$param = apply_filters("unite_creator_process_param_for_output", $param);
 
 			if(isset($param["value"]))

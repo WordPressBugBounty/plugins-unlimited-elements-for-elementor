@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // no direct access
 	defined('UNLIMITED_ELEMENTS_INC') or die;
 
-	class UniteCreatorProviderMasterView{
+	class UELM_CreatorProviderMasterView{
 		
 		/**
 		 * construct
@@ -104,6 +104,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		
 	}
 
-	$uc_providerMasterView = new UniteCreatorProviderMasterView();
+	$uelm_uc_providerMasterView = new UELM_CreatorProviderMasterView();
 	
+class_alias( UELM_CreatorProviderMasterView::class, 'UniteCreatorProviderMasterView' );
 ?>

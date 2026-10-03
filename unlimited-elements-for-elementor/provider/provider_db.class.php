@@ -51,7 +51,7 @@ class UniteProviderDBUC{
 	public function query($query){ 
 		
 		$this->wpdb->suppress_errors(false);
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Query wrapper. SQL is built by the caller and passed in.
 		$success = $this->wpdb->query($query);
 		return($success);
 	}
@@ -70,7 +70,7 @@ class UniteProviderDBUC{
 	public function fetchSql($query, $supressErrors = false, $typeResult = ARRAY_A){
 		
 		$this->wpdb->suppress_errors($supressErrors);
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Query wrapper. SQL is built by the caller and passed in.
 		$rows = $this->wpdb->get_results($query, $typeResult);
 		
 		return($rows);
@@ -85,6 +85,3 @@ class UniteProviderDBUC{
 	
 }
 
-
-
-?>

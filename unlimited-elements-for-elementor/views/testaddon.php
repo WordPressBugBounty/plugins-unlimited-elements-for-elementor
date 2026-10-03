@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class UniteCreatorTestAddonView{
+class UELM_CreatorTestAddonView{
 	
 	protected $showToolbar = true;
 	protected $showHeader = true;
@@ -138,12 +138,14 @@ class UniteCreatorTestAddonView{
 }
 
 
-$pathProviderAddon = GlobalsUC::$pathProvider."views/test_addon.php";
+$uelm_pathProviderAddon = GlobalsUC::$pathProvider."views/test_addon.php";
 
-if(file_exists($pathProviderAddon) == true){
-	require_once $pathProviderAddon;
+if(file_exists($uelm_pathProviderAddon) == true){
+	require_once $uelm_pathProviderAddon;
 	new UniteCreatorTestAddonViewProvider();
 }
 else{
-	new UniteCreatorTestAddonView();
+	new UELM_CreatorTestAddonView();
 }
+
+class_alias( UELM_CreatorTestAddonView::class, 'UniteCreatorTestAddonView' );

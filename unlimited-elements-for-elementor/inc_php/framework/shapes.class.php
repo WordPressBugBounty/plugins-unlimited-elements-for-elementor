@@ -7,7 +7,7 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UniteShapeManagerUC extends HtmlOutputBaseUC{
+class UELM_ShapeManager extends HtmlOutputBaseUC{
 		
 		private static $arrShapeDividersCache = array();
 		private static $arrShapesCache = array();
@@ -362,3 +362,5 @@ class UniteShapeManagerUC extends HtmlOutputBaseUC{
 		
 		
 }
+
+class_alias( UELM_ShapeManager::class, 'UniteShapeManagerUC' );

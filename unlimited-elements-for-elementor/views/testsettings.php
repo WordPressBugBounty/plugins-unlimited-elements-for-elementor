@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 
-function ueCheckCatalog(){
+function uelm_checkCatalog(){
 
 	$objAddon = new UniteCreatorAddon();
 	
@@ -34,7 +34,7 @@ function ueCheckCatalog(){
 	
 }
 
-function checkSomeFunc(){
+function uelm_checkSomeFunc(){
 
 	$webAPI = new UniteCreatorWebAPI();
 	$data = $webAPI->getCatalogData();
@@ -46,7 +46,7 @@ function checkSomeFunc(){
 }
 
 
-checkSomeFunc();
+uelm_checkSomeFunc();
 
 
 exit();

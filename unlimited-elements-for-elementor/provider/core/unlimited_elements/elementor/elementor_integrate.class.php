@@ -137,7 +137,7 @@ class UniteCreatorElementorIntegrate{
 
 		$addon = $arrAddons[0];
 
-		$widget = new UniteCreatorElementorWidget();
+		$widget = new UELM_CreatorElementorWidget();
         \Elementor\Plugin::instance()->widgets_manager->register($widget);
 
 	}
@@ -223,8 +223,8 @@ class UniteCreatorElementorIntegrate{
 
 			self::logMemoryUsage("Before Register Widget: ".$name. ", counter: ".self::$counterWidgets);
 
-			// class_alias('UniteCreatorElementorWidget', $className);
-			$code = "class {$className} extends UniteCreatorElementorWidget{}";
+			// class_alias('UELM_CreatorElementorWidget', $className);
+			$code = "class {$className} extends UELM_CreatorElementorWidget{}";
 			// phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
 			eval($code);
 			try{
@@ -257,11 +257,11 @@ class UniteCreatorElementorIntegrate{
 	 */
 	private function registerWidgetByClassName($className){
 
-		// class_alias('UniteCreatorElementorWidget', $className);
-		$code = "class {$className} extends UniteCreatorElementorWidget{}";
+		// class_alias('UELM_CreatorElementorWidget', $className);
+		$code = "class {$className} extends UELM_CreatorElementorWidget{}";
 		// phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
 	    eval($code);
-		//class_alias('UniteCreatorElementorWidget', $className);
+		//class_alias('UELM_CreatorElementorWidget', $className);
 		$widget = new $className();
 
 		$manager = \Elementor\Plugin::instance()->widgets_manager;
@@ -487,7 +487,7 @@ class UniteCreatorElementorIntegrate{
     	//add hr control
     	require $this->pathDynamicTags."tag_current_timestamp.php";
 
-    	$dynamicTags->register_tag("UnlimitedElementsDynamicTag_TimeStamp");
+    	$dynamicTags->register_tag("UELM_DynamicTag_TimeStamp");
 
     }
 
@@ -597,7 +597,7 @@ class UniteCreatorElementorIntegrate{
 			$objAddon->initByAlias($backgroundType, GlobalsUC::ADDON_TYPE_BGADDON);
 
 			if(empty($this->objBackgroundWidget))
-				$this->objBackgroundWidget = new UniteCreatorElementorBackgroundWidget();
+				$this->objBackgroundWidget = new UELM_CreatorElementorBackgroundWidget();
 
 			$arrAddonValues = $this->objBackgroundWidget->getBGSettings($settings, $backgroundType);
 			
@@ -627,6 +627,8 @@ class UniteCreatorElementorIntegrate{
 			
 			$this->renderBGOutput($elementID, $output);
 			
+			do_action("uelm_render_background_addon", $objAddon);
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 			do_action("ue_render_background_addon", $objAddon);
 			
 		}catch(Exception $e){
@@ -871,7 +873,7 @@ class UniteCreatorElementorIntegrate{
          	$objAddon = new UniteCreatorAddon();
          	$objAddon->initByDBRecord($record);
 
-         	$objWidget = new UniteCreatorElementorBackgroundWidget();
+         	$objWidget = new UELM_CreatorElementorBackgroundWidget();
          	$objWidget->initBGWidget($objAddon, $objControls);
 
          	$objWidget->registerBGControls();
@@ -1236,6 +1238,7 @@ class UniteCreatorElementorIntegrate{
 
 			HelperProviderUC::verifyAdminPermission();
 
+	    	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce is verified above with UniteProviderFunctionsUC::verifyNonce().
 	    	$arrTempFile = UniteFunctionsUC::getVal($_FILES, "file");
 	    	UniteFunctionsUC::validateNotEmpty($arrTempFile,"import file");
 
@@ -1918,11 +1921,12 @@ class UniteCreatorElementorIntegrate{
 
 		//wpml translation integrattion
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 		add_filter( 'wpml_elementor_widgets_to_translate', array( $this, 'onWpmlTranslateRegister' ) );
 
 		//get current dynamic settings from loop
 
-		add_filter( 'ue_get_current_widget_settings', array( $this, 'onGetCurrentRenderingWidgetSettings' ) );
+		add_filter( 'uelm_get_current_widget_settings', array( $this, 'onGetCurrentRenderingWidgetSettings' ) );
 		
 		
     	// ------ admin related only ----------
@@ -1930,7 +1934,7 @@ class UniteCreatorElementorIntegrate{
     	if(is_admin() == false)
     		return(false);
 
-    	add_filter("elementor/template_library/sources/local/import/elements", array("UniteCreatorElementorWidget", "restoreImportAssetUrls"));
+    	add_filter("elementor/template_library/sources/local/import/elements", array("UELM_CreatorElementorWidget", "restoreImportAssetUrls"));
 
     	if($this->enableExportTemplate == true){
 
@@ -1943,6 +1947,7 @@ class UniteCreatorElementorIntegrate{
     	//import tepmlate
     	if($this->enableImportTemplate == true){
 
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 			add_action( 'admin_footer', array($this, 'onAdminFooter') );
 			add_action( 'admin_enqueue_scripts', array($this, 'onAddScripts') );
 

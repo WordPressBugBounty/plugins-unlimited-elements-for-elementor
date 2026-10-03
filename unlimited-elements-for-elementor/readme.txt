@@ -6,7 +6,7 @@ Requires at least: 5.7
 Tested up to: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 2.0.20
+Stable tag: 2.0.22
 
 Elementor all-in-one addons pack with the best widgets for Elementor, offering 100+ free widgets, templates, and tools to create stunning websites!
 
@@ -942,6 +942,11 @@ The choice depends on your design preferences. If you want complete control, go 
 == Changelog ==
 
 
+=  2.0.22 - 2026-10-02 =
+
+* Change: implimented all plugin checker found issues
+
+
 =  2.0.21 - 2026-09-30 =
 
 Plugin Changes: 
@@ -971,7 +976,6 @@ Widgets Changes:
 * Fix: Checkboxes Filter (Pro) - Fixed a Cross-Site Scripting (XSS) vulnerability in the widget by properly escaping tag names output within JavaScript contexts to prevent malicious script execution.
 * Fix: Tag Cloud (Pro) - Fixed a Cross-Site Scripting (XSS) vulnerability in the widget by properly escaping tag names output within JavaScript contexts to prevent malicious script execution.
 * Fix: Glare Button Effect (Free) - Fixed an issue where links with multiple query parameters were improperly escaped, ensuring URLs containing multiple parameters process and function correctly.
-
 
 
 =  2.0.20 - 2026-09-16 =

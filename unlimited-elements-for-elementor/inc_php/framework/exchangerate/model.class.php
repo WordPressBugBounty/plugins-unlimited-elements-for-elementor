@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-abstract class UEExchangeRateAPIModel{
+abstract class UELM_ExchangeRateAPIModel{
 
 	private $attributes;
 
@@ -64,3 +65,5 @@ abstract class UEExchangeRateAPIModel{
 	}
 
 }
+
+class_alias( UELM_ExchangeRateAPIModel::class, 'UEExchangeRateAPIModel' );

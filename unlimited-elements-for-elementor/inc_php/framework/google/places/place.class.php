@@ -1,13 +1,14 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEGoogleAPIPlace extends UEGoogleAPIModel{
+class UELM_GoogleAPIPlace extends UELM_GoogleAPIModel{
 
 	/**
 	 * Transform Places API (New) response into internal place model.
 	 *
 	 * @param array $attributes
 	 *
-	 * @return UEGoogleAPIPlace
+	 * @return UELM_GoogleAPIPlace
 	 */
 	public static function transformNew($attributes){
 
@@ -21,7 +22,7 @@ class UEGoogleAPIPlace extends UEGoogleAPIModel{
 		);
 
 		$reviews = UniteFunctionsUC::getVal($attributes, "reviews", array());
-		$data["reviews"] = UEGoogleAPIPlaceReview::transformAllNew($reviews);
+		$data["reviews"] = UELM_GoogleAPIPlaceReview::transformAllNew($reviews);
 
 		return self::transform($data);
 	}
@@ -50,12 +51,12 @@ class UEGoogleAPIPlace extends UEGoogleAPIModel{
 	/**
 	 * Get the reviews.
 	 *
-	 * @return UEGoogleAPIPlaceReview[]
+	 * @return UELM_GoogleAPIPlaceReview[]
 	 */
 	public function getReviews(){
 		
 		$reviews = $this->getAttribute("reviews", array());
-		$reviews = UEGoogleAPIPlaceReview::transformAll($reviews);
+		$reviews = UELM_GoogleAPIPlaceReview::transformAll($reviews);
 		
 		return $reviews;
 	}
@@ -93,3 +94,5 @@ class UEGoogleAPIPlace extends UEGoogleAPIModel{
 	
 	
 }
+
+class_alias( UELM_GoogleAPIPlace::class, 'UEGoogleAPIPlace' );

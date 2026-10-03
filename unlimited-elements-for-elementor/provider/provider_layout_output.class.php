@@ -7,7 +7,7 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UniteCreatorLayoutOutput extends UniteCreatorLayoutOutputWork{
+class UELM_CreatorLayoutOutput extends UniteCreatorLayoutOutputWork{
 	
 	/**
 	 * construct
@@ -21,3 +21,4 @@ class UniteCreatorLayoutOutput extends UniteCreatorLayoutOutputWork{
 	
 }
 
+class_alias( UELM_CreatorLayoutOutput::class, 'UniteCreatorLayoutOutput' );

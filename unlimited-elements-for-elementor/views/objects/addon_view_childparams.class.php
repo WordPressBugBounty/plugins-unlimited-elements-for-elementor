@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class UniteCreatorAddonViewChildParams{
+class UELM_CreatorAddonViewChildParams{
 	
 	const PARAM_PREFIX = "[param_prefix]";
 	const PARAM_NAME = "[param_name]";
@@ -1766,3 +1766,4 @@ var json = {{ucfunc(\"csv_to_json\",yourattribute)}};
 	
 }
 
+class_alias( UELM_CreatorAddonViewChildParams::class, 'UniteCreatorAddonViewChildParams' );

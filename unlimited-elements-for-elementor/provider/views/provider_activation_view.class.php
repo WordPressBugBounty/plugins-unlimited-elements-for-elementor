@@ -7,7 +7,7 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UniteCreatorActivationViewProvider extends UniteCreatorActivationView{
+class UELM_CreatorActivationViewProvider extends UELM_CreatorActivationView{
 	
 	const ENABLE_STAND_ALONE = true;
 	
@@ -87,3 +87,5 @@ class UniteCreatorActivationViewProvider extends UniteCreatorActivationView{
 	
 		
 }
+
+class_alias( UELM_CreatorActivationViewProvider::class, 'UniteCreatorActivationViewProvider' );

@@ -727,8 +727,11 @@ class UniteCreatorWooIntegrate{
     	$priceNoTax = wc_get_price_excluding_tax($objInfo);
     	$priceWithTax = wc_get_price_including_tax($objInfo);
     	
+    	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
     	$price = apply_filters("woocommerce_product_get_price", $price, $objInfo);
+    	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
     	$salePrice = apply_filters("woocommerce_product_get_sale_price", $salePrice, $objInfo);
+    	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
     	$regularPrice = apply_filters("woocommerce_product_get_regular_price", $regularPrice, $objInfo);
     	
     	$salePrice = $this->modifyPrice($salePrice, $objInfo);
@@ -990,6 +993,7 @@ class UniteCreatorWooIntegrate{
 				$variationValue = $value['terms'][0];
 
 				$aliasVar = "pm_var_" . (int) $index;
+				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $aliasVar is pm_var_ plus an integer. Column values use %s placeholders.
 				$variationJoinConditions[] = $wpdb->prepare(
 					"INNER JOIN {$wpdb->postmeta} {$aliasVar}
                     ON p.ID = {$aliasVar}.post_id
@@ -998,6 +1002,7 @@ class UniteCreatorWooIntegrate{
 					$variationName,
 					$variationValue
 				);
+				// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			}
 		}
 
@@ -1141,6 +1146,7 @@ class UniteCreatorWooIntegrate{
 		
 		//run advanced product labels
 		if(class_exists("BeRocket_products_label")){
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 			do_action('berocket_apl_set_label', true, $productID);
 		}
 
@@ -1610,8 +1616,11 @@ class UniteCreatorWooIntegrate{
 		
 		foreach($arrCartItems as $cart_item_key=>$cart_item){
 			
+		    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 		    $wc_product      = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
+		    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 		    $wc_product_id   = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
+		    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 		    $wc_product_link = apply_filters( 'woocommerce_cart_item_permalink', $wc_product->is_visible() ? $wc_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
 		    //$item_thumbnail  = $wc_product->get_image();
 		    $imageID  = $wc_product->get_image_id();
@@ -1626,6 +1635,7 @@ class UniteCreatorWooIntegrate{
 		    
 		    
 		    $item_name       = $wc_product->get_name();
+		    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 		    $product_link    = apply_filters( 'woocommerce_cart_item_permalink', $wc_product->is_visible() ? $wc_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
 			
 		    $price = WC()->cart->get_product_price( $wc_product );
@@ -1645,7 +1655,11 @@ class UniteCreatorWooIntegrate{
 			
 			//extra html hooks
 			
+			$extraHTML_item = apply_filters("uelm_woocart_item_extra_html", "", $wc_product_id);
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 			$extraHTML_item = apply_filters("ue_woocart_item_extra_html", "", $wc_product_id);
+			$extraHTML_itemContent = apply_filters("uelm_woocart_item_content_extra_html", "" , $wc_product_id);
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 			$extraHTML_itemContent = apply_filters("ue_woocart_item_content_extra_html", "" , $wc_product_id);
 			
 $htmlItem = "

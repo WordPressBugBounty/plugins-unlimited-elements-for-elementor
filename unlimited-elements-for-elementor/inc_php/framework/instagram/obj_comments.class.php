@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * instagram comments list class
  */
-class InstaObjCommentsUC{
+class UELM_InstaObjComments{
 
 	private $arrComments = array();
 	
@@ -84,7 +84,7 @@ class InstaObjCommentsUC{
 		$username = $this->getUsernameFromData($data);
 		
 		if(!empty($caption)){
-			$objComment = new InstaObjCommentUC();
+			$objComment = new UELM_InstaObjComment();
 			$objComment->initByData($caption, $username);
 			$this->arrComments[] = $objComment;
 		}
@@ -94,7 +94,7 @@ class InstaObjCommentsUC{
 		
 		foreach($arrDataComments as $comment){
 			
-			$objComment = new InstaObjCommentUC();
+			$objComment = new UELM_InstaObjComment();
 			$objComment->initNewAPI($comment);
 			
 			$this->arrComments[] = $objComment;
@@ -107,3 +107,5 @@ class InstaObjCommentsUC{
 	
 	
 }
+
+class_alias( UELM_InstaObjComments::class, 'InstaObjCommentsUC' );

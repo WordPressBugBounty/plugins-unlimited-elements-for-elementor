@@ -586,6 +586,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$mainCategoryID = UniteFunctionsUC::getVal($arrMeta, "rank_math_primary_category");
 
 		if (!empty($mainCategoryID)) {
+	    	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 	    	$mainCategoryID = apply_filters('wpml_object_id', $mainCategoryID, 'category', true);
 	    }		
 			
@@ -960,6 +961,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			return($arrData);
 		}
 				
+		$arrData = apply_filters("uelm_modify_post_data", $arrData);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		$arrData = apply_filters("ue_modify_post_data", $arrData);
 		
 		return($arrData);
@@ -992,7 +995,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$widgetData = $data;
 		unset($widgetData[$name]);
 
-		$args = apply_filters($queryID, $args, $widgetData);
+		$args = apply_filters($queryID, $args, $widgetData); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Filter name is entered in the widget settings and is passed through.
 
 		if($showDebugQuery == true){
 			dmp("args after custom query");
@@ -2053,7 +2056,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 					if(isset($_COOKIE["woocommerce_recently_viewed"])){
 
-						$strRecentProducts = wp_unslash($_COOKIE["woocommerce_recently_viewed"]);
+						$strRecentProducts = sanitize_text_field(wp_unslash($_COOKIE["woocommerce_recently_viewed"]));
 						$strRecentProducts = trim($strRecentProducts);
 						$arrRecentProducts = explode("|", $strRecentProducts);
 						
@@ -2219,6 +2222,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 				break;
 				default:	//apply some filter for custom post id's
 					
+					$customPostINIDs = apply_filters("uelm_get_custom_includeby_postids", null, $includeby, $limit);
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 					$customPostINIDs = apply_filters("ue_get_custom_includeby_postids", null, $includeby, $limit);
 										
 				break;
@@ -2425,6 +2430,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 			//for wpml integration
 			
+			do_action("uelm_before_get_only_sticky_posts",$value,$name);
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 			do_action("ue_before_get_only_sticky_posts",$value,$name);
 			
 			$arrStickyPosts = get_option('sticky_posts', array());
@@ -2550,11 +2557,15 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		$query = new WP_Query();
 
+		do_action("uelm_before_custom_posts_query", $query);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		do_action("ue_before_custom_posts_query", $query);
 		
 		$args["cache_results"] = true;
 		$args["update_post_meta_cache"] = true;
 		
+		$args = apply_filters("uelm_modify_posts_query_args", $args, $value, $name);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		$args = apply_filters("ue_modify_posts_query_args", $args, $value, $name);
 
 		//set debug errors
@@ -2604,6 +2615,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		$objFiltersProcess->afterQueryRun();
 		
+		do_action("uelm_after_custom_posts_query", $query);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		do_action("ue_after_custom_posts_query", $query);
 		
 		//custom posts debug
@@ -2997,6 +3010,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			$this->advancedQueryDebug = true;
 		}
 		
+		$args = apply_filters("uelm_modify_posts_query_args", $currentQueryVars, $value, $name);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		$args = apply_filters("ue_modify_posts_query_args", $currentQueryVars, $value, $name);
 		
 		
@@ -5488,6 +5503,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			}
 			
 			$placeholders = implode(", ", array_fill(0, count($arrValidPostTypes), "%s"));
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- dynamic IN() placeholders
 			$post_types_in = $wpdb->prepare($placeholders, $arrValidPostTypes);
 
 			$clauses['where'] .= "

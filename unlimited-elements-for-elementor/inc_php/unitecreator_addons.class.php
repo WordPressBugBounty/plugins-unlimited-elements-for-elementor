@@ -738,7 +738,7 @@ class UniteCreatorAddons extends UniteElementsBaseUC{
 		$returnOutput = UniteFunctionsUC::getVal($data, "return_output");
 		$returnOutput = UniteFunctionsUC::strToBool($returnOutput);
 		if($returnOutput == true){
-			$objLayoutOutput = new UniteCreatorLayoutOutput();
+			$objLayoutOutput = new UELM_CreatorLayoutOutput();
 			$objLayoutOutput->setAddonType($addonType);
 			$arrData["output"] = $objLayoutOutput->getAddonOutput($objAddon);
 		}
@@ -814,7 +814,7 @@ public function prepareAddonByData($addonData, $isForOutput = false){
 		$objIntegrate = new UniteCreatorElementorIntegrate();
 		$objIntegrate->includePluginFiles();
 
-		$objWidget = new UniteCreatorElementorBackgroundWidget();
+		$objWidget = new UELM_CreatorElementorBackgroundWidget();
 		$objAddon  = $objWidget->setAddonSettingsFromElementorSettings($objAddon, $elementorSettings);
 
 		return $objAddon;
@@ -1612,6 +1612,7 @@ public function prepareAddonByData($addonData, $isForOutput = false){
 		if(empty($catID))
 			$catID = null;
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce is verified in UniteCreatorActions::onAjaxAction() before this import runs.
 		$arrTempFile = UniteFunctionsUC::getVal($_FILES, "file");
 
 		//---- addon -----

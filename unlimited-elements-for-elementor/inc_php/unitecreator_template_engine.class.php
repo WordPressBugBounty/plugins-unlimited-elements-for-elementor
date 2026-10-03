@@ -238,7 +238,9 @@ class UniteCreatorTemplateEngineWork{
 
 			//woo commerce global object product save
 			if($postType == "product" && function_exists("wc_get_product")){
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce global product object.
 				global $product;
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce global product object.
 				$product = wc_get_product(GlobalsProviderUC::$lastObjectID);
 			}
 
@@ -268,6 +270,8 @@ class UniteCreatorTemplateEngineWork{
 				$GLOBALS["post"] = $post;
 
 				//get dynamic settings from the widget if exists
+				$arrDynamicSettings = apply_filters("uelm_get_current_widget_settings", array());
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 				$arrDynamicSettings = apply_filters("ue_get_current_widget_settings", array());
 				
 			}
@@ -814,23 +818,23 @@ class UniteCreatorTemplateEngineWork{
 		//run action, without or with params
 
 		if($param === null){
-			do_action($tag);
+			do_action($tag); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Hook name comes from the widget template and is passed through.
 			return(false);
 		}
 
 		//$param exists
 
 		if($param2 === null){
-			do_action($tag, $param);
+			do_action($tag, $param); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Hook name comes from the widget template and is passed through.
 			return(false);
 		}
 
 		if($param3 === null){
-			do_action($tag, $param, $param2);
+			do_action($tag, $param, $param2); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Hook name comes from the widget template and is passed through.
 			return(false);
 		}
 
-		do_action($tag, $param, $param2, $param3);
+		do_action($tag, $param, $param2, $param3); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Hook name comes from the widget template and is passed through.
 
 	}
 
@@ -1143,8 +1147,10 @@ class UniteCreatorTemplateEngineWork{
 			return($newPrice);
 
 		if(!empty($variationID))
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce global product object.
 			$product = wc_get_product($variationID);
 		else
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WooCommerce global product object.
 			$product = wc_get_product(GlobalsProviderUC::$lastObjectID);
 
 		if(empty($product))
@@ -1152,6 +1158,7 @@ class UniteCreatorTemplateEngineWork{
 
 		try{
 
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 			$newPrice = apply_filters("woocommerce_get_price_html",$newPrice, $product);
 
 		}catch(Exception $e){
@@ -1701,7 +1708,7 @@ class UniteCreatorTemplateEngineWork{
 				require_once GlobalsUC::$pathFramework."alphabet_array.class.php";
 				require_once GlobalsUC::$pathFramework."alphabet.class.php";
 				
-				$objAlphabet = new UELanguageAlphabets();
+				$objAlphabet = new UELM_LanguageAlphabets();
 				$arrAlphabet = $objAlphabet->getAlphabetForWidget($arg1);
 				//$arrAlphabet = $objAlphabet->getAlphabetForWidgetNew($arg1);
 				
@@ -1712,7 +1719,7 @@ class UniteCreatorTemplateEngineWork{
 				require_once GlobalsUC::$pathFramework."alphabet_array.class.php";
 				require_once GlobalsUC::$pathFramework."alphabet.class.php";
 				
-				$objAlphabet = new UELanguageAlphabets();
+				$objAlphabet = new UELM_LanguageAlphabets();
 				$arrAlphabet = $objAlphabet->getAlphabetForWidgetNew($arg1);
 				
 				return($arrAlphabet);

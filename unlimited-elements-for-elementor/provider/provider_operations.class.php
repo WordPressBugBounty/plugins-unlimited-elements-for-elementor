@@ -319,35 +319,32 @@ class ProviderOperationsUC extends UCOperations{
 
 		$arrPostTypes = array_keys($arrTypesAssoc);
 
-		$strPostTypes = implode("','", $arrPostTypes);
-		$strPostTypes = "'$strPostTypes'";
+		if(empty($arrPostTypes))
+			return(array());
 
 		//prepare query
 		$db = HelperUC::getDB();
 
-		$tablePosts = UniteProviderFunctionsUC::$tablePosts;
-
 		global $wpdb;
 
-		$where = "post_type in ($strPostTypes)";
-		$where .= " and post_status in ('publish','draft')";
-		
+		$postTypePlaceholders = implode(",", array_fill(0, count($arrPostTypes), "%s"));
+
 		$isStartWord = (strlen($search) == 1);
 
 		$likeStart = $wpdb->esc_like($search) . '%';
 		$likeContains = '%' . $wpdb->esc_like($search) . '%';
 
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Post type list length varies, so replacements are passed as one array. Placeholders are %s only. The posts table is $wpdb->posts. Status values are fixed in the query.
 		$sqlStartWord = $wpdb->prepare(
-			"select * from $tablePosts where $where and post_title like %s order by post_date desc limit %d",
-			$likeStart,
-			$limit
+			"select * from {$wpdb->posts} where post_type in ($postTypePlaceholders) and post_status in ('publish','draft') and post_title like %s order by post_date desc limit %d",
+			array_merge($arrPostTypes, array($likeStart, $limit))
 		);
 
 		$sql = $wpdb->prepare(
-			"select * from $tablePosts where $where and post_title like %s order by post_date desc limit %d",
-			$likeContains,
-			$limit
+			"select * from {$wpdb->posts} where post_type in ($postTypePlaceholders) and post_status in ('publish','draft') and post_title like %s order by post_date desc limit %d",
+			array_merge($arrPostTypes, array($likeContains, $limit))
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 
 		if($isStartWord == true){
 

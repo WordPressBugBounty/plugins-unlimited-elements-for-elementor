@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-abstract class UEOpenWeatherAPIModel{
+abstract class UELM_OpenWeatherAPIModel{
 
 	private $attributes;
 	private $parameters;
@@ -84,3 +85,5 @@ abstract class UEOpenWeatherAPIModel{
 	}
 
 }
+
+class_alias( UELM_OpenWeatherAPIModel::class, 'UEOpenWeatherAPIModel' );

@@ -1,7 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UnlimitedAddonsMigraterUC{
+class UELM_AddonsMigrater{
 	
 	private static $arrMenuPages = array();
 	private static $arrSubMenuPages = array();
@@ -170,7 +170,7 @@ class UnlimitedAddonsMigraterUC{
 	 */
 	public static function putHtmlStart(){
 		
-		global $ucStandAloneErrorMessage;
+		global $uelm_ucStandAloneErrorMessage;
 		
 		$urlUninstall = admin_url()."plugins.php";
 		
@@ -187,7 +187,7 @@ class UnlimitedAddonsMigraterUC{
 				<br><br>
 				
 				<?php 
-				uelm_echo( $ucStandAloneErrorMessage);
+				uelm_echo( $uelm_ucStandAloneErrorMessage);
 				?>
 				
 			</div>
@@ -230,5 +230,6 @@ class UnlimitedAddonsMigraterUC{
 	
 }
 
-new UnlimitedAddonsMigraterUC();
+new UELM_AddonsMigrater();
 
+class_alias( UELM_AddonsMigrater::class, 'UnlimitedAddonsMigraterUC' );

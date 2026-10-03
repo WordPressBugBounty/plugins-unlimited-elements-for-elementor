@@ -133,7 +133,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		public static $pathProvider;
 		public static $pathProviderViews;
 		public static $pathProviderTemplates;
-		public static $pathWPLanguages;
 		public static $pathPro;
 
 		public static $current_host;
@@ -229,7 +228,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			self::$current_page_url = self::$current_host.UniteFunctionsUC::getVal($_SERVER, "REQUEST_URI");
 
 			self::$pathPluginRel = basename(self::$pathPlugin)."/";
-			self::$pathWPLanguages = self::$pathPluginRel."languages/";
 
 			self::$pathProvider = self::$pathPlugin."provider/";
 			self::$pathTemplates = self::$pathPlugin."views/templates/";
@@ -247,8 +245,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			if(defined("UC_TEST_FREE_VERSION"))
 				self::$isProVersion = false;
 
-			Global $mainFilepath;		//defined at plugin start
-			self::$pathPluginFile = $mainFilepath;
+			Global $uelm_mainFilepath;		//defined at plugin start
+			self::$pathPluginFile = $uelm_mainFilepath;
 
 			self::$pathProviderViews = self::$pathProvider."views/";
 			self::$pathProviderTemplates = self::$pathProvider."views/templates/";
@@ -312,11 +310,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		 * init after init action trigger
 		 */
 		public static function initAfterInitTrigger(){
-			
-			load_plugin_textdomain("unlimited-elements-for-elementor", false, GlobalsUC::$pathWPLanguages);
 
 			//init client text
-			ugelInitClientText();
+			uelm_initClientText();
 		}
 		
 		/**

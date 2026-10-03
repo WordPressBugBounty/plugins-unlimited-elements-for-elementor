@@ -11,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 require HelperUC::getPathViewObject("layouts_view.class");
 require HelperUC::getPathViewProvider("provider_layouts_view.class");
 
-if(!isset($layoutType))
-	$layoutType = UniteFunctionsUC::getGetVar("layout_type", "",UniteFunctionsUC::SANITIZE_KEY);
+if(!isset($uelm_layoutType))
+	$uelm_layoutType = UniteFunctionsUC::getGetVar("layout_type", "",UniteFunctionsUC::SANITIZE_KEY);
 	
 
-$objLayouts = new UniteCreatorLayoutsViewProvider();
-$objLayouts->setLayoutType($layoutType);
-$objLayouts->display();
+$uelm_objLayouts = new UELM_CreatorLayoutsViewProvider();
+$uelm_objLayouts->setLayoutType($uelm_layoutType);
+$uelm_objLayouts->display();

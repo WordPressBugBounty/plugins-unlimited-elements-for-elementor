@@ -3,7 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class UniteProviderCoreFrontUC_Elementor extends UniteProviderFrontUC{
+class UELM_ProviderCoreFrontUC_Elementor extends UELM_ProviderFront{
 	
 	private $objFiltersProcess;
 
@@ -35,3 +35,5 @@ class UniteProviderCoreFrontUC_Elementor extends UniteProviderFrontUC{
 	}
 
 }
+
+class_alias( UELM_ProviderCoreFrontUC_Elementor::class, 'UniteProviderCoreFrontUC_Elementor' );

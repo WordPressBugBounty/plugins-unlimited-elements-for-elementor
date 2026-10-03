@@ -9,17 +9,20 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if(!isset($headerTitle))
-	UniteFunctionsUC::throwError("header template error: \$headerTitle variable not defined");
+if(isset($uelm_headerTitle) == false && isset($headerTitle))
+	$uelm_headerTitle = $headerTitle;
 
-$headerPrefix = HelperUC::getText("addon_library");
+if(isset($uelm_headerTitle) == false)
+	UniteFunctionsUC::throwError("header template error: header title variable not defined");
+
+$uelm_headerPrefix = HelperUC::getText("addon_library");
 
 if(!empty(GlobalsUC::$alterViewHeaderPrefix))
-	$headerPrefix = GlobalsUC::$alterViewHeaderPrefix;
+	$uelm_headerPrefix = GlobalsUC::$alterViewHeaderPrefix;
 
-$adminPageTitle = $headerTitle . " - " . $headerPrefix;
+$uelm_adminPageTitle = $uelm_headerTitle . " - " . $uelm_headerPrefix;
 
-UniteProviderFunctionsUC::setAdminPageTitle($adminPageTitle);
+UniteProviderFunctionsUC::setAdminPageTitle($uelm_adminPageTitle);
 
 ?>
 
@@ -27,7 +30,7 @@ UniteProviderFunctionsUC::setAdminPageTitle($adminPageTitle);
 	<div class="title_line">
 		<div class="title_line_text">
 			<?php 
-			uelm_echo( $headerTitle ); ?>
+			uelm_echo( $uelm_headerTitle ); ?>
 		</div>
 		<?php if(isset($headerAddHtml)): ?>
 			<div class="title_line_add_html"><?php echo esc_html($headerAddHtml); ?></div>

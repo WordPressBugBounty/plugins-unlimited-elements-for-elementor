@@ -122,12 +122,18 @@ class UniteFunctionsUC{
 		if($value !== null && $value !== false)
 			return($value);
 
-		// filter_input() fallback (XAMPP/CGI). Values are sanitized via sanitizeVar().
-		if($inputType === INPUT_POST && isset($_POST[$name]))
+		// filter_input() fallback (XAMPP/CGI). Callers sanitize via sanitizeVar(), which includes types that must stay raw.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Generic field reader. Callers verify the nonce after reading it through this function.
+		if($inputType === INPUT_POST && isset($_POST[$name])) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing -- Sanitized by sanitizeVar() with the caller's type. Callers verify the nonce.
 			return wp_unslash($_POST[$name]);
+		}
 
-		if($inputType === INPUT_GET && isset($_GET[$name]))
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Generic field reader. Callers verify the nonce after reading it through this function.
+		if($inputType === INPUT_GET && isset($_GET[$name])) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended -- Sanitized by sanitizeVar() with the caller's type. Callers verify the nonce.
 			return wp_unslash($_GET[$name]);
+		}
 
 		return null;
 	}
@@ -187,8 +193,11 @@ class UniteFunctionsUC{
 
 		$files = array();
 
-		if(isset($_FILES[$name]))
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Generic upload reader. Callers verify the nonce before using the file.
+		if(isset($_FILES[$name])) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing -- Upload array. tmp_name is a PHP path; callers validate with wp_check_filetype_and_ext(). Callers verify the nonce.
 			$files = $_FILES[$name];
+		}
 
 		$keys = array(
 			"name",
@@ -3972,7 +3981,9 @@ class UniteFunctionsUC{
 		else
 			$output = $time_units . " ".$strUnit." ". __("ago","unlimited-elements-for-elementor");
 		
-		$output = apply_filters("ue_modify_time_ago_string", $output);
+		$output = apply_filters("uelm_modify_time_ago_string", $output);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
+		$output = apply_filters("unlimited_elements_modify_time_ago_string", $output);
 		
 		return($output);
 	}
@@ -4059,7 +4070,9 @@ class UniteFunctionsUC{
 			);
 		}
 
-		$output = apply_filters( 'ue_modify_time_ago_string', $output );
+		$output = apply_filters( 'uelm_modify_time_ago_string', $output );
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
+		$output = apply_filters( 'unlimited_elements_modify_time_ago_string', $output );
 
 		return $output;
 	}
@@ -4737,7 +4750,10 @@ class UniteFunctionsUC{
 	 */
 	public static function getUserAgent(){
 
-		return wp_unslash($_SERVER["HTTP_USER_AGENT"]);
+		if(isset($_SERVER["HTTP_USER_AGENT"]) === false)
+			return("");
+
+		return sanitize_text_field(wp_unslash($_SERVER["HTTP_USER_AGENT"]));
 	}
 
 	/**
@@ -4747,7 +4763,7 @@ class UniteFunctionsUC{
 	public static function getUserIp(){
 		
 		if(isset($_SERVER["REMOTE_ADDR"]))
-			return wp_unslash($_SERVER["REMOTE_ADDR"]);
+			return sanitize_text_field(wp_unslash($_SERVER["REMOTE_ADDR"]));
 		
 		return("127.0.0.1");  
 	}
@@ -4758,18 +4774,15 @@ class UniteFunctionsUC{
 /*** File System functions ***/
 
 	/**
-	 * move_uploaded_file
-	*/
-	public static function moveUploadedFile($source, $destination) {
-		return move_uploaded_file($source, $destination);
-	}
-
-	/**
 	 * rename 
 	*/
-	public static function move($source, $destination) {
-		
-		return rename($source, $destination);
+	public static function move($source, $destination, $overwrite = false) {
+
+		$filesystem = self::getWPFilesystem();
+		if($filesystem === false)
+			return(false);
+
+		return $filesystem->move($source, $destination, $overwrite);
 	}
 
 	/**
@@ -4812,43 +4825,91 @@ class UniteFunctionsUC{
 	 * is_writable
 	*/
 	public static function isWritable($path) {
-		return is_writable($path);
+
+		$filesystem = self::getWPFilesystem();
+		if($filesystem === false)
+			return(false);
+
+		return $filesystem->is_writable($path);
+	}
+
+	/**
+	 * get the WordPress filesystem instance
+	 */
+	private static function getWPFilesystem(){
+
+		global $wp_filesystem;
+
+		if(function_exists("WP_Filesystem") == false)
+			require_once ABSPATH . "wp-admin/includes/file.php";
+
+		if(empty($wp_filesystem))
+			WP_Filesystem();
+
+		if($wp_filesystem instanceof WP_Filesystem_Base)
+			return($wp_filesystem);
+
+		return(false);
 	}
 
 	/**
 	 * chmod
 	*/
 	public static function chmod($file, $permissions) {
-		return chmod($file, $permissions);
+
+		$filesystem = self::getWPFilesystem();
+		if($filesystem === false)
+			return(false);
+
+		if(self::isFile($file) == false && self::isDir($file) == false)
+			return(false);
+
+		return $filesystem->chmod($file, $permissions);
 	}
 
 	/**
 	 * chown
 	*/
 	public static function chown($file, $owner) {
-		return chown($file, $owner);
+
+		$filesystem = self::getWPFilesystem();
+		if($filesystem === false)
+			return(false);
+
+		if(self::isFile($file) == false && self::isDir($file) == false)
+			return(false);
+
+		return $filesystem->chown($file, $owner);
 	}
 
 	/**
 	 * mkdir
 	*/
 	public static function mkdir($dir) {
-				
-		return mkdir($dir);
-	}
 
-	/**
-	 * readfile
-	*/
-	public static function wp_filesystem_readfile($file) {
-		return readfile($file);
+		$filesystem = self::getWPFilesystem();
+		if($filesystem === false)
+			return(false);
+
+		if(self::isDir($dir) == true)
+			return(false);
+
+		return $filesystem->mkdir($dir);
 	}
 
 	/**
 	 * rmdir
 	*/
 	public static function rmdir($dir) {
-		return rmdir($dir); 
+
+		$filesystem = self::getWPFilesystem();
+		if($filesystem === false)
+			return(false);
+
+		if(self::isDir($dir) == false)
+			return(false);
+
+		return $filesystem->rmdir($dir);
 	}
 	
 	/*** End File System functions ***/

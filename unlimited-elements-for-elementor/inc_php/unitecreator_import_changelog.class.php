@@ -19,21 +19,20 @@ class UniteCreatorImportExportChangelog{
 		global $wpdb;
 
 
-		$changelogTable = UniteFunctionsWPUC::prefixDBTable(GlobalsUC::TABLE_CHANGELOG_NAME);
-		$addonsTable = GlobalsUc::$table_addons;
+		$changelogTable = esc_sql(UniteFunctionsWPUC::prefixDBTable(GlobalsUC::TABLE_CHANGELOG_NAME));
+		$addonsTable = esc_sql(GlobalsUc::$table_addons);
 
 		$query = "
             SELECT changelog.type, changelog.text, changelog.plugin_version, changelog.created_at, addons.name 
                 AS addon_name  
-              FROM $changelogTable 
+              FROM {$changelogTable} 
                 AS changelog
-         LEFT JOIN $addonsTable 
+         LEFT JOIN {$addonsTable} 
                 AS addons
                 ON changelog.addon_id = addons.id
         ";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$items = $wpdb->get_results($query);
+		$items = $wpdb->get_results($query); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom changelog table. WordPress has no API for it. Table names are escaped with esc_sql(). No placeholders are required.
 
 		$arrayItems = array();
 
@@ -77,13 +76,16 @@ class UniteCreatorImportExportChangelog{
 
 		//check that data is valid
 
-		if (empty($_FILES['json_file']['tmp_name']) || $_FILES['json_file']['type'] !== 'application/json') {
+		$jsonFileType = isset($_FILES['json_file']['type']) ? sanitize_text_field(wp_unslash($_FILES['json_file']['type'])) : "";
+
+		if (empty($_FILES['json_file']['tmp_name']) || $jsonFileType !== 'application/json') {
 
 			$this->processImportJsonAction_error(__("Invalid file or upload error.", "unlimited-elements-for-elementor"));
 
 			return(false);
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- PHP upload path. Must stay unchanged so the JSON file can be read.
 		$jsonData = UniteFunctionsUC::fileGetContents($_FILES['json_file']['tmp_name']);
 
 		$decodedData = json_decode($jsonData, true);
@@ -141,11 +143,11 @@ class UniteCreatorImportExportChangelog{
 
 		}
 
-		$changelogTable = UniteFunctionsWPUC::prefixDBTable(GlobalsUC::TABLE_CHANGELOG_NAME);
+		$changelogTable = esc_sql(UniteFunctionsWPUC::prefixDBTable(GlobalsUC::TABLE_CHANGELOG_NAME));
 
 		//delete the table
 
-		$wpdb->query("TRUNCATE TABLE {$changelogTable}");
+		$wpdb->query("TRUNCATE TABLE {$changelogTable}"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom changelog table. WordPress has no API for it. Table name is escaped with esc_sql().
 		
 		$adminUserID = get_current_user_id();
 		
@@ -166,7 +168,7 @@ class UniteCreatorImportExportChangelog{
 				'addon_title'    => $addon['title']
 			);
 
-			$wpdb->insert($changelogTable, $data_to_insert);
+			$wpdb->insert($changelogTable, $data_to_insert); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom changelog table. WordPress has no API for it.
 		}
 
 		return true;

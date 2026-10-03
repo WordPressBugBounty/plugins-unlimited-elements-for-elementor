@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEGoogleAPIPlaceReview extends UEGoogleAPIModel{
+class UELM_GoogleAPIPlaceReview extends UELM_GoogleAPIModel{
 
 	private $isSerp = false;
 	
@@ -35,7 +36,7 @@ class UEGoogleAPIPlaceReview extends UEGoogleAPIModel{
 	 *
 	 * @param array $attributes
 	 *
-	 * @return UEGoogleAPIPlaceReview
+	 * @return UELM_GoogleAPIPlaceReview
 	 */
 	public static function transformNew($attributes){
 
@@ -299,3 +300,5 @@ class UEGoogleAPIPlaceReview extends UEGoogleAPIModel{
 	}
 
 }
+
+class_alias( UELM_GoogleAPIPlaceReview::class, 'UEGoogleAPIPlaceReview' );

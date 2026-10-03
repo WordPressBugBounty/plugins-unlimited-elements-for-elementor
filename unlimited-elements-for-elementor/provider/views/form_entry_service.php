@@ -9,7 +9,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UCFormEntryService{
+class UELM_FormEntryService{
 
 	/**
 	 * Get the table name.
@@ -100,23 +100,26 @@ class UCFormEntryService{
 		global $wpdb;
 
 		$ids = is_array($id) ? $id : array($id);
-		$idPlaceholders = UniteFunctionsWPUC::getDBPlaceholders($ids, "%d");
+		$ids = array_map("intval", $ids);
 
 		if(empty($ids) === true)
 			return array();
 
+		$idPlaceholders = implode(",", array_fill(0, count($ids), "%d"));
+		$fieldsTable = esc_sql($this->getFieldsTable());
+		$entriesTable = esc_sql($this->getTable());
+
 		// Get fields
 		$sql = "
 			SELECT *
-			FROM {$this->getFieldsTable()}
+			FROM {$fieldsTable}
 			WHERE entry_id IN($idPlaceholders)
 			ORDER BY id ASC
 		";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Query is prepared on this line. Table name is escaped with esc_sql(). Placeholders are %d only.
 		$sql = $wpdb->prepare($sql, $ids);
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$results = $wpdb->get_results($sql, ARRAY_A);
+		$results = $wpdb->get_results($sql, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom form-entry table. WordPress has no API for it.
 		$fields = array();
 
 		foreach($results as $result){
@@ -132,15 +135,14 @@ class UCFormEntryService{
 		// Get entries
 		$sql = "
 			SELECT *
-			FROM {$this->getTable()}
+			FROM {$entriesTable}
 			WHERE id IN($idPlaceholders)
 			ORDER BY FIELD(id, $idPlaceholders)
 		";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Query is prepared on this line. Table name is escaped with esc_sql(). Placeholders are %d only.
 		$sql = $wpdb->prepare($sql, array_merge($ids, $ids));
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$results = $wpdb->get_results($sql, ARRAY_A);
+		$results = $wpdb->get_results($sql, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom form-entry table. WordPress has no API for it.
 		$entries = array();
 
 		foreach($results as $result){
@@ -250,10 +252,10 @@ class UCFormEntryService{
 
 			foreach($ids as $id){
 				$where = array("entry_id" => $id);
-				$wpdb->delete($fieldsTable, $where);
+				$wpdb->delete($fieldsTable, $where); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom form-entry table. WordPress has no API for it.
 
 				$where = array("id" => $id);
-				$result += $wpdb->delete($table, $where);
+				$result += $wpdb->delete($table, $where); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom form-entry table. WordPress has no API for it.
 			}
 
 			return $result;
@@ -283,7 +285,7 @@ class UCFormEntryService{
 
 			foreach($ids as $id){
 				$where = array("id" => $id);
-				$result += $wpdb->update($table, $data, $where);
+				$result += $wpdb->update($table, $data, $where); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom form-entry table. WordPress has no API for it.
 			}
 
 			return $result;
@@ -363,3 +365,5 @@ class UCFormEntryService{
 	}
 
 }
+
+class_alias( UELM_FormEntryService::class, 'UCFormEntryService' );

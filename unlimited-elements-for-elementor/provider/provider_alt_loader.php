@@ -6,7 +6,7 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-function UCIsAddonLibraryPluginExists(){
+function uelm_isAddonLibraryPluginExists(){
 	
 	$alPlugin = "addon-library/addonlibrary.php";
 	$alPlugin2 = "unlimited-addons-for-wpbakery-page-builder/unlimited_addons.php";
@@ -32,7 +32,7 @@ function UCIsAddonLibraryPluginExists(){
 }
 
 
-if(UCIsAddonLibraryPluginExists()){
+if(uelm_isAddonLibraryPluginExists()){
 	
 	require_once dirname(__FILE__)."/views/compatability_message.php";
 	
@@ -41,7 +41,7 @@ if(UCIsAddonLibraryPluginExists()){
 	
 	try{
 		
-		require_once $currentFolder.'/includes.php';
+		require_once $uelm_currentFolder.'/includes.php';
 		
 		HelperUC::validatePluginStartup();
 		
@@ -49,10 +49,10 @@ if(UCIsAddonLibraryPluginExists()){
 				
 	}catch(Exception $e){
 		
-		$ucStandAloneErrorMessage = $e->getMessage();
-		$filePathViewStandAlone = dirname(__FILE__)."/views/stand_alone_broken_error.php";
+		$uelm_ucStandAloneErrorMessage = $e->getMessage();
+		$uelm_filePathViewStandAlone = dirname(__FILE__)."/views/stand_alone_broken_error.php";
 		
-		require $filePathViewStandAlone;	
+		require $uelm_filePathViewStandAlone;	
 		
 	}
 	

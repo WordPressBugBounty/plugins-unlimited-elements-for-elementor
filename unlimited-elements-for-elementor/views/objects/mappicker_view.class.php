@@ -7,7 +7,7 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UniteCreatorMappickerView{
+class UELM_CreatorMappickerView{
 
 	private $settings, $settingsOutput;
 	private $defaultAPIKey = "demokey";
@@ -615,3 +615,5 @@ class UniteCreatorMappickerView{
 	}
 
 }
+
+class_alias( UELM_CreatorMappickerView::class, 'UniteCreatorMappickerView' );

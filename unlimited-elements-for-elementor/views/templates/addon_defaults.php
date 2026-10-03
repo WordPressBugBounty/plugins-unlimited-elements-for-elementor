@@ -13,23 +13,23 @@ if($this->showHeader)
 else
 	require HelperUC::getPathTemplate("header_missing");
 
-$slot1AddHtml = "";
+$uelm_slot1AddHtml = "";
 if($this->isDataExists == false)
-	$slot1AddHtml = "style='display:none'";
+	$uelm_slot1AddHtml = "style='display:none'";
 
 
-$styleShow = "";
-$styleHide = "style='display:none'";
+$uelm_styleShow = "";
+$uelm_styleHide = "style='display:none'";
 
-$strOptions = UniteFunctionsUC::jsonEncodeForHtmlData($arrOptions);
+$uelm_strOptions = UniteFunctionsUC::jsonEncodeForHtmlData($arrOptions);
 
-$urlBack = HelperUC::getViewUrl_Addons($addonType);
+$uelm_urlBack = HelperUC::getViewUrl_Addons($addonType);
 if(!empty($objAddonType->addonView_urlBack))
-	$urlBack = $objAddonType->addonView_urlBack;
+	$uelm_urlBack = $objAddonType->addonView_urlBack;
 
 ?>
 
-<div id="uc_addondefaults_wrapper" class="uc-addondefaults-wrapper" data-options="<?php echo esc_attr($strOptions)?>">
+<div id="uc_addondefaults_wrapper" class="uc-addondefaults-wrapper" data-options="<?php echo esc_attr($uelm_strOptions)?>">
 
 <?php if($this->showToolbar):?>
 
@@ -41,9 +41,9 @@ if(!empty($objAddonType->addonView_urlBack))
 		</div>
 
 		<a id="uc_button_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 
-				uelm_echo( $isPreviewMode?$styleHide:$styleShow ); ?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>
+				uelm_echo( $isPreviewMode?$uelm_styleHide:$uelm_styleShow ); ?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>
 		<a id="uc_button_close_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 
-				uelm_echo( $isPreviewMode?$styleShow:$styleHide ); ?>><?php esc_html_e("Hide Preview", "unlimited-elements-for-elementor")?></a>
+				uelm_echo( $isPreviewMode?$uelm_styleShow:$uelm_styleHide ); ?>><?php esc_html_e("Hide Preview", "unlimited-elements-for-elementor")?></a>
 		<span class="hor_sap10"></span>
 
 		<a id="uc_button_preview_tab" href="javascript:void(0)" class="unite-button-secondary uc-button-cat-sap"><?php esc_html_e("Preview New Tab", "unlimited-elements-for-elementor")?></a>
@@ -53,7 +53,7 @@ if(!empty($objAddonType->addonView_urlBack))
 		<a href="<?php echo esc_url($urlEditAddon)?>" class="unite-button-secondary" ><?php esc_html_e("Edit This Widget", "unlimited-elements-for-elementor")?></a>
 		<span class="hor_sap15"></span>
 
-		<a class="unite-button-secondary uc-button-cat-sap" href="<?php echo esc_attr($urlBack)?>"><?php esc_html_e("Back to Widgets List", "unlimited-elements-for-elementor");?></a>
+		<a class="unite-button-secondary uc-button-cat-sap" href="<?php echo esc_attr($uelm_urlBack)?>"><?php esc_html_e("Back to Widgets List", "unlimited-elements-for-elementor");?></a>
 
 </div>
 
@@ -75,11 +75,11 @@ if(!empty($objAddonType->addonView_urlBack))
 
 </div>
 <?php
-$script = 'jQuery(document).ready(function(){
+$uelm_script = 'jQuery(document).ready(function(){
 		var objAddonDefaultsView = new UniteCreatorAddonDefaultsAdmin();
 		objAddonDefaultsView.init();
 		' . ($isPreviewMode == true ? 'jQuery("#uc_button_preview").trigger("click");' : '' ) . '
 	});';
 	
-UniteProviderFunctionsUC::printCustomScript($script, true); 
+UniteProviderFunctionsUC::printCustomScript($uelm_script, true); 
 

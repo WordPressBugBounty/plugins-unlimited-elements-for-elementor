@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 require	HelperUC::getPathViewObject("settings_view.class");
 
-class UniteCreatorViewLayoutsSettings extends UniteCreatorSettingsView{
+class UELM_CreatorViewLayoutsSettings extends UELM_CreatorSettingsView{
 	
 	
 	/**
@@ -30,4 +30,6 @@ class UniteCreatorViewLayoutsSettings extends UniteCreatorSettingsView{
 }
 
 
-new UniteCreatorViewLayoutsSettings();
+new UELM_CreatorViewLayoutsSettings();
+
+class_alias( UELM_CreatorViewLayoutsSettings::class, 'UniteCreatorViewLayoutsSettings' );

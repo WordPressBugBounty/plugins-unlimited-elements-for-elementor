@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class UnlimitedElementsDynamicTag_TimeStamp extends Tag {
+class UELM_DynamicTag_TimeStamp extends Tag {
 	
 	public function get_name() {
 		return 'uc-current-timestamp';
@@ -35,3 +35,5 @@ class UnlimitedElementsDynamicTag_TimeStamp extends Tag {
 	}
 	
 }
+
+class_alias( UELM_DynamicTag_TimeStamp::class, 'UnlimitedElementsDynamicTag_TimeStamp' );

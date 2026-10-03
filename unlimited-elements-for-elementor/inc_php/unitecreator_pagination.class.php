@@ -138,6 +138,8 @@ class UniteCreatorElementorPagination{
 
 			);
 			
+			$arrAjaxSettings = apply_filters("uelm_modify_post_grid_ajax_settings", $arrAjaxSettings, $paramName);
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 			$arrAjaxSettings = apply_filters("ue_modify_post_grid_ajax_settings", $arrAjaxSettings, $paramName);
 			
 			$arrSettings = array_merge($arrSettings, $arrAjaxSettings);

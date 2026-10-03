@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEGoogleAPISheetValues extends UEGoogleAPIModel{
+class UELM_GoogleAPISheetValues extends UELM_GoogleAPIModel{
 
 	/**
 	 * Get the values.
@@ -81,3 +82,5 @@ class UEGoogleAPISheetValues extends UEGoogleAPIModel{
 	}
 
 }
+
+class_alias( UELM_GoogleAPISheetValues::class, 'UEGoogleAPISheetValues' );

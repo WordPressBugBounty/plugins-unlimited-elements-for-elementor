@@ -1188,7 +1188,7 @@ class UniteCreatorBrowserWork extends HtmlOutputBaseUC{
 		$path = HelperUC::getPathViewObject("activation_view.class");
 		require_once $path;
 		
-		$objActivationView = new UniteCreatorActivationView();
+		$objActivationView = new UELM_CreatorActivationView();
 		$objActivationView->putHtmlPopup();
 	}
 	

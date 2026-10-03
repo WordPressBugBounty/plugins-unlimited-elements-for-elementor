@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEGoogleAPICalendarEvent extends UEGoogleAPIModel{
+class UELM_GoogleAPICalendarEvent extends UELM_GoogleAPIModel{
 
 	/**
 	 * Get the identifier.
@@ -129,3 +130,5 @@ class UEGoogleAPICalendarEvent extends UEGoogleAPIModel{
 	}
 
 }
+
+class_alias( UELM_GoogleAPICalendarEvent::class, 'UEGoogleAPICalendarEvent' );

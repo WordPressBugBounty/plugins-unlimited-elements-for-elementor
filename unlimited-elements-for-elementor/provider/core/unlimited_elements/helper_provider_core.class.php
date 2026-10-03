@@ -192,8 +192,8 @@ class HelperProviderCoreUC_EL{
 		if(class_exists($className) == true)
 			return(false);
 
-		// class_alias('UniteCreatorElementorWidget', $className);
-		$code = "class {$className} extends UniteCreatorElementorWidget{}";
+		// class_alias('UELM_CreatorElementorWidget', $className);
+		$code = "class {$className} extends UELM_CreatorElementorWidget{}";
 		// phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
 		eval($code);
 
@@ -1022,6 +1022,7 @@ class HelperProviderCoreUC_EL{
 			if(!empty($template))
 				$postType = $template->post_type;
 			
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 			$templateID = apply_filters( 'wpml_object_id', $templateID, $postType, true);
 		}
 
@@ -1178,6 +1179,7 @@ class HelperProviderCoreUC_EL{
 				$postType = $template->post_type;
 			
 			if(!empty($template))
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 				$templateID = apply_filters( 'wpml_object_id', $templateID, $postType, true);
 		}
 
@@ -1216,6 +1218,7 @@ class HelperProviderCoreUC_EL{
 		$isJetExists = UniteCreatorPluginIntegrations::isJetEngineExists();
 
 		if($isJetExists == true)
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 			do_action("the_post", $post, false);
 
 		//set the flag on dynamic ajax
@@ -1586,6 +1589,7 @@ class HelperProviderCoreUC_EL{
 		$isJetExists = UniteCreatorPluginIntegrations::isJetEngineExists();
 
 		if($isJetExists == true)
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 			do_action("the_post", $post, false);
 		
 		//set the flag on dynamic ajax
@@ -1762,6 +1766,8 @@ class HelperProviderCoreUC_EL{
 
 		self::registerUploadMimeFilters();
 		
+		do_action("uelm_after_global_init");
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		do_action("ue_after_global_init");
 
 	}

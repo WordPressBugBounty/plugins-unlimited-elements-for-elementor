@@ -9,28 +9,28 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$bottomLineClass = "";
+$uelm_bottomLineClass = "";
 
 if($view == "layout")
-	$bottomLineClass = " unite-position-right";
+	$uelm_bottomLineClass = " unite-position-right";
 
 UniteFunctionsUC::obStart();
 
 self::requireView($view);
 
-$htmlView = ob_get_contents();
+$uelm_htmlView = ob_get_contents();
 
 ob_end_clean();
 
 
-$htmlClassAdd = "";
+$uelm_htmlClassAdd = "";
 
 if(!empty($view)){
-	$htmlClassAdd = " unite-view-{$view}";
-	$bottomLineClass .= " unite-view-{$view}";
+	$uelm_htmlClassAdd = " unite-view-{$view}";
+	$uelm_bottomLineClass .= " unite-view-{$view}";
 }
 
-$showMenu = true;
+$uelm_showMenu = true;
 
 switch($view){
 	case "testaddonnew":
@@ -38,7 +38,7 @@ switch($view){
 	case GlobalsUC::VIEW_ASSETS:
 	case GlobalsUC::VIEW_EDIT_ADDON:
 	case "addondefaults":
-		$showMenu = false;
+		$uelm_showMenu = false;
 	break;
 }
 
@@ -48,33 +48,33 @@ switch($view){
 <?php 
 HelperHtmlUC::putGlobalsHtmlOutput(); 
 
-$script = 'var g_view = "' . esc_attr(self::$view) . '";';
-UniteProviderFunctionsUC::printCustomScript($script, true); 
+$uelm_script = 'var g_view = "' . esc_attr(self::$view) . '";';
+UniteProviderFunctionsUC::printCustomScript($uelm_script, true); 
 
 ?>
 
 <?php HelperHtmlUC::putInternalAdminNotices() ?>
 
-<div id="viewWrapper" class="unite-view-wrapper unite-admin unite-inputs <?php echo esc_attr($htmlClassAdd); ?>">
+<div id="viewWrapper" class="unite-view-wrapper unite-admin unite-inputs <?php echo esc_attr($uelm_htmlClassAdd); ?>">
 
 	<?php require_once(GlobalsUC::$pathTemplates . "head.php"); ?>
 
 	<div class="ue-content-wrapper">
 
 		<?php
-			if($showMenu == true)
+			if($uelm_showMenu == true)
 				require_once(GlobalsUC::$pathTemplates . "menu.php");
 		?>
 
 		<?php 
-		uelm_echo( $htmlView ); 
+		uelm_echo( $uelm_htmlView ); 
 		?>
 		<?php
 
-		$filenameProviderView = GlobalsUC::$pathProviderViews . $view . ".php";
+		$uelm_filenameProviderView = GlobalsUC::$pathProviderViews . $view . ".php";
 
-		if(file_exists($filenameProviderView))
-			require_once($filenameProviderView);
+		if(file_exists($uelm_filenameProviderView))
+			require_once($uelm_filenameProviderView);
 
 		?>
 	</div>
@@ -83,10 +83,10 @@ UniteProviderFunctionsUC::printCustomScript($script, true);
 
 <?php
 
-$filepathProviderMasterView = GlobalsUC::$pathProviderViews . "master_view.php";
+$uelm_filepathProviderMasterView = GlobalsUC::$pathProviderViews . "master_view.php";
 
-if(file_exists($filepathProviderMasterView))
-	require_once $filepathProviderMasterView;
+if(file_exists($uelm_filepathProviderMasterView))
+	require_once $uelm_filepathProviderMasterView;
 
 ?>
 
@@ -106,7 +106,7 @@ if(file_exists($filepathProviderMasterView))
 
 	<div class="unite-clear"></div> 
 
-	<div class="unite-plugin-version-line unite-admin <?php echo esc_attr($bottomLineClass)?>">
+	<div class="unite-plugin-version-line unite-admin <?php echo esc_attr($uelm_bottomLineClass)?>">
 		<?php UniteProviderFunctionsUC::putFooterTextLine() ?>
 		<?php esc_html_e("Plugin version", "unlimited-elements-for-elementor"); ?> <?php echo esc_html(UNLIMITED_ELEMENTS_VERSION); ?>
 		<?php if(defined("UNLIMITED_ELEMENTS_UPRESS_VERSION")) esc_html_e("upress", "unlimited-elements-for-elementor"); ?>

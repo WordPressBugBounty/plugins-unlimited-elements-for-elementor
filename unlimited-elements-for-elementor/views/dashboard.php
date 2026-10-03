@@ -13,61 +13,61 @@ HelperUC::addStyle("jquery.fancybox", "fancybox", "assets_libraries/fancybox3");
 HelperUC::addScript("jquery.fancybox", "fancybox", "assets_libraries/fancybox3");
 HelperUC::addStyle("unitecreator_dashboard", "unitecreator_dashboard");
 
-$isProVersion = GlobalsUC::$isProVersion;
+$uelm_isProVersion = GlobalsUC::$isProVersion;
 
 
-$showFreeVersion = UniteFunctionsUC::getGetVar("showfreeversion", "", UniteFunctionsUC::SANITIZE_TEXT_FIELD);
-$showFreeVersion = UniteFunctionsUC::strToBool($showFreeVersion);
+$uelm_showFreeVersion = UniteFunctionsUC::getGetVar("showfreeversion", "", UniteFunctionsUC::SANITIZE_TEXT_FIELD);
+$uelm_showFreeVersion = UniteFunctionsUC::strToBool($uelm_showFreeVersion);
 
-if($showFreeVersion === true)
-	$isProVersion = false;
+if($uelm_showFreeVersion === true)
+	$uelm_isProVersion = false;
 
-$api = new UniteCreatorWebAPI();
+$uelm_api = new UniteCreatorWebAPI();
 
-$blogItems = $api->getCatalog_blog();
+$uelm_blogItems = $uelm_api->getCatalog_blog();
 
 
-$imagesUrl = GlobalsUC::$urlPluginImages . "dashboard/";
+$uelm_imagesUrl = GlobalsUC::$urlPluginImages . "dashboard/";
 
-$videoItems = array(
+$uelm_videoItems = array(
 	array(
 		"url" => "https://youtu.be/SnNI9_KXY9Y?si=xz3to9IYlYeBJ8qd",
 		"title" => __("Give Your Elementor Website Superpowers with Unlimited Elements", "unlimited-elements-for-elementor"),
-		"image" => $imagesUrl . "tutorials/video-1.jpg",
+		"image" => $uelm_imagesUrl . "tutorials/video-1.jpg",
 	),
 	array(
 		"url" => "https://youtu.be/pvZ5Lvom470?si=cX2vhhgfzsjnBJd1",
 		"title" => __("Unlimited Elements Widget Creator for Elementor Page Builder", "unlimited-elements-for-elementor"),
-		"image" => $imagesUrl . "tutorials/video-2.jpg",
+		"image" => $uelm_imagesUrl . "tutorials/video-2.jpg",
 	),
 	array(
 		"url" => "https://youtu.be/ZdYCoD8_qxo?si=UalRKpw6udz9K3W0",
 		"title" => __("Remote Control Widgets to Create Advanced Interactive Layouts", "unlimited-elements-for-elementor"),
-		"image" => $imagesUrl . "tutorials/video-3.jpg",
+		"image" => $uelm_imagesUrl . "tutorials/video-3.jpg",
 	),
 );
 
 
-$urlVideoTutorials = "https://www.youtube.com/channel/UCNYLnevs1ewIxKQqPiat0xQ";
+$uelm_urlVideoTutorials = "https://www.youtube.com/channel/UCNYLnevs1ewIxKQqPiat0xQ";
 
-$version = UNLIMITED_ELEMENTS_VERSION;
+$uelm_version = UNLIMITED_ELEMENTS_VERSION;
 
 HelperHtmlUC::putHtmlAdminNotices();
 
-$isBFMode = GlobalsUnlimitedElements::$blackFridayMode && $isProVersion == false;
+$uelm_isBFMode = GlobalsUnlimitedElements::$blackFridayMode && $uelm_isProVersion == false;
 
-$showBFBanner = (GlobalsUnlimitedElements::$blackFridayMode == true);
+$uelm_showBFBanner = (GlobalsUnlimitedElements::$blackFridayMode == true);
 
-if($showBFBanner == true){
-	$urlBannerImage = GlobalsUC::$urlPluginImages."banners/ue-dashboard-bf-banner.png";	
+if($uelm_showBFBanner == true){
+	$uelm_urlBannerImage = GlobalsUC::$urlPluginImages."banners/ue-dashboard-bf-banner.png";	
 }
 
-$showSheetsPilotBanner = (defined('SHEETSPILOT_INC') == false || HelperUC::hasPermissionsFromQuery("showadminnotices"));
+$uelm_showSheetsPilotBanner = (defined('SHEETSPILOT_INC') == false || HelperUC::hasPermissionsFromQuery("showadminnotices"));
 
 
-if($showSheetsPilotBanner == true){
-	$urlSheetsPilotBanner = GlobalsUC::$urlPluginImages."banners/banner-sheetspilot.jpeg";
-	$urlSheetsPilotInstall = UniteFunctionsWPUC::getInstallPluginLink('sheetspilot');
+if($uelm_showSheetsPilotBanner == true){
+	$uelm_urlSheetsPilotBanner = GlobalsUC::$urlPluginImages."banners/banner-sheetspilot.jpeg";
+	$uelm_urlSheetsPilotInstall = UniteFunctionsWPUC::getInstallPluginLink('sheetspilot');
 }
 
 ?>
@@ -131,18 +131,18 @@ if($showSheetsPilotBanner == true){
 						<?php echo esc_html__("3 important videos to get you started with Unlimited Elements.", "unlimited-elements-for-elementor"); ?>
 					</div>
 				</div>
-				<a class="ue-content-btn ue-flex-center ue-tmore-btn-1" target="_blank" href="<?php echo esc_url($urlVideoTutorials); ?>">
+				<a class="ue-content-btn ue-flex-center ue-tmore-btn-1" target="_blank" href="<?php echo esc_url($uelm_urlVideoTutorials); ?>">
 					<?php echo esc_html__("View More", "unlimited-elements-for-elementor"); ?>
 				</a>
 			</div>
 			<div class="ue-video-wrapper">
-				<?php foreach($videoItems as $item): ?>
-					<a class="ue-video-item" href="<?php echo esc_url($item["url"]); ?>" target="_blank" data-fancybox="gallery">
+				<?php foreach($uelm_videoItems as $uelm_item): ?>
+					<a class="ue-video-item" href="<?php echo esc_url($uelm_item["url"]); ?>" target="_blank" data-fancybox="gallery">
 						<div class="ue-video ue-flex-center">
-							<img class="ue-video-bg" src="<?php echo esc_url($item["image"]); ?>?ver=<?php echo esc_attr($version)?>" alt="<?php echo esc_attr($item["title"]); ?>" />
+							<img class="ue-video-bg" src="<?php echo esc_url($uelm_item["image"]); ?>?ver=<?php echo esc_attr($uelm_version)?>" alt="<?php echo esc_attr($uelm_item["title"]); ?>" />
 							<div class="ue-video-play-btn"></div>
 						</div>
-						<h3 class="ue-video-title"><?php echo esc_html($item["title"]); ?></h3>
+						<h3 class="ue-video-title"><?php echo esc_html($uelm_item["title"]); ?></h3>
 					</a>
 				<?php endforeach; ?>
 			</div>
@@ -169,7 +169,7 @@ if($showSheetsPilotBanner == true){
 				</a>
 			</div>
 			<div class="ue-inner-section-right ue-flex-center">
-				<img class="ue-illustration" src="<?php echo esc_url($imagesUrl) . "rate.svg"; ?>" alt="" />
+				<img class="ue-illustration" src="<?php echo esc_url($uelm_imagesUrl) . "rate.svg"; ?>" alt="" />
 			</div>
 		</div>
 
@@ -191,11 +191,11 @@ if($showSheetsPilotBanner == true){
 				</a>
 			</div>
 			<div class="ue-inner-section-right ue-flex-center">
-				<img class="ue-illustration" src="<?php echo esc_url($imagesUrl) . "documentation.svg"; ?>" alt="" />
+				<img class="ue-illustration" src="<?php echo esc_url($uelm_imagesUrl) . "documentation.svg"; ?>" alt="" />
 			</div>
 		</div>
 
-		<?php if($isProVersion === false): ?>
+		<?php if($uelm_isProVersion === false): ?>
 			<div class="ue-content-card ue-full-card ue-flex-center">
 				<div class="ue-inner-section-left">
 					<div class="ue-content-icon ue-flex-center">
@@ -219,7 +219,7 @@ if($showSheetsPilotBanner == true){
 					</a>
 				</div>
 				<div class="ue-inner-section-right ue-flex-center">
-					<img class="ue-illustration" src="<?php echo esc_url($imagesUrl) . "upgrade.svg"; ?>" alt="" />
+					<img class="ue-illustration" src="<?php echo esc_url($uelm_imagesUrl) . "upgrade.svg"; ?>" alt="" />
 				</div>
 			</div>
 		<?php endif; ?>
@@ -231,15 +231,15 @@ if($showSheetsPilotBanner == true){
 	<div class="ue-sidebar">
 		<div class="ue-cta-post-wrapper">
 		
-			<?php if($showBFBanner == true):?>
+			<?php if($uelm_showBFBanner == true):?>
 			<div class="ue-content-card ue-dashboard-banner">
 				<a class="ue-dashboard-banner__link" href="<?php echo esc_url(GlobalsUC::$url_buy_platform)?>">
-					<img class="ue-dashboard-banner__image" src="<?php echo esc_url($urlBannerImage);?>" target="_blank">
+					<img class="ue-dashboard-banner__image" src="<?php echo esc_url($uelm_urlBannerImage);?>" target="_blank">
 				</a>
 			</div>
 			<?php endif?>
 	
-			<?php if($isProVersion === false): ?>
+			<?php if($uelm_isProVersion === false): ?>
 				
 				<div class="ue-content-card ue-get-pro-cta">
 					<div class="ue-cta-bg-overlay"></div>
@@ -272,14 +272,14 @@ if($showSheetsPilotBanner == true){
 				</div>
 			<?php endif; ?>
 
-			<?php if($showSheetsPilotBanner == true): ?>
+			<?php if($uelm_showSheetsPilotBanner == true): ?>
 			<div class="ue-content-card ue-dashboard-banner">
-				<a class="ue-dashboard-banner__link" href="<?php echo esc_url($urlSheetsPilotInstall); ?>">
-					<img class="ue-dashboard-banner__image" src="<?php echo esc_url($urlSheetsPilotBanner); ?>?ver=<?php echo esc_attr($version); ?>" alt="<?php echo esc_attr__("SheetsPilot", "unlimited-elements-for-elementor"); ?>">
+				<a class="ue-dashboard-banner__link" href="<?php echo esc_url($uelm_urlSheetsPilotInstall); ?>">
+					<img class="ue-dashboard-banner__image" src="<?php echo esc_url($uelm_urlSheetsPilotBanner); ?>?ver=<?php echo esc_attr($uelm_version); ?>" alt="<?php echo esc_attr__("SheetsPilot", "unlimited-elements-for-elementor"); ?>">
 				</a>
 			</div>
 			<?php endif; ?>
-			<?php if(!empty($blogItems)):?>
+			<?php if(!empty($uelm_blogItems)):?>
 
 			<div class="ue-content-card ue-blog-section">
 				<div class="ue-content-icon ue-flex-center">
@@ -292,10 +292,10 @@ if($showSheetsPilotBanner == true){
 				</div>
 				<div class="ue-post-wrapper">
 
-					<?php foreach($blogItems as $item): ?>
-						<a class="ue-post" href="<?php echo esc_url($item["link"]); ?>" target="_blank">
-							<img class="ue-post-img" src="<?php echo esc_url($item["image"]); ?>?ver=<?php echo esc_attr($version)?>" alt="<?php echo esc_attr($item["title"]); ?>" />
-							<h3 class="ue-post-title"><?php echo esc_html($item["title"]); ?></h3>
+					<?php foreach($uelm_blogItems as $uelm_item): ?>
+						<a class="ue-post" href="<?php echo esc_url($uelm_item["link"]); ?>" target="_blank">
+							<img class="ue-post-img" src="<?php echo esc_url($uelm_item["image"]); ?>?ver=<?php echo esc_attr($uelm_version)?>" alt="<?php echo esc_attr($uelm_item["title"]); ?>" />
+							<h3 class="ue-post-title"><?php echo esc_html($uelm_item["title"]); ?></h3>
 						</a>
 					<?php endforeach; ?>
 				</div>

@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEGoogleAPISpreadsheet extends UEGoogleAPIModel{
+class UELM_GoogleAPISpreadsheet extends UELM_GoogleAPIModel{
 
 	/**
 	 * Get the identifier.
@@ -17,14 +18,16 @@ class UEGoogleAPISpreadsheet extends UEGoogleAPIModel{
 	/**
 	 * Get the sheets.
 	 *
-	 * @return UEGoogleAPISheet[]
+	 * @return UELM_GoogleAPISheet[]
 	 */
 	public function getSheets(){
 
 		$sheets = $this->getAttribute("sheets");
-		$sheets = UEGoogleAPISheet::transformAll($sheets);
+		$sheets = UELM_GoogleAPISheet::transformAll($sheets);
 
 		return $sheets;
 	}
 
 }
+
+class_alias( UELM_GoogleAPISpreadsheet::class, 'UEGoogleAPISpreadsheet' );

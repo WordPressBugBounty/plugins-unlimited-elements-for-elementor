@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class UniteCreatorLayoutPreview{
+class UELM_CreatorLayoutPreview{
 	
 	protected $showHeader = false;
 	protected $showToolbar = true;
@@ -85,7 +85,9 @@ class UniteCreatorLayoutPreview{
 }
 
 
-$pathProviderLayout = GlobalsUC::$pathProvider."views/layout_preview.php";
-require_once $pathProviderLayout;
+$uelm_pathProviderLayout = GlobalsUC::$pathProvider."views/layout_preview.php";
+require_once $uelm_pathProviderLayout;
 
-new UniteCreatorLayoutPreviewProvider();
+new UELM_CreatorLayoutPreviewProvider();
+
+class_alias( UELM_CreatorLayoutPreview::class, 'UniteCreatorLayoutPreview' );

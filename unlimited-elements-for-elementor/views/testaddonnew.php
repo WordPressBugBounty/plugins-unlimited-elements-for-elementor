@@ -9,7 +9,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UniteCreatorTestAddonNewView{
+class UELM_CreatorTestAddonNewView{
 
 	/**
 	 * constructor
@@ -124,4 +124,6 @@ class UniteCreatorTestAddonNewView{
 
 }
 
-new UniteCreatorTestAddonNewView();
+new UELM_CreatorTestAddonNewView();
+
+class_alias( UELM_CreatorTestAddonNewView::class, 'UniteCreatorTestAddonNewView' );

@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 			$this->includeInstagramAPI();
 
-			$arrData = HelperInstaUC::getInstagramSavedAccessData();
+			$arrData = UELM_HelperInsta::getInstagramSavedAccessData();
 
 			return($arrData);
 		}
@@ -71,7 +71,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			if(empty($accessToken))
 				UniteFunctionsUC::throwError("Please connect instagram from general settings -> instagram");
 			
-			$api = new InstagramAPIOfficialUC();
+			$api = new UELM_InstagramAPIOfficial();
 
 			$response = $api->getItemsData($user,null,null,$maxItems);
 

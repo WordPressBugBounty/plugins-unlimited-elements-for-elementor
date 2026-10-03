@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 	HelperProviderUC::showDebugDBTables();
 
-	$admin = UniteProviderAdminUC::getInstance();
+	$uelm_admin = UniteProviderAdminUC::getInstance();
 	
-	$response = $admin->createTables();
+	$uelm_response = $uelm_admin->createTables();
 	
 	dmp("Create Tables Response:");
-	dmp($response);
+	dmp($uelm_response);

@@ -7,13 +7,13 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UELanguageAlphabets {
+class UELM_LanguageAlphabets {
 	
     private $alphabets = array();
 	
     public function __construct(){
     	
-    	$this->alphabets = UELanguageAlphabetsArray::$alphabets;
+    	$this->alphabets = UELM_LanguageAlphabetsArray::$alphabets;
     }
     
     /**
@@ -114,4 +114,6 @@ class UELanguageAlphabets {
     	
     }
     
-} 
+}
+
+class_alias( UELM_LanguageAlphabets::class, 'UELanguageAlphabets' ); 

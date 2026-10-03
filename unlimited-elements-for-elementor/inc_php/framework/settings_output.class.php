@@ -892,7 +892,7 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		$filepathPickerObject = GlobalsUC::$pathViewsObjects."mappicker_view.class.php";
 		require_once $filepathPickerObject;
 
-		$objPicker = new UniteCreatorMappickerView();
+		$objPicker = new UELM_CreatorMappickerView();
 		$objPicker->setData($value);
 
 		$strMapData = UniteFunctionsUC::jsonEncodeForHtmlData($value, "mapdata");

@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 require HelperUC::getPathViewObject("activation_view.class");
 
 
-class UnlimitedElementsLicenceView extends UniteCreatorActivationView{
+class UELM_LicenceView extends UELM_CreatorActivationView{
 	
 	/**
 	 * init by upress
@@ -278,6 +278,7 @@ class UnlimitedElementsLicenceView extends UniteCreatorActivationView{
 
 //require "licensefs.php";
 
-$objLicense = new UnlimitedElementsLicenceView();
-$objLicense->display();
+$uelm_objLicense = new UELM_LicenceView();
+$uelm_objLicense->display();
 
+class_alias( UELM_LicenceView::class, 'UnlimitedElementsLicenceView' );

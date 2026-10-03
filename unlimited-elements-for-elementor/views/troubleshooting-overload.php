@@ -18,20 +18,20 @@ you should see "test success" text at the end of this page.
 put big string, size: 
 <?php
 
-$size = 1200000;
+$uelm_size = 1200000;
 
-$strData = "this is text";
-while(strlen($strData) < $size){
-	$strData .= " this is text ";
+$uelm_strData = "this is text";
+while(strlen($uelm_strData) < $uelm_size){
+	$uelm_strData .= " this is text ";
 }
 
-echo esc_attr(strlen($strData));
+echo esc_attr(strlen($uelm_strData));
 
 ?><br><br>
 <div style="height:300px;overflow:auto;border:1px solid black;padding:5px;">
 
 <?php 
-uelm_echo( $strData );
+uelm_echo( $uelm_strData );
 ?>
 
 </div>

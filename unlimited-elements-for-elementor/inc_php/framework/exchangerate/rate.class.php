@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEExchangeRateAPIRate extends UEExchangeRateAPIModel{
+class UELM_ExchangeRateAPIRate extends UELM_ExchangeRateAPIModel{
 
 	/**
 	 * Get the identifier.
@@ -923,3 +924,5 @@ class UEExchangeRateAPIRate extends UEExchangeRateAPIModel{
 	}
 
 }
+
+class_alias( UELM_ExchangeRateAPIRate::class, 'UEExchangeRateAPIRate' );

@@ -9,7 +9,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UCFormsDebugLogView extends WP_List_Table{
+class UELM_FormsDebugLogView extends WP_List_Table{
 
 	/**
 	 * Gets a list of columns.
@@ -163,5 +163,7 @@ class UCFormsDebugLogView extends WP_List_Table{
 
 }
 
-$debugLog = new UCFormsDebugLogView();
-$debugLog->display();
+$uelm_debugLog = new UELM_FormsDebugLogView();
+$uelm_debugLog->display();
+
+class_alias( UELM_FormsDebugLogView::class, 'UCFormsDebugLogView' );

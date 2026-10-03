@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEGoogleAPIHelper{
+class UELM_GoogleAPIHelper{
 
 	const AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 
@@ -381,3 +382,5 @@ class UEGoogleAPIHelper{
 	}
 
 }
+
+class_alias( UELM_GoogleAPIHelper::class, 'UEGoogleAPIHelper' );

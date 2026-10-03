@@ -7,7 +7,7 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class InstaObjItemUC{
+class UELM_InstaObjItem{
 	
 	const TYPE_VIDEO = "video";
 	const TYPE_IMAGE = "image";
@@ -139,7 +139,7 @@ class InstaObjItemUC{
 	 */
 	public function getNumCommentsText(){
 				
-		$numComments = HelperInstaUC::convertNumberToText($this->numComments);
+		$numComments = UELM_HelperInsta::convertNumberToText($this->numComments);
 		return($numComments);
 	}
 	
@@ -149,7 +149,7 @@ class InstaObjItemUC{
 	 */
 	public function getNumLikesText(){
 		
-		$numLikes = HelperInstaUC::convertNumberToText($this->numLikes);
+		$numLikes = UELM_HelperInsta::convertNumberToText($this->numLikes);
 		return($numLikes);
 		
 	}
@@ -160,7 +160,7 @@ class InstaObjItemUC{
 	 */
 	public function getNumVideoViewsText(){
 		
-		$numViews = HelperInstaUC::convertNumberToText($this->videoViews);
+		$numViews = UELM_HelperInsta::convertNumberToText($this->videoViews);
 		
 		return($numViews);
 	}
@@ -260,7 +260,7 @@ class InstaObjItemUC{
 	 */
 	public function getTimePassedText(){
 		
-		$timeSinse = HelperInstaUC::getTimeSince($this->createdDateStamp);
+		$timeSinse = UELM_HelperInsta::getTimeSince($this->createdDateStamp);
 		
 		return($timeSinse);
 	}
@@ -330,7 +330,7 @@ class InstaObjItemUC{
 		//get all comments
 		foreach($commentsData as $comment){
 			
-			$objComment = new InstaObjCommentUC();
+			$objComment = new UELM_InstaObjComment();
 			$objComment->init($comment);
 			
 			$this->arrComments[] = $objComment;
@@ -366,7 +366,7 @@ class InstaObjItemUC{
 		
 		foreach($likesData as $likeUser){
 			
-			$user = new InstaObjUserUC();
+			$user = new UELM_InstaObjUser();
 			$user->init($likeUser);
 			
 			$this->arrLikesUsers[] = $user;
@@ -386,7 +386,7 @@ class InstaObjItemUC{
 		if(empty($user))
 			return(false);
 		
-		$this->itemUser = new InstaObjUserUC();
+		$this->itemUser = new UELM_InstaObjUser();
 		$this->itemUser->init($user);
 		
 	}
@@ -414,7 +414,7 @@ class InstaObjItemUC{
 		
 		$this->hasCaption = true;
 		
-		$this->objCaption = new InstaObjCommentUC();
+		$this->objCaption = new UELM_InstaObjComment();
 		$this->objCaption->init($caption);
 		
 		$this->captionText = $this->objCaption->text;
@@ -462,7 +462,7 @@ class InstaObjItemUC{
 		
 		//created date
 		$this->createdDateStamp = $this->getVal("created_time");
-		$this->createdDateText = HelperInstaUC::stampToDate($this->createdDateStamp);
+		$this->createdDateText = UELM_HelperInsta::stampToDate($this->createdDateStamp);
 		
 		//get type
 		$this->type = $this->getVal("type");
@@ -555,7 +555,7 @@ class InstaObjItemUC{
 		$this->createdDateStamp = UniteFunctionsUC::getVal($item, "taken_at_timestamp");
 				
 		if(!empty($this->createdDateStamp))
-			$this->createdDateText = HelperInstaUC::stampToDate($this->createdDateStamp);
+			$this->createdDateText = UELM_HelperInsta::stampToDate($this->createdDateStamp);
 		
 		$this->captionText = UniteFunctionsUC::getVal($item, "caption");
 		$this->captionText = trim($this->captionText);
@@ -601,7 +601,7 @@ class InstaObjItemUC{
 		
 		if(!empty($commentsNodes)){
 			
-			$this->objComments = new InstaObjCommentsUC();
+			$this->objComments = new UELM_InstaObjComments();
 			$this->objComments->initByData($item);
 		}
 		
@@ -657,7 +657,7 @@ class InstaObjItemUC{
 		$this->createdDateStamp = $timeStamp;
 		
 		if(!empty($this->createdDateStamp))
-			$this->createdDateText = HelperInstaUC::stampToDate($this->createdDateStamp);
+			$this->createdDateText = UELM_HelperInsta::stampToDate($this->createdDateStamp);
 		
 		$this->isInited = true;
 		
@@ -680,3 +680,5 @@ class InstaObjItemUC{
 	
 	
 }
+
+class_alias( UELM_InstaObjItem::class, 'InstaObjItemUC' );

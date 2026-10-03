@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-abstract class UEOpenWeatherAPIForecastAbstract extends UEOpenWeatherAPIModel{
+abstract class UELM_OpenWeatherAPIForecastAbstract extends UELM_OpenWeatherAPIModel{
 
 	const UNITS_STANDARD = "standard";
 	const UNITS_METRIC = "metric";
@@ -385,3 +386,5 @@ abstract class UEOpenWeatherAPIForecastAbstract extends UEOpenWeatherAPIModel{
 	}
 
 }
+
+class_alias( UELM_OpenWeatherAPIForecastAbstract::class, 'UEOpenWeatherAPIForecastAbstract' );

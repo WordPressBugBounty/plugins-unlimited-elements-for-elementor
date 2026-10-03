@@ -1,6 +1,6 @@
 <?php
 
-trait UEOpenWeatherAPIForecastHasSunTime{
+trait UELM_OpenWeatherAPIForecastHasSunTime{
 
 	/**
 	 * Get the sunrise time.

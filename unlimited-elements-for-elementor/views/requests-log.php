@@ -9,7 +9,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UCRequestsLogView extends WP_List_Table{
+class UELM_RequestsLogView extends WP_List_Table{
 
 	/**
 	 * Gets a list of columns.
@@ -146,18 +146,20 @@ class UCRequestsLogView extends WP_List_Table{
 		
 		// Get requests from changelog table
 		$changelogService = new UniteCreatorAddonChangelog();
-		$table = $changelogService->getTable();
-		
-		$sql = $wpdb->prepare(
-			"SELECT id, text, user_id, created_at
+		$table = esc_sql($changelogService->getTable());
+
+		$sql = "
+			SELECT id, text, user_id, created_at
 			FROM {$table}
 			WHERE type = %s
 			ORDER BY created_at DESC
-			LIMIT 50",
-			'request'
-		);
-		
-		$results = $wpdb->get_results($sql, ARRAY_A);
+			LIMIT 50
+		";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table name is escaped with esc_sql().
+		$sql = $wpdb->prepare($sql, "request");
+
+		$results = $wpdb->get_results($sql, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom changelog table. WordPress has no API for it.
 		
 		foreach($results as $row){
 			
@@ -233,6 +235,7 @@ class UCRequestsLogView extends WP_List_Table{
 
 }
 
-$requestLog = new UCRequestsLogView();
-$requestLog->display();
+$uelm_requestLog = new UELM_RequestsLogView();
+$uelm_requestLog->display();
 
+class_alias( UELM_RequestsLogView::class, 'UCRequestsLogView' );

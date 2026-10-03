@@ -70,7 +70,7 @@ class UnlimitedElementsPluginUC extends UniteCreatorPluginBase{
 		
 		$mainFilepath = GlobalsUC::$pathPlugin."unlimited_elements.php";
 						
-		new UniteProviderCoreFrontUC_Elementor($mainFilepath);
+		new UELM_ProviderCoreFrontUC_Elementor($mainFilepath);
 		
 	}
 	

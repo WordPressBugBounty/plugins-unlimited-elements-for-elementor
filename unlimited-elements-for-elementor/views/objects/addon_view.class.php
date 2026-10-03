@@ -14,7 +14,7 @@ if(GlobalsUC::$isProVersion){
 	require_once GlobalsUC::$pathPro."childparams_pro.class.php";
 }
 
-class UniteCreatorAddonView{
+class UELM_CreatorAddonView{
 
 	protected $objAddon;
 	protected $settingsItemOutput, $settingsJSOutput, $objAddonType, $addonType;
@@ -47,9 +47,9 @@ class UniteCreatorAddonView{
 	public function __construct(){
 
 		if(GlobalsUC::$isProVersion)
-			$this->objChildParams = new UniteCreatorChildParamsPro();
+			$this->objChildParams = new UELM_CreatorChildParamsPro();
 		else
-			$this->objChildParams = new UniteCreatorAddonViewChildParams();
+			$this->objChildParams = new UELM_CreatorAddonViewChildParams();
 
 	}
 
@@ -335,6 +335,8 @@ class UniteCreatorAddonView{
 		$filepathAddonSettings = GlobalsUC::$pathSettings."addon_fields.php";
 
 		require $filepathAddonSettings;
+
+		$generalSettings = $uelm_generalSettings;
 
 		if($this->isSVG)
 			$generalSettings = $this->modifyGeneralSettings_SVG($generalSettings);
@@ -2204,3 +2206,5 @@ class UniteCreatorAddonView{
 
 
 }
+
+class_alias( UELM_CreatorAddonView::class, 'UniteCreatorAddonView' );

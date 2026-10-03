@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$layoutType = GlobalsUC::ADDON_TYPE_LAYOUT_GENERAL;
+$uelm_layoutType = GlobalsUC::ADDON_TYPE_LAYOUT_GENERAL;
 
 require "layouts.php";

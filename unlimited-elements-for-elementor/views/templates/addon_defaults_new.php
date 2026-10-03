@@ -9,15 +9,15 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$addonTitle = $addon->getTitle();
-$addonEditUrl = HelperUC::getViewUrl_EditAddon($addon->getId());
-$addonsListUrl = HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_ADDONS_ELEMENTOR);
+$uelm_addonTitle = $addon->getTitle();
+$uelm_addonEditUrl = HelperUC::getViewUrl_EditAddon($addon->getId());
+$uelm_addonsListUrl = HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_ADDONS_ELEMENTOR);
 
 ?>
 
 <div id="uc_addondefaults_wrapper" class="uc-addondefaults-wrapper">
 
-	<h1><?php esc_html_e("Widget Defaults", "unlimited-elements-for-elementor"); ?> - <?php echo esc_html($addonTitle); ?></h1>
+	<h1><?php esc_html_e("Widget Defaults", "unlimited-elements-for-elementor"); ?> - <?php echo esc_html($uelm_addonTitle); ?></h1>
 
 	<div class="uc-preview-addon-actions">
 		<div class="uc-preview-addon-actions-primary">
@@ -33,7 +33,7 @@ $addonsListUrl = HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_ADDONS_ELEM
 		<div class="uc-preview-addon-actions-secondary">
 		
 			<?php if(GlobalsUnlimitedElements::$enableEditWidget == true):?>
-			<a class="unite-button-secondary" href="<?php echo esc_url($addonEditUrl); ?>">
+			<a class="unite-button-secondary" href="<?php echo esc_url($uelm_addonEditUrl); ?>">
 				
 					<?php if(GlobalsUnlimitedElements::$isGutenbergOnly == true):?>
 					<?php esc_html_e("Edit Block", "unlimited-elements-for-elementor"); ?>
@@ -44,7 +44,7 @@ $addonsListUrl = HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_ADDONS_ELEM
 			</a>
 			<?php endif?>
 			
-			<a class="unite-button-secondary" href="<?php echo esc_url($addonsListUrl); ?>">
+			<a class="unite-button-secondary" href="<?php echo esc_url($uelm_addonsListUrl); ?>">
 				<?php if(GlobalsUnlimitedElements::$isGutenbergOnly == true):?>
 				<?php esc_html_e("Back to Blocks", "unlimited-elements-for-elementor"); ?>
 				<?php else:?>
@@ -61,9 +61,9 @@ $addonsListUrl = HelperUC::getViewUrl(GlobalsUnlimitedElements::VIEW_ADDONS_ELEM
 </div>
 <?php
 
-$script = 'jQuery(document).ready(function () {
+$uelm_script = 'jQuery(document).ready(function () {
 		var objView = new UniteCreatorAddonDefaultsAdmin();
 		objView.init();
 	});';
 
-UniteProviderFunctionsUC::printCustomScript($script, true); 
+UniteProviderFunctionsUC::printCustomScript($uelm_script, true); 

@@ -23,7 +23,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
  * Keep all logic self-contained in this view file.
  */
 
-class UETroubleshootingShowObjectsUC{
+class UELM_TroubleshootingShowObjects{
 
 	const QUERY_OBJECT_TYPE = "ue_object_type";
 	const QUERY_IDENTIFIER = "ue_object_identifier";
@@ -45,8 +45,8 @@ class UETroubleshootingShowObjectsUC{
 
 	private function readRequest(){
 
-		$type = isset($_REQUEST[self::QUERY_OBJECT_TYPE]) ? sanitize_key(wp_unslash($_REQUEST[self::QUERY_OBJECT_TYPE])) : "";
-		$identifier = isset($_REQUEST[self::QUERY_IDENTIFIER]) ? sanitize_text_field(wp_unslash($_REQUEST[self::QUERY_IDENTIFIER])) : "";
+		$type = isset($_REQUEST[self::QUERY_OBJECT_TYPE]) ? sanitize_key(wp_unslash($_REQUEST[self::QUERY_OBJECT_TYPE])) : ""; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is verified in renderResult() before these values are used to load an object.
+		$identifier = isset($_REQUEST[self::QUERY_IDENTIFIER]) ? sanitize_text_field(wp_unslash($_REQUEST[self::QUERY_IDENTIFIER])) : ""; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is verified in renderResult() before these values are used to load an object.
 
 		if(in_array($type, array("post","term","user"), true))
 			$this->objectType = $type;
@@ -77,7 +77,7 @@ class UETroubleshootingShowObjectsUC{
 	private function renderForm(){
 
 		$nonce = wp_create_nonce("ue_troubleshooting_showobjects");
-		$pageParam = isset($_GET["page"]) ? sanitize_key(wp_unslash($_GET["page"])) : "unlimitedelements";
+		$pageParam = isset($_GET["page"]) ? sanitize_key(wp_unslash($_GET["page"])) : "unlimitedelements"; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen page query arg, copied into the form.
 		$clearUrl = add_query_arg(array(
 			"page" => $pageParam,
 			"view" => "troubleshooting-showobjects",
@@ -325,6 +325,7 @@ class UETroubleshootingShowObjectsUC{
 	}
 }
 
-$page = new UETroubleshootingShowObjectsUC();
+$page = new UELM_TroubleshootingShowObjects();
 $page->render();
+class_alias( UELM_TroubleshootingShowObjects::class, 'UETroubleshootingShowObjectsUC' );
 ?>

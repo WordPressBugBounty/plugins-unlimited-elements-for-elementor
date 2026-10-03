@@ -13,23 +13,23 @@ if($this->showHeader)
 else
 	require HelperUC::getPathTemplate("header_missing");
 
-$slot1AddHtml = "";
+$uelm_slot1AddHtml = "";
 if($this->isTestData1 == false)
-	$slot1AddHtml = "style='display:none'";
+	$uelm_slot1AddHtml = "style='display:none'";
 
 
-$styleShow = "";
-$styleHide = "style='display:none'";
+$uelm_styleShow = "";
+$uelm_styleHide = "style='display:none'";
 
-$urlBack = HelperUC::getViewUrl_Addons($addonType);
+$uelm_urlBack = HelperUC::getViewUrl_Addons($addonType);
 if(!empty($objAddonType->addonView_urlBack))
-	$urlBack = $objAddonType->addonView_urlBack;
+	$uelm_urlBack = $objAddonType->addonView_urlBack;
 
-	$textEditThis = esc_html__("Edit This ", "unlimited-elements-for-elementor"). $this->textSingle;
+	$uelm_textEditThis = esc_html__("Edit This ", "unlimited-elements-for-elementor"). $this->textSingle;
 
-	$textBackTo = esc_html__("Back To ", "unlimited-elements-for-elementor"). $this->textPlural .esc_html__(" List", "unlimited-elements-for-elementor");
+	$uelm_textBackTo = esc_html__("Back To ", "unlimited-elements-for-elementor"). $this->textPlural .esc_html__(" List", "unlimited-elements-for-elementor");
 
-	$urlTestAddonNew = HelperUC::getViewUrl("testaddon", "id={$addonID}");
+	$uelm_urlTestAddonNew = HelperUC::getViewUrl("testaddon", "id={$addonID}");
 
 ?>
 
@@ -39,21 +39,21 @@ if(!empty($objAddonType->addonView_urlBack))
 
 <div class="uc-testaddon-panel">
 
-		<a href="<?php echo esc_url($urlEditAddon)?>" class="unite-button-secondary" ><?php echo esc_attr($textEditThis)?></a>
+		<a href="<?php echo esc_url($urlEditAddon)?>" class="unite-button-secondary" ><?php echo esc_attr($uelm_textEditThis)?></a>
 
-		<a class="unite-button-secondary uc-button-cat-sap" href="<?php echo esc_url($urlBack)?>"><?php echo esc_html($textBackTo);?></a>
+		<a class="unite-button-secondary uc-button-cat-sap" href="<?php echo esc_url($uelm_urlBack)?>"><?php echo esc_html($uelm_textBackTo);?></a>
 
 		<a id="uc_button_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 
-				uelm_echo( $isPreviewMode?$styleHide:$styleShow ); ?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>
+				uelm_echo( $isPreviewMode?$uelm_styleHide:$uelm_styleShow ); ?>><?php esc_html_e("To Preview", "unlimited-elements-for-elementor")?></a>
 		<a id="uc_button_close_preview" href="javascript:void(0)" class="unite-button-secondary" <?php 
-				uelm_echo( $isPreviewMode?$styleShow:$styleHide ); ?>><?php esc_html_e("Hide Preview", "unlimited-elements-for-elementor")?></a>
+				uelm_echo( $isPreviewMode?$uelm_styleShow:$uelm_styleHide ); ?>><?php esc_html_e("Hide Preview", "unlimited-elements-for-elementor")?></a>
 
 		<a id="uc_button_preview_tab" href="javascript:void(0)" class="unite-button-secondary uc-button-cat-sap"><?php esc_html_e("Preview New Tab", "unlimited-elements-for-elementor")?></a>
 
-		<a id="uc_button_testaddon_new" href="<?php echo esc_url($urlTestAddonNew); ?>" class="unite-button-secondary uc-button-cat-sap"><?php esc_html_e("Test Widget New", "unlimited-elements-for-elementor")?></a>
+		<a id="uc_button_testaddon_new" href="<?php echo esc_url($uelm_urlTestAddonNew); ?>" class="unite-button-secondary uc-button-cat-sap"><?php esc_html_e("Test Widget New", "unlimited-elements-for-elementor")?></a>
 
 		<span id="uc_testaddon_slot1" class="uc-testaddon-slot" <?php 
-				uelm_echo( $slot1AddHtml ); ?>>
+				uelm_echo( $uelm_slot1AddHtml ); ?>>
 			<a id="uc_testaddon_button_restore" href="javascript:void(0)" class="unite-button-secondary"><?php esc_html_e("Restore Data", "unlimited-elements-for-elementor")?></a>
 			<span id="uc_testaddon_loader_restore" class="loader-text" style="display:none"><?php esc_html_e("loading...", "unlimited-elements-for-elementor")?></span>
 			<a id="uc_testaddon_button_delete" href="javascript:void(0)" class="unite-button-secondary"><?php esc_html_e("Delete Data", "unlimited-elements-for-elementor")?></a>
@@ -87,10 +87,10 @@ if(!empty($objAddonType->addonView_urlBack))
 
 <?php
 
-$script = 'jQuery(document).ready(function(){
+$uelm_script = 'jQuery(document).ready(function(){
 		var objTestAddonView = new UniteCreatorTestAddon();
 		objTestAddonView.init();
 		' . ($isPreviewMode == true ? 'jQuery("#uc_button_preview").trigger("click");' : '') . '
 	});';
 
-UniteProviderFunctionsUC::printCustomScript($script, true); 
+UniteProviderFunctionsUC::printCustomScript($uelm_script, true); 

@@ -1,9 +1,10 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * @link https://developers.google.com/maps/documentation/places/web-service/overview
  */
-class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
+class UELM_GoogleAPIPlacesService extends UELM_GoogleAPIClient{
 	
 	private $isSerp = false;
 
@@ -20,7 +21,7 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 	 * @param string $placeId
 	 * @param array $params
 	 *
-	 * @return UEGoogleAPIPlace
+	 * @return UELM_GoogleAPIPlace
 	 */
 	public function getDetails($placeId, $params = array(),$showDebug = false){
 		
@@ -63,7 +64,7 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 				HelperHtmlUC::putHtmlDataDebugBox_end();
 			}
 
-			return UEGoogleAPIPlace::transformNew($response);
+			return UELM_GoogleAPIPlace::transformNew($response);
 		}
 
 		$params["place_id"] = $placeId;
@@ -94,7 +95,7 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 			HelperHtmlUC::putHtmlDataDebugBox_end();
 		}
 
-		return UEGoogleAPIPlace::transform($response["result"]);
+		return UELM_GoogleAPIPlace::transform($response["result"]);
 	}
 	
 
@@ -241,7 +242,7 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 		if($showDebug == true)
 			HelperHtmlUC::putHtmlDataDebugBox_end();
 				
-		$place = UEGoogleAPIPlace::transform($data);		
+		$place = UELM_GoogleAPIPlace::transform($data);		
 		
 		return($place);
 	}
@@ -362,7 +363,7 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 			"reviews" => $this->getDemoReviews(),
 		);
 
-		$place = UEGoogleAPIPlace::transform($data);
+		$place = UELM_GoogleAPIPlace::transform($data);
 
 		return($place);
 	}
@@ -704,3 +705,5 @@ class UEGoogleAPIPlacesService extends UEGoogleAPIClient{
 	}
 
 }
+
+class_alias( UELM_GoogleAPIPlacesService::class, 'UEGoogleAPIPlacesService' );

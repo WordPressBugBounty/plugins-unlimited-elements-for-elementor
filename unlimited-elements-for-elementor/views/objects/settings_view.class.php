@@ -7,7 +7,7 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UniteCreatorSettingsView{
+class UELM_CreatorSettingsView{
 	
 	const SETTINGS_KEY_GENERAL_SETTINGS = "general_settings";
 	
@@ -164,3 +164,5 @@ class UniteCreatorSettingsView{
 	
 	
 }
+
+class_alias( UELM_CreatorSettingsView::class, 'UniteCreatorSettingsView' );

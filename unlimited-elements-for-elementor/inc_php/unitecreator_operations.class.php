@@ -197,7 +197,7 @@ class UCOperations extends UniteElementsBaseUC{
 			$objServices = new UniteServicesUC();
 			$objServices->includeInstagramAPI();
 
-			$isRenewed = HelperInstaUC::checkRenewAccessToken_onceInAWhile();
+			$isRenewed = UELM_HelperInsta::checkRenewAccessToken_onceInAWhile();
 		}catch(Exception $e){
 		}
 	}
@@ -350,7 +350,7 @@ class UCOperations extends UniteElementsBaseUC{
 	public function getAddonChangelogFromData($data){
 
 		require_once GlobalsUC::$pathViewsObjects . "addon_view.class.php";
-		$objAddonView = new UniteCreatorAddonView();
+		$objAddonView = new UELM_CreatorAddonView();
 
 		$response = $objAddonView->getChangelogContents($data);
 
@@ -363,7 +363,7 @@ class UCOperations extends UniteElementsBaseUC{
 	public function getAddonRevisionsFromData($data){
 
 		require_once GlobalsUC::$pathViewsObjects . "addon_view.class.php";
-		$objAddonView = new UniteCreatorAddonView();
+		$objAddonView = new UELM_CreatorAddonView();
 
 		$response = $objAddonView->getRevisionsContents($data);
 
@@ -376,7 +376,7 @@ class UCOperations extends UniteElementsBaseUC{
 	public function getAddonBulkDialogFromData($data){
 
 		require_once GlobalsUC::$pathViewsObjects . "addon_view.class.php";
-		$objAddonView = new UniteCreatorAddonView();
+		$objAddonView = new UELM_CreatorAddonView();
 
 		$response = $objAddonView->getBulkDialogContents($data);
 
@@ -750,7 +750,7 @@ class UCOperations extends UniteElementsBaseUC{
 		}catch(Exception $e){
 			
 			if($operateError == true)
-				throw($e);
+				throw $e;
 		}
 
 		return null;
@@ -855,7 +855,7 @@ class UCOperations extends UniteElementsBaseUC{
 		require_once GlobalsUC::$pathViewsObjects . "addon_view.class.php";
 		require_once GlobalsUC::$pathProvider . "views/addon.php";
 
-		$objAddonView = new UniteCreatorAddonViewProvider();
+		$objAddonView = new UELM_CreatorAddonViewProvider();
 
 		$arrPostAdditions = $this->getPostAttributesFromData_getPostAdditions($data);
 

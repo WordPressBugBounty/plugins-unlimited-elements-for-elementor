@@ -41,7 +41,7 @@ class UniteCreatorActions{
 
 		$data = UniteFunctionsUC::getPostGetVariable("data", "", UniteFunctionsUC::SANITIZE_NOTHING);
 		if(empty($data))
-			$data = $_REQUEST;
+			$data = $_REQUEST; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin ajax verifies the nonce in onAjaxAction() before this data is used. The front handler does not use it.
 
 		if(is_string($data)){
 			$arrData = json_decode($data,true);
@@ -556,6 +556,8 @@ class UniteCreatorActions{
 
 					$operations->checkInstagramRenewToken();
 
+					do_action("uelm_on_check_catalog_ajax_action");
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 					do_action("ue_on_check_catalog_ajax_action");
 
 					HelperUC::ajaxResponseData($response);
@@ -691,7 +693,7 @@ class UniteCreatorActions{
 					$objServices = new UniteServicesUC();
 					$objServices->includeInstagramAPI();
 
-					HelperInstaUC::saveInstagramConnectDataAjax($data);
+					UELM_HelperInsta::saveInstagramConnectDataAjax($data);
 				break;
 				case "renew_instagram_access_token":
 
@@ -700,8 +702,8 @@ class UniteCreatorActions{
 					$objServices = new UniteServicesUC();
 					$objServices->includeInstagramAPI();
 
-					HelperInstaUC::renewAccessToken();
-					HelperInstaUC::redirectToGeneralSettings();
+					UELM_HelperInsta::renewAccessToken();
+					UELM_HelperInsta::redirectToGeneralSettings();
 				break;
 				case "save_google_connect_data":
 					
@@ -717,13 +719,13 @@ class UniteCreatorActions{
 						if(empty($error) === false)
 							UniteFunctionsUC::throwError($error);
 
-						UEGoogleAPIHelper::saveCredentials($data);
+						UELM_GoogleAPIHelper::saveCredentials($data);
 						
 					}catch(Exception $exception){
 						$params = array("google_connect_error" => $exception->getMessage());
 					}
 
-					UEGoogleAPIHelper::redirectToSettings($params);
+					UELM_GoogleAPIHelper::redirectToSettings($params);
 				break;
 				case "remove_google_connect_data":
 					
@@ -739,12 +741,12 @@ class UniteCreatorActions{
 						if(empty($error) === false)
 							UniteFunctionsUC::throwError($error);
 
-						UEGoogleAPIHelper::removeCredentials();
+						UELM_GoogleAPIHelper::removeCredentials();
 					}catch(Exception $exception){
 						$params = array("google_connect_error" => $exception->getMessage());
 					}
 
-					UEGoogleAPIHelper::redirectToSettings($params);
+					UELM_GoogleAPIHelper::redirectToSettings($params);
 				break;
 				case "dismiss_notice":
 

@@ -452,6 +452,8 @@ class UniteCreatorOutputWork extends HtmlOutputBaseUC{
 				case "css":
 					$cssID = "{$handle}-css";
 
+					$isDelayedScript = apply_filters("uelm_is_style_delayed", $cssID);
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 					$isDelayedScript = apply_filters("unlimited_element_is_style_delayed", $cssID);
 
 					if($isDelayedScript === true){
@@ -3380,6 +3382,8 @@ $css
 
 		//add custom templates
 		$arrCustomTemplates = array();
+		$arrCustomTemplates = apply_filters("uelm_get_twig_templates", $arrCustomTemplates);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		$arrCustomTemplates = apply_filters("ue_get_twig_templates", $arrCustomTemplates);
 
 		if(!empty($arrCustomTemplates)){

@@ -1,10 +1,11 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Class WPML_Elementor_Price_List
  */
-class UNITE_CREATOR_WPML_Translation_Module extends WPML_Elementor_Module_With_Items{
-//class UNITE_CREATOR_WPML_Translation_Module{
+class UELM_UNITE_CREATOR_WPML_Translation_Module extends WPML_Elementor_Module_With_Items{
+//class UELM_UNITE_CREATOR_WPML_Translation_Module{
 	
 	private $ucIsInited = false;
 	private $ucData = array();
@@ -129,3 +130,5 @@ class UNITE_CREATOR_WPML_Translation_Module extends WPML_Elementor_Module_With_I
 	}
 	
 }
+
+class_alias( UELM_UNITE_CREATOR_WPML_Translation_Module::class, 'UNITE_CREATOR_WPML_Translation_Module' );

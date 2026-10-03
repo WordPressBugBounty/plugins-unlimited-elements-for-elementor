@@ -9,7 +9,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UCFormEntriesView extends WP_List_Table{
+class UELM_FormEntriesView extends WP_List_Table{
 
 	const ACTION_VIEW = "view";
 	const ACTION_READ = "read";
@@ -47,7 +47,7 @@ class UCFormEntriesView extends WP_List_Table{
 	 */
 	public function __construct($args = array()){
 
-		$this->service = new UCFormEntryService();
+		$this->service = new UELM_FormEntryService();
 
 		parent::__construct($args);
 	}
@@ -102,10 +102,10 @@ class UCFormEntriesView extends WP_List_Table{
 			}
 		}
 
-		$containedQueryArgs = array_intersect($generalQueryArgs, array_keys($_REQUEST));
+		$containedQueryArgs = array_intersect($generalQueryArgs, array_keys($_REQUEST)); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only the names of admin redirect query args are read, so they can be removed from the URL.
 
-		if(empty($containedQueryArgs) === false){
-			$url = wp_unslash($_SERVER["REQUEST_URI"]);
+		if(empty($containedQueryArgs) === false && isset($_SERVER["REQUEST_URI"])){
+			$url = esc_url_raw(wp_unslash($_SERVER["REQUEST_URI"]));
 			$url = remove_query_arg(array_merge($generalQueryArgs, $actionQueryArgs), $url);
 
 			wp_safe_redirect($url);
@@ -120,7 +120,7 @@ class UCFormEntriesView extends WP_List_Table{
 	 */
 	public function current_action(){
 
-		if(isset($_REQUEST[self::ACTION_EXPORT]))
+		if(isset($_REQUEST[self::ACTION_EXPORT])) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Detects the list-table export button. The value is not used.
 			return self::ACTION_EXPORT;
 
 		return parent::current_action();
@@ -560,8 +560,7 @@ class UCFormEntriesView extends WP_List_Table{
 			ORDER BY {$this->getOrderBy()}
 		";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$ids = $wpdb->get_col($sql);
+		$ids = $wpdb->get_col($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom form-entry table. WHERE and ORDER BY are built in this class. WordPress has no API for this table.
 		$entries = $this->service->findEntry($ids); 
 
 		$entryHeaders = array(
@@ -615,8 +614,7 @@ class UCFormEntriesView extends WP_List_Table{
 			FROM $table
 			WHERE $where
 		";
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$total = $wpdb->get_var($sql);
+		$total = $wpdb->get_var($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom form-entry table. WHERE and ORDER BY are built in this class. WordPress has no API for this table.
 
 		$sql = "
 			SELECT id
@@ -627,8 +625,7 @@ class UCFormEntriesView extends WP_List_Table{
 			OFFSET {$this->getOffset()}
 		";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$ids = $wpdb->get_col($sql);
+		$ids = $wpdb->get_col($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom form-entry table. WHERE and ORDER BY are built in this class. WordPress has no API for this table.
 		$items = $this->service->findEntry($ids);
 
 		$data = array(
@@ -655,8 +652,7 @@ class UCFormEntriesView extends WP_List_Table{
 			ORDER BY form_name
 		";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$results = $wpdb->get_results($sql);
+		$results = $wpdb->get_results($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom form-entry table. WHERE and ORDER BY are built in this class. WordPress has no API for this table.
 		$items = array();
 
 		foreach($results as $result){
@@ -681,8 +677,7 @@ class UCFormEntriesView extends WP_List_Table{
 			GROUP BY post_title
 			ORDER BY post_title
 		";
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$results = $wpdb->get_results($sql);
+		$results = $wpdb->get_results($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom form-entry table. WHERE and ORDER BY are built in this class. WordPress has no API for this table.
 		$items = array();
 
 		foreach($results as $result){
@@ -755,12 +750,12 @@ class UCFormEntriesView extends WP_List_Table{
 	private function getActionLink($action, $id, $label){
 
 		$url = array();
-		$url["page"] = wp_unslash($_REQUEST["page"]);
+		$url["page"] = isset($_REQUEST["page"]) ? sanitize_key(wp_unslash($_REQUEST["page"])) : ""; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen page query arg, copied into the action link.
 		$url["action"] = $action;
 		$url[self::FILTER_ID] = $id;
 
-		if(empty($_REQUEST["view"]) === false)
-			$url["view"] = wp_unslash($_REQUEST["view"]);
+		if(empty($_REQUEST["view"]) === false) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen view query arg, copied into the action link.
+			$url["view"] = sanitize_key(wp_unslash($_REQUEST["view"])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen view query arg, copied into the action link.
 
 		if($action !== self::ACTION_VIEW)
 			$url["ucwindow"] = "blank";
@@ -852,8 +847,7 @@ class UCFormEntriesView extends WP_List_Table{
 			WHERE {$this->getWhere($filters)}
 		";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$results = $wpdb->get_row($sql);
+		$results = $wpdb->get_row($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom form-entry table. WHERE and ORDER BY are built in this class. WordPress has no API for this table.
 		$counts = array();
 
 		foreach($results as $status => $count){
@@ -881,7 +875,7 @@ class UCFormEntriesView extends WP_List_Table{
 		if(empty($id) === false){
 			$ids = is_array($id) ? $id : array($id);
 			$placeholders = UniteFunctionsWPUC::getDBPlaceholders($ids, "%d");
-			$where .= $wpdb->prepare(" AND id IN($placeholders)", $ids);
+			$where .= $wpdb->prepare(" AND id IN($placeholders)", $ids); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- $placeholders is only %d tokens from getDBPlaceholders(). $ids are the replacements.
 		}
 
 		$status = UniteFunctionsUC::getVal($filters, self::FILTER_STATUS, null);
@@ -893,8 +887,10 @@ class UCFormEntriesView extends WP_List_Table{
 
 		if(empty($search) === false){
 			$search = "%{$wpdb->esc_like($search)}%";
-			$fieldsTable = $this->service->getFieldsTable();
+			$fieldsTable = esc_sql($this->service->getFieldsTable());
+			$entriesTable = esc_sql($this->service->getTable());
 
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are escaped with esc_sql(). Search text uses %s placeholders.
 			$where .= $wpdb->prepare(
 				" AND (
 						form_name LIKE %s
@@ -902,12 +898,13 @@ class UCFormEntriesView extends WP_List_Table{
 						OR (
 							SELECT GROUP_CONCAT($fieldsTable.value)
 							FROM $fieldsTable
-							WHERE $fieldsTable.entry_id = {$this->service->getTable()}.id
+							WHERE $fieldsTable.entry_id = {$entriesTable}.id
 							GROUP BY $fieldsTable.entry_id
 						) LIKE %s
 					)",
 				array($search, $search, $search)
 			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		}
 
 		$form = UniteFunctionsUC::getVal($filters, self::FILTER_FORM, null);
@@ -1048,19 +1045,21 @@ class UCFormEntriesView extends WP_List_Table{
 	 */
 	private function displayHiddenFields(){
 
-		echo '<input type="hidden" name="page" value="' . esc_attr(wp_unslash($_REQUEST["page"])) . '" />';
+		$page = isset($_REQUEST["page"]) ? sanitize_key(wp_unslash($_REQUEST["page"])) : ""; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen page query arg, copied into a hidden field.
 
-		if(empty($_REQUEST["view"]) === false)
-			echo '<input type="hidden" name="view" value="' . esc_attr(wp_unslash($_REQUEST["view"])) . '" />';
+		echo '<input type="hidden" name="page" value="' . esc_attr($page) . '" />';
 
-		if(empty($_REQUEST["orderby"]) === false)
-			echo '<input type="hidden" name="orderby" value="' . esc_attr(wp_unslash($_REQUEST["orderby"])) . '" />';
+		if(empty($_REQUEST["view"]) === false) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen view query arg, copied into a hidden field.
+			echo '<input type="hidden" name="view" value="' . esc_attr(sanitize_key(wp_unslash($_REQUEST["view"]))) . '" />'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen view query arg, copied into a hidden field.
 
-		if(empty($_REQUEST["order"]) === false)
-			echo '<input type="hidden" name="order" value="' . esc_attr(wp_unslash($_REQUEST["order"])) . '" />';
+		if(empty($_REQUEST["orderby"]) === false) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen orderby query arg, copied into a hidden field.
+			echo '<input type="hidden" name="orderby" value="' . esc_attr(sanitize_key(wp_unslash($_REQUEST["orderby"]))) . '" />'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen orderby query arg, copied into a hidden field.
 
-		if(empty($_REQUEST["status"]) === false)
-			echo '<input type="hidden" name="status" value="' . esc_attr(wp_unslash($_REQUEST["status"])) . '" />';
+		if(empty($_REQUEST["order"]) === false) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen order query arg, copied into a hidden field.
+			echo '<input type="hidden" name="order" value="' . esc_attr(sanitize_key(wp_unslash($_REQUEST["order"]))) . '" />'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen order query arg, copied into a hidden field.
+
+		if(empty($_REQUEST["status"]) === false) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen status query arg, copied into a hidden field.
+			echo '<input type="hidden" name="status" value="' . esc_attr(sanitize_key(wp_unslash($_REQUEST["status"]))) . '" />'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen status query arg, copied into a hidden field.
 
 		echo '<input type="hidden" name="ucwindow" value="blank" />';
 	}
@@ -1090,3 +1089,5 @@ class UCFormEntriesView extends WP_List_Table{
 	}
 
 }
+
+class_alias( UELM_FormEntriesView::class, 'UCFormEntriesView' );

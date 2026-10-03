@@ -9,7 +9,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UCAdminNoticeRating extends UCAdminNoticeAbstract{
+class UELM_AdminNoticeRating extends UCAdminNoticeAbstract{
 
 	/**
 	 * get the notice identifier
@@ -60,3 +60,5 @@ class UCAdminNoticeRating extends UCAdminNoticeAbstract{
 	}
 
 }
+
+class_alias( UELM_AdminNoticeRating::class, 'UCAdminNoticeRating' );

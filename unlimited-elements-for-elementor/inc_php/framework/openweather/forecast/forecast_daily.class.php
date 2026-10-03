@@ -1,8 +1,9 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEOpenWeatherAPIForecastDaily extends UEOpenWeatherAPIForecastAbstract{
+class UELM_OpenWeatherAPIForecastDaily extends UELM_OpenWeatherAPIForecastAbstract{
 
-	use UEOpenWeatherAPIForecastHasSunTime;
+	use UELM_OpenWeatherAPIForecastHasSunTime;
 
 	/**
 	 * Get the minimum temperature.
@@ -157,3 +158,5 @@ class UEOpenWeatherAPIForecastDaily extends UEOpenWeatherAPIForecastAbstract{
 	}
 
 }
+
+class_alias( UELM_OpenWeatherAPIForecastDaily::class, 'UEOpenWeatherAPIForecastDaily' );

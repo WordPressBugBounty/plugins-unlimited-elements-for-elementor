@@ -1,9 +1,10 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * https://developers.google.com/calendar/api/v3/reference
  */
-class UEGoogleAPICalendarService extends UEGoogleAPIClient{
+class UELM_GoogleAPICalendarService extends UELM_GoogleAPIClient{
 
 	
 	/**
@@ -108,7 +109,7 @@ class UEGoogleAPICalendarService extends UEGoogleAPIClient{
 	 * @param string $calendarId
 	 * @param array $params
 	 *
-	 * @return UEGoogleAPICalendarEvent[]
+	 * @return UELM_GoogleAPICalendarEvent[]
 	 */
 	public function getEvents($calendarId, $params = array(),$timezone = null){
 	
@@ -123,7 +124,7 @@ class UEGoogleAPICalendarService extends UEGoogleAPIClient{
 
 		$response = $this->convertTimezones($response, $timezone);
 		
-		$response = UEGoogleAPICalendarEvent::transformAll($response["items"]);
+		$response = UELM_GoogleAPICalendarEvent::transformAll($response["items"]);
 				
 		return $response;
 	}
@@ -140,3 +141,5 @@ class UEGoogleAPICalendarService extends UEGoogleAPIClient{
 	}
 
 }
+
+class_alias( UELM_GoogleAPICalendarService::class, 'UEGoogleAPICalendarService' );

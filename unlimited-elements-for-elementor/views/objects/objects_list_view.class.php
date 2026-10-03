@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class UniteCreatorObjectsListView extends UniteElementsBaseUC{
+class UELM_CreatorObjectsListView extends UniteElementsBaseUC{
 	
 	protected $objectClass;
 	protected $dbTable;
@@ -340,3 +340,4 @@ class UniteCreatorObjectsListView extends UniteElementsBaseUC{
 	
 }
 
+class_alias( UELM_CreatorObjectsListView::class, 'UniteCreatorObjectsListView' );

@@ -17,11 +17,11 @@ $action = UniteFunctionsUC::getGetVar("action", null, UniteFunctionsUC::SANITIZE
 if(empty($id) === false && $action === "view"){
 	require HelperUC::getPathViewObject("form_entry_view.class");
 
-	$formEntry = new UCFormEntryView($id);
-	$formEntry->display();
+	$uelm_formEntry = new UELM_FormEntryView($id);
+	$uelm_formEntry->display();
 }else{
 	require HelperUC::getPathViewObject("form_entries_view.class");
 
-	$formEntries = new UCFormEntriesView();
-	$formEntries->display();
+	$uelm_formEntries = new UELM_FormEntriesView();
+	$uelm_formEntries->display();
 }

@@ -9,7 +9,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UCChangelogView extends WP_List_Table{
+class UELM_ChangelogView extends WP_List_Table{
 
 	const ACTION_EDIT = "edit";
 	const ACTION_DELETE = "delete";
@@ -90,10 +90,10 @@ class UCChangelogView extends WP_List_Table{
 			}
 		}
 
-		$containedQueryArgs = array_intersect($generalQueryArgs, array_keys($_REQUEST));
+		$containedQueryArgs = array_intersect($generalQueryArgs, array_keys($_REQUEST)); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only the names of admin redirect query args are read, so they can be removed from the URL.
 
-		if(empty($containedQueryArgs) === false){
-			$url = wp_unslash($_SERVER["REQUEST_URI"]);
+		if(empty($containedQueryArgs) === false && isset($_SERVER["REQUEST_URI"])){
+			$url = esc_url_raw(wp_unslash($_SERVER["REQUEST_URI"]));
 			$url = remove_query_arg(array_merge($generalQueryArgs, $actionQueryArgs), $url);
 
 			wp_safe_redirect($url);
@@ -108,13 +108,13 @@ class UCChangelogView extends WP_List_Table{
 	 */
 	public function current_action(){
 
-		if(isset($_REQUEST[self::ACTION_EXPORT]))
+		if(isset($_REQUEST[self::ACTION_EXPORT])) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Detects the list-table export button. The value is not used.
 			return self::ACTION_EXPORT;
 
-		if(isset($_REQUEST[self::ACTION_EXPORT_JSON]))
+		if(isset($_REQUEST[self::ACTION_EXPORT_JSON])) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Detects the list-table JSON export button. The value is not used.
 			return self::ACTION_EXPORT_JSON;
 
-		if(isset($_REQUEST[self::ACTION_IMPORT_JSON]))
+		if(isset($_REQUEST[self::ACTION_IMPORT_JSON])) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Detects the list-table JSON import button. The value is not used.
 			return self::ACTION_IMPORT_JSON;
 
 
@@ -546,8 +546,7 @@ class UCChangelogView extends WP_List_Table{
 			ORDER BY {$this->getOrderBy()}
 		";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$ids = $wpdb->get_col($sql);
+		$ids = $wpdb->get_col($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom changelog table. WHERE and ORDER BY are built in this class. WordPress has no API for this table.
 		$items = $this->service->findChangelog($ids);
 
 		$lines = array();
@@ -616,8 +615,7 @@ class UCChangelogView extends WP_List_Table{
 			WHERE $where
 		";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$total = $wpdb->get_var($sql);
+		$total = $wpdb->get_var($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom changelog table. WHERE and ORDER BY are built in this class. WordPress has no API for this table.
 
 		$sql = "
 			SELECT id
@@ -628,8 +626,7 @@ class UCChangelogView extends WP_List_Table{
 			OFFSET {$this->getOffset()}
 		";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$ids = $wpdb->get_col($sql);
+		$ids = $wpdb->get_col($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom changelog table. WHERE and ORDER BY are built in this class. WordPress has no API for this table.
 		$items = $this->service->findChangelog($ids);
 
 		$data = array(
@@ -656,8 +653,7 @@ class UCChangelogView extends WP_List_Table{
 			ORDER BY addon_id
 		";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$results = $wpdb->get_results($sql);
+		$results = $wpdb->get_results($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom changelog table. WHERE and ORDER BY are built in this class. WordPress has no API for this table.
 		$items = array();
 
 		foreach($results as $result){
@@ -684,8 +680,7 @@ class UCChangelogView extends WP_List_Table{
 			LIMIT 10
 		";
 		
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$results = $wpdb->get_results($sql);
+		$results = $wpdb->get_results($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom changelog table. WHERE and ORDER BY are built in this class. WordPress has no API for this table.
 		$items = array();
 
 		foreach($results as $result){
@@ -707,13 +702,13 @@ class UCChangelogView extends WP_List_Table{
 	private function getActionLink($action, $id, $label){
 
 		$url = array();
-		$url["page"] = wp_unslash($_REQUEST["page"]);
+		$url["page"] = isset($_REQUEST["page"]) ? sanitize_key(wp_unslash($_REQUEST["page"])) : ""; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen page query arg, copied into the action link.
 		$url["action"] = $action;
 		$url["ucwindow"] = "blank";
 		$url[self::FILTER_ID] = $id;
 
-		if(empty($_REQUEST["view"]) === false)
-			$url["view"] = wp_unslash($_REQUEST["view"]);
+		if(empty($_REQUEST["view"]) === false) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen view query arg, copied into the action link.
+			$url["view"] = sanitize_key(wp_unslash($_REQUEST["view"])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen view query arg, copied into the action link.
 
 		return '<a href="?' . http_build_query($url) . '" data-action="' . esc_attr($action) . '">' . esc_html($label) . '</a>';
 	}
@@ -787,7 +782,7 @@ class UCChangelogView extends WP_List_Table{
 		if(empty($id) === false){
 			$ids = is_array($id) ? $id : array($id);
 			$placeholders = UniteFunctionsWPUC::getDBPlaceholders($ids, "%d");
-			$where .= $wpdb->prepare(" AND id IN($placeholders)", $ids);
+			$where .= $wpdb->prepare(" AND id IN($placeholders)", $ids); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- $placeholders is only %d tokens from getDBPlaceholders(). $ids are the replacements.
 		}
 
 		$addon = UniteFunctionsUC::getVal($filters, self::FILTER_ADDON, null);
@@ -858,10 +853,12 @@ class UCChangelogView extends WP_List_Table{
 	 */
 	private function displayHiddenFields(){
 
-		echo '<input type="hidden" name="page" value="' . esc_attr(wp_unslash($_REQUEST["page"])) . '" />';
+		$page = isset($_REQUEST["page"]) ? sanitize_key(wp_unslash($_REQUEST["page"])) : ""; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen page query arg, copied into a hidden field.
 
-		if(empty($_REQUEST["view"]) === false)
-			echo '<input type="hidden" name="view" value="' . esc_attr(wp_unslash($_REQUEST["view"])) . '" />';
+		echo '<input type="hidden" name="page" value="' . esc_attr($page) . '" />';
+
+		if(empty($_REQUEST["view"]) === false) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen view query arg, copied into a hidden field.
+			echo '<input type="hidden" name="view" value="' . esc_attr(sanitize_key(wp_unslash($_REQUEST["view"]))) . '" />'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen view query arg, copied into a hidden field.
 
 		echo '<input type="hidden" name="ucwindow" value="blank" />';
 	}
@@ -1088,5 +1085,7 @@ class UCChangelogView extends WP_List_Table{
 
 }
 
-$changelog = new UCChangelogView();
-$changelog->display();
+$uelm_changelog = new UELM_ChangelogView();
+$uelm_changelog->display();
+
+class_alias( UELM_ChangelogView::class, 'UCChangelogView' );

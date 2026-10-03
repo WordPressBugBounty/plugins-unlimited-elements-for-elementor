@@ -8,37 +8,37 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 	
-	$sapIDPrefix = "uc_tab_";
+	$uelm_sapIDPrefix = "uc_tab_";
 ?>
 <div class="content_wrapper unite-content-wrapper">	
 
 	<div id="uc_tabs" class="uc-tabs">
 		<?php 
-			$isFirstTab = true;
-			foreach($arrSaps as $sap):
+			$uelm_isFirstTab = true;
+			foreach($arrSaps as $uelm_sap):
 
-				$isHidden = UniteFunctionsUC::getVal($sap, "hidden");
-				$isHidden = UniteFunctionsUC::strToBool($isHidden);
+				$uelm_isHidden = UniteFunctionsUC::getVal($uelm_sap, "hidden");
+				$uelm_isHidden = UniteFunctionsUC::strToBool($uelm_isHidden);
 							
-				$sapName = $sap["name"];
-				$sapID = $sapIDPrefix.$sapName;
-				$class = "";
-				if($isFirstTab == true)
-					$class = "uc-tab-selected";
+				$uelm_sapName = $uelm_sap["name"];
+				$uelm_sapID = $uelm_sapIDPrefix.$uelm_sapName;
+				$uelm_class = "";
+				if($uelm_isFirstTab == true)
+					$uelm_class = "uc-tab-selected";
 				
-				$text = $sap["text"];
+				$uelm_text = $uelm_sap["text"];
 				
-				$isFirstTab = false;
+				$uelm_isFirstTab = false;
 				
-				$style = "";
+				$uelm_style = "";
 				
-				if($isHidden == true)
-					$style = "style='display:none'";
+				if($uelm_isHidden == true)
+					$uelm_style = "style='display:none'";
 					
 		?>
 		
-			<a id="<?php echo esc_attr($sapID)?>_tablink" data-name="<?php echo esc_attr($sapName)?>" data-contentid="<?php echo esc_attr($sapID)?>" class="<?php echo esc_attr($class)?>" href="javascript:void(0)" onfocus="this.blur()" <?php 
-				uelm_echo( $style ); ?>> <?php echo esc_html($text)?></a>
+			<a id="<?php echo esc_attr($uelm_sapID)?>_tablink" data-name="<?php echo esc_attr($uelm_sapName)?>" data-contentid="<?php echo esc_attr($uelm_sapID)?>" class="<?php echo esc_attr($uelm_class)?>" href="javascript:void(0)" onfocus="this.blur()" <?php 
+				uelm_echo( $uelm_style ); ?>> <?php echo esc_html($uelm_text)?></a>
 			
 		<?php endforeach?>
 		
@@ -54,29 +54,29 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		<form name="<?php echo esc_attr($formID)?>" id="<?php echo esc_attr($formID)?>">
 		
 			<?php 
-			$isFirstTab = true;
+			$uelm_isFirstTab = true;
 			
-			foreach($arrSaps as $sapKey=>$sap):
+			foreach($arrSaps as $uelm_sapKey=>$uelm_sap):
 
-			    $sapName = $sap["name"];
+			    $uelm_sapName = $uelm_sap["name"];
 				
-				$sapID = $sapIDPrefix.$sapName;
+				$uelm_sapID = $uelm_sapIDPrefix.$uelm_sapName;
 				
-				$style = "style='display:none'";
-				if($isFirstTab == true)
-					$style = "";
+				$uelm_style = "style='display:none'";
+				if($uelm_isFirstTab == true)
+					$uelm_style = "";
 				
-				$isFirstTab = false;
+				$uelm_isFirstTab = false;
 				
 			?>
 			
-			<div id="<?php echo esc_attr($sapID)?>" class="uc-tab-content" <?php 
-				uelm_echo( $style ); ?> >
+			<div id="<?php echo esc_attr($uelm_sapID)?>" class="uc-tab-content" <?php 
+				uelm_echo( $uelm_style ); ?> >
 				<?php
 				
-				$objOutput->drawSettings($sapKey);
+				$objOutput->drawSettings($uelm_sapKey);
 				
-				$this->drawSaveSettingsButton($sapID)?>
+				$this->drawSaveSettingsButton($uelm_sapID)?>
 				
 			</div>
 			
@@ -95,9 +95,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 </div>	
 
 <?php
-$script = 'jQuery(document).ready(function(){
+$uelm_script = 'jQuery(document).ready(function(){
 		var objAdmin = new UniteCreatorAdmin_GeneralSettings();
 		objAdmin.initView("' . ( $this->saveAction ) . '");
 	});';
 	
-UniteProviderFunctionsUC::printCustomScript($script, true); 
+UniteProviderFunctionsUC::printCustomScript($uelm_script, true); 

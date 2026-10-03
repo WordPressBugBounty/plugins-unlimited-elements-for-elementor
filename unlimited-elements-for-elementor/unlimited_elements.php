@@ -4,7 +4,7 @@
 * Plugin URI: http://unlimited-elements.com
 * Description: Elementor all-in-one addons pack with the best widgets for Elementor, offering 100+ free widgets, templates, and tools to create stunning websites!
 * Author: Unlimited Elements
-* Version: 2.0.21
+* Version: 2.0.22
 * Author URI: http://unlimited-elements.com
 * Text Domain: unlimited-elements-for-elementor
 * Domain Path: /languages
@@ -30,21 +30,22 @@ if(!defined("UE_ENABLE_ELEMENTOR_SUPPORT"))
 	define("UE_ENABLE_ELEMENTOR_SUPPORT", true);
 else{
 	if(!defined("UC_BOTH_VERSIONS_ACTIVE"))
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Shared with the other Unlimited Elements edition.
 		define("UC_BOTH_VERSIONS_ACTIVE", true);
 } 
 
 
 /*** Freemius ***/	
-if ( ! function_exists( 'uefe_fs' ) ) {
+if ( ! function_exists( 'uelm_fs' ) ) {
     // Create a helper function for easy SDK access.
-    function uefe_fs() {
-        global $uefe_fs;
+    function uelm_fs() {
+        global $uelm_fs;
 
-        if ( ! isset( $uefe_fs ) ) {
+        if ( ! isset( $uelm_fs ) ) {
             // Include Freemius SDK.
             require_once dirname(__FILE__) . '/provider/freemius/start.php';
 	
-            $uefe_fs = fs_dynamic_init( array(
+            $uelm_fs = fs_dynamic_init( array(
                 'id'                  => '4036',
                 'slug'                => 'unlimited-elements-for-elementor',
 				'premium_slug'        => 'unlimited-elements-pro',            
@@ -65,31 +66,33 @@ if ( ! function_exists( 'uefe_fs' ) ) {
             ) );
         }
 
-        return $uefe_fs;
+        return $uelm_fs;
     }
 
     // Init Freemius.
-    uefe_fs();
+    uelm_fs();
     // Signal that SDK was initiated.
+    do_action( 'uelm_fs_loaded' );
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy Freemius hook kept for existing callbacks.
     do_action( 'uefe_fs_loaded' );
     
 }	
 /*** End Freemius ***/	
 	
-$mainFilepath = __FILE__;
-$currentFolder = dirname($mainFilepath);
-$pathProvider = $currentFolder."/provider/";
+$uelm_mainFilepath = __FILE__;
+$uelm_currentFolder = dirname($uelm_mainFilepath);
+$uelm_pathProvider = $uelm_currentFolder."/provider/";
 
 
 try{
 	if(!class_exists("GlobalsUC")) {
-		$pathAltLoader = $pathProvider."provider_alt_loader.php";
-		if(file_exists($pathAltLoader)){
+		$uelm_pathAltLoader = $uelm_pathProvider."provider_alt_loader.php";
+		if(file_exists($uelm_pathAltLoader)){
 			
-			require $pathAltLoader;
+			require $uelm_pathAltLoader;
 		
 		}else{
-			require_once $currentFolder.'/includes.php';
+			require_once $uelm_currentFolder.'/includes.php';
 			
 			require_once  GlobalsUC::$pathProvider."core/provider_main_file.php";
 		}
@@ -99,12 +102,12 @@ try{
 
 	
 }catch(Exception $e){
-	$message = $e->getMessage();
-	$trace = $e->getTraceAsString();
+	$uelm_message = $e->getMessage();
+	$uelm_trace = $e->getTraceAsString();
 	
 	echo "<br>";
-	echo esc_html($message);
+	echo esc_html($uelm_message);
 	echo "<pre>";
-	echo esc_html($trace);
+	echo esc_html($uelm_trace);
 }
 

@@ -1707,6 +1707,8 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 			$arrIncludeBy["products_from_post"] = __("Products From Post Content (woo)", "unlimited-elements-for-elementor");
 		}
 		
+		$arrIncludeBy = apply_filters("uelm_modify_post_select_includeby", $arrIncludeBy);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		$arrIncludeBy = apply_filters("ue_modify_post_select_includeby", $arrIncludeBy);
 		
 		
@@ -2485,6 +2487,8 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$this->addHr($name . "_hr_after_order_dir", $params);
 		
 		//allow to modify settings by third party plugins
+		do_action("uelm_modify_post_list_settings", $this, $name);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		do_action("ue_modify_post_list_settings", $this, $name);
 
 		//---- query id -----
@@ -3113,7 +3117,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 
 		if(GlobalsUC::$isProVersion == true){
 			require_once GlobalsUC::$pathPro . "provider_settings_multisource_pro.class.php";
-			$objMultisourceSettings = new UniteCreatorSettingsMultisourcePro();
+			$objMultisourceSettings = new UELM_CreatorSettingsMultisourcePro();
 		}else{
 			//free version - add placeholders
 

@@ -62,6 +62,8 @@ class UniteCreatorAjaxSeach{
 			return($search);
 
 		$wild = empty($queryVars["exact"]) ? "%" : "";
+		$exclusionPrefix = apply_filters("uelm_wp_query_search_exclusion_prefix", "-");
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		$exclusionPrefix = apply_filters("wp_query_search_exclusion_prefix", "-");
 
 		$searchAnd = "";
@@ -81,7 +83,7 @@ class UniteCreatorAjaxSeach{
 
 			$arrParts = array();
 			foreach($arrFields as $field){
-				$arrParts[] = $wpdb->prepare("{$wpdb->posts}.{$field} {$likeOp} %s", $like);
+				$arrParts[] = $wpdb->prepare("{$wpdb->posts}.{$field} {$likeOp} %s", $like); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $field is limited to post_title, post_excerpt, post_content. $likeOp is only LIKE or NOT LIKE. The term is a %s placeholder.
 			}
 
 			$newSearch .= $searchAnd . "(" . implode(" {$andOrOp} ", $arrParts) . ")";

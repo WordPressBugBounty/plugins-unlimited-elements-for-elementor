@@ -7,7 +7,7 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class InstagramAPIOfficialUC{
+class UELM_InstagramAPIOfficial{
 
 	const URL_REFRESH = "https://graph.instagram.com/refresh_access_token";
 	//const URL_AUTHORIZE = "https://api.instagram.com/oauth/authorize";	//old
@@ -218,7 +218,7 @@ class InstagramAPIOfficialUC{
 	 */
 	private function initAccessData(){
 
-		$arrData = HelperInstaUC::getInstagramSavedAccessData();
+		$arrData = UELM_HelperInsta::getInstagramSavedAccessData();
 
 		$this->accessToken = UniteFunctionsUC::getVal($arrData, "access_token");
 		$this->userID = UniteFunctionsUC::getVal($arrData, "user_id");
@@ -234,9 +234,9 @@ class InstagramAPIOfficialUC{
 	 */
 	private function getUserData_new($user, $lastID = null, $userID = null){
 
-		$user = HelperInstaUC::sanitizeUser($user);
+		$user = UELM_HelperInsta::sanitizeUser($user);
 
-		HelperInstaUC::validateInstance($user, "user");
+		UELM_HelperInsta::validateInstance($user, "user");
 
 		$this->initAccessData();
 
@@ -244,7 +244,7 @@ class InstagramAPIOfficialUC{
 
 		$arrItemsData = $this->requestMedia();
 
-		$objItems = new InstaObjUserUCItemsUC();
+		$objItems = new UELM_InstaObjUserUCItems();
 		$objItems->initOfficialAPI($arrItemsData, $arrUserData);
 
 		return($objItems);
@@ -348,7 +348,7 @@ class InstagramAPIOfficialUC{
 		}
 
 		//renew here
-		HelperInstaUC::checkRenewAccessToken_onceInAWhile();
+		UELM_HelperInsta::checkRenewAccessToken_onceInAWhile();
 
 
 		$pageData = $objItems->getArrPageData();
@@ -363,3 +363,5 @@ class InstagramAPIOfficialUC{
 
 
 }
+
+class_alias( UELM_InstagramAPIOfficial::class, 'InstagramAPIOfficialUC' );

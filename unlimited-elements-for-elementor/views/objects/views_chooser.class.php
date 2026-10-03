@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class UniteCreatorViewsChooser{
+class UELM_CreatorViewsChooser{
 
 	protected $showButtons = true;
 	protected $showHeader = true;
@@ -130,3 +130,5 @@ class UniteCreatorViewsChooser{
 	}
 
 }
+
+class_alias( UELM_CreatorViewsChooser::class, 'UniteCreatorViewsChooser' );

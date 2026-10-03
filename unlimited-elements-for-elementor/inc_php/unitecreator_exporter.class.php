@@ -1072,6 +1072,8 @@ class UniteCreatorExporter extends UniteCreatorExporterBase{
 			}
 		}
 
+		$arrImport = apply_filters("uelm_uc_modify_addon_data_before_import", $arrImport);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		$arrImport = apply_filters("uc_modify_addon_data_before_import", $arrImport);
 
 		//check if addon type match

@@ -7,8 +7,10 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UniteCreatorWebLibrary{
+class UELM_CreatorWebLibrary{
 	
 	
 	
 }
+
+class_alias( UELM_CreatorWebLibrary::class, 'UniteCreatorWebLibrary' );

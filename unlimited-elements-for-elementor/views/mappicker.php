@@ -8,11 +8,11 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 	
-	$filepathPickerObject = GlobalsUC::$pathViewsObjects."mappicker_view.class.php";
-	require $filepathPickerObject;
+	$uelm_filepathPickerObject = GlobalsUC::$pathViewsObjects."mappicker_view.class.php";
+	require $uelm_filepathPickerObject;
 	
-	$objView = new UniteCreatorMappickerView();
+	$uelm_objView = new UELM_CreatorMappickerView();
 	
 	
-	$objView->putHtml();
+	$uelm_objView->putHtml();
 

@@ -8,29 +8,29 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-$headerTitle = esc_html__("Assets Manager", "unlimited-elements-for-elementor");
+$uelm_headerTitle = esc_html__("Assets Manager", "unlimited-elements-for-elementor");
 require HelperUC::getPathTemplate("header");
 
 
-$objAssets = new UniteCreatorAssetsWork();
-$objAssets->initByKey("assets_manager");
+$uelm_objAssets = new UniteCreatorAssetsWork();
+$uelm_objAssets->initByKey("assets_manager");
 
 ?>
 <div class="uc-assets-manager-wrapper">
 
 	<?php 
-	$objAssets->putHTML();
+	$uelm_objAssets->putHTML();
 	?>
 	
 </div>
 
 <?php
 
-	$script = 'jQuery(document).ready(function(){
+	$uelm_script = 'jQuery(document).ready(function(){
 	
 		var objAdmin = new UniteCreatorAdmin();
 		objAdmin.initAssetsManagerView();
 	
 	});';
 
-	UniteProviderFunctionsUC::printCustomScript($script, true); 
+	UniteProviderFunctionsUC::printCustomScript($uelm_script, true); 

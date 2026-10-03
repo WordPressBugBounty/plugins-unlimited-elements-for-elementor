@@ -224,6 +224,7 @@ class UniteCreatorAssetsWork extends UniteCreatorAssets{
 			UniteFunctionsUC::throwError("Empty upload path");
 		
 		//move uploaded file
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce is verified in UniteCreatorActions::onAjaxAction() before this upload runs.
 		$arrFile = UniteFunctionsUC::getVal($_FILES, "file");
 		
 		if(empty($arrFile))

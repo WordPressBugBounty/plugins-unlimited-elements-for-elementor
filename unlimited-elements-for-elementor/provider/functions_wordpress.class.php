@@ -95,10 +95,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 			if(empty($tableName))
 				UniteFunctionsUC::throwError("Empty table name!!!");
-			
-			$sql = "show tables like '$tableName'";
-			
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+			$sql = $wpdb->prepare("SHOW TABLES LIKE %s", $tableName);
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Schema check. WordPress has no API for SHOW TABLES. The table name is a %s placeholder.
 			$table = $wpdb->get_var($sql);
 
 			if($table == $tableName)
@@ -170,15 +170,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			global $wpdb;
 
 			try{
-				$wpdb->query("START TRANSACTION");
+				$wpdb->query("START TRANSACTION"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transaction control. Caching does not apply.
 
 				$result = $callback();
 
-				$wpdb->query("COMMIT");
+				$wpdb->query("COMMIT"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transaction control. Caching does not apply.
 
 				return $result;
 			}catch(Exception $e){
-				$wpdb->query("ROLLBACK");
+				$wpdb->query("ROLLBACK"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transaction control. Caching does not apply.
 
 				throw $e;
 			}
@@ -2925,6 +2925,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$content = $post->post_content;
 
 		if(GlobalsProviderUC::$disablePostContentFiltering !== true)
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 			$content = apply_filters("widget_text_content", $content);
 
 		self::$cachePostContent[$postID] = $content;
@@ -3888,6 +3889,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				$arrData = $arrData + $arrMeta;
 		}
 		
+		$arrData = apply_filters("uelm_get_user_data", $arrData);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		$arrData = apply_filters("unlimited_elements_get_user_data", $arrData);
 
 		return ($arrData);
@@ -4898,7 +4901,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			$postType
 		);
 		
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared		
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Title lookup on wp_posts. Query is prepared above.
 		$response = $wpdb->get_var($sql);
 		
 		$isExists = (bool)$response;
@@ -5089,6 +5092,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			if(defined($tag))
 				continue;
 
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.VariableConstantNameFound -- Cache plugin constants: DONOTCACHEPAGE, DONOTCACHEDB, DONOTMINIFY, DONOTCDN.
 			define($tag, true);
 		}
 

@@ -371,7 +371,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		$objServices = new UniteServicesUC();
 		$objServices->includeInstagramAPI();
 
-		HelperInstaUC::putConnectWithInstagramButton();
+		UELM_HelperInsta::putConnectWithInstagramButton();
 	}
 
 	/**
@@ -386,20 +386,20 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		$textConnected = "";
 
 		try{
-			$accessToken = UEGoogleAPIHelper::getFreshAccessToken();
+			$accessToken = UELM_GoogleAPIHelper::getFreshAccessToken();
 		}catch(Exception $exception){
-			if(UEGoogleAPIHelper::getAccessToken())
+			if(UELM_GoogleAPIHelper::getAccessToken())
 				// translators: %s is a string
 				$error = sprintf(__("Unable to refresh the access token. Please connect to Google again. (Reason: \"%s\")", "unlimited-elements-for-elementor"), $exception->getMessage());
 		}
 
 		$error = UniteFunctionsUC::getGetVar("google_connect_error", $error, UniteFunctionsUC::SANITIZE_NOTHING);
 
-		$isAccessTokenExpired = UEGoogleAPIHelper::isAccessTokenExpired();
-        $credentials = UEGoogleAPIHelper::isCredentials();
+		$isAccessTokenExpired = UELM_GoogleAPIHelper::isAccessTokenExpired();
+        $credentials = UELM_GoogleAPIHelper::isCredentials();
 
 		if($isAccessTokenExpired == false){
-			$email = UEGoogleAPIHelper::getUserEmail();
+			$email = UELM_GoogleAPIHelper::getUserEmail();
 			$isValid = UniteFunctionsUC::isEmailValid($email);
 
 			if($isValid == true)
@@ -409,7 +409,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 					$email
 				);
 
-            $expirationTime = UEGoogleAPIHelper::getExpirationDate();
+            $expirationTime = UELM_GoogleAPIHelper::getExpirationDate();
 			$textExpirationTime = sprintf(
 				/* translators: %s = token expiration time */
 				__("Expires in <b>%s</b>, the time will auto extend.", "unlimited-elements-for-elementor"),
@@ -422,13 +422,13 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
                 <div><?php echo wp_kses($textExpirationTime, HelperUC::getKsesAllowedHTML()); ?></div>
 			</div>
 
-			<a class="button" href="<?php echo esc_url(UEGoogleAPIHelper::getRevokeUrl()); ?>">
+			<a class="button" href="<?php echo esc_url(UELM_GoogleAPIHelper::getRevokeUrl()); ?>">
 				<?php esc_html_e("Disconnect from Google Sheets", "unlimited-elements-for-elementor"); ?>
 			</a>
 		<?php
 		}else{
 		?>
-			<a class="button" href="<?php echo esc_url(UEGoogleAPIHelper::getAuthUrl()); ?>">
+			<a class="button" href="<?php echo esc_url(UELM_GoogleAPIHelper::getAuthUrl()); ?>">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" style="margin-bottom: -0.2em">
 					<path fill="#19b870" d="m21 6-6-6H5a2 2 0 0 0-2 2v20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6z" />
 					<path fill="#80D8B0" d="M15 0v4a2 2 0 0 0 2 2h4l-6-6z" />
@@ -469,7 +469,7 @@ class UniteCreatorSettingsOutput extends UniteSettingsOutputUC{
 		$objServices->includeOpenWeatherAPI();
 
 		$key = HelperProviderCoreUC_EL::getGeneralSetting("openweather_api_key");
-		$weatherService = new UEOpenWeatherAPIClient($key);
+		$weatherService = new UELM_OpenWeatherAPIClient($key);
 
 		if(empty($key) === false){
 			?>

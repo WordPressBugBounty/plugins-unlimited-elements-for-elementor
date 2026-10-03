@@ -186,14 +186,14 @@ class AddonLibraryCreatorPluginUC extends UniteCreatorPluginBase{
 
 //run the plugin
 
-$filepathProvider = dirname(__FILE__)."/../plugin_provider.php";
-if(file_exists($filepathProvider)){
+$uelm_filepathProvider = dirname(__FILE__)."/../plugin_provider.php";
+if(file_exists($uelm_filepathProvider)){
 	
-	require $filepathProvider;
+	require $uelm_filepathProvider;
 	new AddonLibraryCreatorPluginProviderUC();
 	
 }else{
-	$objPlugin = new AddonLibraryCreatorPluginUC();
+	$uelm_objPlugin = new AddonLibraryCreatorPluginUC();
 }
 		
 

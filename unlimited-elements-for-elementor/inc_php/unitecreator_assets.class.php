@@ -212,6 +212,93 @@ class UniteCreatorAssets{
 	
 	
 	/**
+	 * mime types the assets manager accepts
+	 */
+	private function getAssetUploadMimes(){
+
+		return array(
+			"jpg" => "image/jpeg",
+			"jpeg" => "image/jpeg",
+			"png" => "image/png",
+			"gif" => "image/gif",
+			"apng" => "image/apng",
+			"tiff" => "image/tiff",
+			"avif" => "image/avif",
+			"webp" => "image/webp",
+			"svg" => "image/svg+xml",
+			"txt" => "text/plain",
+			"doc" => "application/msword",
+			"ini" => "text/plain",
+			"md" => "text/plain",
+			"html" => "text/html",
+			"htm" => "text/html",
+			"css" => "text/css",
+			"js" => "application/javascript",
+			"avi" => "video/avi",
+			"mp4" => "video/mp4",
+			"ogv" => "video/ogg",
+			"webm" => "video/webm",
+			"mp3" => "audio/mpeg",
+			"wav" => "audio/wav",
+			"flac" => "audio/flac",
+			"ogg" => "audio/ogg",
+			"swf" => "application/x-shockwave-flash",
+			"zip" => "application/zip",
+			"json" => "application/json",
+			"tpl" => "text/plain",
+			"ds_store" => "application/octet-stream",
+			"xml" => "text/xml",
+		);
+	}
+
+	/**
+	 * Keep asset types that WordPress would otherwise reject by content sniffing.
+	 * PHP and unknown extensions stay blocked by isFilenameAllowed().
+	 */
+	private function allowAssetUploadFiletype($data, $file, $filename, $mimes, $realMime = ""){
+
+		if(empty($data["ext"]) == false && empty($data["type"]) == false)
+			return($data);
+
+		$ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+		if($this->isFilenameAllowed($filename) == false)
+			return($data);
+
+		$assetMimes = $this->getAssetUploadMimes();
+
+		if(empty($assetMimes[$ext]))
+			return($data);
+
+		$data["ext"] = $ext;
+		$data["type"] = $assetMimes[$ext];
+
+		return($data);
+	}
+
+	/**
+	 * move a file WordPress already accepted into the assets folder
+	 */
+	private function moveUploadedFileToDestination($source, $destination){
+
+		if(function_exists("WP_Filesystem") == false)
+			require_once ABSPATH . "wp-admin/includes/file.php";
+
+		global $wp_filesystem;
+
+		if(empty($wp_filesystem))
+			WP_Filesystem();
+
+		if($wp_filesystem instanceof WP_Filesystem_Base && $wp_filesystem->move($source, $destination, true) === true)
+			return(true);
+
+		if(is_file($destination))
+			wp_delete_file($destination);
+
+		return UniteFunctionsUC::move($source, $destination);
+	}
+
+	/**
 	 * validate allowed filetype
 	 */
 	private function validateAllowedFiletype($filename){
@@ -1160,21 +1247,40 @@ class UniteCreatorAssets{
 			if(is_file($tempFilepath) == false)
 				UniteFunctionsUC::throwError("wrong upload filepath!");
 
-			/*
-			$uploaded_file = wp_handle_upload( $arrFile, array(
-				'test_form' => false,
-			) );
-			if ( isset( $uploaded_file['file'] ) ) {
-				UniteFunctionsUC::move( $uploaded_file['file'], $destFilepath, true );
-				$success = true;
+			if(function_exists("wp_handle_upload") == false)
+				require_once ABSPATH . "wp-admin/includes/file.php";
+
+			$allowFiletype = function($data, $file, $filename, $mimes, $realMime = ""){
+				return $this->allowAssetUploadFiletype($data, $file, $filename, $mimes, $realMime);
+			};
+
+			add_filter("wp_check_filetype_and_ext", $allowFiletype, 10, 5);
+
+			try{
+				$uploaded_file = wp_handle_upload($arrFile, array(
+					"test_form" => false,
+					"mimes" => $this->getAssetUploadMimes(),
+				));
+			}finally{
+				remove_filter("wp_check_filetype_and_ext", $allowFiletype, 10);
 			}
-			*/
 
-			UniteFunctionsUC::moveUploadedFile($arrFile['tmp_name'], $destFilepath);
-			$success = UniteFunctionsUC::fileExists($destFilepath);
+			$error = UniteFunctionsUC::getVal($uploaded_file, "error");
 
-			if($success == false)
-				UniteFunctionsUC::throwError("Upload Failed to: $destFilepath\n" . json_encode($uploaded_file) . "\n" . json_encode($arrFile));
+			if(empty($error) == false)
+				UniteFunctionsUC::throwError($error);
+
+			$uploadedFile = UniteFunctionsUC::getVal($uploaded_file, "file");
+
+			if(empty($uploadedFile))
+				UniteFunctionsUC::throwError("Upload Failed to: $destFilepath");
+
+			$moved = $this->moveUploadedFileToDestination($uploadedFile, $destFilepath);
+
+			if($moved == false){
+				wp_delete_file($uploadedFile);
+				UniteFunctionsUC::throwError("Upload Failed to: $destFilepath");
+			}
 	
 		}catch(Exception $e){
 			http_response_code(406);

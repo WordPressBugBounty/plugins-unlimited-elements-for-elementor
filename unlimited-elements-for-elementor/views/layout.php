@@ -7,7 +7,7 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class AddonLibraryViewLayout{
+class UELM_AddonLibraryViewLayout{
 	
 	protected $showButtons = true;
 	protected $isEditMode = false;
@@ -67,6 +67,8 @@ class AddonLibraryViewLayout{
 	
 }
 
-$pathProviderLayout = GlobalsUC::$pathProvider."views/layout.php";
-require_once $pathProviderLayout;
-new AddonLibraryViewLayoutProvider();
+$uelm_pathProviderLayout = GlobalsUC::$pathProvider."views/layout.php";
+require_once $uelm_pathProviderLayout;
+new UELM_AddonLibraryViewLayoutProvider();
+
+class_alias( UELM_AddonLibraryViewLayout::class, 'AddonLibraryViewLayout' );

@@ -2,7 +2,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UniteCreatorElementorBackgroundWidget extends UniteCreatorElementorWidget {
+class UELM_CreatorElementorBackgroundWidget extends UELM_CreatorElementorWidget {
 	
 	
     /**
@@ -152,3 +152,5 @@ class UniteCreatorElementorBackgroundWidget extends UniteCreatorElementorWidget 
     }
     
 }
+
+class_alias( UELM_CreatorElementorBackgroundWidget::class, 'UniteCreatorElementorBackgroundWidget' );

@@ -16,7 +16,7 @@ use Elementor\Repeater;
 use Elementor\Utils;
 
 
-class UniteCreatorElementorWidget extends Widget_Base {
+class UELM_CreatorElementorWidget extends Widget_Base {
 
     protected $objAddon;
 	
@@ -2475,6 +2475,8 @@ class UniteCreatorElementorWidget extends Widget_Base {
 			);
 		}
 
+		do_action("uelm_widget_advanced_controls", $this);
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		do_action("ue_widget_advanced_controls", $this);
 
     	$this->end_controls_section();
@@ -4498,3 +4500,5 @@ class UniteCreatorElementorWidget extends Widget_Base {
 
 
 }
+
+class_alias( UELM_CreatorElementorWidget::class, 'UniteCreatorElementorWidget' );

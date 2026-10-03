@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 defined('UNLIMITED_ELEMENTS_INC') or die;
 
-class UniteCreatorViewGeneralSettingsProvider extends UniteCreatorViewGeneralSettings{
+class UELM_CreatorViewGeneralSettingsProvider extends UniteCreatorViewGeneralSettings{
 
 	/**
 	 * draw additional tabs
@@ -65,3 +65,5 @@ add_filter(&quot;blox_path_theme_addons&quot;, &quot;set_addons_install_path_<?p
 	
 	
 }
+
+class_alias( UELM_CreatorViewGeneralSettingsProvider::class, 'UniteCreatorViewGeneralSettingsProvider' );

@@ -356,7 +356,7 @@ class UniteCreatorForm{
 								$services->includeGoogleAPI();
 
 								try{
-									UEGoogleAPIHelper::getFreshAccessToken();
+									UELM_GoogleAPIHelper::getFreshAccessToken();
 								}catch(Exception $exception){
 									// translators: %s is a string
 									$errors[] = sprintf(__("%s Google access token is missing or expired. Please connect to Google in the \"General Settings > Integrations\".", "unlimited-elements-for-elementor"), $errorTitle);
@@ -547,7 +547,7 @@ class UniteCreatorForm{
 					"form_name" => $this->getFormName(),
 				));
 
-				$isEntryCreated = $wpdb->insert($entriesTable, $entriesData);
+				$isEntryCreated = $wpdb->insert($entriesTable, $entriesData); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom form-entry table. WordPress has no API for it.
 
 				if($isEntryCreated === false)
 					UniteFunctionsUC::throwError($wpdb->last_error);
@@ -567,7 +567,7 @@ class UniteCreatorForm{
 						"value" => $field["value"],
 					);
 					
-					$isFieldCreated = $wpdb->insert($entryFieldsTable, $entryFieldsData);
+					$isFieldCreated = $wpdb->insert($entryFieldsTable, $entryFieldsData); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom form-entry table. WordPress has no API for it.
 
 					if($isFieldCreated === false)
 						UniteFunctionsUC::throwError($wpdb->last_error);
@@ -651,7 +651,7 @@ class UniteCreatorForm{
 					wp_mkdir_p($targetDir);
 				}
 				
-				if ( !is_writable($targetDir) ) {
+				if(UniteFunctionsUC::isWritable($targetDir) == false){
 					$errors[] = "Target directory is not writable: " . $targetDir;
 					continue;
 				}
@@ -905,8 +905,8 @@ class UniteCreatorForm{
 		$services = new UniteServicesUC();
 		$services->includeGoogleAPI();
 
-		$sheetsService = new UEGoogleAPISheetsService();
-		$sheetsService->setAccessToken(UEGoogleAPIHelper::getFreshAccessToken());
+		$sheetsService = new UELM_GoogleAPISheetsService();
+		$sheetsService->setAccessToken(UELM_GoogleAPIHelper::getFreshAccessToken());
 
 		$headersRow = array();
 		$emptyRow = array();
@@ -1018,8 +1018,8 @@ class UniteCreatorForm{
 	private function executeCustomAction($name){
 		
 		$hookName = self::HOOK_NAMESPACE . "/$name";
-		
-		do_action($hookName, $this->formFields, $this->formSettings);
+
+		do_action($hookName, $this->formFields, $this->formSettings); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Hook name is ue_form/ plus the form action name.
 	}
 	
 	/**
@@ -1027,7 +1027,7 @@ class UniteCreatorForm{
 	 */
 	private function executeFormAction($name){
 		
-		do_action(self::HOOK_NAMESPACE . "/$name", $this->formFields, $this->formSettings);
+		do_action(self::HOOK_NAMESPACE . "/$name", $this->formFields, $this->formSettings); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Hook name is ue_form/ plus the form action name.
 	}
 
 	/**
@@ -1035,7 +1035,7 @@ class UniteCreatorForm{
 	 */
 	private function applyActionFieldsFilter($action, $fields){
 
-		$fields = apply_filters(self::HOOK_NAMESPACE . "/{$action}_fields", $fields, $this->formFields, $this->formSettings);
+		$fields = apply_filters(self::HOOK_NAMESPACE . "/{$action}_fields", $fields, $this->formFields, $this->formSettings); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Hook name is ue_form/ plus the action name and _fields.
 
 		return $fields;
 	}

@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class BloxViewLayoutOuter{
+class UELM_BloxViewLayoutOuter{
 	
 	protected $objPageBuilder;
 	protected $objLayout, $objLayouts, $layoutID, $layoutType, $isTemplate;
@@ -68,8 +68,10 @@ class BloxViewLayoutOuter{
 }
 
 
-$pathProviderLayoutOuter = GlobalsUC::$pathProvider."views/layout_outer.php";
+$uelm_pathProviderLayoutOuter = GlobalsUC::$pathProvider."views/layout_outer.php";
 
-require_once $pathProviderLayoutOuter;
+require_once $uelm_pathProviderLayoutOuter;
 
-new BloxViewLayoutOuterProvider();
+new UELM_BloxViewLayoutOuterProvider();
+
+class_alias( UELM_BloxViewLayoutOuter::class, 'BloxViewLayoutOuter' );

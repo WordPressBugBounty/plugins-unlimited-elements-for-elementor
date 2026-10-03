@@ -1,7 +1,10 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEOpenWeatherAPIForecastCurrent extends UEOpenWeatherAPIForecastAbstract{
+class UELM_OpenWeatherAPIForecastCurrent extends UELM_OpenWeatherAPIForecastAbstract{
 
-	use UEOpenWeatherAPIForecastHasInlineTemperature, UEOpenWeatherAPIForecastHasSunTime;
+	use UELM_OpenWeatherAPIForecastHasInlineTemperature, UELM_OpenWeatherAPIForecastHasSunTime;
 
 }
+
+class_alias( UELM_OpenWeatherAPIForecastCurrent::class, 'UEOpenWeatherAPIForecastCurrent' );

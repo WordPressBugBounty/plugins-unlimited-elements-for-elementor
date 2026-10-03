@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 defined('UNLIMITED_ELEMENTS_INC') or die;
 
-class UniteCreatorLayoutPreviewProvider extends UniteCreatorLayoutPreview{
+class UELM_CreatorLayoutPreviewProvider extends UELM_CreatorLayoutPreview{
 
 
 	/**
@@ -19,3 +19,5 @@ class UniteCreatorLayoutPreviewProvider extends UniteCreatorLayoutPreview{
 	}
 	
 }
+
+class_alias( UELM_CreatorLayoutPreviewProvider::class, 'UniteCreatorLayoutPreviewProvider' );

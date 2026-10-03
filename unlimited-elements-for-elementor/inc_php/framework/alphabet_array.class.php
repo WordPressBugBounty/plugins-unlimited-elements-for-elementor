@@ -7,7 +7,7 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UELanguageAlphabetsArray {
+class UELM_LanguageAlphabetsArray {
 	
     public static $alphabets = array(
         'english' => ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
@@ -27,3 +27,5 @@ class UELanguageAlphabetsArray {
     );
 
 }
+
+class_alias( UELM_LanguageAlphabetsArray::class, 'UELanguageAlphabetsArray' );

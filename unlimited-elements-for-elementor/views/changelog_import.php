@@ -8,15 +8,15 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$error_message = get_transient('uc_changelog_import_error');
-$success_message = get_transient('uc_changelog_import_success');
-$isChangelogImportDisabled = HelperProviderUC::isAddonChangelogImportDisabled();
-if($isChangelogImportDisabled){
+$uelm_error_message = get_transient('uc_changelog_import_error');
+$uelm_success_message = get_transient('uc_changelog_import_success');
+$uelm_isChangelogImportDisabled = HelperProviderUC::isAddonChangelogImportDisabled();
+if($uelm_isChangelogImportDisabled){
 	echo '<div class="error"><p>'.esc_attr_e( "The import operation disabled in the general settings.", "unlimited-elements-for-elementor" ).'</p></div>';
 	return false;
 }
 
-$script = 'jQuery(document).ready(function($) {
+$uelm_script = 'jQuery(document).ready(function($) {
         jQuery(\'#changelog-import-form\').on(\'submit\', function(e) {
             var confirmation = confirm("' . esc_attr_e("This operation will delete all your old change log records, and put the new ones. Continue?", "unlimited-elements-for-elementor") .'");
             if (!confirmation) {
@@ -25,20 +25,20 @@ $script = 'jQuery(document).ready(function($) {
         });
     });';
 
-UniteProviderFunctionsUC::printCustomScript($script, true); 
+UniteProviderFunctionsUC::printCustomScript($uelm_script, true); 
 
 
 ?>
 <div class="wrap">
-    <?php if($error_message): ?>
+    <?php if($uelm_error_message): ?>
         <div class="error"><p><?php 
-			uelm_echo( $error_message ); ?></p></div>
+			uelm_echo( $uelm_error_message ); ?></p></div>
         <?php delete_transient('uc_changelog_import_error'); ?>
     <?php endif; ?>
 
-	<?php if($success_message): ?>
+	<?php if($uelm_success_message): ?>
         <div class="updated"><p><?php 
-			uelm_echo( $success_message ); ?></p></div>
+			uelm_echo( $uelm_success_message ); ?></p></div>
 		<?php delete_transient('uc_changelog_import_success'); ?>
 	<?php endif; ?>
 

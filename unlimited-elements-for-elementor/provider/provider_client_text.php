@@ -7,5 +7,6 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Class property assignment, not a loose global.
 GlobalsUC::$arrServerSideText["addon_library"] = esc_html__("Unlimited Elements", "unlimited-elements-for-elementor");
 

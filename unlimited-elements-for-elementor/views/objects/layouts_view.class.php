@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class UniteCreatorLayoutsView{
+class UELM_CreatorLayoutsView{
 
 	protected $isTemplate = false;
 	protected $layoutType, $layoutTypeTitle, $layoutTypeTitlePlural;
@@ -558,3 +558,5 @@ class UniteCreatorLayoutsView{
 	}
 
 }
+
+class_alias( UELM_CreatorLayoutsView::class, 'UniteCreatorLayoutsView' );

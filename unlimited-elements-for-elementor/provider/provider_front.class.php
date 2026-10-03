@@ -8,7 +8,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UniteProviderFrontUC{
+class UELM_ProviderFront{
 	
 	private $t;
 	const ACTION_FOOTER_SCRIPTS = "wp_print_footer_scripts";
@@ -99,12 +99,14 @@ class UniteProviderFrontUC{
 			$isMultiple = UniteFunctionsUC::strToBool($isMultiple);
 			
 			if(!defined("DONOTCDN") && $isMultiple == false)
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Constant name read by CDN plugins.
 				define("DONOTCDN",true);
 		}
 		
 		//disable doubly
 		
 		if(!defined("DISABLE_DOUBLY"))		
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Constant name read by the Doubly plugin.
 			define("DISABLE_DOUBLY", true);
 	}
 	
@@ -135,6 +137,8 @@ class UniteProviderFrontUC{
 		
 		$this->t = $this;
 		
+		do_action("uelm_addon_library_before_front_init");
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		do_action("addon_library_before_front_init");
 		
 		HelperProviderUC::globalInit();
@@ -201,4 +205,5 @@ class UniteProviderFrontUC{
 		
 }
 
+class_alias( UELM_ProviderFront::class, 'UniteProviderFrontUC' );
 ?>

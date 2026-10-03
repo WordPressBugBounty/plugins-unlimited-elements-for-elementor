@@ -1,6 +1,6 @@
 <?php
 
-trait UEOpenWeatherAPIForecastHasInlineTemperature{
+trait UELM_OpenWeatherAPIForecastHasInlineTemperature{
 
 	/**
 	 * Get the temperature.

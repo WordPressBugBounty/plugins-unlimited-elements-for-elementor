@@ -228,13 +228,13 @@ class GlobalsUnlimitedElements{
 		if(self::$blackFridayMode == true)
 			$arrBanners[] = new UCAdminNoticeBFBanner();
 		
-			//new UCAdminNoticeSimpleExample();
+			//new UELM_AdminNoticeSimpleExample();
 		
 		//$arrBanners[] = new UCAdminNoticeDoubly();
 
 		$arrBanners[] = new UCAdminNoticeSheetsPilot();
 		
-//		new UCAdminNoticeRating(),
+//		new UELM_AdminNoticeRating(),
 		
 		UCAdminNotices::init($arrBanners);
 

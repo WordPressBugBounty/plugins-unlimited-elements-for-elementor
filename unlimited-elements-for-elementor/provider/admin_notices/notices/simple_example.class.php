@@ -9,7 +9,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UCAdminNoticeSimpleExample extends UCAdminNoticeAbstract{
+class UELM_AdminNoticeSimpleExample extends UCAdminNoticeAbstract{
 
 	/**
 	 * get the notice identifier
@@ -53,3 +53,5 @@ class UCAdminNoticeSimpleExample extends UCAdminNoticeAbstract{
 	}
 
 }
+
+class_alias( UELM_AdminNoticeSimpleExample::class, 'UCAdminNoticeSimpleExample' );

@@ -8,7 +8,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class UniteTranslateUC{
+class UELM_Translate{
 	
 	private $entries;
 	private $domain;
@@ -103,3 +103,5 @@ class UniteTranslateUC{
 	
 	
 }
+
+class_alias( UELM_Translate::class, 'UniteTranslateUC' );

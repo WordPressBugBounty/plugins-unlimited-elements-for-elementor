@@ -9,7 +9,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 
-class BloxViewLicense{
+class UELM_BloxViewLicense{
 
 	private $showHeader = true;
 	
@@ -43,10 +43,10 @@ class BloxViewLicense{
 		$pathProvider = GlobalsUC::$pathProviderViews."provider_activation_view.class.php";
 		if(file_exists($pathProvider)){
 			require_once $pathProvider;
-			$objActivationView = new UniteCreatorActivationViewProvider();
+			$objActivationView = new UELM_CreatorActivationViewProvider();
 			
 		}else{
-			$objActivationView = new UniteCreatorActivationView();
+			$objActivationView = new UELM_CreatorActivationView();
 		}
 		
 		$webAPI = new UniteCreatorWebAPI();
@@ -72,5 +72,7 @@ class BloxViewLicense{
 }
 
 
-$objBloxViewLicense = new BloxViewLicense();
-$objBloxViewLicense->display();
+$uelm_objBloxViewLicense = new UELM_BloxViewLicense();
+$uelm_objBloxViewLicense->display();
+
+class_alias( UELM_BloxViewLicense::class, 'BloxViewLicense' );

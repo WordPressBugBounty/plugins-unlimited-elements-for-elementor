@@ -1,9 +1,10 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * @link https://developers.google.com/youtube/v3/docs
  */
-class UEGoogleAPIYouTubeService extends UEGoogleAPIClient{
+class UELM_GoogleAPIYouTubeService extends UELM_GoogleAPIClient{
 
 	/**
 	 * Get the playlist items.
@@ -11,7 +12,7 @@ class UEGoogleAPIYouTubeService extends UEGoogleAPIClient{
 	 * @param string $playlistId
 	 * @param array $params
 	 *
-	 * @return UEGoogleAPIPlaylistItem[]
+	 * @return UELM_GoogleAPIPlaylistItem[]
 	 */
 	public function getPlaylistItems($playlistId, $params = array()){
 
@@ -26,7 +27,7 @@ class UEGoogleAPIYouTubeService extends UEGoogleAPIClient{
 		if(empty($items) === true)
 			return array();
 
-		return UEGoogleAPIPlaylistItem::transformAll($items);
+		return UELM_GoogleAPIPlaylistItem::transformAll($items);
 	}
 
 	/**
@@ -62,3 +63,5 @@ class UEGoogleAPIYouTubeService extends UEGoogleAPIClient{
 	}
 
 }
+
+class_alias( UELM_GoogleAPIYouTubeService::class, 'UEGoogleAPIYouTubeService' );

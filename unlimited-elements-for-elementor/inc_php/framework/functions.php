@@ -20,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	}
 
 	if(!function_exists("dmp")){
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Debug helper kept under its existing name.
 		function dmp($str){
 
 			$html = "<div align='left' style='direction:ltr;color:black;'><pre>" . uelm_html_debug($str) . "</pre></div>";
@@ -40,6 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	}
 	
 	if(!function_exists("dmpHtml")){
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Debug helper kept under its existing name.
 		function dmpHtml($str){
 			dmp($str);
 		}
@@ -47,6 +49,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	 
 	if(!function_exists("dmpGet")){
 		
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Debug helper kept under its existing name.
 		function dmpGet($str){
 			
 			$html = "";
@@ -64,6 +67,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	}
 	
 	if(!function_exists("uelm_echo")){
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Kept under its existing name.
 		function uelm_echo($str) {
 			if( is_array($str) || is_object($str) ) {
 				return;
@@ -75,6 +79,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 	if (!function_exists("uelm_date")) {
 		
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Kept under its existing name.
 		function uelm_date($format, $time = null) {
 			
 			if(empty($time))

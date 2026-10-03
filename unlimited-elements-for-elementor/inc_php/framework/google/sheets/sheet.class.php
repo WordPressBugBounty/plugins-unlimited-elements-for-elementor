@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEGoogleAPISheet extends UEGoogleAPIModel{
+class UELM_GoogleAPISheet extends UELM_GoogleAPIModel{
 
 	/**
 	 * Get the identifier.
@@ -43,3 +44,5 @@ class UEGoogleAPISheet extends UEGoogleAPIModel{
 	}
 
 }
+
+class_alias( UELM_GoogleAPISheet::class, 'UEGoogleAPISheet' );

@@ -13,12 +13,12 @@ class HelperProviderUC{
 	 */
 	public static function isActivatedByFreemius(){
 
-		global $uefe_fs;
+		global $uelm_fs;
 
-		if(isset($uefe_fs) === false)
+		if(isset($uelm_fs) === false)
 			return (false);
 
-		$isActivated = $uefe_fs->is_paying();
+		$isActivated = $uelm_fs->is_paying();
 				
 		return ($isActivated);
 	}
@@ -28,12 +28,12 @@ class HelperProviderUC{
 	 */
 	public static function getFreemiusAccountUrl(){
 
-		global $uefe_fs;
+		global $uelm_fs;
 
-		if(isset($uefe_fs) === false)
+		if(isset($uelm_fs) === false)
 			return "";
 
-		$url = $uefe_fs->get_account_url();
+		$url = $uelm_fs->get_account_url();
 
 		return $url;
 	}
@@ -1531,6 +1531,7 @@ class HelperProviderUC{
 		add_action("init", array("HelperProviderUC", "onInitTrigger"));
 		
 		add_action("wp_footer", array("HelperProviderUC", "showPostMetaDebugFromQuery"));
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from WordPress or another plugin.
 		add_action("admin_footer", array("HelperProviderUC", "showPostMetaDebugFromQuery"));
 				
 		//add_action("wp_loaded", array("HelperProviderUC", "onWPLoaded"));
@@ -1541,6 +1542,8 @@ class HelperProviderUC{
 	 */
 	public static function onPluginsLoadedCallPlugins(){
 
+		do_action("uelm_addon_library_register_plugins");
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		do_action("addon_library_register_plugins");
 
 		UniteProviderFunctionsUC::doAction(UniteCreatorFilters::ACTION_EDIT_GLOBALS);

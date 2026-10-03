@@ -1,4 +1,8 @@
 
+version 2.0.22:
+
+* Change: implimented all plugin checker found issues
+
 
 version 2.0.21:
 

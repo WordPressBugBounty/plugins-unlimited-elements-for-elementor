@@ -7,6 +7,6 @@
  * */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$pathViewMediaselect = HelperUC::getPathViewProvider("mediaselect");
+$uelm_pathViewMediaselect = HelperUC::getPathViewProvider("mediaselect");
 
-require $pathViewMediaselect;
+require $uelm_pathViewMediaselect;

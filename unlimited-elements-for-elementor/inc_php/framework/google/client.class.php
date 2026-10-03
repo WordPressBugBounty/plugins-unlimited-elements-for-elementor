@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-abstract class UEGoogleAPIClient{
+abstract class UELM_GoogleAPIClient{
 
 	const PARAM_QUERY = "__query__";
 
@@ -258,3 +259,5 @@ abstract class UEGoogleAPIClient{
 	}
 
 }
+
+class_alias( UELM_GoogleAPIClient::class, 'UEGoogleAPIClient' );

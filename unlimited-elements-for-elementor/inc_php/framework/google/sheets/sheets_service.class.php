@@ -1,9 +1,10 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * @link https://developers.google.com/sheets/api/reference/rest
  */
-class UEGoogleAPISheetsService extends UEGoogleAPIClient{
+class UELM_GoogleAPISheetsService extends UELM_GoogleAPIClient{
 
 	/**
 	 * Get the spreadsheet.
@@ -11,12 +12,12 @@ class UEGoogleAPISheetsService extends UEGoogleAPIClient{
 	 * @param string $spreadsheetId
 	 * @param array $params
 	 *
-	 * @return UEGoogleAPISpreadsheet
+	 * @return UELM_GoogleAPISpreadsheet
 	 */
 	public function getSpreadsheet($spreadsheetId, $params = array()){
 
 		$response = $this->get("/$spreadsheetId", $params);
-		$response = UEGoogleAPISpreadsheet::transform($response);
+		$response = UELM_GoogleAPISpreadsheet::transform($response);
 
 		return $response;
 	}
@@ -28,14 +29,14 @@ class UEGoogleAPISheetsService extends UEGoogleAPIClient{
 	 * @param string $range
 	 * @param array $params
 	 *
-	 * @return UEGoogleAPISheetValues
+	 * @return UELM_GoogleAPISheetValues
 	 */
 	public function getSpreadsheetValues($spreadsheetId, $range, $params = array()){
 
 		$range = urlencode($range);
 
 		$response = $this->get("/$spreadsheetId/values/$range", $params);
-		$response = UEGoogleAPISheetValues::transform($response);
+		$response = UELM_GoogleAPISheetValues::transform($response);
 
 		return $response;
 	}
@@ -48,7 +49,7 @@ class UEGoogleAPISheetsService extends UEGoogleAPIClient{
 	 * @param string $range
 	 * @param array $params
 	 *
-	 * @return UEGoogleAPISheetValues
+	 * @return UELM_GoogleAPISheetValues
 	 */
 	public function getSpreadsheetValuesWithLinksAndAttributes($spreadsheetId, $ranges = array(), $params = array()) {
 		$params["fields"] = 'sheets.data.rowData.values(effectiveFormat.textFormat,textFormatRuns,formattedValue,hyperlink)';
@@ -56,7 +57,7 @@ class UEGoogleAPISheetsService extends UEGoogleAPIClient{
 			$params["ranges"] = $ranges;
 
 		$response = $this->get("/$spreadsheetId", $params);
-		$response = UEGoogleAPISheetValues::transform($response);
+		$response = UELM_GoogleAPISheetValues::transform($response);
 
 		return $response;
 	}
@@ -251,3 +252,5 @@ class UEGoogleAPISheetsService extends UEGoogleAPIClient{
 	}
 
 }
+
+class_alias( UELM_GoogleAPISheetsService::class, 'UEGoogleAPISheetsService' );

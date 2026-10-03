@@ -9,14 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 require_once GlobalsUC::$pathViewsObjects."addon_view.class.php";
 
-$pathProviderAddon = GlobalsUC::$pathProvider."views/addon.php";
+$uelm_pathProviderAddon = GlobalsUC::$pathProvider."views/addon.php";
 
-if(file_exists($pathProviderAddon) == true){
-	require_once $pathProviderAddon;
-	$objAddonView = new UniteCreatorAddonViewProvider();
+if(file_exists($uelm_pathProviderAddon) == true){
+	require_once $uelm_pathProviderAddon;
+	$uelm_objAddonView = new UELM_CreatorAddonViewProvider();
 }
 else{
-	$objAddonView = new UniteCreatorAddonView();
+	$uelm_objAddonView = new UELM_CreatorAddonView();
 }
 
-$objAddonView->runView();
+$uelm_objAddonView->runView();

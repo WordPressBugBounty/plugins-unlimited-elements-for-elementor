@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  */
 
-class UniteCreatorAddonsView{
+class UELM_CreatorAddonsView{
 	
 	protected $showButtons = true;
 	protected $showHeader = true;
@@ -168,3 +168,5 @@ class UniteCreatorAddonsView{
 	
 
 }
+
+class_alias( UELM_CreatorAddonsView::class, 'UniteCreatorAddonsView' );

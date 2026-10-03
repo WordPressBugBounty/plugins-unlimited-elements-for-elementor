@@ -2,6 +2,11 @@
 
 == Changelog ==
 
+
+=  2.0.22 - 2026-10-02 =
+
+* Change: implimented all plugin checker found issues
+
 =  2.0.21 - 2026-09-30 =
 
 Plugin Changes: 

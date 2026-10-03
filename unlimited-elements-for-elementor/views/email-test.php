@@ -9,7 +9,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UCEmailTestView{
+class UELM_EmailTestView{
 
 	/**
 	 * Displays the view.
@@ -50,10 +50,12 @@ class UCEmailTestView{
 	 */
 	private function displayHiddenFields(){
 
-		echo '<input type="hidden" name="page" value="' . esc_attr(wp_unslash($_REQUEST["page"])) . '" />';
+		$page = isset($_REQUEST["page"]) ? sanitize_key(wp_unslash($_REQUEST["page"])) : ""; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen page query arg, copied into a hidden field.
 
-		if(empty($_REQUEST["view"]) === false)
-			echo '<input type="hidden" name="view" value="' . esc_attr(wp_unslash($_REQUEST["view"])) . '" />';
+		echo '<input type="hidden" name="page" value="' . esc_attr($page) . '" />';
+
+		if(empty($_REQUEST["view"]) === false) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen view query arg, copied into a hidden field.
+			echo '<input type="hidden" name="view" value="' . esc_attr(sanitize_key(wp_unslash($_REQUEST["view"]))) . '" />'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen view query arg, copied into a hidden field.
 	}
 
 	/**
@@ -136,5 +138,7 @@ class UCEmailTestView{
 
 }
 
-$emailTest = new UCEmailTestView();
-$emailTest->display();
+$uelm_emailTest = new UELM_EmailTestView();
+$uelm_emailTest->display();
+
+class_alias( UELM_EmailTestView::class, 'UCEmailTestView' );

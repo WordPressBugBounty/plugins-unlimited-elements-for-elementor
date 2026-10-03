@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class BloxViewLayoutOuterProvider extends BloxViewLayoutOuter{
+class UELM_BloxViewLayoutOuterProvider extends UELM_BloxViewLayoutOuter{
 	
 	
 	/**
@@ -71,3 +72,5 @@ class BloxViewLayoutOuterProvider extends BloxViewLayoutOuter{
 	}
 	
 }
+
+class_alias( UELM_BloxViewLayoutOuterProvider::class, 'BloxViewLayoutOuterProvider' );

@@ -8,7 +8,7 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UniteCreatorAddonDefaultsView{
+class UELM_CreatorAddonDefaultsView{
 
 	protected $showToolbar = true;
 	protected $showHeader = true;
@@ -121,4 +121,6 @@ class UniteCreatorAddonDefaultsView{
 
 }
 
-new UniteCreatorAddonDefaultsView();
+new UELM_CreatorAddonDefaultsView();
+
+class_alias( UELM_CreatorAddonDefaultsView::class, 'UniteCreatorAddonDefaultsView' );

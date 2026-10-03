@@ -1,6 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-class UEOpenWeatherAPIClient{
+class UELM_OpenWeatherAPIClient{
 
 	const DATA_BASE_URL = "https://api.openweathermap.org/data/3.0";
 	const GEO_BASE_URL = "http://api.openweathermap.org/geo/1.0";
@@ -54,10 +55,10 @@ class UEOpenWeatherAPIClient{
 	 * @param string $city
 	 * @param string $units
 	 *
-	 * @return UEOpenWeatherAPIForecast[]
+	 * @return UELM_OpenWeatherAPIForecast[]
 	 * @throws Exception
 	 */
-	public function getForecasts($country, $city, $units = UEOpenWeatherAPIForecast::UNITS_STANDARD, $locale = null){
+	public function getForecasts($country, $city, $units = UELM_OpenWeatherAPIForecast::UNITS_STANDARD, $locale = null){
 		
 		$location = $this->findLocation($country, $city);
 		
@@ -92,14 +93,14 @@ class UEOpenWeatherAPIClient{
 		);
 		
 		$current = UniteFunctionsUC::getVal($response, "current", array());
-		$current = UEOpenWeatherAPIForecastCurrent::transform($current, $params);
+		$current = UELM_OpenWeatherAPIForecastCurrent::transform($current, $params);
 		
 		
 		$hourly = UniteFunctionsUC::getVal($response, "hourly", array());
-		$hourly = UEOpenWeatherAPIForecastHourly::transformAll($hourly, $params);
+		$hourly = UELM_OpenWeatherAPIForecastHourly::transformAll($hourly, $params);
 
 		$daily = UniteFunctionsUC::getVal($response, "daily", array());
-		$daily = UEOpenWeatherAPIForecastDaily::transformAll($daily, $params);
+		$daily = UELM_OpenWeatherAPIForecastDaily::transformAll($daily, $params);
 
 		$alerts = UniteFunctionsUC::getVal($response, "alerts", array());
 
@@ -205,3 +206,5 @@ class UEOpenWeatherAPIClient{
 	}
 
 }
+
+class_alias( UELM_OpenWeatherAPIClient::class, 'UEOpenWeatherAPIClient' );

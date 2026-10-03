@@ -7,7 +7,7 @@ defined ('UNLIMITED_ELEMENTS_INC') or die ('restricted aceess');
 require HelperUC::getPathViewObject("addons_view.class");
 
 
-class UniteCreatorAddonsBackgroundsView extends UniteCreatorAddonsView{
+class UELM_CreatorAddonsBackgroundsView extends UELM_CreatorAddonsView{
 
 	protected $showButtons = true;
 	protected $showHeader = false;
@@ -43,4 +43,6 @@ class UniteCreatorAddonsBackgroundsView extends UniteCreatorAddonsView{
 }
 
 
-new UniteCreatorAddonsBackgroundsView();
+new UELM_CreatorAddonsBackgroundsView();
+
+class_alias( UELM_CreatorAddonsBackgroundsView::class, 'UniteCreatorAddonsBackgroundsView' );
