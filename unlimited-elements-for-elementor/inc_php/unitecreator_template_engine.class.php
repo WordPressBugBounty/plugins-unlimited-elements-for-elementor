@@ -2049,6 +2049,72 @@ class UniteCreatorTemplateEngineWork{
 	 */
 	private function escapeRawFiltersInJsTemplate($template){
 
+		return($this->escapeRawFiltersInQuotedPrints($template, "js"));
+	}
+
+	/**
+	 * In HTML templates, a print inside a quoted attribute must be attribute-escaped.
+	 * A print inside a script block is a JS string. Unquoted |raw stays as-is
+	 * (icons, prebuilt attribute strings, and HTML content).
+	 */
+	private function escapeRawFiltersInHtmlTemplate($template){
+
+		if(is_string($template) == false || $template === "")
+			return($template);
+
+		if(stripos($template, "raw") === false)
+			return($template);
+
+		$parts = preg_split('/(<script\b[^>]*>.*?<\/script>)/is', $template, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+		if(is_array($parts) == false)
+			return($this->escapeRawFiltersInQuotedPrints($template, "html_attr"));
+
+		$output = "";
+
+		foreach($parts as $part){
+
+			if(preg_match('/^<script\b/i', $part) == 1){
+				$output .= $this->escapeRawFiltersInScriptTag($part);
+				continue;
+			}
+
+			$output .= $this->escapeRawFiltersInQuotedPrints($part, "html_attr");
+		}
+
+		return($output);
+	}
+
+	/**
+	 * Escape the opening tag as HTML, and the script body as JavaScript.
+	 */
+	private function escapeRawFiltersInScriptTag($tag){
+
+		$openEnd = strpos($tag, ">");
+
+		if($openEnd === false)
+			return($this->escapeRawFiltersInQuotedPrints($tag, "html_attr"));
+
+		$closeStart = stripos($tag, "</script>", $openEnd);
+
+		if($closeStart === false)
+			return($this->escapeRawFiltersInQuotedPrints($tag, "html_attr"));
+
+		$open = substr($tag, 0, $openEnd + 1);
+		$inner = substr($tag, $openEnd + 1, $closeStart - ($openEnd + 1));
+		$close = substr($tag, $closeStart);
+
+		$open = $this->escapeRawFiltersInQuotedPrints($open, "html_attr");
+		$inner = $this->escapeRawFiltersInJsTemplate($inner);
+
+		return($open.$inner.$close);
+	}
+
+	/**
+	 * Replace a trailing |raw on Twig prints that sit inside ' or ".
+	 */
+	private function escapeRawFiltersInQuotedPrints($template, $strategy){
+
 		if(is_string($template) == false || $template === "")
 			return($template);
 
@@ -2098,7 +2164,7 @@ class UniteCreatorTemplateEngineWork{
 				}
 
 				$print = substr($template, $index, ($end + 2) - $index);
-				$print = $this->replaceRawFilterWithJsEscape($print);
+				$print = $this->replaceRawFilterWithContextEscape($print, $strategy);
 
 				$output .= $print;
 				$index = $end + 2;
@@ -2113,14 +2179,20 @@ class UniteCreatorTemplateEngineWork{
 	}
 
 	/**
-	 * Replace a trailing |raw on one Twig print with the JS escaper.
+	 * Replace a trailing |raw on one Twig print.
+	 * |raw after html_attr stops a later auto-escape from encoding the & in &#x27; and &quot;.
 	 */
-	private function replaceRawFilterWithJsEscape($print){
+	private function replaceRawFilterWithContextEscape($print, $strategy){
 
 		if(strpos($print, "|e(") !== false)
 			return($print);
 
-		$replaced = preg_replace('/\|\s*raw(\s*)\}\}$/', "|e('js')$1}}", $print, 1);
+		if($strategy === "html_attr")
+			$filter = "|e('html_attr')|raw";
+		else
+			$filter = "|e('js')";
+
+		$replaced = preg_replace('/\|\s*raw(\s*)\}\}$/', $filter.'$1}}', $print, 1);
 
 		if(is_string($replaced) == false)
 			return($print);
@@ -2148,6 +2220,8 @@ class UniteCreatorTemplateEngineWork{
 
 		if($name === "js")
 			$html = $this->escapeRawFiltersInJsTemplate($html);
+		elseif($name === "html" || $name === "item" || $name === "item2")
+			$html = $this->escapeRawFiltersInHtmlTemplate($html);
 
 		$this->arrTemplates[$name] = $html;
 	}

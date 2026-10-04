@@ -6,7 +6,7 @@ Requires at least: 5.7
 Tested up to: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 2.0.22
+Stable tag: 2.0.23
 
 Elementor all-in-one addons pack with the best widgets for Elementor, offering 100+ free widgets, templates, and tools to create stunning websites!
 
@@ -941,6 +941,10 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+
+=  2.0.23 - 2026-10-04 =
+
+* Fix: fixed 2 secutity recomendations
 
 =  2.0.22 - 2026-10-02 =
 

@@ -1824,7 +1824,6 @@ class HelperProviderUC{
 		return do_shortcode($html);
 	}
 
-	
 	/**
 	 * verify admin permisison of the plugin, use it before ajax actions
 	 */

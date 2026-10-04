@@ -1964,7 +1964,7 @@ class UniteCreatorSettings extends UniteCreatorSettingsWork{
 		$params = array();
 		$params["origtype"] = UniteCreatorDialogParam::PARAM_TEXTFIELD;
 		$params["placeholder"] = __("getMyIDs", "unlimited-elements-for-elementor");
-		$params["description"] = __("Get post id's array from php function. \n For example: function getMyIDs(\$arg){return(array(\"32\",\"58\")). This function MUST begin with 'get'. }","unlimited-elements-for-elementor");
+		$params["description"] = __("Get post id's array from a PHP function. Add the function name in Unlimited Elements General Settings, under Allowed PHP Functions. Example: function getMyIDs(\$arg){return(array(\"32\",\"58\"));}. This function MUST begin with 'get'.","unlimited-elements-for-elementor");
 		$params["elementor_condition"] = $arrConditionIncludeFunction;
 
 		$this->addTextBox($name . "_includeby_function_name", "", esc_html__("PHP Function Name", "unlimited-elements-for-elementor"), $params);

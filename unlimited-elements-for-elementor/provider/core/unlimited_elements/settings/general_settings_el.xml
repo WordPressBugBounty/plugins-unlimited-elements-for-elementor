@@ -114,6 +114,15 @@
       description="Enable revisions in widgets editor">
     </field>
 
+    <field name="posts_php_functions"
+      type="textarea"
+      default=""
+      label="Allowed PHP Functions"
+      rows="5"
+      style="height:100px;"
+      description="One function name per line. A post list runs a PHP function only when its name is listed here. Any other function is skipped.">
+    </field>
+
     <field name="edit_pro_settings"
            type="boolean"
            default="false"

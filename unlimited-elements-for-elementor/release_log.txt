@@ -1,8 +1,12 @@
 
+
+version 2.0.23:
+
+* Fix: fixed 2 secutity reccomendations
+
 version 2.0.22:
 
 * Change: implimented all plugin checker found issues
-
 
 version 2.0.21:
 

@@ -453,6 +453,46 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 
 	/**
+	 * function names from general settings, one per line
+	 */
+	private function getPostListData_getAllowedPHPFunctions(){
+
+		if(class_exists("HelperProviderCoreUC_EL") == false)
+			return(array());
+
+		try{
+			$raw = HelperProviderCoreUC_EL::getGeneralSetting("posts_php_functions");
+		}catch(Exception $e){
+			return(array());
+		}
+
+		if(is_string($raw) == false || trim($raw) === "")
+			return(array());
+
+		$lines = preg_split('/[\r\n,]+/', $raw);
+		$names = array();
+
+		if(is_array($lines) == false)
+			return(array());
+
+		foreach($lines as $line){
+
+			$line = trim($line);
+
+			if($line === "")
+				continue;
+
+			if(preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $line) !== 1)
+				continue;
+
+			$names[] = $line;
+		}
+
+		return($names);
+	}
+
+
+	/**
 	 * get post ids from php function
 	 */
 	private function getPostListData_getIDsFromPHPFunction($value, $name, $showDebugQuery){
@@ -471,6 +511,13 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 		if(is_string($functionName) == false)
 			return(false);
+
+		$functionName = trim($functionName);
+
+		$allowed = $this->getPostListData_getAllowedPHPFunctions();
+
+		if(in_array($functionName, $allowed, true) == false)
+			return(null);
 
 		if(strpos($functionName, "get") !== 0){
 
