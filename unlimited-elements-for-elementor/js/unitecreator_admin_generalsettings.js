@@ -33,7 +33,20 @@ function UniteCreatorAdmin_GeneralSettings(){
 		g_ucAdmin.setAjaxHideButtonID(prefix+"_button_save_settings");
 		g_ucAdmin.setErrorMessageID(prefix+"_save_settings_error");
 		
-		g_ucAdmin.ajaxRequest(g_saveAction, data);
+		g_ucAdmin.ajaxRequest(g_saveAction, data, function(){
+
+			var objAblyKey = jQuery("input[name='ably_api_key']");
+			var ablyMask = "********";
+
+			if(objAblyKey.length == 0)
+				return;
+
+			if(objAblyKey.val() && objAblyKey.val() != ablyMask){
+				objAblyKey.val(ablyMask);
+				objAblyKey.closest("tr").find(".description").html("A key is saved. The dots are only a marker. Create a key at <a href='https://ably.com/' target='_blank'>ably.com</a>. Paste a new key to replace it.");
+			}
+
+		});
 		
 	}
 	
@@ -152,6 +165,13 @@ function UniteCreatorAdmin_GeneralSettings(){
 		initTabs();
 		
 		g_settings.init(objSettingsWrapper);
+
+		jQuery("input[name='ably_api_key']").on("focus", function(){
+
+			if(jQuery(this).val() == "********")
+				this.select();
+
+		});
 		
 		//save settings click
 		jQuery(".uc-button-save-settings").on("click",onSaveButtonClick);

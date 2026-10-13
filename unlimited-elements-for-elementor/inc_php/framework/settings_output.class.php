@@ -1429,6 +1429,13 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 		$typeNumber = UniteFunctionsUC::strToBool($typeNumber);
 		$typePassword = UniteFunctionsUC::getVal($setting, "ispassword");
 		$typePassword = UniteFunctionsUC::strToBool($typePassword);
+		$hideValue = UniteFunctionsUC::getVal($setting, "hidevalue");
+		$hideValue = UniteFunctionsUC::strToBool($hideValue);
+
+		if($hideValue === true && $value !== "" && $value !== "********"){
+			$value = "********";
+			$setting["value"] = "********";
+		}
 
 		if(is_array($value) === true)
 			$value = json_encode($value);
@@ -1487,6 +1494,9 @@ class UniteSettingsOutputUCWork extends HtmlOutputBaseUC{
 					&& is_numeric($step) === true
 				) {
 					echo " step=\"" . esc_attr($step) . "\"";
+				}
+				if($hideValue === true) {
+					echo " autocomplete=\"off\" spellcheck=\"false\"";
 				}
 				?>
 			/>

@@ -293,6 +293,20 @@
       label=" ">
     </field>
 
+    <field name="ably_heading"
+      type="statictext"
+      label="&lt;b&gt;Ably&lt;/b&gt;">
+    </field>
+
+    <field name="ably_api_key"
+      type="text"
+      ispassword="true"
+      hidevalue="true"
+      label="Ably API Key"
+      description="Paste your Ably API key. Create a key at &lt;a href='https://ably.com/' target='_blank'&gt;ably.com&lt;/a&gt;. After saving, the box shows dots instead of the key."
+      default="">
+    </field>
+
     <field name="wpml_heading"
       type="statictext"
       hidden="true"

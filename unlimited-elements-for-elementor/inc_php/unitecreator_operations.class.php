@@ -72,6 +72,16 @@ class UCOperations extends UniteElementsBaseUC{
 		if(empty($arrValues))
 			$arrValues = array();
 
+		//write-only: empty or the on-screen dots keep the key already stored
+		if(array_key_exists("ably_api_key", $arrValues)){
+			$ablyKey = trim($arrValues["ably_api_key"]);
+
+			if($ablyKey === "" || $ablyKey === "********")
+				unset($arrValues["ably_api_key"]);
+			else
+				$arrValues["ably_api_key"] = $ablyKey;
+		}
+
 		$arrValues = array_merge($arrCurrentSettings, $arrValues);
 
 		//clear cache

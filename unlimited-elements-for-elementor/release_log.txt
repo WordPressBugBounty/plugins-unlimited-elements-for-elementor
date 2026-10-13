@@ -1,8 +1,22 @@
 
 
+version 2.0.24:
+
+* Fix: Listing Grid no longer prints the Elementor loop template CSS once per item. The stylesheet is loaded once, from Elementor's external file when CSS Print Method is External
+* Fix: Post Tabs and other post widgets no longer fatal when full post content clears the main query during render
+* Fix: an Administrator who also has the Author or Contributor role can run plugin operations again. The same applies to Editor when Edit Permission is set to Editor
+* Feature: added Greek to the alphabet filter
+* Fix: the alphabet filter now accepts letters from non-Latin alphabets, so Greek and the other existing languages can filter by the first letter of the title. A tonos on the first letter, such as Ήλιος, still matches the plain letter
+* Change: updated freemius sdk
+
+
 version 2.0.23:
 
 * Fix: fixed 2 secutity reccomendations
+* Feature: added an Ably API key on the Integrations tab. The saved key is write-only, shown as dots, with a link to ably.com
+* Feature: added an Ably token endpoint so widgets can connect without putting the API key in the page
+* Feature: added the Live Poll widget, which connects through that token
+* Feature: added {{ putAblyConnectFunction() }} so a widget script can connect to Ably without copying the token code
 
 version 2.0.22:
 

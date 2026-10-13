@@ -21,6 +21,9 @@ class HelperProviderCoreUC_EL{
 	private static $arrTemplatesCounter = array();
 	private static $isInfiniteLoopCode = false;
 	private static $arrAddedStyles = array();
+	private static $arrPrintedListingTemplateCss = array();
+	private static $listingTemplateCssGuardDepth = 0;
+	private static $builderContentDocumentID = 0;
 	private static $isUploadMimeFiltersRegistered = false;
 	
 	private static $currentDocument = null;
@@ -1146,6 +1149,131 @@ class HelperProviderCoreUC_EL{
 	}
 	
 	/**
+	 * remember which document Elementor is about to render
+	 */
+	public static function rememberBuilderContentDocument($document, $isExcerpt = null){
+
+		self::$builderContentDocumentID = 0;
+
+		if(empty($document) || is_object($document) == false)
+			return;
+
+		if(method_exists($document, "get_main_id") == false)
+			return;
+
+		self::$builderContentDocumentID = (int)$document->get_main_id();
+	}
+
+	/**
+	 * print a loop template stylesheet once per request
+	 * Elementor inlines the full template CSS on every item when with_css is true,
+	 * and forces that again on Ajax. The external file is already enqueued.
+	 */
+	public static function preventRepeatedListingTemplateCss($withCss){
+
+		if(empty(GlobalsUnlimitedElements::$renderingDynamicData))
+			return($withCss);
+
+		$templateID = (int)UniteFunctionsUC::getVal(GlobalsUnlimitedElements::$renderingDynamicData, "template_id");
+
+		if(empty($templateID))
+			return($withCss);
+
+		$documentID = (int)self::$builderContentDocumentID;
+
+		//a template nested inside the loop item keeps its own stylesheet
+		if(!empty($documentID) && $documentID !== $templateID)
+			return($withCss);
+
+		if(isset(self::$arrPrintedListingTemplateCss[$templateID]))
+			return(false);
+
+		self::$arrPrintedListingTemplateCss[$templateID] = true;
+
+		$handle = "elementor-post-".$templateID;
+		$style = wp_styles()->query($handle, "registered");
+		$hasExternalFile = (!empty($style) && empty($style->src) == false);
+
+		//external file is queued and printed separately
+		if($hasExternalFile == true)
+			return(false);
+
+		//internal mode already echoed the style because the frontend stylesheet was printed
+		$frontendPrinted = wp_styles()->query("elementor-frontend", "done");
+
+		if(!empty($frontendPrinted))
+			return(false);
+
+		return(true);
+	}
+
+	/**
+	 * limit listing template CSS to one copy while this template renders
+	 */
+	private static function startListingTemplateCssGuard(){
+
+		if(self::$listingTemplateCssGuardDepth === 0){
+
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from Elementor.
+			add_action("elementor/frontend/before_get_builder_content", array("HelperProviderCoreUC_EL", "rememberBuilderContentDocument"), 9, 2);
+
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from Elementor.
+			add_filter("elementor/frontend/builder_content/before_print_css", array("HelperProviderCoreUC_EL", "preventRepeatedListingTemplateCss"));
+		}
+
+		self::$listingTemplateCssGuardDepth++;
+	}
+
+	/**
+	 * remove the listing template CSS guard
+	 */
+	private static function stopListingTemplateCssGuard(){
+
+		self::$listingTemplateCssGuardDepth--;
+
+		if(self::$listingTemplateCssGuardDepth > 0)
+			return;
+
+		self::$listingTemplateCssGuardDepth = 0;
+
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from Elementor.
+		remove_action("elementor/frontend/before_get_builder_content", array("HelperProviderCoreUC_EL", "rememberBuilderContentDocument"), 9);
+
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- External hook from Elementor.
+		remove_filter("elementor/frontend/builder_content/before_print_css", array("HelperProviderCoreUC_EL", "preventRepeatedListingTemplateCss"));
+	}
+
+	/**
+	 * print the enqueued template stylesheet once, next to the first item
+	 */
+	private static function printListingTemplateStylesheet($templateID){
+
+		$templateID = (int)$templateID;
+
+		if(empty($templateID))
+			return(false);
+
+		if(GlobalsProviderUC::$isUnderAjax == true)
+			return(false);
+
+		//footer will print this together with the Elementor frontend stylesheet
+		if(wp_style_is("elementor-frontend", "done") == false)
+			return(false);
+
+		$handle = "elementor-post-".$templateID;
+
+		if(wp_style_is($handle, "enqueued") == false)
+			return(false);
+
+		if(wp_style_is($handle, "done") == true)
+			return(false);
+
+		wp_print_styles($handle);
+
+		return(true);
+	}
+
+	/**
 	 * put the post listing template
 	 */
 	public static function putListingItemTemplate_post($post, $templateID, $widgetID, $listingType = "elementor", $withCss = false){
@@ -1259,8 +1387,19 @@ class HelperProviderCoreUC_EL{
 
 		if($listingType == "jet")
 			$htmlTemplate = self::getJetTemplateListingItem($templateID, $post);
-		else
-			$htmlTemplate = self::getElementorTemplate($templateID, $withCss);
+		else{
+
+			self::startListingTemplateCssGuard();
+
+			try{
+
+				$htmlTemplate = self::getElementorTemplate($templateID, $withCss);
+
+			}finally{
+
+				self::stopListingTemplateCssGuard();
+			}
+		}
 		
 		$objStyles2 = wp_styles();
 		$arrHandles2 = $objStyles->queue;
@@ -1309,6 +1448,8 @@ class HelperProviderCoreUC_EL{
 		$htmlTemplate = str_replace($source, $dest, $htmlTemplate);
 
 		$htmlTemplate = HelperProviderUC::processOutputShortcodes($htmlTemplate);
+
+		self::printListingTemplateStylesheet($templateID);
 
 		uelm_echo($htmlTemplate);
 
@@ -1534,7 +1675,8 @@ class HelperProviderCoreUC_EL{
 			return(false);
 		}
 
-		$withCss = true;  //formelli was only on ajax calls
+		//template CSS is enqueued once; Elementor must not inline it on every item
+		$withCss = false;
 		
 		//template output
 		if($type == "post")

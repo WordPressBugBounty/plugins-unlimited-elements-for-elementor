@@ -774,10 +774,16 @@ class UniteCreatorFiltersProcess{
 		
 		//validation
 		if(!empty($titleStart)){
-			if(!UniteFunctionsUC::isAlphaNumeric($titleStart))
+			$isLetter = UniteFunctionsUC::isAlphaNumeric($titleStart);
+
+			// \w without the unicode flag is ASCII only, so Greek and the other non-Latin alphabets fail it.
+			if($isLetter == false)
+				$isLetter = (preg_match('/^\p{L}+$/u', $titleStart) === 1);
+
+			if($isLetter == false)
 				UniteFunctionsUC::throwError("Wrong title start. please check the alphabit filter, should be some letter only");
 			
-			$arrOutput["titlestart"] = strtolower($titleStart);
+			$arrOutput["titlestart"] = mb_strtolower($titleStart, "UTF-8");
 		}
 				
 		//main term

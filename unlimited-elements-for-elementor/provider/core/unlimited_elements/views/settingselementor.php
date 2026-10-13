@@ -53,6 +53,15 @@ class UELM_CreatorViewElementorSettings extends UELM_CreatorSettingsView{
 		if(GlobalsUC::$isProVersion == false || GlobalsUnlimitedElements::$enableLimitProFunctionality == false)
 			$objSettings->hideSetting("edit_pro_settings");
 
+		$ablySetting = $objSettings->getSettingByName("ably_api_key");
+		$ablyKey = UniteFunctionsUC::getVal($ablySetting, "value");
+
+		//the mask is not the key; the real value stays in the database and is not printed
+		if(empty($ablyKey) == false){
+			$objSettings->updateSettingProperty("ably_api_key", "description", "A key is saved. The dots are only a marker. Create a key at <a href='https://ably.com/' target='_blank'>ably.com</a>. Paste a new key to replace it.");
+			$objSettings->updateSettingProperty("ably_api_key", "value", "********");
+		}
+
 		return($objSettings);
 	}
 

@@ -254,6 +254,9 @@ class UniteCreatorTemplateEngineWork{
 
 				global $wp_query;
 
+				//keep the object itself. Content rendering can clear the global variable.
+				$originalWpQuery = ($wp_query instanceof WP_Query) ? $wp_query : null;
+
 				//backup the original queried object
 				$originalQueriedObject = $wp_query->queried_object;
 				self::$originalQueriedObject = $originalQueriedObject;
@@ -301,8 +304,20 @@ class UniteCreatorTemplateEngineWork{
 
 			//restore the original queried object
 			if(self::$isPostIDSaved === true){
-				$wp_query->queried_object = $originalQueriedObject;
-				$wp_query->queried_object_id = $originalQueriedObjectID;
+
+				$currentWpQuery = null;
+
+				if(isset($GLOBALS["wp_query"]) === true)
+					$currentWpQuery = $GLOBALS["wp_query"];
+
+				if($originalWpQuery instanceof WP_Query && $currentWpQuery !== $originalWpQuery)
+					$GLOBALS["wp_query"] = $originalWpQuery;
+
+				if(isset($GLOBALS["wp_query"]) === true && $GLOBALS["wp_query"] instanceof WP_Query){
+					$GLOBALS["wp_query"]->queried_object = $originalQueriedObject;
+					$GLOBALS["wp_query"]->queried_object_id = $originalQueriedObjectID;
+				}
+
 				$GLOBALS["post"] = $originalPost;
 			}
 		}
@@ -729,6 +744,20 @@ class UniteCreatorTemplateEngineWork{
 		$strUTC = gmdate('Y/m/d H:i:s', $stamp);
 
 		echo esc_attr($strUTC);
+	}
+
+
+	/**
+	 * print the shared Ably connect function into a widget script.
+	 * call from the widget js template: {{ putAblyConnectFunction() }}
+	 * no twig arguments. the widget passes mode when it calls ueAblyConnect().
+	 */
+	public function putAblyConnectFunction(){
+
+		if(class_exists("UniteCreatorAbly") == false)
+			return "";
+
+		return UniteCreatorAbly::getConnectFunctionJs();
 	}
 
 
@@ -1841,6 +1870,8 @@ class UniteCreatorTemplateEngineWork{
 		$putPostDateFunction = new Twig\TwigFunction('putPostDate', array($this,"putPostDate"));
 		$putPostGetVar = new Twig\TwigFunction('putPostGetVar', array($this,"putPostGetVar"));
 		$convertDate = new Twig\TwigFunction('put_date_utc', array($this,"put_date_utc"));
+		$putAblyConnect = new Twig\TwigFunction('putAblyConnectFunction', array($this,"putAblyConnectFunction"), array("is_safe" => array("html")));
+		$putAlbiConnect = new Twig\TwigFunction('putAlbiConnectFunction', array($this,"putAblyConnectFunction"), array("is_safe" => array("html")));
 		$putShowDataFunction = new Twig\TwigFunction('showData', array($this,"showData"));
 		$putShowDebug = new Twig\TwigFunction('showDebug', array($this,"showDebug"));
 		$getPostTags = new Twig\TwigFunction('getPostTags', array($this,"getPostTags"));
@@ -1912,6 +1943,8 @@ class UniteCreatorTemplateEngineWork{
 		$this->twig->addFunction($putPostDateFunction);
 		$this->twig->addFunction($putPostGetVar);
 		$this->twig->addFunction($convertDate);
+		$this->twig->addFunction($putAblyConnect);
+		$this->twig->addFunction($putAlbiConnect);
 		$this->twig->addFunction($putShowDataFunction);
 		$this->twig->addFunction($putShowDebug);
 		$this->twig->addFunction($putGetDataFunction);

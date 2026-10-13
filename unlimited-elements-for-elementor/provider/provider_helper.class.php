@@ -1781,8 +1781,16 @@ class HelperProviderUC{
 			return false;		
 		
 		$roles = (array) $user->roles;
-			if (in_array('contributor', $roles, true) || in_array('author', $roles, true))
-				return false;		
+
+		// A higher role still counts when Author or Contributor is also assigned.
+		if(in_array("administrator", $roles, true))
+			return(true);
+
+		if($permission == "editor" && in_array("editor", $roles, true))
+			return(true);
+
+		if(in_array("contributor", $roles, true) || in_array("author", $roles, true))
+			return(false);
 			
 		return($isUserHasPermission);
 	}

@@ -12,7 +12,7 @@ if(!defined('UNLIMITED_ELEMENTS_INC'))
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 if(!defined("UNLIMITED_ELEMENTS_VERSION"))
-	define("UNLIMITED_ELEMENTS_VERSION", "2.0.23");
+	define("UNLIMITED_ELEMENTS_VERSION", "2.0.24");
 
 
 //disable elementor support for debugging purposes. keep it commented
@@ -121,6 +121,7 @@ require_once $uelm_folderIncludesMain . 'unitecreator_rss.class.php';
 require_once $uelm_folderIncludesMain . 'unitecreator_pagination.class.php';
 require_once $uelm_folderIncludesMain . 'unitecreator_breadcrumbs.class.php';
 require_once $uelm_folderIncludesMain . 'unitecreator_import_changelog.class.php';
+require_once $uelm_folderIncludesMain . 'unitecreator_ably.class.php';
 
 
 //admin only, maybe split later

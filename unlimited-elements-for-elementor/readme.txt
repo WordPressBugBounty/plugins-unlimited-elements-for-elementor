@@ -6,7 +6,7 @@ Requires at least: 5.7
 Tested up to: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 2.0.23
+Stable tag: 2.0.24
 
 Elementor all-in-one addons pack with the best widgets for Elementor, offering 100+ free widgets, templates, and tools to create stunning websites!
 
@@ -940,6 +940,16 @@ The choice depends on your design preferences. If you want complete control, go 
 
 
 == Changelog ==
+
+
+=  2.0.24 - 2026-10-12 =
+
+* Fix: Listing Grid no longer prints the Elementor loop template CSS once per item. The stylesheet is loaded once, from Elementor's external file when CSS Print Method is External
+* Fix: Post Tabs and other post widgets no longer fatal when full post content clears the main query during render
+* Fix: an Administrator who also has the Author or Contributor role can run plugin operations again. The same applies to Editor when Edit Permission is set to Editor
+* Feature: added Greek to the alphabet filter
+* Fix: the alphabet filter now accepts letters from non-Latin alphabets, so Greek and the other existing languages can filter by the first letter of the title. A tonos on the first letter, such as Ήλιος, still matches the plain letter
+* Change: updated freemius sdk
 
 
 =  2.0.23 - 2026-10-04 =
