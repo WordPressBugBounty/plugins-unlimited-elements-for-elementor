@@ -1,5 +1,14 @@
 
 
+version 2.0.26:
+
+* Fix: a |raw print inside href, src, and the other URL attributes is escaped as a URL. The address stays readable, so translation plugins no longer prepend the language slug. javascript: and data: URLs are removed. An apostrophe in the template text no longer attribute-escapes the rest of the widget
+* Feature: added Connect with TikTok on the Integrations tab. The access token renews automatically. Clear Access Data disconnects the account
+* Feature: added the TikTok Feed widget under Media Widgets. It lists public videos from the connected account. The number of videos can be set from 1 to 20
+* Feature: added tiktok integration so a widget template can read that video list
+* Fix: removed the leftover asset-url filters on Elementor import and page save. Saving a page no longer fatals with class UELM_CreatorElementorWidget not found
+
+
 version 2.0.24:
 
 * Fix: Listing Grid no longer prints the Elementor loop template CSS once per item. The stylesheet is loaded once, from Elementor's external file when CSS Print Method is External

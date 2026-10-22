@@ -741,6 +741,51 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 
 	/**
+	 * postlinkadd is a raw query string from the request.
+	 * Keep only name=value pairs whose names are plain keys, so the value
+	 * cannot break out of an href. addUrlParams() encodes array values.
+	 */
+	private function getPostLinkAddParams($postLinkAdd){
+
+		$params = array();
+
+		if(is_string($postLinkAdd) == false || $postLinkAdd === "")
+			return($params);
+
+		$postLinkAdd = ltrim($postLinkAdd, "?&");
+
+		foreach(explode("&", $postLinkAdd) as $part){
+
+			if($part === "")
+				continue;
+
+			$pair = explode("=", $part, 2);
+			$key = $pair[0];
+
+			if(preg_match("/^[A-Za-z0-9_-]+$/", $key) != 1)
+				continue;
+
+			$params[$key] = isset($pair[1]) ? $pair[1] : "";
+		}
+
+		return($params);
+	}
+
+
+	/**
+	 * A URL placed in a single-quoted attribute. javascript:void(0) is a
+	 * literal link type, not a user URL, and esc_url() would strip it.
+	 */
+	private function escapeUrlAttribute($url){
+
+		if($url === "javascript:void(0)")
+			return($url);
+
+		return(esc_url($url));
+	}
+
+
+	/**
 	 * get post data
 	 */
 	public function getPostDataByObj($post, $arrPostAdditions = array(), $arrImageSizes = null, $options = array()){
@@ -773,13 +818,13 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 			
 			$link = UniteFunctionsWPUC::getPermalink($post);
 			
-			
 			//post link addition
 			
 			$postLinkAdd = UniteFunctionsUC::getPostGetVariable("postlinkadd","",UniteFunctionsUC::SANITIZE_TEXT_FIELD);
-			
-			if(!empty($postLinkAdd))
-				$link = UniteFunctionsUC::addUrlParams($link, $postLinkAdd);
+			$postLinkAddParams = $this->getPostLinkAddParams($postLinkAdd);
+
+			if(!empty($postLinkAddParams))
+				$link = UniteFunctionsUC::addUrlParams($link, $postLinkAddParams);
 			
 			$arrData["link"] = $link;
 
@@ -811,8 +856,10 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 					if($isDynamicEnabled == true){
 						$dynamicLinkAddClass = " uc-open-popup";
-						$dynamicLinkAttr = " href='javascrpit:void(0)' data-post-link='{$link}' data-postid='$postID'";
-						$dynamicLinkDivAttr = " data-post-link='{$link}' data-postid='$postID'";
+						$linkAttr = $this->escapeUrlAttribute($link);
+						$postIDAttr = (int)$postID;
+						$dynamicLinkAttr = " href='javascrpit:void(0)' data-post-link='{$linkAttr}' data-postid='{$postIDAttr}'";
+						$dynamicLinkDivAttr = " data-post-link='{$linkAttr}' data-postid='{$postIDAttr}'";
 					}
 					else{
 
@@ -843,7 +890,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 						}
 
 						$dynamicLinkAddClass = "";
-						$dynamicLinkAttr = "href='{$dynamicPopupLink}'";
+						$dynamicPopupLinkAttr = $this->escapeUrlAttribute($dynamicPopupLink);
+						$dynamicLinkAttr = "href='{$dynamicPopupLinkAttr}'";
 						$dynamicLinkDivAttr = "";
 						
 					}
