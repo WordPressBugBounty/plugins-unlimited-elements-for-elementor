@@ -6,7 +6,7 @@ Requires at least: 5.7
 Tested up to: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Stable tag: 2.0.26
+Stable tag: 2.0.27
 
 Elementor all-in-one addons pack with the best widgets for Elementor, offering 100+ free widgets, templates, and tools to create stunning websites!
 
@@ -941,6 +941,12 @@ The choice depends on your design preferences. If you want complete control, go 
 
 == Changelog ==
 
+
+=  2.0.27 - 2026-10-29 =
+
+* Fix: an inline SVG icon is read only when the file is a real SVG inside the site directory. A query string or a backslash can no longer point that icon at wp-config.php or a file outside the site
+* Fix: AJAX Search autocorrection no longer reflects the raw search text. Markup after the first word of the search is stripped before the suggestion is returned
+* Fix: a post list no longer returns private, draft, pending, or scheduled posts to a user who cannot read them. A Contributor preview receives published posts only
 
 =  2.0.26 - 2026-10-22 =
 

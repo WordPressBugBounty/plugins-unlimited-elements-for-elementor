@@ -1,6 +1,12 @@
 
 == Changelog ==
 
+=  2.0.27 - 2026-10-29 =
+
+* Fix: an inline SVG icon is read only when the file is a real SVG inside the site directory. A query string or a backslash can no longer point that icon at wp-config.php or a file outside the site
+* Fix: AJAX Search autocorrection no longer reflects the raw search text. Markup after the first word of the search is stripped before the suggestion is returned
+* Fix: a post list no longer returns private, draft, pending, or scheduled posts to a user who cannot read them. A Contributor preview receives published posts only
+
 =  2.0.26 - 2026-10-22 =
 
 * Fix: removed the leftover asset-url filters on Elementor import and page save. Saving a page no longer fatals with class UELM_CreatorElementorWidget not found

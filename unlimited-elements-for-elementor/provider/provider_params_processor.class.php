@@ -1466,6 +1466,159 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 
 
 	/**
+	 * post types used to decide which statuses the current user may query
+	 */
+	private function getPostTypesForStatusCheck($postType){
+
+		if(is_string($postType)){
+
+			$postType = trim($postType);
+
+			if($postType === "" || $postType === "any")
+				return(array("post"));
+
+			if(strpos($postType, ",") !== false)
+				$postType = array_map("trim", explode(",", $postType));
+			else
+				return(array(sanitize_key($postType)));
+		}
+
+		if(is_array($postType) == false)
+			return(array("post"));
+
+		$types = array();
+
+		foreach($postType as $type){
+
+			if(is_string($type) == false)
+				continue;
+
+			$type = sanitize_key($type);
+
+			if($type === "" || $type === "any")
+				continue;
+
+			$types[] = $type;
+		}
+
+		if(empty($types))
+			return(array("post"));
+
+		return($types);
+	}
+
+
+	/**
+	 * true when the user has this capability for every requested post type
+	 */
+	private function currentUserCanForPostTypes($postType, $capField){
+
+		$types = $this->getPostTypesForStatusCheck($postType);
+
+		foreach($types as $type){
+
+			$objType = get_post_type_object($type);
+
+			if(empty($objType) || empty($objType->cap) || isset($objType->cap->$capField) == false)
+				return(false);
+
+			if(current_user_can($objType->cap->$capField) == false)
+				return(false);
+		}
+
+		return(true);
+	}
+
+
+	/**
+	 * drop statuses the current user may not read. an empty result falls back to publish.
+	 */
+	private function limitPostStatusesForCurrentUser($statuses, $postType){
+
+		if(is_string($statuses))
+			$statuses = preg_split("/[,\s]+/", $statuses, -1, PREG_SPLIT_NO_EMPTY);
+
+		if(is_array($statuses) == false)
+			$statuses = array();
+
+		$canReadPrivate = $this->currentUserCanForPostTypes($postType, "read_private_posts");
+		$canEditOthers = $this->currentUserCanForPostTypes($postType, "edit_others_posts");
+		$types = $this->getPostTypesForStatusCheck($postType);
+		$allowsInherit = in_array("attachment", $types, true);
+
+		$filtered = array();
+
+		foreach($statuses as $status){
+
+			if(is_string($status) == false)
+				continue;
+
+			$status = sanitize_key($status);
+
+			if($status === "" || $status === "any")
+				continue;
+
+			if($status === "publish"){
+				$filtered[] = $status;
+				continue;
+			}
+
+			if($status === "inherit"){
+
+				if($allowsInherit == true)
+					$filtered[] = $status;
+
+				continue;
+			}
+
+			if($status === "private"){
+
+				if($canReadPrivate == true)
+					$filtered[] = $status;
+
+				continue;
+			}
+
+			if($status === "draft" || $status === "pending" || $status === "future"){
+
+				if($canEditOthers == true)
+					$filtered[] = $status;
+
+				continue;
+			}
+
+			$statusObj = get_post_status_object($status);
+
+			if(empty($statusObj))
+				continue;
+
+			if(!empty($statusObj->public)){
+				$filtered[] = $status;
+				continue;
+			}
+
+			if(!empty($statusObj->private) && $canReadPrivate == true){
+				$filtered[] = $status;
+				continue;
+			}
+
+			if($canEditOthers == true)
+				$filtered[] = $status;
+		}
+
+		$filtered = array_values(array_unique($filtered));
+
+		if(empty($filtered))
+			return("publish");
+
+		if(count($filtered) == 1)
+			return($filtered[0]);
+
+		return($filtered);
+	}
+
+
+	/**
 	 * get post list data custom from filters
 	 */
 	private function getPostListData_custom($value, $name, $processType, $param, $data, $nameListing = null){
@@ -2507,7 +2660,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		if(is_array($arrStatuses) && count($arrStatuses) == 1)
 			$arrStatuses = $arrStatuses[0];
 
-		$args["post_status"] = $arrStatuses;
+		$args["post_status"] = $this->limitPostStatusesForCurrentUser($arrStatuses, $postType);
 
 
 		//add sticky posts only
@@ -2662,6 +2815,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$args = apply_filters("uelm_modify_posts_query_args", $args, $value, $name);
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook name kept for existing callbacks.
 		$args = apply_filters("ue_modify_posts_query_args", $args, $value, $name);
+
+		$args["post_status"] = $this->limitPostStatusesForCurrentUser(UniteFunctionsUC::getVal($args, "post_status", "publish"), UniteFunctionsUC::getVal($args, "post_type"));
 
 		//set debug errors
 		if($showDebugQuery == true && $debugType == "show_query"){
@@ -3300,7 +3455,7 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		$args["posts_per_page"] = $postsPerPage;
 		$args["suppress_filters"] = true;
 
-		$args["post_status"] = "publish, private";
+		$args["post_status"] = $this->limitPostStatusesForCurrentUser("publish, private", $args["post_type"]);
 
 		$args = $this->getPostListData_addOrderBy($args, $value, $name, true);
 
@@ -3329,6 +3484,8 @@ class UniteCreatorParamsProcessor extends UniteCreatorParamsProcessorWork{
 		add_action("pre_get_posts", array($this,"clearTaxQueryForGetPostListData_manualSelection"), 1, 1);
 		
 		
+		$args["post_status"] = $this->limitPostStatusesForCurrentUser(UniteFunctionsUC::getVal($args, "post_status", "publish"), UniteFunctionsUC::getVal($args, "post_type"));
+
 		if($this->skipPostListQueryRun == false){
 			$query = new WP_Query($args);
 			
